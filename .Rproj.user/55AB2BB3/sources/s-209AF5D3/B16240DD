@@ -1,0 +1,27 @@
+{
+    "id": "B16240DD",
+    "path": "~/R/deces_europe/creation_tables_deces_europe.R",
+    "project_path": "creation_tables_deces_europe.R",
+    "type": "r_source",
+    "hash": "3402980965",
+    "contents": "",
+    "dirty": false,
+    "created": 1620813166891.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "436,24",
+        "scrollLine": "438"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1621260232,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1621260232949,
+    "read_only": false,
+    "read_only_alternatives": []
+}
