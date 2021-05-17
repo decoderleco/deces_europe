@@ -42,15 +42,76 @@ pjan<-pjan %>% rename(population=values) %>% select(-unit) %>% filter(sex !="T",
 
 deces_annuel_age<-deces_annuel_age %>% rename(deces=values) %>% select(-unit)  %>% filter(sex !="T",age!="TOTAL", age !="UNK")
 
+# identification des couples(geo,time) qui s'arrêtent à 84 ans
+deces_age <- deces_annuel_age %>% mutate(age = as.double(str_sub(age,2,length(age)))) %>% 
+  filter(age !="_LT1") %>% 
+  filter(age !="_OPEN") 
+
+age_max_deces <- deces_age %>% group_by(geo,time) %>% summarise( age_max = max(age))
+
+
+pjan_age <- pjan %>% mutate(age = as.double(str_sub(age,2,length(age)))) %>% 
+  filter(age !="_LT1") %>% 
+  filter(age !="_OPEN")
+
+age_max_pop <- pjan_age %>% group_by(geo,time) %>% summarise( age_max = max(age))
+
+pb_age_max_deces <-age_max_deces %>% filter(age_max<89) %>% filter(str_sub(geo,1,2)!="EU")%>%
+  filter(str_sub(geo,1,2)!="EA") %>% 
+  filter(str_sub(geo,1,3)!="EEA") %>% 
+  filter(str_sub(geo,1,3)!="EFT") %>% 
+  rename (age_max_deces=age_max)
+
+pb_age_max_pop <-age_max_pop %>% filter(age_max<89) %>% filter(str_sub(geo,1,2)!="EU")%>%
+  filter(str_sub(geo,1,2)!="EA") %>% 
+  filter(str_sub(geo,1,3)!="EEA") %>% 
+  filter(str_sub(geo,1,3)!="EFT")%>% 
+  rename (age_max_pop=age_max)
+
+pb_age <-full_join(pb_age_max_deces,pb_age_max_pop,by=c("geo","time"))
+
+#on filtre sur les zones geographiques
+pjan<- pjan %>% filter(str_sub(geo,1,2)!="EU")%>%
+  filter(str_sub(geo,1,2)!="EA") %>% 
+  filter(str_sub(geo,1,3)!="EEA") %>% 
+  filter(str_sub(geo,1,3)!="EFT") %>%
+  filter(geo!="DE_TOT") %>%
+  filter(geo!="TR")
+
+deces_annuel_age<- deces_annuel_age %>% filter(str_sub(geo,1,2)!="EU")%>%
+  filter(str_sub(geo,1,2)!="EA") %>% 
+  filter(str_sub(geo,1,3)!="EEA") %>% 
+  filter(str_sub(geo,1,3)!="EFT") %>%
+  filter(geo!="DE_TOT")%>%
+  filter(geo!="TR")
+
+# on enleve l'Italie qui pose probleme au 01/01/1981 et avant
+pjan<- pjan %>% filter(!(geo=="IT" & time<="1981-01-01"))
+deces_annuel_age<- deces_annuel_age %>% filter(!(geo=="IT" & time<="1981-01-01"))
+
+#table pb_age : on ne garde que ceux qui snt en 84plus
+age85<-pb_age %>% filter(age_max_deces==84 | age_max_pop==84 ) %>% filter(geo!="TR")
+
+
+#### traitement des tables de pop ###############
+
+#table de pop : on partitionne en deux tables : celle avec les couples (geo,time) traites en age quinquennal jusqu'à 90+
+#celle vec les couples (geo,time) traites en age quinquennal jusqu'à 85+
+
+pjan85 <- age85 %>% left_join(pjan)
+pjan90 <- pjan %>% anti_join(pjan85)
+
+#### traitement de pjan85 ###############
+
 #mettre en age quinquennal
-pjanquinq<-pjan %>% mutate(agequinq=case_when(
+pjan85quinq<-pjan85 %>% mutate(agequinq=case_when(
   age=="Y_LT1" ~ "0",
   age== "Y_OPEN" ~ "100",
   TRUE ~ str_sub(age,2,length(age))
   
 ))
-pjanquinq<-pjanquinq %>% mutate(agequinq=as.numeric(agequinq))
-pjanquinq<-pjanquinq %>% mutate(agequinq=case_when(
+pjan85quinq<-pjan85quinq %>% mutate(agequinq=as.numeric(agequinq))
+pjan85quinq<-pjan85quinq %>% mutate(agequinq=case_when(
   agequinq <= 4 ~ "Y_LT5",
   agequinq >= 5 & agequinq < 10 ~ "Y5-9",
   agequinq >= 10 & agequinq < 15 ~ "Y10-14",
@@ -72,18 +133,68 @@ pjanquinq<-pjanquinq %>% mutate(agequinq=case_when(
   
 ))
 
-pjanquinq <- pjanquinq %>% group_by(agequinq,sex,geo,time) %>% 
+pjan85quinq <- pjan85quinq %>% group_by(agequinq,sex,geo,time) %>% 
+  summarise(population=sum(population))
+
+#### traitement de pjan90 ###############
+
+#mettre en age quinquennal
+pjan90quinq<-pjan90 %>% mutate(agequinq=case_when(
+  age=="Y_LT1" ~ "0",
+  age== "Y_OPEN" ~ "100",
+  TRUE ~ str_sub(age,2,length(age))
+  
+))
+pjan90quinq<-pjan90quinq %>% mutate(agequinq=as.numeric(agequinq))
+pjan90quinq<-pjan90quinq %>% mutate(agequinq=case_when(
+  agequinq <= 4 ~ "Y_LT5",
+  agequinq >= 5 & agequinq < 10 ~ "Y5-9",
+  agequinq >= 10 & agequinq < 15 ~ "Y10-14",
+  agequinq >= 15 & agequinq < 20 ~ "Y15-19",
+  agequinq >= 20 & agequinq < 25 ~ "Y20-24",
+  agequinq >= 25 & agequinq < 30 ~ "Y25-29",  
+  agequinq >= 30 & agequinq < 35 ~ "Y30-34",
+  agequinq >= 35 & agequinq < 40 ~ "Y35-39",  
+  agequinq >= 40 & agequinq < 45 ~ "Y40-44",
+  agequinq >= 45 & agequinq < 50 ~ "Y45-49",
+  agequinq >= 50 & agequinq < 55 ~ "Y50-54",
+  agequinq >= 55 & agequinq < 60 ~ "Y55-59",  
+  agequinq >= 60 & agequinq < 65 ~ "Y60-64",
+  agequinq >= 65 & agequinq < 70 ~ "Y65-69",  
+  agequinq >= 70 & agequinq < 75 ~ "Y70-74",
+  agequinq >= 75 & agequinq < 80 ~ "Y75-79",  
+  agequinq >= 80 & agequinq < 85 ~ "Y80-84",
+  agequinq >= 85 & agequinq < 90 ~ "Y85-89",
+  agequinq >= 90 ~ "Y_GE90"
+  
+))
+
+pjan90quinq <- pjan90quinq %>% group_by(agequinq,sex,geo,time) %>% 
   summarise(population=sum(population))
 
 
-deces_annuel_agequinq<-deces_annuel_age%>% mutate(agequinq=case_when(
+
+
+
+#### traitement des tables de deces ###############
+
+#table de deces : on partitionne en deux tables : celle avec les couples (geo,time) traites en age quinquennal jusqu'à 90+
+#celle vec les couples (geo,time) traites en age quinquennal jusqu'à 85+
+
+deces_annuel_age85 <- age85 %>% left_join(deces_annuel_age) %>% filter(!is.na(age))
+deces_annuel_age90 <- deces_annuel_age %>% anti_join(deces_annuel_age85)
+
+#### traitement de deces_annuel_age85 ###############
+
+#mettre en age quinquennal
+deces85quinq<-deces_annuel_age85 %>% mutate(agequinq=case_when(
   age=="Y_LT1" ~ "0",
   age== "Y_OPEN" ~ "100",
   TRUE ~ str_sub(age,2,length(age))
   
 ))
-deces_annuel_agequinq <- deces_annuel_agequinq %>% mutate(agequinq=as.numeric(agequinq))
-deces_annuel_agequinq<-deces_annuel_agequinq %>% mutate(agequinq=case_when(
+deces85quinq<-deces85quinq %>% mutate(agequinq=as.numeric(agequinq))
+deces85quinq<-deces85quinq %>% mutate(agequinq=case_when(
   agequinq <= 4 ~ "Y_LT5",
   agequinq >= 5 & agequinq < 10 ~ "Y5-9",
   agequinq >= 10 & agequinq < 15 ~ "Y10-14",
@@ -105,17 +216,61 @@ deces_annuel_agequinq<-deces_annuel_agequinq %>% mutate(agequinq=case_when(
   
 ))
 
-deces_annuel_agequinq <- deces_annuel_agequinq %>% group_by(agequinq,sex,geo,time) %>% 
+deces85quinq <- deces85quinq %>% group_by(agequinq,sex,geo,time) %>% 
+  summarise(deces=sum(deces))
+
+#### traitement de deces_annuel_age90 ###############
+
+#mettre en age quinquennal
+deces90quinq<-deces_annuel_age90 %>% mutate(agequinq=case_when(
+  age=="Y_LT1" ~ "0",
+  age== "Y_OPEN" ~ "100",
+  TRUE ~ str_sub(age,2,length(age))
+  
+))
+deces90quinq<-deces90quinq %>% mutate(agequinq=as.numeric(agequinq))
+deces90quinq<-deces90quinq %>% mutate(agequinq=case_when(
+  agequinq <= 4 ~ "Y_LT5",
+  agequinq >= 5 & agequinq < 10 ~ "Y5-9",
+  agequinq >= 10 & agequinq < 15 ~ "Y10-14",
+  agequinq >= 15 & agequinq < 20 ~ "Y15-19",
+  agequinq >= 20 & agequinq < 25 ~ "Y20-24",
+  agequinq >= 25 & agequinq < 30 ~ "Y25-29",  
+  agequinq >= 30 & agequinq < 35 ~ "Y30-34",
+  agequinq >= 35 & agequinq < 40 ~ "Y35-39",  
+  agequinq >= 40 & agequinq < 45 ~ "Y40-44",
+  agequinq >= 45 & agequinq < 50 ~ "Y45-49",
+  agequinq >= 50 & agequinq < 55 ~ "Y50-54",
+  agequinq >= 55 & agequinq < 60 ~ "Y55-59",  
+  agequinq >= 60 & agequinq < 65 ~ "Y60-64",
+  agequinq >= 65 & agequinq < 70 ~ "Y65-69",  
+  agequinq >= 70 & agequinq < 75 ~ "Y70-74",
+  agequinq >= 75 & agequinq < 80 ~ "Y75-79",  
+  agequinq >= 80 & agequinq < 85 ~ "Y80-84",
+  agequinq >= 85 & agequinq < 90 ~ "Y85-89",
+  agequinq >= 90 ~ "Y_GE90"
+  
+))
+
+deces90quinq <- deces90quinq %>% group_by(agequinq,sex,geo,time) %>% 
   summarise(deces=sum(deces))
 
 
+#### on concatene les tables 85 et 90 ###############
+deces_annuel_agequinq<-bind_rows(deces90quinq,deces85quinq)
+pjanquinq <-bind_rows(pjan90quinq,pjan85quinq)
+
+#### on joint les deces et les pop ###############
 pop_deces_pays_age_quinq<-deces_annuel_agequinq %>% inner_join(pjanquinq,by=c("sex","geo","agequinq","time"))
 
 
 #ajouter la population de l'ann?e 2020 correspondant du pays dans chaque pays*sexe*age*ann?e
 
 pop20<-pjanquinq %>% filter(time=="2020-01-01") %>% rename(pop20=population) %>% select(-time)
-pop_deces_pays_age_quinq<-pop_deces_pays_age_quinq %>% left_join(pop20,by=c("sex","geo","agequinq"))
+pop20_ge85<-pop20 %>% filter(agequinq %in% c("Y_GE90","Y85-89"))
+pop20_85<-pop20_ge85 %>% group_by(geo,sex) %>% summarise(pop20=sum(pop20)) %>% mutate(agequinq="Y_GE85")
+pop20tot<-bind_rows(pop20,pop20_85)
+pop_deces_pays_age_quinq<-pop_deces_pays_age_quinq %>% left_join(pop20tot,by=c("sex","geo","agequinq"))
 pop_deces_pays_age_quinq<-pop_deces_pays_age_quinq %>% filter(str_sub(geo,1,2)!="EU") %>% 
   filter(str_sub(geo,1,2)!="EA")%>% 
   filter(str_sub(geo,1,3)!="EEA")%>% 
@@ -143,10 +298,11 @@ deces_tot_20 <- deces_week20 %>% group_by(age,sex,geo) %>% summarise(dc20=sum(dc
 
 deces_tot_20 <- deces_tot_20 %>% rename(agequinq=age)
 
-deces_tot_20 <- deces_tot_20 %>% mutate(agequinq=case_when(agequinq=="Y85-89"~"Y_GE85",
-                                                           agequinq=="Y_GE90"~"Y_GE85",
-                                                           TRUE ~agequinq))
-deces_tot_20 <- deces_tot_20 %>% group_by(agequinq,sex,geo) %>% summarise(dc20=sum(dc20))
+
+deces_tot_20_ge85<-deces_tot_20 %>% filter(agequinq %in% c("Y_GE90","Y85-89"))
+deces_tot_20_85<-deces_tot_20_ge85 %>% group_by(geo,sex) %>% summarise(dc20=sum(dc20)) %>% mutate(agequinq="Y_GE85")
+deces_tot_20tot<-bind_rows(deces_tot_20,deces_tot_20_85)
+
 
 #calculer les deces theoriques de chaque annee avec la population 2020 du pays en 2020
 pop_deces_pays_age_quinq<-pop_deces_pays_age_quinq %>% mutate(deces_theo_2020 = case_when(
@@ -155,7 +311,9 @@ pop_deces_pays_age_quinq<-pop_deces_pays_age_quinq %>% mutate(deces_theo_2020 = 
 
 #jointure des deces annuels avec 2020
 
-deces_complet <- pop_deces_pays_age_quinq %>% left_join(deces_tot_20,by=c("sex","geo","agequinq"))
+deces_complet <- pop_deces_pays_age_quinq %>% left_join(deces_tot_20tot,by=c("sex","geo","agequinq"))
+
+#ajout des deces 2020
 deces_tot_20_2 <- deces_tot_20 %>% rename(deces=dc20) %>% mutate(time=as.Date("2020-01-01"),deces_theo_2020=deces,dc20=deces)
 deces_tot_20_2 <- deces_tot_20_2 %>% filter(sex!="T"&agequinq!="TOTAL"&agequinq!="UNK") %>% group_by(geo,sex,time,agequinq) %>% 
   summarise(dc20=sum(dc20),deces=sum(deces),deces_theo_2020=sum(deces_theo_2020))
@@ -164,7 +322,6 @@ deces_tot_20_2 <- deces_tot_20_2 %>% left_join(pop_quinq_20)
 deces_complet<- deces_complet %>% bind_rows(deces_tot_20_2)
 
 #gestion de l'Allemagne pour laquelle il manque les donn?es sexu?es et des moins de 40 ans en 2020
-
 deces_weekDE <- deces_week %>% filter(geo=="DE") 
 
 deces_tot_20DE<- deces_tot_20 %>% filter(geo=="DE")

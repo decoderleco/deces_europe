@@ -1,6 +1,7 @@
 #analyse des donnees annuelles
 
 deces_complet_annuel_analysable2000 <- deces_complet_annuel %>% filter(time >="2000-01-01")
+deces_complet_annuel_analysable2010 <- deces_complet_annuel %>% filter(time >="2010-01-01")
 
 p <- ggplot(data=deces_complet_annuel_analysable2000, aes(x=time, y=deces_theo_2020, colour=geo))
 p <- p + geom_line(size=1)
@@ -8,8 +9,58 @@ print(p)
 
 ggplot(deces_complet_annuel_analysable2000) + geom_boxplot(aes(x = geo, y = deces_europe_theo_20))
 
+max_deces<-tapply(deces_complet_annuel_analysable2010$deces_theo_2020, deces_complet_annuel_analysable2010$geo, max)
+max_deces = data.frame(max_deces)
+max_deces$geo <- rownames(max_deces)
+max_deces <- max_deces %>% rename(deces_theo_2020=max_deces)
+max_deces <-left_join(max_deces,deces_complet_annuel_analysable2000)
+
+annee_deces_superieure_2020  <- deces_complet_annuel %>%  filter(augmentation20 <0) %>% mutate(annee = str_sub(as.character(time),1,4))
+annee_deces_superieure_2020 <-tapply(annee_deces_superieure_2020$annee, annee_deces_superieure_2020$geo, max)
+annee_deces_superieure_2020 <- data.frame(annee_deces_superieure_2020)
+annee_deces_superieure_2020$geo <- rownames(annee_deces_superieure_2020)
+
+annee_deces_inferieure_2020  <- deces_complet_annuel %>%  filter(augmentation20 >0) %>% mutate(annee = str_sub(as.character(time),1,4))
+annee_deces_inferieure_2020 <-tapply(annee_deces_inferieure_2020$annee, annee_deces_inferieure_2020$geo, min)
+annee_deces_inferieure_2020 <- data.frame(annee_deces_inferieure_2020)
+annee_deces_inferieure_2020$geo <- rownames(annee_deces_inferieure_2020)
 
 
+age_max <- deces_annuel_age %>% mutate(age = as.double(str_sub(age,2,length(age)))) %>% 
+  filter(age !="_LT1") %>% 
+  filter(age !="_OPEN") %>% 
+  mutate(geotime = paste(geo,str_sub(as.character(time),1,4)))
+age_max2 <-tapply(age_max$age, age_max$geotime, max) 
+age_max2 <- data.frame(age_max2)
+
+
+deces_age <- deces_annuel_age %>% mutate(age = as.double(str_sub(age,2,length(age)))) %>% 
+  filter(age !="_LT1") %>% 
+  filter(age !="_OPEN") 
+
+age_max_deces <- deces_age %>% group_by(geo,time) %>% summarise( age_max = max(age))
+
+
+pjan_age <- pjan %>% mutate(age = as.double(str_sub(age,2,length(age)))) %>% 
+  filter(age !="_LT1") %>% 
+  filter(age !="_OPEN")
+
+age_max_pop <- pjan_age %>% group_by(geo,time) %>% summarise( age_max = max(age))
+
+pb_age_max_deces <-age_max_deces %>% filter(age_max<89) %>% filter(str_sub(geo,1,2)!="EU")%>%
+filter(str_sub(geo,1,2)!="EA") %>% 
+ filter(str_sub(geo,1,3)!="EEA") %>% 
+  filter(str_sub(geo,1,3)!="EFT") %>% 
+  rename (age_max_deces=age_max)
+
+pb_age_max_pop <-age_max_pop %>% filter(age_max<89) %>% filter(str_sub(geo,1,2)!="EU")%>%
+  filter(str_sub(geo,1,2)!="EA") %>% 
+  filter(str_sub(geo,1,3)!="EEA") %>% 
+  filter(str_sub(geo,1,3)!="EFT")%>% 
+  rename (age_max_pop=age_max)
+
+pb_age <-full_join(pb_age_max_deces,pb_age_max_pop,by=c("geo","time"))
+table(pb_age$age_max_pop)
 
 table_deces_annee<-with(deces_analysables,table(deces_standard_tot_rec , annee))
 chisq.test(table_deces_annee,simulate.p.value = TRUE)
@@ -19,30 +70,28 @@ table_deces_geo<-with(deces_analysables,table(deces_standard_tot_rec , geo))
 chisq.test(table_deces_geo,simulate.p.value = TRUE)
 cramersV(table_deces_geo)
 
-
-
-
-
-
-
-
-
-
-
-
-
-#cr?ation d'une ligne fictive par classe avec la g?om?trie du Canada
+#cartographie
+#creation d'une ligne fictive par classe avec la geometrie du Canada pour avoir toujours toutes les classes présentes
 
 worldmap <- ne_countries(scale = 'medium', type = 'map_units',
                          returnclass = 'sf')
 canada<-worldmap %>% filter(name=="Canada")
 geocanada<-canada$geometry
 
-
-##r?alisation de cartes dynamiques avec 1 carte par semaine
-
-
 geodata <- get_eurostat_geospatial(resolution = "60", nuts_level = "0", year = 2021)
+
+map_data_init <- inner_join(geodata, deces_complet_annuel_analysable2000)
+
+#analyse des donnees hebdomadaires
+
+
+
+
+
+##realisation de cartes dynamiques avec 1 carte par semaine
+
+
+
 
 
 map_data_init <- inner_join(geodata, deces_standard_pays_semaine_plus_40)
