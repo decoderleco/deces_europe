@@ -313,12 +313,14 @@ pop_deces_pays_age_quinq<-pop_deces_pays_age_quinq %>% mutate(deces_theo_2020 = 
 
 deces_complet <- pop_deces_pays_age_quinq %>% left_join(deces_tot_20tot,by=c("sex","geo","agequinq"))
 
+pop_quinq_20 <- pop_deces_pays_age_quinq %>% filter(time=="2019-01-01") %>% select(-deces,-deces_theo_2020,-time)
+
+
 #ajout des deces 2020
-deces_tot_20_2 <- deces_tot_20 %>% rename(deces=dc20) %>% mutate(time=as.Date("2020-01-01"),deces_theo_2020=deces,dc20=deces)
+deces_tot_20_2 <- deces_tot_20tot %>% rename(deces=dc20) %>% mutate(time=as.Date("2020-01-01"),deces_theo_2020=deces,dc20=deces)
 deces_tot_20_2 <- deces_tot_20_2 %>% filter(sex!="T"&agequinq!="TOTAL"&agequinq!="UNK") %>% group_by(geo,sex,time,agequinq) %>% 
   summarise(dc20=sum(dc20),deces=sum(deces),deces_theo_2020=sum(deces_theo_2020))
-pop_quinq_20 <- pop_deces_pays_age_quinq %>% filter(time=="2019-01-01") %>% select(-deces,-deces_theo_2020,-time)
-deces_tot_20_2 <- deces_tot_20_2 %>% left_join(pop_quinq_20)
+deces_tot_20_2 <- deces_tot_20_2 %>% left_join(pop_quinq_20) %>% filter(!is.na(pop20))
 deces_complet<- deces_complet %>% bind_rows(deces_tot_20_2)
 
 #gestion de l'Allemagne pour laquelle il manque les donn?es sexu?es et des moins de 40 ans en 2020
@@ -372,7 +374,7 @@ deces_complet <-deces_complet %>%  mutate(deces_europe_theo_20 = case_when(
 
 
 #groupement des donnees pour trouver les deces annuels
-deces_complet_annuel  <- deces_complet %>% group_by(geo,time) %>% 
+deces_complet_annuel  <- deces_complet %>% filter(!is.na(population)) %>% group_by(geo,time) %>% 
   summarise(population=sum(population),pop20=sum(pop20),deces=sum(deces),deces_theo_2020=sum(deces_theo_2020),dc20=sum(dc20),deces_europe_theo_20=sum(deces_europe_theo_20))
 
 deces_complet_annuel<- deces_complet_annuel %>% filter(!is.na(dc20)) %>% filter(!is.na(deces_theo_2020))

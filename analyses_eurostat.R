@@ -1,5 +1,6 @@
 #analyse des donnees annuelles
 
+deces_complet_annuel_analysable1990 <- deces_complet_annuel %>% filter(time >="1990-01-01")
 deces_complet_annuel_analysable2000 <- deces_complet_annuel %>% filter(time >="2000-01-01")
 deces_complet_annuel_analysable2010 <- deces_complet_annuel %>% filter(time >="2010-01-01")
 
@@ -9,21 +10,26 @@ print(p)
 
 ggplot(deces_complet_annuel_analysable2000) + geom_boxplot(aes(x = geo, y = deces_europe_theo_20))
 
-max_deces<-tapply(deces_complet_annuel_analysable2010$deces_theo_2020, deces_complet_annuel_analysable2010$geo, max)
-max_deces = data.frame(max_deces)
-max_deces$geo <- rownames(max_deces)
-max_deces <- max_deces %>% rename(deces_theo_2020=max_deces)
-max_deces <-left_join(max_deces,deces_complet_annuel_analysable2000)
+#dernière année avec mortalité supérieure à 2020
 
-annee_deces_superieure_2020  <- deces_complet_annuel %>%  filter(augmentation20 <0) %>% mutate(annee = str_sub(as.character(time),1,4))
+annee_deces_superieure_2020  <- deces_complet_annuel_analysable1990 %>%  filter(augmentation20 <0) %>% mutate(annee = str_sub(as.character(time),1,4))
 annee_deces_superieure_2020 <-tapply(annee_deces_superieure_2020$annee, annee_deces_superieure_2020$geo, max)
 annee_deces_superieure_2020 <- data.frame(annee_deces_superieure_2020)
 annee_deces_superieure_2020$geo <- rownames(annee_deces_superieure_2020)
 
-annee_deces_inferieure_2020  <- deces_complet_annuel %>%  filter(augmentation20 >0) %>% mutate(annee = str_sub(as.character(time),1,4))
+#première années avec mortalité inférieure à 2020
+
+annee_deces_inferieure_2020  <- deces_complet_annuel_analysable1990 %>%  filter(augmentation20 >0) %>% mutate(annee = str_sub(as.character(time),1,4))
 annee_deces_inferieure_2020 <-tapply(annee_deces_inferieure_2020$annee, annee_deces_inferieure_2020$geo, min)
 annee_deces_inferieure_2020 <- data.frame(annee_deces_inferieure_2020)
 annee_deces_inferieure_2020$geo <- rownames(annee_deces_inferieure_2020)
+
+annee_comparaison_2020 <- annee_deces_inferieure_2020 %>% full_join(annee_deces_superieure_2020)
+annee_comparaison_2020 <- annee_comparaison_2020 %>% mutate(annee_deces_inferieure_2020=if_else(is.na(annee_deces_inferieure_2020),"2020",annee_deces_inferieure_2020))
+
+
+
+
 
 
 age_max <- deces_annuel_age %>% mutate(age = as.double(str_sub(age,2,length(age)))) %>% 
