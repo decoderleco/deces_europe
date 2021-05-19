@@ -1,4 +1,7 @@
-#analyse des donnees annuelles
+install.packages("pyramid")
+library(pyramid)
+
+####analyse des donnees annuelles####
 
 deces_complet_annuel_analysable1990 <- deces_complet_annuel %>% filter(time >="1990-01-01")
 deces_complet_annuel_analysable2000 <- deces_complet_annuel %>% filter(time >="2000-01-01")
@@ -26,47 +29,115 @@ annee_deces_inferieure_2020$geo <- rownames(annee_deces_inferieure_2020)
 
 annee_comparaison_2020 <- annee_deces_inferieure_2020 %>% full_join(annee_deces_superieure_2020)
 annee_comparaison_2020 <- annee_comparaison_2020 %>% mutate(annee_deces_inferieure_2020=if_else(is.na(annee_deces_inferieure_2020),"2020",annee_deces_inferieure_2020))
+annee_comparaison_2020 <- annee_comparaison_2020 %>% mutate(typo=case_when(annee_deces_inferieure_2020=="2020"~"1 - année la moins mortelle",
+                                                                           annee_deces_inferieure_2020=="2019"~"2 - 2e année la moins mortelle",
+                                                                           annee_deces_inferieure_2020 %in% c("2016","2014")~"3 - mortalité normale- pour la décennie",
+                                                                           annee_deces_inferieure_2020 %in% c("2015","2013","2012")~"4 - mortalité normale+ pour la décennie",
+                                                                           TRUE ~"5 - mortalité haute pour la décennie"))
+#année de dèces maximum
+
+annne_deces_maximum <- tapply(deces_complet_annuel$deces, deces_complet_annuel$geo, max)
+annne_deces_maximum <- data.frame(annne_deces_maximum)
+annne_deces_maximum$geo <- rownames(annne_deces_maximum)
+annne_deces_maximum <- annne_deces_maximum %>% rename(deces=annne_deces_maximum)
+annne_deces_maximum <- annne_deces_maximum %>% left_join(deces_complet_annuel)
+
+annne_deces_maximum2020 <- annne_deces_maximum %>% filter(time=="2020-01-01") %>% select(geo)
+annne_deces_maximumautre  <- annne_deces_maximum %>% filter(time!="2020-01-01") %>% select(geo)
+
+#pyramide des âges des pays à forts décès 2020 et des autres
+
+pjanquinq20 <- pjanquinq %>% filter(time=="2020-01-01")
+annne_deces_maximum2020 <- annne_deces_maximum2020 %>% left_join(pjanquinq20)
+annne_deces_maximum2020 <- annne_deces_maximum2020 %>% filter (geo!="AM")%>% filter (geo!="AL")
+annne_deces_maximumautre <- annne_deces_maximumautre %>% left_join(pjanquinq20)
+
+annne_deces_maximum2020F <- annne_deces_maximum2020 %>% filter (sex!="F") %>% 
+  group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(femmes = population) %>% select(-population)
+annne_deces_maximum2020M <- annne_deces_maximum2020 %>% filter (sex!="M") %>% 
+  group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(hommes = population) %>% select(-population)
+
+annne_deces_maximum2020MF <- annne_deces_maximum2020M %>% left_join(annne_deces_maximum2020F) %>% 
+  mutate(agequinq = case_when(agequinq=="Y5-9"~"Y05-09",
+                              agequinq=="Y_LT5"~"Y00-04",
+                              agequinq=="Y_GE90"~"Y90+",
+                              TRUE ~agequinq))
+annne_deces_maximum2020MF <- annne_deces_maximum2020MF %>% arrange(agequinq)
+annne_deces_maximum2020MF$part_hommes <- annne_deces_maximum2020MF$hommes/sum(annne_deces_maximum2020MF$hommes)*100
+annne_deces_maximum2020MF$part_femmes <- annne_deces_maximum2020MF$femmes/sum(annne_deces_maximum2020MF$femmes)*100
+
+
+
+pyramids(Left=annne_deces_maximum2020MF$part_hommes,Llab="Hommes",
+         Right=annne_deces_maximum2020MF$part_femmes, Rlab="Femmes",
+         Center = annne_deces_maximum2020MF$agequinq,Laxis=c(0,2,4,6,8,10),
+         main="Pyramide des âges ",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
+
+annne_deces_maximumautreF <- annne_deces_maximumautre %>% filter (sex!="F") %>% 
+  group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(femmes = population) %>% select(-population)
+annne_deces_maximumautreM <- annne_deces_maximumautre %>% filter (sex!="M") %>% 
+  group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(hommes = population) %>% select(-population)
+
+annne_deces_maximumautreMF <- annne_deces_maximumautreM %>% left_join(annne_deces_maximumautreF) %>% 
+  mutate(agequinq = case_when(agequinq=="Y5-9"~"Y05-09",
+                              agequinq=="Y_LT5"~"Y00-04",
+                              agequinq=="Y_GE90"~"Y90+",
+                              TRUE ~agequinq))
+annne_deces_maximumautreMF <- annne_deces_maximumautreMF %>% arrange(agequinq)
+
+annne_deces_maximumautreMF$part_hommes <- annne_deces_maximumautreMF$hommes/sum(annne_deces_maximumautreMF$hommes)*100
+annne_deces_maximumautreMF$part_femmes <- annne_deces_maximumautreMF$femmes/sum(annne_deces_maximumautreMF$femmes)*100
+
+
+pyramids(Left=annne_deces_maximumautreMF$part_hommes,Llab="Hommes",
+         Right=annne_deces_maximumautreMF$part_femmes, Rlab="Femmes",
+         Center = annne_deces_maximumautreMF$agequinq,Laxis=c(0,2,4,6,8,10),
+         main="Pyramide des âges ",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
 
 
 
 
+####cartographie des donnees annuelles####
 
-age_max <- deces_annuel_age %>% mutate(age = as.double(str_sub(age,2,length(age)))) %>% 
-  filter(age !="_LT1") %>% 
-  filter(age !="_OPEN") %>% 
-  mutate(geotime = paste(geo,str_sub(as.character(time),1,4)))
-age_max2 <-tapply(age_max$age, age_max$geotime, max) 
-age_max2 <- data.frame(age_max2)
+worldmap <- ne_countries(scale = 'medium', type = 'map_units',
+                         returnclass = 'sf')
+canada<-worldmap %>% filter(name=="Canada")
+geocanada<-canada$geometry
+france <-worldmap %>% filter(geounit=="France")
+france <- france %>% select (geometry) %>% mutate (id="FR",NAME_LATN="France") 
+
+geodata <- get_eurostat_geospatial(resolution = "60", nuts_level = "0", year = 2021)
+
+map_data_init <- full_join(geodata, annee_comparaison_2020)
+
+map_data_init <- cbind(map_data_init,st_coordinates(st_centroid(map_data_init)))
+map_data_init <- map_data_init %>% mutate(NAME_LATN=case_when(id=="FI"~"Finland",
+                                                              id=="HU"~"Hungary",
+                                                              id=="HR"~"Croatia",
+                                                              id=="BE"~"Belgium",
+                                                              id=="CH"~"Switzerland",
+                                                              id=="CZ"~"Czech Republic",
+                                                              id=="EL"~"Greece",
+                                                              id=="ME"~"Montenegro",
+                                                              id=="AL"~"Albania",
+                                                              TRUE~NAME_LATN))
 
 
-deces_age <- deces_annuel_age %>% mutate(age = as.double(str_sub(age,2,length(age)))) %>% 
-  filter(age !="_LT1") %>% 
-  filter(age !="_OPEN") 
+p <- ggplot(data=map_data_init) + geom_sf(aes(fill=typo),color="dim grey", size=.1) +
+  scale_fill_brewer(palette = "Oranges") +
+  guides(fill = guide_legend(reverse=T, title = "Typologie des décés standardisés de 2020")) +
+  geom_text( data = map_data_init, aes(X,Y,label = NAME_LATN), size = 3, hjust = 0.5)+
+  labs(title= paste0("Typologie des décès 2020 des pays européens"),
+       caption="(C) EuroGeographics for the administrative boundaries
+    Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
+  theme_light() + theme(legend.position=c(.1,.5)) +
+  coord_sf(xlim=c(-22,34), ylim=c(35,70)) 
 
-age_max_deces <- deces_age %>% group_by(geo,time) %>% summarise( age_max = max(age))
+ggsave("cartetypo.png",plot=p, width = 11, height = 8)
 
 
-pjan_age <- pjan %>% mutate(age = as.double(str_sub(age,2,length(age)))) %>% 
-  filter(age !="_LT1") %>% 
-  filter(age !="_OPEN")
 
-age_max_pop <- pjan_age %>% group_by(geo,time) %>% summarise( age_max = max(age))
-
-pb_age_max_deces <-age_max_deces %>% filter(age_max<89) %>% filter(str_sub(geo,1,2)!="EU")%>%
-filter(str_sub(geo,1,2)!="EA") %>% 
- filter(str_sub(geo,1,3)!="EEA") %>% 
-  filter(str_sub(geo,1,3)!="EFT") %>% 
-  rename (age_max_deces=age_max)
-
-pb_age_max_pop <-age_max_pop %>% filter(age_max<89) %>% filter(str_sub(geo,1,2)!="EU")%>%
-  filter(str_sub(geo,1,2)!="EA") %>% 
-  filter(str_sub(geo,1,3)!="EEA") %>% 
-  filter(str_sub(geo,1,3)!="EFT")%>% 
-  rename (age_max_pop=age_max)
-
-pb_age <-full_join(pb_age_max_deces,pb_age_max_pop,by=c("geo","time"))
-table(pb_age$age_max_pop)
 
 table_deces_annee<-with(deces_analysables,table(deces_standard_tot_rec , annee))
 chisq.test(table_deces_annee,simulate.p.value = TRUE)
@@ -88,7 +159,9 @@ geodata <- get_eurostat_geospatial(resolution = "60", nuts_level = "0", year = 2
 
 map_data_init <- inner_join(geodata, deces_complet_annuel_analysable2000)
 
-#analyse des donnees hebdomadaires
+ggsave(paste0("carte",i,".png"),plot=p, width = 11, height = 8)
+
+####analyse des donnees hebdomadaires####
 
 
 
@@ -163,14 +236,14 @@ IC_deces <- deces_standard_pays_semaine_plus_40 %>% group_by(geo) %>%
 
 deces_standard_pays_semaine_plus_40 <- left_join(deces_standard_pays_semaine_plus_40,IC_deces)
 deces_standard_pays_semaine_plus_40 <- deces_standard_pays_semaine_plus_40 %>% 
-  mutate(surmortalit? = case_when(deces_standard_tot<=binf~"sous-mortalit?",
+  mutate(surmortalité = case_when(deces_standard_tot<=binf~"sous-mortalit?",
                                   deces_standard_tot>=bsup~"surmortalit?",
                                   TRUE~"mortalit? normale"))
 deces_standard_pays_semaine_plus_40 <- deces_standard_pays_semaine_plus_40 %>% 
-  mutate(valeur_surmortalit? = case_when(surmortalit?=="sous-mortalit?"~deces_standard_tot-binf,
-                                         surmortalit?=="surmortalit?"~deces_standard_tot-bsup,
+  mutate(valeur_surmortalité = case_when(surmortalité=="sous-mortalit?"~deces_standard_tot-binf,
+                                         surmortalité=="surmortalit?"~deces_standard_tot-bsup,
                                          TRUE~0)) %>% 
-  mutate(part_surmortalit? = valeur_surmortalit?/deces_standard_tot*100) %>% 
+  mutate(part_surmortalité = valeur_surmortalité/deces_standard_tot*100) %>% 
   mutate(ecart_moyenne = (deces_standard_tot-moyenne)/moyenne*100)
 
 test <- deces_standard_pays_semaine_plus_40 %>% mutate (numerosemaine=numerosemaine + 1, 
@@ -180,8 +253,8 @@ test <- deces_standard_pays_semaine_plus_40 %>% mutate (numerosemaine=numerosema
                                                         new_cases_prec = new_cases,
                                                         new_vaccinations_prec=new_vaccinations,
                                                         Response_measure_prec = Response_measure,
-                                                        surmortalit?_prec = surmortalit?) %>% 
-  select(geo,numerosemaine,deces_standard_tot_prec,new_deaths_prec,deces_tot_prec,new_cases_prec,new_vaccinations_prec,Response_measure_prec,surmortalit?_prec)
+                                                        surmortalité_prec = surmortalité) %>% 
+  select(geo,numerosemaine,deces_standard_tot_prec,new_deaths_prec,deces_tot_prec,new_cases_prec,new_vaccinations_prec,Response_measure_prec,surmortalité_prec)
 
 deces_standard_pays_semaine_plus_40 <-left_join(deces_standard_pays_semaine_plus_40 ,test)
 
