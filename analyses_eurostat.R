@@ -101,6 +101,33 @@ pyramids(Left=annne_deces_maximumautreMF$part_hommes,Llab="Hommes",
          main="Pyramide des âges \n recrod décès avant 2020",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
 
+#pyramide des âges de la France
+
+annne_deces_maximumautreF <- annne_deces_maximumautre %>% filter (sex=="F") %>% 
+  group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(femmes = population) %>% select(-population)
+annne_deces_maximumautreM <- annne_deces_maximumautre %>% filter (sex=="M") %>% 
+  group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(hommes = population) %>% select(-population)
+
+annne_deces_maximumautreMF <- annne_deces_maximumautreM %>% left_join(annne_deces_maximumautreF) %>% 
+  mutate(agequinq = case_when(agequinq=="Y5-9"~"Y05-09",
+                              agequinq=="Y_LT5"~"Y00-04",
+                              agequinq=="Y_GE90"~"Y90+",
+                              TRUE ~agequinq))
+annne_deces_maximumautreMF <- annne_deces_maximumautreMF %>% arrange(agequinq)
+
+annne_deces_maximumautreMF$part_hommes <- annne_deces_maximumautreMF$hommes/sum(annne_deces_maximumautreMF$hommes)*100
+annne_deces_maximumautreMF$part_femmes <- annne_deces_maximumautreMF$femmes/sum(annne_deces_maximumautreMF$femmes)*100
+
+
+pyramids(Left=annne_deces_maximumautreMF$part_hommes,Llab="Hommes",
+         Right=annne_deces_maximumautreMF$part_femmes, Rlab="Femmes",
+         Center = annne_deces_maximumautreMF$agequinq,Laxis=c(0,2,4,6,8,10),
+         main="Pyramide des âges \n recrod décès avant 2020",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
+
+
+
+
+
 ####cartographie des donnees annuelles####
 
 worldmap <- ne_countries(scale = 'medium', type = 'map_units',
