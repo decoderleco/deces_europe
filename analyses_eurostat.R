@@ -42,19 +42,22 @@ annne_deces_maximum$geo <- rownames(annne_deces_maximum)
 annne_deces_maximum <- annne_deces_maximum %>% rename(deces=annne_deces_maximum)
 annne_deces_maximum <- annne_deces_maximum %>% left_join(deces_complet_annuel)
 
-annne_deces_maximum2020 <- annne_deces_maximum %>% filter(time=="2020-01-01") %>% select(geo)
-annne_deces_maximumautre  <- annne_deces_maximum %>% filter(time!="2020-01-01") %>% select(geo)
 
-#pyramide des âges des pays à forts décès 2020 et des autres
+annne_deces_maximum2020 <- annne_deces_maximum %>% filter(time=="2020-01-01") %>% select(geo)
+annne_deces_maximumautre  <- annne_deces_maximum %>% filter(time<"2020-01-01") %>% select(geo)
+
+
+####pyramide des âges des pays à forts décès 2020 et des autres####
 
 pjanquinq20 <- pjanquinq %>% filter(time=="2020-01-01")
-annne_deces_maximum2020 <- annne_deces_maximum2020 %>% left_join(pjanquinq20)
-annne_deces_maximum2020 <- annne_deces_maximum2020 %>% filter (geo!="AM")%>% filter (geo!="AL")
+annne_deces_maximum2020 <- annne_deces_maximum2020 %>% left_join(pjanquinq20) %>% filter (geo!="AM")%>% filter (geo!="AL")
 annne_deces_maximumautre <- annne_deces_maximumautre %>% left_join(pjanquinq20)
 
-annne_deces_maximum2020F <- annne_deces_maximum2020 %>% filter (sex!="F") %>% 
+#pyramide des pays à fort décès 2020
+
+annne_deces_maximum2020F <- annne_deces_maximum2020 %>% filter (sex=="F") %>% 
   group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(femmes = population) %>% select(-population)
-annne_deces_maximum2020M <- annne_deces_maximum2020 %>% filter (sex!="M") %>% 
+annne_deces_maximum2020M <- annne_deces_maximum2020 %>% filter (sex=="M") %>% 
   group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(hommes = population) %>% select(-population)
 
 annne_deces_maximum2020MF <- annne_deces_maximum2020M %>% left_join(annne_deces_maximum2020F) %>% 
@@ -67,15 +70,18 @@ annne_deces_maximum2020MF$part_hommes <- annne_deces_maximum2020MF$hommes/sum(an
 annne_deces_maximum2020MF$part_femmes <- annne_deces_maximum2020MF$femmes/sum(annne_deces_maximum2020MF$femmes)*100
 
 
-
 pyramids(Left=annne_deces_maximum2020MF$part_hommes,Llab="Hommes",
          Right=annne_deces_maximum2020MF$part_femmes, Rlab="Femmes",
          Center = annne_deces_maximum2020MF$agequinq,Laxis=c(0,2,4,6,8,10),
-         main="Pyramide des âges ",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
+         main="Pyramide des âges \n record décès 2020",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
-annne_deces_maximumautreF <- annne_deces_maximumautre %>% filter (sex!="F") %>% 
+
+
+#pyramide des pays à fort décès avant 2020
+
+annne_deces_maximumautreF <- annne_deces_maximumautre %>% filter (sex=="F") %>% 
   group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(femmes = population) %>% select(-population)
-annne_deces_maximumautreM <- annne_deces_maximumautre %>% filter (sex!="M") %>% 
+annne_deces_maximumautreM <- annne_deces_maximumautre %>% filter (sex=="M") %>% 
   group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(hommes = population) %>% select(-population)
 
 annne_deces_maximumautreMF <- annne_deces_maximumautreM %>% left_join(annne_deces_maximumautreF) %>% 
@@ -92,10 +98,7 @@ annne_deces_maximumautreMF$part_femmes <- annne_deces_maximumautreMF$femmes/sum(
 pyramids(Left=annne_deces_maximumautreMF$part_hommes,Llab="Hommes",
          Right=annne_deces_maximumautreMF$part_femmes, Rlab="Femmes",
          Center = annne_deces_maximumautreMF$agequinq,Laxis=c(0,2,4,6,8,10),
-         main="Pyramide des âges ",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
-
-
-
+         main="Pyramide des âges \n recrod décès avant 2020",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
 
 ####cartographie des donnees annuelles####
@@ -109,20 +112,42 @@ france <- france %>% select (geometry) %>% mutate (id="FR",NAME_LATN="France")
 
 geodata <- get_eurostat_geospatial(resolution = "60", nuts_level = "0", year = 2021)
 
+geodata <- geodata %>% mutate(NAME_LATN=case_when(id=="FI"~"Finland",
+                                                        id=="HU"~"Hungary",
+                                                        id=="HR"~"Croatia",
+                                                        id=="BE"~"Belgium",
+                                                        id=="CH"~"Switzerland",
+                                                        id=="CZ"~"Czech Republic",
+                                                        id=="EL"~"Greece",
+                                                        id=="ME"~"Montenegro",
+                                                        id=="AL"~"Albania",
+                                                        TRUE~NAME_LATN))
+
+geodata <- cbind(geodata,st_coordinates(st_centroid(geodata)))
+
+#année record des décès
+
+
+map_data_init <- full_join(geodata, annne_deces_maximum)
+map_data_init <- map_data_init %>% mutate(time = as.character(time))
+map_data_init <- map_data_init %>% mutate(time = str_sub(time,1,4))
+
+p <- ggplot(data=map_data_init) + geom_sf(aes(fill=time),color="dim grey", size=.1) +
+  scale_fill_brewer(palette = "Oranges") +
+  guides(fill = guide_legend(reverse=T, title = "Année de record de décès \n des pays européens")) +
+  geom_text( data = map_data_init, aes(X,Y,label = NAME_LATN), size = 3, hjust = 0.5)+
+  labs(title= paste0("Année de record de décès\n des pays européens"),
+       caption="(C) EuroGeographics for the administrative boundaries
+    Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
+  theme_light() + theme(legend.position=c(.1,.5)) +
+  coord_sf(xlim=c(-22,34), ylim=c(35,70)) 
+
+ggsave("annee_deces_maximum.png",plot=p, width = 11, height = 8)
+
+
+#typologie des décès 2020
+
 map_data_init <- full_join(geodata, annee_comparaison_2020)
-
-map_data_init <- cbind(map_data_init,st_coordinates(st_centroid(map_data_init)))
-map_data_init <- map_data_init %>% mutate(NAME_LATN=case_when(id=="FI"~"Finland",
-                                                              id=="HU"~"Hungary",
-                                                              id=="HR"~"Croatia",
-                                                              id=="BE"~"Belgium",
-                                                              id=="CH"~"Switzerland",
-                                                              id=="CZ"~"Czech Republic",
-                                                              id=="EL"~"Greece",
-                                                              id=="ME"~"Montenegro",
-                                                              id=="AL"~"Albania",
-                                                              TRUE~NAME_LATN))
-
 
 p <- ggplot(data=map_data_init) + geom_sf(aes(fill=typo),color="dim grey", size=.1) +
   scale_fill_brewer(palette = "Oranges") +
