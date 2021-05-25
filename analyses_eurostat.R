@@ -100,31 +100,72 @@ pyramids(Left=annne_deces_maximumautreMF$part_hommes,Llab="Hommes",
          Center = annne_deces_maximumautreMF$agequinq,Laxis=c(0,2,4,6,8,10),
          main="Pyramide des âges \n recrod décès avant 2020",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
+####Analyse de la France####
 
-#pyramide des âges de la France
 
-annne_deces_maximumautreF <- annne_deces_maximumautre %>% filter (sex=="F") %>% 
+#décès de la france
+
+deces_complet_annuel_france <- ungroup(deces_complet_annuel) %>% filter(geo == "FR") %>% rename(annee=time)
+barplot_deces_france <-ggplot(data=deces_complet_annuel_france, aes(x=annee, y=deces)) +
+  geom_bar(stat="identity", fill="steelblue")
+saveRDS(barplot_deces_france,"barplot_deces_france.RDS")
+
+barplot_decestheo_france<-ggplot(data=deces_complet_annuel_france, aes(x=annee, y=deces_theo_2020)) +
+  geom_bar(stat="identity", fill="steelblue")
+saveRDS(barplot_decestheo_france,"barplot_decestheo_france.RDS")
+
+#pyramide des âges de la France 2020
+
+annne_deces_maximumFranceF<- pjanquinq20 %>% filter (sex=="F"& geo=="FR") %>% 
   group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(femmes = population) %>% select(-population)
-annne_deces_maximumautreM <- annne_deces_maximumautre %>% filter (sex=="M") %>% 
+annne_deces_maximumFranceM <- pjanquinq20 %>% filter (sex=="M"& geo=="FR") %>% 
   group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(hommes = population) %>% select(-population)
 
-annne_deces_maximumautreMF <- annne_deces_maximumautreM %>% left_join(annne_deces_maximumautreF) %>% 
+annne_deces_maximumFranceMF <- annne_deces_maximumFranceM %>% left_join(annne_deces_maximumFranceF) %>% 
   mutate(agequinq = case_when(agequinq=="Y5-9"~"Y05-09",
                               agequinq=="Y_LT5"~"Y00-04",
                               agequinq=="Y_GE90"~"Y90+",
                               TRUE ~agequinq))
-annne_deces_maximumautreMF <- annne_deces_maximumautreMF %>% arrange(agequinq)
+annne_deces_maximumFranceMF <- annne_deces_maximumFranceMF %>% arrange(agequinq)
 
-annne_deces_maximumautreMF$part_hommes <- annne_deces_maximumautreMF$hommes/sum(annne_deces_maximumautreMF$hommes)*100
-annne_deces_maximumautreMF$part_femmes <- annne_deces_maximumautreMF$femmes/sum(annne_deces_maximumautreMF$femmes)*100
-
-
-pyramids(Left=annne_deces_maximumautreMF$part_hommes,Llab="Hommes",
-         Right=annne_deces_maximumautreMF$part_femmes, Rlab="Femmes",
-         Center = annne_deces_maximumautreMF$agequinq,Laxis=c(0,2,4,6,8,10),
-         main="Pyramide des âges \n recrod décès avant 2020",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
+annne_deces_maximumFranceMF$part_hommes <- annne_deces_maximumFranceMF$hommes/sum(annne_deces_maximumFranceMF$hommes)*100
+annne_deces_maximumFranceMF$part_femmes <- annne_deces_maximumFranceMF$femmes/sum(annne_deces_maximumFranceMF$femmes)*100
 
 
+pyramids(Left=annne_deces_maximumFranceMF$part_hommes,Llab="Hommes",
+         Right=annne_deces_maximumFranceMF$part_femmes, Rlab="Femmes",
+         Center = annne_deces_maximumFranceMF$agequinq,Laxis=c(0,2,4,6,8,10),
+         main="Pyramide des âges 2020 de la France",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
+
+dev.print(device = png, file = "pyramid_france_2020.png", width = 600)
+
+
+#pyramide des âges de la France 2000
+
+pjanquinq2000 <- pjanquinq %>% filter(time=="2000-01-01")
+
+annne_deces_maximumFranceF0<- pjanquinq2000 %>% filter (sex=="F"& geo=="FR") %>% 
+  group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(femmes = population) %>% select(-population)
+annne_deces_maximumFranceM0 <- pjanquinq2000 %>% filter (sex=="M"& geo=="FR") %>% 
+  group_by(agequinq) %>% summarise(population=sum(population)) %>% mutate(hommes = population) %>% select(-population)
+
+annne_deces_maximumFranceMF0 <- annne_deces_maximumFranceM0 %>% left_join(annne_deces_maximumFranceF0) %>% 
+  mutate(agequinq = case_when(agequinq=="Y5-9"~"Y05-09",
+                              agequinq=="Y_LT5"~"Y00-04",
+                              agequinq=="Y_GE90"~"Y90+",
+                              TRUE ~agequinq))
+annne_deces_maximumFranceMF0 <- annne_deces_maximumFranceMF0 %>% arrange(agequinq)
+
+annne_deces_maximumFranceMF0$part_hommes <- annne_deces_maximumFranceMF0$hommes/sum(annne_deces_maximumFranceMF0$hommes)*100
+annne_deces_maximumFranceMF0$part_femmes <- annne_deces_maximumFranceMF0$femmes/sum(annne_deces_maximumFranceMF0$femmes)*100
+
+
+pyramids(Left=annne_deces_maximumFranceMF0$part_hommes,Llab="Hommes",
+         Right=annne_deces_maximumFranceMF0$part_femmes, Rlab="Femmes",
+         Center = annne_deces_maximumFranceMF0$agequinq,Laxis=c(0,2,4,6,8,10),
+         main="Pyramide des âges 2000 de la France",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
+
+dev.print(device = png, file = "pyramid_france_2000.png", width = 600)
 
 
 

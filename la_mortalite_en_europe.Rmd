@@ -22,13 +22,29 @@ Il est aujourd'hui grand temps de dresser le bilan des mesures prises, pour savo
 
 Dans les vidéos précédentes, par exemple celle qui compare les décès de toutes les années entre 1962 et 2020 : <https://youtu.be/IPu4QvUHaQE> nous avons vu que la mortalité en France depuis 2020 n’est finalement pas extraordinaire et est au niveau de l’année 2015. 
 
-En effet, la France vieillit. Ainsi lorsque l’on regarde le nombre de morts chaque année, on voit une nette augmentation depuis 2010. Ce n’est pas le signe qu’en France la santé se dégrade, mais juste le signe que nous avons de plus en plus de personnes âgées, et à force de vieillir, tous les humains finissent par mourir. Plutôt que de fantasmer sur ces nombres bruts, on peut regarder les mêmes décès, mais cette fois en corrigeant de l’âge des gens. Ici, on a mis la même population population partout : celle de la France de 2020. On constate alors que l’année 2020 n’est plus du tout une année de record de mortalité. L’année 2020, c’est même la 6e année la moins mortelle de toute l’histoire de la France.
+En effet, la France vieillit. Ainsi lorsque l’on regarde le nombre de morts chaque année, on voit une nette augmentation depuis 2010. 
 
+```{r, echo=FALSE}
+barplot_deces_france <- readRDS("barplot_deces_france.RDS")
+barplot_deces_france
 
-```{r cars}
-summary(cars)
 ```
-On a vu également dans la dernière vidéo que le comptage des morts Covid ne représente qu’une petite partie de tous les morts français. Depuis mars 2020, 750 000 personnes sont décédées en France. Pourtant les médias ne parlent que des 100 000 attribués à la Covid-19. Les médias réussissent à faire peur aux gens uniquement parce qu’ils ne parlent que de ça. C’est le grand pouvoir des médias, ils font le focus sur un sujet particulier et font croire qu’il n’y a plus qui existe. Dans cette même vidéo, on a vu que ce comptage des morts « Covid-19 » n’a pas le moindre sens et englobe toute la surmortalité hivernale habituelle. On fait ainsi croire aux gens qu’il n’y a plus qu’une seule cause de mortalité en France.
+
+Ce n’est pas le signe qu’en France la santé se dégrade, mais juste le signe que nous avons de plus en plus de personnes âgées, et à force de vieillir, tous les humains finissent par mourir. Pour l'illuster, voici le la pyramide des âges de la France en 2000 et en 2020, réalisée avec les données disponibles sur Eurostat.
+
+ ![](pyramid_france_2000.png){width=450px} ![](pyramid_france_2020.png){width=450px}
+En 20 ans, la génération des baby-boomers est, logiquement, passée de la tranche des moins de 55 ans à celle des plus de 65 ans. Dès lors, il est tout à fait normal que le nombre de décès en France augmente chaque année, et cela va continuer à augmenter pendant encore 20 ans.
+
+Plutôt que de fantasmer sur ces nombres de décès bruts, on peut regarder les mêmes décès, mais cette fois en corrigeant de l’âge des gens. Il s'agit de standardiser les décès pour mettre la même population population partout, par exemple celle de la France de 2020. On constate alors que l’année 2020 n’est plus du tout une année de record de mortalité. 
+
+```{r, echo=FALSE}
+barplot_decestheo_france <- readRDS("barplot_decestheo_france.RDS")
+barplot_decestheo_france
+
+```
+
+L’année 2020 est au niveau de l'année 2015, c’est même la 6e année la moins mortelle de toute l’histoire de la France.POur être complètement exact, avec les données Eurostat, on trouve un nombre décès standardisé légèrement plus élevé en 2015 qu'en 2020, alors qu'avec les données de l'Insee utilisées dans la vidéo on trouve l'inverse. Cela vient du fait que les données Eurostat sont moins précises : elles sont par âge quinquennal et regroupent tous les âges au-delà de 90 ans, alors que l'Insee donne l'âge exact et ne regroupe qu'au-delà de 100 ans. D'une manière générale, plus on détaille les décès par âge et moins on trouvve que l'année 2020 est exceptionnelle. Toute la psychose actuelle repose sur un biais démographique.
+
 
 Enfin , dans une autre vidéo, on a vu que les épisodes de fortes mortalités que nous avons connu en 2020 ont tous eu lieu après le début des différentes mesures. En France, nous avons vu que l’interdiction de prescrire pour les médecins de ville l’abandon de soin organisé au moment des confinements expliquent en majeure partie la surmortalité de 2020. ON ne se trouve donc pas dans le sens où le gouvernement à réagit à une forte mortalité, puisque le nombre de décès n’avait pas encore commencé à augmenter au moment des mesures. On, se trouve dans le sens où les mesures ont été appliquées et ensuite seulement la mortalité a augmenter.
 Au vu des chiffres de mortalité, on doit se poser la question sérieusement de savoir si les morts dont on parle sont réellement la conséquence du seul virus ou plutôt directement des mesures que l’on a mis en place depuis le début de la panique.
@@ -48,15 +64,21 @@ On verra aussi qu’en Europe, ce qui compte pour savoir si vous avez plus de ch
 Tous les pays européens vivent au rythme des nouvelles annoncent et mesures concernant la Covid-19 depuis plus d’un an. Mais qu’en est-il réellement du point de vue de la mortalité ? L’année 2020 est-elle vraiment une année d’hécatombe ?
 Voici une carte d’Europe qui représente l’année pour laquelle chaque pays européen, dont nous disposons des données a connu le plus de décès.
 
+ ![](annee_deces_maximum.png)
+
 En marron, nous retrouvons tous les pays pour lesquels l’année 2020 est l’année pour laquelle il y a eu le plus de décès. C’est bien le cas de la majorité des pays d’Europe. On note toutefois quelques exceptions, en particulier les pays nordiques. Cette carte est réalisée avec des données brutes. Il n’y a qu’avec les données brutes que l’on peut faire peur aux gens en leur faisant croire que 2020 est exceptionnelle.
 
 Nous allons maintenant regarder la pyramide des âges des pays Européens. On va regarder d’un côté celle des pays qui ont eu leur maximum de décès en 2020, et en face, les autres.
 
+ ![](pyramid2020.png){width=450px} ![](pyramide_avant2020.png){width=450px}
+
 Sans surprise les pays qui ont eu leur maximum de décès en 2020 sont les pays avec une population plus âgée que les autres. Leur pyramide des âges est forme de cloche, signe qu’il y a très peu de jeunes et beaucoup de vieux. Ce sont donc des pays battent leur record de décès tous les ans, juste parce que leur population vieillit. Il est donc tout à fait normal que l’année 2020 soit un record de décès. Pour ces pays, 2021 sera un nouveau record de décès, qui sera battu par 2022 puis 2023 etc. jusqu’à ce que toute la grosse génération des baby-boomers soit décédée. Cela arrivera d’ici 30 ans. Si on doit rester confiner jusqu’à ce que le nombre de morts baisse, je vous préviens qu’on va trouver le temps long.
 
-Le bilan, de ce constat, c’est que, plutôt que de regarder les décès bruts, il faut les corriger par la pyramide des âges, de façon à prendre en compte le vieillissement de la population dans les calculs. Cela permet de ne pas dire que la mortalité augmente, si cela vient juste du fait qu’il y a plus de vieux.
+Le bilan, de ce constat, c’est que, plutôt que de regarder les décès bruts, il faut les corriger par la pyramide des âges, de façon à prendre en compte le vieillissement de la population dans les calculs. Cela permet de ne pas dire que la mortalité augmente, si cela vient juste du fait qu’il y a plus de personnes âgées.
 
 On va donc calculer pour chaque pays les décès standardisés par âge, pour toutes les années et les comparer aux décès 2020. Cela va nous permettre de savoir si à âge égal, l’année 2020 a été réellement plus mortelle que les autres. En faisant ce calcul, on se rend compte qu’il y a 5 type des pays que l’on va représenter sur une carte.
+
+ ![](cartetypo.png)
 
 Pour l’Islande, la Norvège et le Danemark, l’année 2020 est en fait l’année la moins mortelle de toute leur histoire. Dans ces pays, on n’est jamais moins mort qu’en 2020. Ce n’est pas pour autant qu’ils n’ont pas de morts attribués à la Covid-19, mais, dans ces pays malgré, la « pandémie », l’année 2020 est le record absolu de faible mortalité.
 
