@@ -264,7 +264,7 @@ pjanquinq <-bind_rows(pjan90quinq,pjan85quinq)
 pop_deces_pays_age_quinq<-deces_annuel_agequinq %>% inner_join(pjanquinq,by=c("sex","geo","agequinq","time"))
 
 
-#ajouter la population de l'ann?e 2020 correspondant du pays dans chaque pays*sexe*age*ann?e
+#ajouter la population de l'ann?e 2020 correspondant du pays dans chaque pays*sexe*age*annee
 
 pop20<-pjanquinq %>% filter(time=="2020-01-01") %>% rename(pop20=population) %>% select(-time)
 pop20_ge85<-pop20 %>% filter(agequinq %in% c("Y_GE90","Y85-89"))
@@ -380,19 +380,12 @@ deces_complet_annuel  <- deces_complet %>% filter(!is.na(population)) %>% group_
 deces_complet_annuel<- deces_complet_annuel %>% filter(!is.na(dc20)) %>% filter(!is.na(deces_theo_2020))
 deces_complet_annuel<- deces_complet_annuel %>% mutate (augmentation20 = (dc20-deces_theo_2020)/deces_theo_2020)
 
-
-#deces hebdomadaires des pays
+                                       #----------------------------------#
+                                       ####deces hebdomadaires des pays####
+                                       #----------------------------------#
 
 deces_weekpays <- deces_week %>% group_by(geo,time,age) %>% 
   summarise(deces=sum(values)) 
-deces_weekFrance  <- deces_week %>% group_by(geo,time) %>% 
-  summarise(deces=sum(values)) %>% filter(geo=="FR")
-deces_weekFrance  <- deces_weekFrance %>% arrange(time)
-
-deces_weekFrance$numerosemaine<-1:nrow(deces_weekFrance)
-
-plot(deces_weekFrance$numerosemaine,deces_weekFrance$deces,type="l")
-
 numerosemaine <- ungroup(deces_weekFrance) %>% select(time, numerosemaine)
 deces_weekpays <- deces_weekpays %>% rename(agequinq=age)
 
@@ -599,9 +592,14 @@ deces_standard_pays_semaine_plus_40  <- deces_standard_pays_semaine_plus_40 %>%
 ourworldindata <-read_csv(file = "https://covid.ourworldindata.org/data/owid-covid-data.csv")
 ourworldindata <- ourworldindata %>% mutate(date=as.Date(date))
 ourworldindata <- ourworldindata %>% mutate(time = paste0(isoyear(date),"W",as.integer(isoweek(date)/10),isoweek(date)-as.integer(isoweek(date)/10)*10))
+ourworldindata <- ourworldindata %>% mutate(new_vaccinations = if_else(is.na(new_vaccinations),0,new_vaccinations)) %>% 
+  mutate(new_deaths = if_else(is.na(new_deaths),0,new_deaths)) %>% 
+  mutate(new_cases = if_else(is.na(new_cases),0,new_cases))%>% 
+  mutate(new_vaccinations_smoothed_per_million = if_else(is.na(new_vaccinations_smoothed_per_million),0,new_vaccinations_smoothed_per_million))
+
 ourworldindata_week <- ourworldindata  %>% filter(continent=="Europe"|iso_code=="ARM")%>% 
   group_by(location,iso_code,time) %>% 
-  summarise(new_cases=sum(new_cases),new_deaths=sum(new_deaths),new_vaccinations=sum(new_vaccinations))
+  summarise(new_cases=sum(new_cases),new_deaths=sum(new_deaths),new_vaccinations=sum(new_vaccinations),new_vaccinations_smoothed_per_million=sum(new_vaccinations_smoothed_per_million))
 ourworldindata_week <- ourworldindata_week  %>% 
   mutate(geo=case_when(iso_code=="DNK"~"DK",
                        iso_code=="SRB"~"RS",
@@ -619,12 +617,27 @@ ourworldindata_week <- ourworldindata_week  %>%
                        iso_code=="FRO"~"FO",
                        TRUE~substr(iso_code,1,2))) 
 ourworldindata_week <- ourworldindata_week  %>% left_join(numerosemaine)
-test <- ungroup(ourworldindata_week) %>% select(geo,time,new_deaths,new_cases,new_vaccinations)
+test <- ungroup(ourworldindata_week) %>% select(geo,time,new_deaths,new_cases,new_vaccinations,new_vaccinations_smoothed_per_million)
 deces_standard_pays_semaine_plus_40<- left_join(deces_standard_pays_semaine_plus_40,test)
 
-essai <- ourworldindata_week 
-p <- ggplot(data=essai, aes(x=numerosemaine, y=new_deaths, colour=geo)) 
+essai <- deces_standard_pays_semaine_plus_40  %>% filter(numerosemaine>400) %>% filter(geo=="DE")
+
+
+p <- ggplot(data=essai, aes(x=numerosemaine, y=new_vaccinations_smoothed_per_million, colour=geo)) 
 p <- p + geom_line(size=1)
 
 print(p)
 
+test <- ourworldindata %>% filter(iso_code=="HUN")
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="black", main="Graphique à 2 axes")
+axis(2, ylim=c(0,60000),col="black")
+mtext("nombre de vaccinés",side=2,line=2.5)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot, pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="red", main="Graphique à 2 axes")
+mtext("nombre de décès",side=4,col="red",line=2.5)
+axis(4, ylim=c(0,3), col="red",col.axis="red")
+axis(1,pretty(range(essai$numerosemaine),10))
+mtext("Numéro de semaine",side=1,col="black",line=2.5)
