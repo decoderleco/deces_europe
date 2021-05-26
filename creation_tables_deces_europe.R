@@ -283,12 +283,6 @@ pop_deces_pays_age_quinq<-pop_deces_pays_age_quinq %>% filter(str_sub(geo,1,2)!=
 
 deces_week$time <- as.character(deces_week$time)
 
-#erreurs potentielles du fichier deces_week
-
-deces_week8589 <- deces_week %>% filter(age=="Y85-89") %>% rename(deces8589=values) %>% select(-age)
-deces_weekYGE90 <- deces_week %>% filter(age=="Y_GE90") %>% rename(decesYGE90=values)%>% select(-age)
-deces_week_erreur <- deces_week8589 %>% full_join(deces_weekYGE90)
-
 deces_week20 <- deces_week %>% filter(str_sub(time,1,4)=="2020") 
 
 deces_week20 <- deces_week20 %>% mutate(dc_cor=if_else(str_sub(time,6,8)=="01",
@@ -516,6 +510,7 @@ mesures <-mesures %>% mutate(time_start = paste0(isoyear(date_start),"W",as.inte
 mesures <-mesures %>% mutate(time_end = paste0(isoyear(date_end),"W",as.integer(isoweek(date_end)/10),isoweek(date_end)-as.integer(isoweek(date_end)/10)*10))
 mesures <-mesures %>% mutate(geo=case_when(Country=="Austria"~"AT",
                                            Country=="Bulgaria"~"BG",
+                                           Country=="Croatia" ~"HR",
                                            Country=="Estonia"~"EE",
                                            Country=="Germany"~"DE",
                                            Country=="Greece"~"EL",
@@ -609,6 +604,16 @@ ourworldindata_week <- ourworldindata_week  %>%
                        TRUE~substr(iso_code,1,2))) 
 ourworldindata_week <- ourworldindata_week  %>% left_join(numerosemaine)
 test <- ungroup(ourworldindata_week) %>% select(geo,time,new_deaths,new_cases,new_vaccinations,new_vaccinations_smoothed_per_million)
+
 deces_standard_pays_semaine<- left_join(deces_standard_pays_semaine,test)
 
+nom_pays<- ungroup(ourworldindata_week) %>% select(geo,location) %>% distinct(geo,location)
+deces_standard_pays_semaine<- left_join(deces_standard_pays_semaine,nom_pays)
+
+saveRDS(deces_standard_pays_semaine,file="deces_standard_pays_semaine.RDS")
 write.table(deces_standard_pays_semaine, "deces_standard_pays_semaine.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+
+deces_complet_annuel<- left_join(deces_complet_annuel,nom_pays)
+
+write.table(deces_complet_annuel, "deces_complet_annuel.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+saveRDS(deces_complet_annuel,file="deces_complet_annuel.RDS")

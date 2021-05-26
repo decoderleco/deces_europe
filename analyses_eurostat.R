@@ -1,17 +1,74 @@
 install.packages("pyramid")
 library(pyramid)
+library(maptools)
+library(rgdal)
+library(maps)
+library(eurostat)
+library(dplyr)
+library(stringr)
+library(leaflet)
+library(questionr)
+library(ggplot2)
+library(lubridate)
+library(sf)
+library(rnaturalearth)
+library(rgeos)
+library("rnaturalearthdata")
+library(readr)
+library(lsr)
 
-####analyse des donnees annuelles####
+                                  #-----------------------------------#
+                                  ####analyse des donnees annuelles####
+                                  #-----------------------------------#
 
-deces_complet_annuel_analysable1990 <- deces_complet_annuel %>% filter(time >="1990-01-01")
-deces_complet_annuel_analysable2000 <- deces_complet_annuel %>% filter(time >="2000-01-01")
-deces_complet_annuel_analysable2010 <- deces_complet_annuel %>% filter(time >="2010-01-01")
+
+#répartition des décès annuels#
+
+deces_complet_annuel <- readRDS("deces_complet_annuel.RDS")
+
 
 p <- ggplot(data=deces_complet_annuel_analysable2000, aes(x=time, y=deces_theo_2020, colour=geo))
 p <- p + geom_line(size=1)
 print(p)
 
-ggplot(deces_complet_annuel_analysable2000) + geom_boxplot(aes(x = geo, y = deces_europe_theo_20))
+ggplot(deces_complet_annuel_analysable1990) + geom_boxplot(aes(x = geo, y = deces_europe_theo_20))
+
+deces_complet_annuel <-deces_complet_annuel %>% mutate(zone=case_when(geo=="AL"~ "Est",
+                                                                      geo=="AM"~ "Est",
+                                                                      geo=="BG"~ "Est",
+                                                                      geo=="CY"~ "Est",
+                                                                      geo=="EE"~ "Est",
+                                                                      geo=="EL"~ "Est",
+                                                                      geo=="FI"~ "Est",
+                                                                      geo=="GE"~ "Est",
+                                                                      geo=="HR"~ "Est",
+                                                                      geo=="HU"~ "Est",
+                                                                      geo=="LT"~ "Est",
+                                                                      geo=="LV"~ "Est",
+                                                                      geo=="ME"~ "Est",
+                                                                      geo=="PL"~ "Est",
+                                                                      geo=="RO"~ "Est",
+                                                                      geo=="RS"~ "Est",
+                                                                      geo=="SI"~ "Est",
+                                                                      geo=="SK"~ "Est",
+                                                                      TRUE~ "Ouest",))
+
+
+
+deces_complet_annuel_est  <-deces_complet_annuel %>% filter(zone=="Est")
+deces_complet_annuel_ouest  <-deces_complet_annuel %>% filter(zone=="Ouest")
+
+deces_complet_annuel_analysable1990_est <- deces_complet_annuel_est %>% filter(time >="1990-01-01")
+deces_complet_annuel_analysable2000_est <- deces_complet_annuel_est %>% filter(time >="2000-01-01")
+deces_complet_annuel_analysable2010_est <- deces_complet_annuel_est %>% filter(time >="2010-01-01")
+
+deces_complet_annuel_analysable1990_ouest <- deces_complet_annuel_ouest %>% filter(time >="1990-01-01")
+deces_complet_annuel_analysable2000_ouest <- deces_complet_annuel_ouest %>% filter(time >="2000-01-01")
+deces_complet_annuel_analysable2010_ouest <- deces_complet_annuel_ouest %>% filter(time >="2010-01-01")
+
+
+ggplot(deces_complet_annuel_analysable1990_est) + geom_boxplot(aes(x = location, y = deces_europe_theo_20))
+ggplot(deces_complet_annuel_analysable1990_ouest) + geom_boxplot(aes(x = location, y = deces_europe_theo_20))
 
 #dernière année avec mortalité supérieure à 2020
 
@@ -255,6 +312,9 @@ map_data_init <- inner_join(geodata, deces_complet_annuel_analysable2000)
 ggsave(paste0("carte",i,".png"),plot=p, width = 11, height = 8)
 
 ####analyse des donnees hebdomadaires####
+
+
+deces_standard_pays_semaine<-read.csv("deces_standard_pays_semaine.csv",sep = "t",dec=",", na=" ")
 
 #vaccinations et deces 
 
