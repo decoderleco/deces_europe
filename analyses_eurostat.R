@@ -256,7 +256,29 @@ ggsave(paste0("carte",i,".png"),plot=p, width = 11, height = 8)
 
 ####analyse des donnees hebdomadaires####
 
+#vaccinations et deces 
 
+essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400)
+
+
+p <- ggplot(data=essai, aes(x=numerosemaine, y=new_vaccinations_smoothed_per_million, colour=geo)) 
+p <- p + geom_line(size=1)
+
+print(p)
+
+essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="IT")
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="black", main="Graphique à 2 axes")
+axis(2, ylim=c(0,60000),col="black")
+mtext("nombre de vaccinés",side=2,line=2.5)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_standard_tot_plus_40, pch=16, axes=F, ylim=c(0,300000), xlab="", ylab="", type="o",col="red", main="Graphique à 2 axes")
+mtext("nombre de décès",side=4,col="red",line=2.5)
+axis(4, ylim=c(0,3), col="red",col.axis="red")
+axis(1,pretty(range(essai$numerosemaine),10))
+mtext("Numéro de semaine",side=1,col="black",line=2.5)
 
 
 
