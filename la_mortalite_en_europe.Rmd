@@ -59,7 +59,7 @@ Toutes les données de population et de décès que j’utilise sont les statist
 Ce que je vais montrer dans cette vidéo, c’est qu’aucun pays européen n’a vécu une période exceptionnelle en terme de mortalité en 2020. Au pire l’année 2020 n’est que la 10e année la moins mortelle de l’histoire du pays. Pour certains pays, c’est juste l’année la moins mortelle de leur histoire. 
 On verra aussi qu’en Europe, ce qui compte pour savoir si vous avez plus de chance de vivre vieux, ce n’est pas s’il y a une pandémie, mais uniquement le pays dans lequel vous vivez.
 
-## L’année 2020 en Europe, finalement une année banale
+## L’année 2020 en Europe, finalement une année banale pour tous les pays
 
 Tous les pays européens vivent au rythme des nouvelles annoncent et mesures concernant la Covid-19 depuis plus d’un an. Mais qu’en est-il réellement du point de vue de la mortalité ? L’année 2020 est-elle vraiment une année d’hécatombe ?
 Voici une carte d’Europe qui représente l’année pour laquelle chaque pays européen, dont nous disposons des données a connu le plus de décès.
@@ -78,11 +78,44 @@ Le bilan, de ce constat, c’est que, plutôt que de regarder les décès bruts,
 
 On va donc calculer pour chaque pays les décès standardisés par âge, pour toutes les années et les comparer aux décès 2020. Cela va nous permettre de savoir si à âge égal, l’année 2020 a été réellement plus mortelle que les autres. En faisant ce calcul, on se rend compte qu’il y a 5 type des pays que l’on va représenter sur une carte.
 
- ![](cartetypo.png)
+ ![](typo_annee_deces.png)
 
-Pour l’Islande, la Norvège et le Danemark, l’année 2020 est en fait l’année la moins mortelle de toute leur histoire. Dans ces pays, on n’est jamais moins mort qu’en 2020. Ce n’est pas pour autant qu’ils n’ont pas de morts attribués à la Covid-19, mais, dans ces pays malgré, la « pandémie », l’année 2020 est le record absolu de faible mortalité.
+Pour l’Islande, la Norvège et le Danemark , l’année 2020 est en fait l’année la moins mortelle de toute leur histoire (la qualité des données de la Géorgie semble trop douteuse pour être citée ici). Dans ces pays, on n’est jamais moins mort qu’en 2020. Ce n’est pas pour autant qu’ils n’ont pas de morts attribués à la Covid-19, mais dans ces pays, malgré la « pandémie », l’année 2020 est le record absolu de faible mortalité.
 
-Ensuite on a 
+L'Allemagne, la Suède, la Finlande, l'Estonie et la Lituanie ont vécu la 2e année la moins mortelle de toute leur histoire. POur l'écrasante majorité des pays d'Europe, l'année 2019 a été un record de sous-mortalité qui sera très difficile à battre, même en enfermant tout le monde.
+
+Un majorité des pays d'Europe, dont la France a vécu une année 2020 dans la norme de la décennie. Les pays en orange clair sont plutôt dans la 2e moitié de la décennie, autour des années 2015-2016. Les pays en orange foncé sont plus souvent autour de l'année 2012.
+
+Seuls l'Espagne, l'Italie, la Belgique, la Roumanie, la Bulgarie la Pologne et le Monténégro ont connu une mortalité forte pour la décennie. Ainsi, les pays d'Europe ayant connu les plus fortes mortalités relativement à leur histoire, ont connu une mortalité de l'ordre de la 10e plus faible de toute leur histoire.
+
+L'année 2020 présentée comme une hécatombe modiale, n'est en fait qu'une année pendant laquelle, au pire, les humains sont morts dans les mêmes proportions que l'année 2010. Ce que je montre depuis 6 mois pour la France, est donc réplicable pour tous les pays dans lesquels ont trouve des données. 
+
+Pas un seul payus d'Europe n'a vécu une hécatombe en 2020. POur les pire cas, 2020 est juste aussi mortelle que 2010.
+
+## La mortalité en Europe, où meurt-on le plus ?
+
+Nous venons de voir qu'en corrigeant les décès de la pyramide des âges de chaque pays, on montre que 2020 est finalement une année de faible mortalité. Afin de compléter notre vision, il est important de comparer les pays entre eux.  POur ce faire, nous allons appliquer la pyramide des âges de l'Europe de 2020 à tous les pays Européens. Ainsi nous pourrons savoir, dans quel pays et pendant quelle année, les européens sont le plus décédés.
+
+Ce graphique représente les décès théorique pour chaque pays et chaque année, s'ils avaient eu la population et la pyramide des âges de l'Europe.
+
+Le point rouge pour chaque pays représente ses décès théoriques en 2020 et les autres points, les décès théoriques des autres années.
+
+Par exemple, une Europe de 2020 dont les habitants décéderaient comme en Bulgarie en 2020 aurait 900 000 morts, alors qu'une Europe de 2020 dont les habitants décéderaient comme en France en 2020 aurait 450 000 morts.
+A population et pyramide des âges égales, ont meurt 2 fois plus en Bulgarie qu'en France.
+
+Ainsi si la Bulgarie n'a pas 2 fois plus de morts que la France chaque année, c'est parce que les Bulgares sont 7 millions et les français 67 millions, mais aussi parce que les Bulgares sont en moyenne plus jeunes que les français.
+
+Les Bulgare sont plus jeune que les français notamment parce qu'ils meurent plus jeunes. Il y a donc moins de Bulgare âgés dans leur population. Ils décèdent petit à petit plus fortement que les français.
+
+
+ ![](deces2000tot.png){width=1000px}
+
+Ce graphique montre une forte disparité entre les pays de l'Est et les pays de l'Ouest de l'Europe. Il montre également que les français vivent dans l'un des pays d'Europe, et donc du monde, au sein duquel on meurt le moins.
+
+Nous avons montré plus haut que l'année 2020 est la 6e année pour laquelle les français sont le moins mort. Ce graphique nous montre que la mortalité de la France en 2020 a été une des plus faible jamais enregistrée dans tous les pays du monde.
+POur la quasi totalité des humains ayant jamais vécu sur cette planète, l'année 2020 est France est l'un des endroits et moment où on a connu le moins de morts.
+
+
 ```{r pressure, echo=FALSE}
 plot(pressure)
 ```

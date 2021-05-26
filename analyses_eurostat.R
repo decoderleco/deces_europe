@@ -26,12 +26,7 @@ library(lsr)
 
 deces_complet_annuel <- readRDS("deces_complet_annuel.RDS")
 
-
-p <- ggplot(data=deces_complet_annuel_analysable2000, aes(x=time, y=deces_theo_2020, colour=geo))
-p <- p + geom_line(size=1)
-print(p)
-
-ggplot(deces_complet_annuel_analysable1990) + geom_boxplot(aes(x = geo, y = deces_europe_theo_20))
+#ajout de la nuance est-ouest pour la visualisation
 
 deces_complet_annuel <-deces_complet_annuel %>% mutate(zone=case_when(geo=="AL"~ "Est",
                                                                       geo=="AM"~ "Est",
@@ -57,33 +52,53 @@ deces_complet_annuel <-deces_complet_annuel %>% mutate(zone=case_when(geo=="AL"~
 
 deces_complet_annuel_est  <-deces_complet_annuel %>% filter(zone=="Est")
 deces_complet_annuel_ouest  <-deces_complet_annuel %>% filter(zone=="Ouest")
+deces_complet_annuel_20  <-deces_complet_annuel %>%  filter(time=="2020-01-01")
 
-deces_complet_annuel_analysable1990_est <- deces_complet_annuel_est %>% filter(time >="1990-01-01")
+#création des tables avec seulement les dernières années
+
+deces_complet_annuel_analysable2000 <- deces_complet_annuel %>% filter(time >="2000-01-01")
+
 deces_complet_annuel_analysable2000_est <- deces_complet_annuel_est %>% filter(time >="2000-01-01")
-deces_complet_annuel_analysable2010_est <- deces_complet_annuel_est %>% filter(time >="2010-01-01")
 
-deces_complet_annuel_analysable1990_ouest <- deces_complet_annuel_ouest %>% filter(time >="1990-01-01")
 deces_complet_annuel_analysable2000_ouest <- deces_complet_annuel_ouest %>% filter(time >="2000-01-01")
-deces_complet_annuel_analysable2010_ouest <- deces_complet_annuel_ouest %>% filter(time >="2010-01-01")
+
+deces_complet_annuel_analysable2000_est20 <- deces_complet_annuel_analysable2000_est %>% filter(time=="2020-01-01")
+deces_complet_annuel_analysable2000_ouest20 <- deces_complet_annuel_analysable2000_ouest %>% filter(time=="2020-01-01")
+
+ggplot(deces_complet_annuel_analysable2000) + 
+  geom_point(aes(x = geo, y = deces_europe_theo_20, color = time), size = 2)+
+  geom_point(data=deces_complet_annuel_20,aes(x = geo, y = deces_europe_theo_20), color = "red", size = 3)
+
+dev.print(device = png, file = "deces2000tot.png", width = 1000)
 
 
-ggplot(deces_complet_annuel_analysable1990_est) + geom_boxplot(aes(x = location, y = deces_europe_theo_20))
-ggplot(deces_complet_annuel_analysable1990_ouest) + geom_boxplot(aes(x = location, y = deces_europe_theo_20))
+ggplot(deces_complet_annuel_analysable2000_est) + 
+  geom_point(aes(x = location, y = deces_europe_theo_20, color = time), size = 2)+
+  geom_point(data=deces_complet_annuel_analysable2000_est20,aes(x = location, y = deces_europe_theo_20), color = "red", size = 3)
+
+dev.print(device = png, file = "deces2000est.png", width = 1000)
+
+ggplot(deces_complet_annuel_analysable2000_ouest) + 
+  geom_point(aes(x = location, y = deces_europe_theo_20, color = time), size = 2)+
+  geom_point(data=deces_complet_annuel_analysable2000_ouest20,aes(x = location, y = deces_europe_theo_20), color = "red", size = 3)
+
+dev.print(device = png, file = "deces2000ouest.png", width = 1000)
 
 #dernière année avec mortalité supérieure à 2020
 
 annee_deces_superieure_2020  <- deces_complet_annuel_analysable1990 %>%  filter(augmentation20 <0) %>% mutate(annee = str_sub(as.character(time),1,4))
-annee_deces_superieure_2020 <-tapply(annee_deces_superieure_2020$annee, annee_deces_superieure_2020$geo, max)
+annee_deces_superieure_2020 <-tapply(annee_deces_superieure_2020$annee, annee_deces_superieure_2020$location, max)
 annee_deces_superieure_2020 <- data.frame(annee_deces_superieure_2020)
-annee_deces_superieure_2020$geo <- rownames(annee_deces_superieure_2020)
+annee_deces_superieure_2020$location <- rownames(annee_deces_superieure_2020)
 
-#première années avec mortalité inférieure à 2020
+#première année avec mortalité inférieure à 2020
 
 annee_deces_inferieure_2020  <- deces_complet_annuel_analysable1990 %>%  filter(augmentation20 >0) %>% mutate(annee = str_sub(as.character(time),1,4))
-annee_deces_inferieure_2020 <-tapply(annee_deces_inferieure_2020$annee, annee_deces_inferieure_2020$geo, min)
+annee_deces_inferieure_2020 <-tapply(annee_deces_inferieure_2020$annee, annee_deces_inferieure_2020$location, min)
 annee_deces_inferieure_2020 <- data.frame(annee_deces_inferieure_2020)
-annee_deces_inferieure_2020$geo <- rownames(annee_deces_inferieure_2020)
+annee_deces_inferieure_2020$location <- rownames(annee_deces_inferieure_2020)
 
+#typo selon l'encadrement de 2020
 annee_comparaison_2020 <- annee_deces_inferieure_2020 %>% full_join(annee_deces_superieure_2020)
 annee_comparaison_2020 <- annee_comparaison_2020 %>% mutate(annee_deces_inferieure_2020=if_else(is.na(annee_deces_inferieure_2020),"2020",annee_deces_inferieure_2020))
 annee_comparaison_2020 <- annee_comparaison_2020 %>% mutate(typo=case_when(annee_deces_inferieure_2020=="2020"~"1 - année la moins mortelle",
@@ -225,68 +240,66 @@ pyramids(Left=annne_deces_maximumFranceMF0$part_hommes,Llab="Hommes",
 dev.print(device = png, file = "pyramid_france_2000.png", width = 600)
 
 
+                                    #----------------------------------------#
+                                    ####cartographie des donnees annuelles####
+                                    #----------------------------------------#
 
-####cartographie des donnees annuelles####
 
 worldmap <- ne_countries(scale = 'medium', type = 'map_units',
                          returnclass = 'sf')
-canada<-worldmap %>% filter(name=="Canada")
-geocanada<-canada$geometry
-france <-worldmap %>% filter(geounit=="France")
-france <- france %>% select (geometry) %>% mutate (id="FR",NAME_LATN="France") 
 
-geodata <- get_eurostat_geospatial(resolution = "60", nuts_level = "0", year = 2021)
 
-geodata <- geodata %>% mutate(NAME_LATN=case_when(id=="FI"~"Finland",
-                                                        id=="HU"~"Hungary",
-                                                        id=="HR"~"Croatia",
-                                                        id=="BE"~"Belgium",
-                                                        id=="CH"~"Switzerland",
-                                                        id=="CZ"~"Czech Republic",
-                                                        id=="EL"~"Greece",
-                                                        id=="ME"~"Montenegro",
-                                                        id=="AL"~"Albania",
-                                                        TRUE~NAME_LATN))
+worldmap <- worldmap %>% mutate (location=geounit)
+worldmap <- worldmap %>% mutate (location=if_else(location == "Czech Republic","Czechia", location))
+worldmap <- worldmap %>% mutate (location=if_else(admin == "Belgium","Belgium", location))
+worldmap <- cbind(worldmap,st_coordinates(st_centroid(worldmap)))
 
-geodata <- cbind(geodata,st_coordinates(st_centroid(geodata)))
+#typologie des décès
+
+test <- annee_comparaison_2020 %>% select(location, typo)
+worldmap <- worldmap %>% left_join(test)
+worldmap <- worldmap %>% mutate (location=case_when(geounit == "Flemish Region"~"", 
+                                                    geounit == "Walloon Region"~"",
+                                                    TRUE~location))
+
+p <- ggplot(data=worldmap) + geom_sf(aes(fill=typo),color="dim grey", size=.1) +
+  scale_fill_brewer(palette = "Oranges") +
+  guides(fill = guide_legend(reverse=T, title = "Typologie \n des pays européens", size = 1)) +
+  geom_text( data = worldmap, aes(X,Y,label = location), size = 3, hjust = 0.5)+
+  labs(title= paste0("Typologie des décès relativement à l'année 2020"),
+       caption="(C) EuroGeographics for the administrative boundaries
+    Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
+  theme_light() + theme(legend.position=c(0,.5)) +
+  coord_sf(xlim=c(-22,45), ylim=c(35,70)) 
+
+plot(p)
+
+ggsave("typo_annee_deces.png",plot=p, width = 11, height = 8)
 
 #année record des décès
 
+temp <- annne_deces_maximum  %>% select(location, time)%>% 
+  mutate(time = as.character(time))%>% mutate(time = str_sub(time,1,4))
 
-map_data_init <- full_join(geodata, annne_deces_maximum)
-map_data_init <- map_data_init %>% mutate(time = as.character(time))
-map_data_init <- map_data_init %>% mutate(time = str_sub(time,1,4))
+worldmap <- worldmap %>% left_join(temp)
+worldmap <- worldmap %>% mutate (location=case_when(geounit == "Flemish Region"~"", 
+                                                    geounit == "Walloon Region"~"",
+                                                    TRUE~location))
 
-p <- ggplot(data=map_data_init) + geom_sf(aes(fill=time),color="dim grey", size=.1) +
+p <- ggplot(data=worldmap) + geom_sf(aes(fill=time),color="dim grey", size=.1) +
   scale_fill_brewer(palette = "Oranges") +
   guides(fill = guide_legend(reverse=T, title = "Année de record de décès \n des pays européens")) +
-  geom_text( data = map_data_init, aes(X,Y,label = NAME_LATN), size = 3, hjust = 0.5)+
+  geom_text( data = worldmap, aes(X,Y,label = location), size = 3, hjust = 0.5)+
   labs(title= paste0("Année de record de décès\n des pays européens"),
        caption="(C) EuroGeographics for the administrative boundaries
     Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
-  theme_light() + theme(legend.position=c(.1,.5)) +
-  coord_sf(xlim=c(-22,34), ylim=c(35,70)) 
+  theme_light() + theme(legend.position=c(0,.5)) +
+  coord_sf(xlim=c(-22,45), ylim=c(35,70)) 
+
+plot(p)
+
 
 ggsave("annee_deces_maximum.png",plot=p, width = 11, height = 8)
-
-
-#typologie des décès 2020
-
-map_data_init <- full_join(geodata, annee_comparaison_2020)
-
-p <- ggplot(data=map_data_init) + geom_sf(aes(fill=typo),color="dim grey", size=.1) +
-  scale_fill_brewer(palette = "Oranges") +
-  guides(fill = guide_legend(reverse=T, title = "Typologie des décés standardisés de 2020")) +
-  geom_text( data = map_data_init, aes(X,Y,label = NAME_LATN), size = 3, hjust = 0.5)+
-  labs(title= paste0("Typologie des décès 2020 des pays européens"),
-       caption="(C) EuroGeographics for the administrative boundaries
-    Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
-  theme_light() + theme(legend.position=c(.1,.5)) +
-  coord_sf(xlim=c(-22,34), ylim=c(35,70)) 
-
-ggsave("cartetypo.png",plot=p, width = 11, height = 8)
-
-
 
 
 table_deces_annee<-with(deces_analysables,table(deces_standard_tot_rec , annee))
