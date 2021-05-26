@@ -387,6 +387,9 @@ deces_complet_annuel  <- deces_complet %>% filter(!is.na(population)) %>% group_
 deces_complet_annuel<- deces_complet_annuel %>% filter(!is.na(dc20)) %>% filter(!is.na(deces_theo_2020))
 deces_complet_annuel<- deces_complet_annuel %>% mutate (augmentation20 = (dc20-deces_theo_2020)/deces_theo_2020)
 
+write.table(deces_complet_annuel, "deces_complet_annuel.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+
+
                                        #----------------------------------#
                                        ####deces hebdomadaires des pays####
                                        #----------------------------------#
@@ -608,4 +611,4 @@ ourworldindata_week <- ourworldindata_week  %>% left_join(numerosemaine)
 test <- ungroup(ourworldindata_week) %>% select(geo,time,new_deaths,new_cases,new_vaccinations,new_vaccinations_smoothed_per_million)
 deces_standard_pays_semaine<- left_join(deces_standard_pays_semaine,test)
 
-
+write.table(deces_standard_pays_semaine, "deces_standard_pays_semaine.csv", row.names=FALSE, sep="t",dec=",", na=" ")

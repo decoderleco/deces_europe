@@ -258,15 +258,14 @@ ggsave(paste0("carte",i,".png"),plot=p, width = 11, height = 8)
 
 #vaccinations et deces 
 
-essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400)
+essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400)  %>% filter(geo=="FR")
 
 
-p <- ggplot(data=essai, aes(x=numerosemaine, y=new_vaccinations_smoothed_per_million, colour=geo)) 
-p <- p + geom_line(size=1)
+ggplot(essai) +
+  geom_line(aes(x = numerosemaine, y = deces_tot)) +
+  geom_line(aes(x = numerosemaine, y = new_vaccinations)) 
 
-print(p)
-
-essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="IT")
+essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="FR")
 
 par(mar=c(4,4,3,5))
 plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="black", main="Graphique à 2 axes")
