@@ -28,35 +28,15 @@ deces_complet_annuel <- readRDS("deces_complet_annuel.RDS")
 
 #ajout de la nuance est-ouest pour la visualisation
 
-deces_complet_annuel <-deces_complet_annuel %>% mutate(zone=case_when(geo=="AL"~ "Est",
-                                                                      geo=="AM"~ "Est",
-                                                                      geo=="BG"~ "Est",
-                                                                      geo=="CY"~ "Est",
-                                                                      geo=="EE"~ "Est",
-                                                                      geo=="EL"~ "Est",
-                                                                      geo=="FI"~ "Est",
-                                                                      geo=="GE"~ "Est",
-                                                                      geo=="HR"~ "Est",
-                                                                      geo=="HU"~ "Est",
-                                                                      geo=="LT"~ "Est",
-                                                                      geo=="LV"~ "Est",
-                                                                      geo=="ME"~ "Est",
-                                                                      geo=="PL"~ "Est",
-                                                                      geo=="RO"~ "Est",
-                                                                      geo=="RS"~ "Est",
-                                                                      geo=="SI"~ "Est",
-                                                                      geo=="SK"~ "Est",
-                                                                      TRUE~ "Ouest",))
-
-
-
 deces_complet_annuel_est  <-deces_complet_annuel %>% filter(zone=="Est")
 deces_complet_annuel_ouest  <-deces_complet_annuel %>% filter(zone=="Ouest")
-deces_complet_annuel_20  <-deces_complet_annuel %>%  filter(time=="2020-01-01")
+
 
 #création des tables avec seulement les dernières années
 
+deces_complet_annuel_20  <-deces_complet_annuel %>%  filter(time=="2020-01-01")
 deces_complet_annuel_analysable2000 <- deces_complet_annuel %>% filter(time >="2000-01-01")
+deces_complet_annuel_analysable1990 <- deces_complet_annuel %>% filter(time >="1990-01-01")
 
 deces_complet_annuel_analysable2000_est <- deces_complet_annuel_est %>% filter(time >="2000-01-01")
 
@@ -118,9 +98,12 @@ annne_deces_maximum <- annne_deces_maximum %>% left_join(deces_complet_annuel)
 annne_deces_maximum2020 <- annne_deces_maximum %>% filter(time=="2020-01-01") %>% select(geo)
 annne_deces_maximumautre  <- annne_deces_maximum %>% filter(time<"2020-01-01") %>% select(geo)
 
+                            #-----------------------------------------------------------------#
+                            ####pyramide des âges des pays à forts décès 2020 et des autres####
+                            #-----------------------------------------------------------------#
 
-####pyramide des âges des pays à forts décès 2020 et des autres####
 
+pjanquinq <- readRDS("pjanquinq.RDS")
 pjanquinq20 <- pjanquinq %>% filter(time=="2020-01-01")
 annne_deces_maximum2020 <- annne_deces_maximum2020 %>% left_join(pjanquinq20) %>% filter (geo!="AM")%>% filter (geo!="AL")
 annne_deces_maximumautre <- annne_deces_maximumautre %>% left_join(pjanquinq20)
@@ -148,7 +131,6 @@ pyramids(Left=annne_deces_maximum2020MF$part_hommes,Llab="Hommes",
          main="Pyramide des âges \n record décès 2020",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
 
-
 #pyramide des pays à fort décès avant 2020
 
 annne_deces_maximumautreF <- annne_deces_maximumautre %>% filter (sex=="F") %>% 
@@ -172,8 +154,9 @@ pyramids(Left=annne_deces_maximumautreMF$part_hommes,Llab="Hommes",
          Center = annne_deces_maximumautreMF$agequinq,Laxis=c(0,2,4,6,8,10),
          main="Pyramide des âges \n recrod décès avant 2020",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
-####Analyse de la France####
-
+                                    #--------------------------#
+                                    ####Analyse de la France####
+                                    #--------------------------#
 
 #décès de la france
 
@@ -254,28 +237,6 @@ worldmap <- worldmap %>% mutate (location=if_else(location == "Czech Republic","
 worldmap <- worldmap %>% mutate (location=if_else(admin == "Belgium","Belgium", location))
 worldmap <- cbind(worldmap,st_coordinates(st_centroid(worldmap)))
 
-#typologie des décès
-
-test <- annee_comparaison_2020 %>% select(location, typo)
-worldmap <- worldmap %>% left_join(test)
-worldmap <- worldmap %>% mutate (location=case_when(geounit == "Flemish Region"~"", 
-                                                    geounit == "Walloon Region"~"",
-                                                    TRUE~location))
-
-p <- ggplot(data=worldmap) + geom_sf(aes(fill=typo),color="dim grey", size=.1) +
-  scale_fill_brewer(palette = "Oranges") +
-  guides(fill = guide_legend(reverse=T, title = "Typologie \n des pays européens", size = 1)) +
-  geom_text( data = worldmap, aes(X,Y,label = location), size = 3, hjust = 0.5)+
-  labs(title= paste0("Typologie des décès relativement à l'année 2020"),
-       caption="(C) EuroGeographics for the administrative boundaries
-    Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
-  theme_light() + theme(legend.position=c(0,.5)) +
-  coord_sf(xlim=c(-22,45), ylim=c(35,70)) 
-
-plot(p)
-
-ggsave("typo_annee_deces.png",plot=p, width = 11, height = 8)
-
 #année record des décès
 
 temp <- annne_deces_maximum  %>% select(location, time)%>% 
@@ -298,31 +259,31 @@ p <- ggplot(data=worldmap) + geom_sf(aes(fill=time),color="dim grey", size=.1) +
 
 plot(p)
 
-
 ggsave("annee_deces_maximum.png",plot=p, width = 11, height = 8)
 
+#typologie des décès de l'année 2020
 
-table_deces_annee<-with(deces_analysables,table(deces_standard_tot_rec , annee))
-chisq.test(table_deces_annee,simulate.p.value = TRUE)
-cramersV(table_deces_annee)
+test <- annee_comparaison_2020 %>% select(location, typo)
+worldmap <- worldmap %>% left_join(test)
+worldmap <- worldmap %>% mutate (location=case_when(geounit == "Flemish Region"~"", 
+                                                    geounit == "Walloon Region"~"",
+                                                    TRUE~location))
 
-table_deces_geo<-with(deces_analysables,table(deces_standard_tot_rec , geo))
-chisq.test(table_deces_geo,simulate.p.value = TRUE)
-cramersV(table_deces_geo)
+p <- ggplot(data=worldmap) + geom_sf(aes(fill=typo),color="dim grey", size=.1) +
+  scale_fill_brewer(palette = "Oranges") +
+  guides(fill = guide_legend(reverse=T, title = "Typologie \n des pays européens", size = 1)) +
+  geom_text( data = worldmap, aes(X,Y,label = location), size = 3, hjust = 0.5)+
+  labs(title= paste0("Typologie des décès relativement à l'année 2020"),
+       caption="(C) EuroGeographics for the administrative boundaries
+    Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
+  theme_light() + theme(legend.position=c(0,.5)) +
+  coord_sf(xlim=c(-22,45), ylim=c(35,70)) 
 
-#cartographie
-#creation d'une ligne fictive par classe avec la geometrie du Canada pour avoir toujours toutes les classes présentes
+plot(p)
 
-worldmap <- ne_countries(scale = 'medium', type = 'map_units',
-                         returnclass = 'sf')
-canada<-worldmap %>% filter(name=="Canada")
-geocanada<-canada$geometry
+ggsave("typo_annee_deces.png",plot=p, width = 11, height = 8)
 
-geodata <- get_eurostat_geospatial(resolution = "60", nuts_level = "0", year = 2021)
 
-map_data_init <- inner_join(geodata, deces_complet_annuel_analysable2000)
-
-ggsave(paste0("carte",i,".png"),plot=p, width = 11, height = 8)
 
 ####analyse des donnees hebdomadaires####
 

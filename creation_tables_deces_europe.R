@@ -260,6 +260,10 @@ deces90quinq <- deces90quinq %>% group_by(agequinq,sex,geo,time) %>%
 deces_annuel_agequinq<-bind_rows(deces90quinq,deces85quinq)
 pjanquinq <-bind_rows(pjan90quinq,pjan85quinq)
 
+write.table(pjanquinq, "pjanquinq.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+saveRDS(pjanquinq,file="pjanquinq.RDS")
+
+
 #### on joint les deces et les pop ###############
 pop_deces_pays_age_quinq<-deces_annuel_agequinq %>% inner_join(pjanquinq,by=c("sex","geo","agequinq","time"))
 
@@ -606,8 +610,34 @@ ourworldindata_week <- ourworldindata_week  %>% left_join(numerosemaine)
 test <- ungroup(ourworldindata_week) %>% select(geo,time,new_deaths,new_cases,new_vaccinations,new_vaccinations_smoothed_per_million)
 
 deces_standard_pays_semaine<- left_join(deces_standard_pays_semaine,test)
+                                    
+                                    #-----------------------------------------------#
+                                    #### ajout du nom des pays et zone est-ouest ####
+                                    #-----------------------------------------------#
+
 
 nom_pays<- ungroup(ourworldindata_week) %>% select(geo,location) %>% distinct(geo,location)
+
+nom_pays <-nom_pays %>% mutate(zone=case_when(geo=="AL"~ "Est",
+                                                                      geo=="AM"~ "Est",
+                                                                      geo=="BG"~ "Est",
+                                                                      geo=="CY"~ "Est",
+                                                                      geo=="EE"~ "Est",
+                                                                      geo=="EL"~ "Est",
+                                                                      geo=="FI"~ "Est",
+                                                                      geo=="GE"~ "Est",
+                                                                      geo=="HR"~ "Est",
+                                                                      geo=="HU"~ "Est",
+                                                                      geo=="LT"~ "Est",
+                                                                      geo=="LV"~ "Est",
+                                                                      geo=="ME"~ "Est",
+                                                                      geo=="PL"~ "Est",
+                                                                      geo=="RO"~ "Est",
+                                                                      geo=="RS"~ "Est",
+                                                                      geo=="SI"~ "Est",
+                                                                      geo=="SK"~ "Est",
+                                                                      TRUE~ "Ouest",))
+
 deces_standard_pays_semaine<- left_join(deces_standard_pays_semaine,nom_pays)
 
 saveRDS(deces_standard_pays_semaine,file="deces_standard_pays_semaine.RDS")
