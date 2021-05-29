@@ -1,1 +1,23 @@
 
+library(pyramid)
+library(maptools)
+library(rgdal)
+library(maps)
+library(eurostat)
+library(dplyr)
+library(stringr)
+library(leaflet)
+library(questionr)
+library(ggplot2)
+library(lubridate)
+library(sf)
+library(rnaturalearth)
+library(rgeos)
+library("rnaturalearthdata")
+library(readr)
+library(lsr)
+
+medicam <-read.csv(file = "Médic'AM mensuel 2020 - 1er semestre_tous régimes.csv",encoding = "UTF-8", sep=",")
+medicam <-medicam %>% mutate (Nombre.de.boites.remboursées..2020.01 = (gsub("8 486", ".", Nombre.de.boites.remboursées..2020.01)))
+test <- medicam %>% filter(NOM.COURT=="YELLOX 0,9 MG/ML COLLYRE FL 1/5 ML")
+test

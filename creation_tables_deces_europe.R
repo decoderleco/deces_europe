@@ -392,7 +392,7 @@ write.table(deces_complet_annuel, "deces_complet_annuel.csv", row.names=FALSE, s
                                        ####deces hebdomadaires des pays####
                                        #----------------------------------#
 
-deces_weekpays <- deces_week %>% group_by(geo,time,age) %>% 
+deces_weekpays <- deces_week %>% filter(sex=="T") %>%  group_by(geo,time,age) %>% 
   summarise(deces=sum(values))
 deces_weekFrance  <- deces_week %>% group_by(geo,time) %>% 
   summarise(deces=sum(values)) %>% filter(geo=="FR")
@@ -411,7 +411,7 @@ numerosemaine<-numerosemaine %>% mutate(numerosemaineannee=as.numeric(substr(tim
 
 #calcul de la population hebdomadaire par âge
 
-pop_week <- pjanquinq 
+pop_week <- pjanquinq %>% group_by(agequinq,geo,time) %>% summarise(population=sum(population)) 
 
 #ajout des années 2021 et 2022 comme étant égales à 2020
 pop_week21 <- pop_week %>%  filter(time == "2020-01-01") %>%  mutate(time = time + years(1))
@@ -455,12 +455,16 @@ mortalite_week <- mortalite_week %>% anti_join((a_enlever))
 mortalite_week <- mortalite_week %>% filter(!is.na(deces))
 mortalite_week <-mortalite_week %>% mutate(tx_mortalite=deces/pop_semaine)
 
-#on calcule la population totale des pays du fichier par semaine et age quinquennal
-pop_totale<-mortalite_week %>% group_by(agequinq,time) %>% summarise(pop_totale=sum(pop_semaine))
+#on calcule la population 2020 des pays du fichier 
+pop_totale<-pjanquinq %>% filter(time=="2020-01-01") %>% 
+  group_by(agequinq,geo,time) %>% 
+  summarise(population=sum(population)) %>% 
+  select(-time) %>% 
+  rename(pop20=population)
 #on joint avec la table du taux de mortalite
 test3<-mortalite_week %>% left_join(pop_totale)
 #on calcule les deces standardises par pays et age quinquennal
-test3<-test3 %>% mutate(deces_standard=tx_mortalite*pop_totale)
+test3<-test3 %>% mutate(deces_standard=tx_mortalite*pop20)
 #on somme pour avoir les deces par pays et par semaine
 deces_standard_pays_semaine<-test3 %>% group_by(geo,time) %>% summarise(deces_standard_tot=sum(deces_standard),deces_tot=sum(deces))
 num_semaine<-numerosemaine %>% select(time,numerosemaine)
@@ -647,3 +651,8 @@ deces_complet_annuel<- left_join(deces_complet_annuel,nom_pays)
 
 write.table(deces_complet_annuel, "deces_complet_annuel.csv", row.names=FALSE, sep="t",dec=",", na=" ")
 saveRDS(deces_complet_annuel,file="deces_complet_annuel.RDS")
+
+deces_complet<- left_join(deces_complet,nom_pays)
+
+write.table(deces_complet, "deces_complet.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+saveRDS(deces_complet,file="deces_complet.RDS")

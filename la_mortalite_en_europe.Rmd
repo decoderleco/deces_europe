@@ -9,14 +9,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# La contagion de la panique
+# La mise à disposition des données
 
-Nous sommes en mai 2021 et la panique générée par la Covid-19 ne faiblit toujours pas.  Le gouvernement français nous a pourtant confiné, obligé à porter un masque en toutes situations, forcé à nous badigeonner de gel hydralcoolique 100 fois par jour, interdit de nous rassembler et fermé tout les commerces non essentiels et lieux de cultures. Aucune de ces mesures n’a permis d’empêcher le virus de circuler.
+Depuis un peu plus d'un an, je vous propose sur cette chaîne des analyses sur la mortalité en France. Dans chacune de mes vidéos, je mets toujours à dispoistion les liens vers les sources que j'utilise, et aussi dernièrement, vers des fichiers de calculs pour que vous puissiez vérifier tout ce que je dis.
+Depuis 1 mois, j'ai décidé de passer à un autre niveau de partage. Je me suis formé au langage R et j'ai recodé tous mes calculs de mortalité. Je les ai tous mis àdisposition sur la plateforme GitHub.
+Ainsi, tous ceux d'entre vous qui souhaiteraient faire des analyses de mortalité peuvent bénéficier de tous mes travaux.
 
-La moindre des choses serait donc de se demander quel est l'intérêt de continuer ces mesures qui nous pourrissent la vie, si elles ne remplissent pas le rôle qu’on leur donne.
-
-La presse bien-pensante et notre gouvernement ont toujours la même réponse à  ce sujet : « si on ne le faisait pas, ce serait pire ». Avec ce genre de raisonnement, on peut évidemment tout justifier. 
-Il est aujourd'hui grand temps de dresser le bilan des mesures prises, pour savoir si on est vraiment en train  d’améliorer les choses, ou juste de faire de la communication. Dans article on va regarder ce qu’il se passe, en chiffres, dans tous les pays européens. On va commencer par quelques rappels de ce que l’on a déjà vu pour la France dans les vidéos précédentes.
 
 ## Quelques rappels pour la France : l’année 2020 n’est pas exceptionnelle
 
@@ -113,7 +111,7 @@ Les Bulgare sont plus jeune que les français notamment parce qu'ils meurent plu
 Ce graphique montre une forte disparité entre les pays de l'Est et les pays de l'Ouest de l'Europe. Il montre également que les français vivent dans l'un des pays d'Europe, et donc du monde, au sein duquel on meurt le moins.
 
 Nous avons montré plus haut que l'année 2020 est la 6e année pour laquelle les français sont le moins mort. Ce graphique nous montre que la mortalité de la France en 2020 a été une des plus faible jamais enregistrée dans tous les pays du monde.
-POur la quasi totalité des humains ayant jamais vécu sur cette planète, l'année 2020 est France est l'un des endroits et moment où on a connu le moins de morts.
+POur la quasi totalité des humains ayant jamais vécu sur cette planète, l'année 2020 en France est l'un des endroits et moment où on a connu le moins de morts.
 
 
 ```{r pressure, echo=FALSE}

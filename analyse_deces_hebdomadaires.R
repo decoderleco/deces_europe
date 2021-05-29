@@ -22,30 +22,204 @@ library(lsr)
                                       ####analyse des donnees hebdomadaires####
                                       #---------------------------------------#
 
-deces_standard_pays_semaine<-read.csv("deces_standard_pays_semaine.csv",sep = "t",dec=",", na=" ")
+deces_standard_pays_semaine<-readRDS("deces_standard_pays_semaine.RDS")
 
 #vaccinations et deces 
 
-essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400)  %>% filter(geo=="FR")
-
-
-ggplot(essai) +
-  geom_line(aes(x = numerosemaine, y = deces_tot)) +
-  geom_line(aes(x = numerosemaine, y = new_vaccinations)) 
+#France
 
 essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="FR")
 
 par(mar=c(4,4,3,5))
-plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="black", main="Graphique à 2 axes")
+plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="black", main="Situation de la France")
 axis(2, ylim=c(0,60000),col="black")
-mtext("nombre de vaccinés",side=2,line=2.5)
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès Covid",side=2,line=2, col="red")
 box() # pour encadrer le graphique
 par(new=T)
-plot(essai$numerosemaine, essai$deces_standard_tot_plus_40, pch=16, axes=F, ylim=c(0,300000), xlab="", ylab="", type="o",col="red", main="Graphique à 2 axes")
-mtext("nombre de décès",side=4,col="red",line=2.5)
-axis(4, ylim=c(0,3), col="red",col.axis="red")
+plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="red")
+#mtext("nombre de décès",side=4,col="red",line=2.5)
+#axis(4, ylim=c(0,3), col="red",col.axis="red")
+#axis(1,pretty(range(essai$numerosemaine),10))
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,3500000), xlab="", ylab="", type="o",col="blue")
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 axis(1,pretty(range(essai$numerosemaine),10))
 mtext("Numéro de semaine",side=1,col="black",line=2.5)
+
+#Hongrie
+
+essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="HU")
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="black", main="Situation de la Hongrie")
+axis(2, ylim=c(0,60000),col="black")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès Covid",side=2,line=2, col="red")
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="red")
+#mtext("nombre de décès",side=4,col="red",line=2.5)
+#axis(4, ylim=c(0,3), col="red",col.axis="red")
+#axis(1,pretty(range(essai$numerosemaine),10))
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="blue")
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+axis(1,pretty(range(essai$numerosemaine),10))
+mtext("Numéro de semaine",side=1,col="black",line=2.5)
+
+#Allemagne
+
+essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="DE")
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,60000), xlab="", ylab="", type="o",col="black", main="Situation de l'Allemagne")
+axis(2, ylim=c(0,60000),col="black")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès Covid",side=2,line=2, col="red")
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,60000), xlab="", ylab="", type="o",col="red")
+#mtext("nombre de décès",side=4,col="red",line=2.5)
+#axis(4, ylim=c(0,3), col="red",col.axis="red")
+#axis(1,pretty(range(essai$numerosemaine),10))
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,5000000), xlab="", ylab="", type="o",col="blue")
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+axis(1,pretty(range(essai$numerosemaine),10))
+mtext("Numéro de semaine",side=1,col="black",line=2.5)
+
+
+
+#Italie
+
+essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="IT")
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="black", main="Situation de l'Italie")
+axis(2, ylim=c(0,60000),col="black")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès Covid",side=2,line=2, col="red")
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="red")
+#mtext("nombre de décès",side=4,col="red",line=2.5)
+#axis(4, ylim=c(0,3), col="red",col.axis="red")
+#axis(1,pretty(range(essai$numerosemaine),10))
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="blue")
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+axis(1,pretty(range(essai$numerosemaine),10))
+mtext("Numéro de semaine",side=1,col="black",line=2.5)
+
+#malte
+
+essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="MT")
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,200), xlab="", ylab="", type="o",col="black", main="Situation de Malte")
+axis(2, ylim=c(0,60000),col="black")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès Covid",side=2,line=2, col="red")
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,200), xlab="", ylab="", type="o",col="red")
+#mtext("nombre de décès",side=4,col="red",line=2.5)
+#axis(4, ylim=c(0,3), col="red",col.axis="red")
+#axis(1,pretty(range(essai$numerosemaine),10))
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,100000), xlab="", ylab="", type="o",col="blue")
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+axis(1,pretty(range(essai$numerosemaine),10))
+mtext("Numéro de semaine",side=1,col="black",line=2.5)
+
+#Island
+
+essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="IS")
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,100), xlab="", ylab="", type="o",col="black", main="Situation de l'Island")
+axis(2, ylim=c(0,60000),col="black")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès Covid",side=2,line=2, col="red")
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,100), xlab="", ylab="", type="o",col="red")
+#mtext("nombre de décès",side=4,col="red",line=2.5)
+#axis(4, ylim=c(0,3), col="red",col.axis="red")
+#axis(1,pretty(range(essai$numerosemaine),10))
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,10000), xlab="", ylab="", type="o",col="blue")
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+axis(1,pretty(range(essai$numerosemaine),10))
+mtext("Numéro de semaine",side=1,col="black",line=2.5)
+
+#Croatie
+
+essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="HR")
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="black", main="Situation de la Croatie")
+axis(2, ylim=c(0,60000),col="black")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès Covid",side=2,line=2, col="red")
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="red")
+#mtext("nombre de décès",side=4,col="red",line=2.5)
+#axis(4, ylim=c(0,3), col="red",col.axis="red")
+#axis(1,pretty(range(essai$numerosemaine),10))
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,200000), xlab="", ylab="", type="o",col="blue")
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+axis(1,pretty(range(essai$numerosemaine),10))
+mtext("Numéro de semaine",side=1,col="black",line=2.5)
+
+#Norvège
+
+essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="NO")
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="black", main="Situation de la Norvège")
+axis(2, ylim=c(0,60000),col="black")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès Covid",side=2,line=2, col="red")
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="red")
+#mtext("nombre de décès",side=4,col="red",line=2.5)
+#axis(4, ylim=c(0,3), col="red",col.axis="red")
+#axis(1,pretty(range(essai$numerosemaine),10))
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,500000), xlab="", ylab="", type="o",col="blue")
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+axis(1,pretty(range(essai$numerosemaine),10))
+mtext("Numéro de semaine",side=1,col="black",line=2.5)
+
+#deces long terme
+
+
+essai <- deces_standard_pays_semaine %>% filter(geo=="FR")
+
+plot(essai$numerosemaine, essai$deces_standard_tot, pch=16, axes=F, ylim=c(0,25000), xlab="", ylab="", type="o",col="black", main="Deces hebdomadaire France")
+axis(2, ylim=c(0,60000),col="black")
+mtext("nombre de décès toutes causes",side=2,line=3)
+axis(1,pretty(range(essai$numerosemaine),10))
+mtext("Numéro de semaine",side=1,col="black",line=2.5)
+
+
+
+
+
+
 
 
 
