@@ -1,4 +1,5 @@
 install.packages("pyramid")
+install.packages("igraph")
 library(pyramid)
 library(maptools)
 library(rgdal)
@@ -16,6 +17,7 @@ library(rgeos)
 library("rnaturalearthdata")
 library(readr)
 library(lsr)
+library(igraph)
 
 
                                       #---------------------------------------#
@@ -24,7 +26,61 @@ library(lsr)
 
 deces_standard_pays_semaine<-readRDS("deces_standard_pays_semaine.RDS")
 
-#vaccinations et deces 
+
+
+                                      #---------------------------------------#
+                                      ####     analyse glissante           ####
+                                      #---------------------------------------#
+
+
+
+#France
+
+essai <- deces_standard_pays_semaine %>% filter(geo=="FR")
+moyenne_mobile <- running_mean(essai$deces_standard_tot, 52)
+
+plot(essai$numerosemaine, essai$deces_standard_tot, pch=16,cex=0, axes=F, ylim=c(0,25000), xlab="", ylab="", type="o",col="black", main="Deces hebdomadaire France")
+axis(2, ylim=c(0,60000),col="black")
+mtext("nombre de décès toutes causes",side=2,line=3)
+axis(1,pretty(range(essai$numerosemaine),10))
+mtext("Numéro de semaine",side=1,col="black",line=2.5)
+par(new=T)
+plot(moyenne_mobile, pch=16, axes=F,cex=0, ylim=c(0,25000), xlab="",lwd=3,  ylab="", type="o",col="red") 
+mtext("moyenne mobile décès toutes causes",col="red",side=2,line=2)
+
+
+#Hongrie
+essai <- deces_standard_pays_semaine %>% filter(geo=="HU")
+moyenne_mobile <- running_mean(essai$deces_standard_tot_moins40, 5)
+
+plot(essai$numerosemaine, essai$deces_standard_tot_moins40, pch=16,lwd=3, cex=0, axes=F, ylim=c(0,100), xlab="", ylab="", type="o",col="black", main="Deces hebdomadaire Hongrie moins de 40 ans")
+axis(2, ylim=c(0,60000),col="black")
+mtext("nombre de décès toutes causes",side=2,line=3)
+axis(1,pretty(range(essai$numerosemaine),10))
+mtext("Numéro de semaine",side=1,col="black",line=2.5)
+par(new=T)
+plot(moyenne_mobile, pch=16, axes=F,cex=0, ylim=c(0,100), xlab="",lwd=3,  ylab="", type="o",col="red") 
+mtext("moyenne mobile décès toutes causes",col="red",side=2,line=2)
+
+
+#Malte
+essai <- deces_standard_pays_semaine %>% filter(geo=="MT")
+moyenne_mobile <- running_mean(essai$deces_standard_tot_moins40, 5)
+
+plot(essai$numerosemaine, essai$deces_standard_tot_moins40, pch=16,lwd=3, cex=0, axes=F, ylim=c(0,20), xlab="", ylab="", type="o",col="black", main="Deces hebdomadaire Malte moins de 40 ans")
+axis(2, ylim=c(0,60000),col="black")
+mtext("nombre de décès toutes causes",side=2,line=3)
+axis(1,pretty(range(essai$numerosemaine),10))
+mtext("Numéro de semaine",side=1,col="black",line=2.5)
+par(new=T)
+plot(moyenne_mobile, pch=16, axes=F,cex=0, ylim=c(0,20), xlab="",lwd=3,  ylab="", type="o",col="red") 
+mtext("moyenne mobile décès toutes causes",col="red",side=2,line=2)
+
+
+                                      #---------------------------------------#
+                                      ####    vaccinations et deces        ####
+                                      #---------------------------------------#
+
 
 #France
 
@@ -47,28 +103,29 @@ mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 axis(1,pretty(range(essai$numerosemaine),10))
 mtext("Numéro de semaine",side=1,col="black",line=2.5)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_moins40, pch=16, axes=F, ylim=c(0,600), xlab="", ylab="", type="o",col="green")
 
 #Hongrie
 
-essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="HU")
+essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>360) %>% filter(geo=="HU")
 
 par(mar=c(4,4,3,5))
-plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="black", main="Situation de la Hongrie")
-axis(2, ylim=c(0,60000),col="black")
+plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="red", main="Situation de la Hongrie")
+axis(2, ylim=c(0,60000),col="red")
 mtext("nombre de décès toutes causes",side=2,line=3)
 mtext("nombre de décès Covid",side=2,line=2, col="red")
 box() # pour encadrer le graphique
 par(new=T)
-plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="red")
-#mtext("nombre de décès",side=4,col="red",line=2.5)
-#axis(4, ylim=c(0,3), col="red",col.axis="red")
-#axis(1,pretty(range(essai$numerosemaine),10))
+plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="black")
 par(new=T)
 plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="blue")
 mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 axis(1,pretty(range(essai$numerosemaine),10))
 mtext("Numéro de semaine",side=1,col="black",line=2.5)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_moins40, pch=16, axes=F, ylim=c(0,600), xlab="", ylab="", type="o",col="green")
 
 #Allemagne
 
@@ -91,8 +148,6 @@ mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 axis(1,pretty(range(essai$numerosemaine),10))
 mtext("Numéro de semaine",side=1,col="black",line=2.5)
-
-
 
 #Italie
 
@@ -121,22 +176,24 @@ mtext("Numéro de semaine",side=1,col="black",line=2.5)
 essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="MT")
 
 par(mar=c(4,4,3,5))
-plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,200), xlab="", ylab="", type="o",col="black", main="Situation de Malte")
+plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,120), xlab="", ylab="", type="o",col="black", main="Situation de Malte")
 axis(2, ylim=c(0,60000),col="black")
 mtext("nombre de décès toutes causes",side=2,line=3)
 mtext("nombre de décès Covid",side=2,line=2, col="red")
 box() # pour encadrer le graphique
 par(new=T)
-plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,200), xlab="", ylab="", type="o",col="red")
+plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,120), xlab="", ylab="", type="o",col="red")
 #mtext("nombre de décès",side=4,col="red",line=2.5)
 #axis(4, ylim=c(0,3), col="red",col.axis="red")
 #axis(1,pretty(range(essai$numerosemaine),10))
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,100000), xlab="", ylab="", type="o",col="blue")
+plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,30000), xlab="", ylab="", type="o",col="blue")
 mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 axis(1,pretty(range(essai$numerosemaine),10))
 mtext("Numéro de semaine",side=1,col="black",line=2.5)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_moins40, pch=16, axes=F, ylim=c(0,12), xlab="", ylab="", type="o",col="green")
 
 #Island
 
@@ -187,36 +244,22 @@ mtext("Numéro de semaine",side=1,col="black",line=2.5)
 essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="NO")
 
 par(mar=c(4,4,3,5))
-plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="black", main="Situation de la Norvège")
+plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,1000), xlab="", ylab="", type="o",col="black", main="Situation de la Norvège")
 axis(2, ylim=c(0,60000),col="black")
 mtext("nombre de décès toutes causes",side=2,line=3)
 mtext("nombre de décès Covid",side=2,line=2, col="red")
 box() # pour encadrer le graphique
 par(new=T)
-plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="red")
+plot(essai$numerosemaine, essai$deces_tot_plus_40, pch=16, axes=F, ylim=c(0,1000), xlab="", ylab="", type="o",col="red")
 #mtext("nombre de décès",side=4,col="red",line=2.5)
 #axis(4, ylim=c(0,3), col="red",col.axis="red")
 #axis(1,pretty(range(essai$numerosemaine),10))
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,500000), xlab="", ylab="", type="o",col="blue")
+plot(essai$numerosemaine, essai$new_vaccinations, pch=16, axes=F, ylim=c(0,300000), xlab="", ylab="", type="o",col="blue")
 mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 axis(1,pretty(range(essai$numerosemaine),10))
 mtext("Numéro de semaine",side=1,col="black",line=2.5)
-
-#deces long terme
-
-
-essai <- deces_standard_pays_semaine %>% filter(geo=="FR")
-
-plot(essai$numerosemaine, essai$deces_standard_tot, pch=16, axes=F, ylim=c(0,25000), xlab="", ylab="", type="o",col="black", main="Deces hebdomadaire France")
-axis(2, ylim=c(0,60000),col="black")
-mtext("nombre de décès toutes causes",side=2,line=3)
-axis(1,pretty(range(essai$numerosemaine),10))
-mtext("Numéro de semaine",side=1,col="black",line=2.5)
-
-
-
 
 
 

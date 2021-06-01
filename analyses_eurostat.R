@@ -50,21 +50,21 @@ deces_complet_annuel_analysable2000_est20 <- deces_complet_annuel_analysable2000
 deces_complet_annuel_analysable2000_ouest20 <- deces_complet_annuel_analysable2000_ouest %>% filter(time=="2020-01-01")
 
 ggplot(deces_complet_annuel_analysable2000) + 
-  geom_point(aes(x = geo, y = deces_europe_theo_20, color = time), size = 2)+
-  geom_point(data=deces_complet_annuel_20,aes(x = geo, y = deces_europe_theo_20), color = "red", size = 3)
+  geom_point(aes(x = geo, y = deces_france_theo_20, color = time), size = 2)+
+  geom_point(data=deces_complet_annuel_20,aes(x = geo, y = deces_france_theo_20), color = "red", size = 3)
 
 dev.print(device = png, file = "deces2000tot.png", width = 1000)
 
 
 ggplot(deces_complet_annuel_analysable2000_est) + 
-  geom_point(aes(x = location, y = deces_europe_theo_20, color = time), size = 2)+
-  geom_point(data=deces_complet_annuel_analysable2000_est20,aes(x = location, y = deces_europe_theo_20), color = "red", size = 3)
+  geom_point(aes(x = location, y = deces_france_theo_20, color = time), size = 2)+
+  geom_point(data=deces_complet_annuel_analysable2000_est20,aes(x = location, y = deces_france_theo_20), color = "red", size = 3)
 
 dev.print(device = png, file = "deces2000est.png", width = 1000)
 
 ggplot(deces_complet_annuel_analysable2000_ouest) + 
-  geom_point(aes(x = location, y = deces_europe_theo_20, color = time), size = 2)+
-  geom_point(data=deces_complet_annuel_analysable2000_ouest20,aes(x = location, y = deces_europe_theo_20), color = "red", size = 3)
+  geom_point(aes(x = location, y = deces_france_theo_20, color = time), size = 2)+
+  geom_point(data=deces_complet_annuel_analysable2000_ouest20,aes(x = location, y = deces_france_theo_20), color = "red", size = 3)
 
 dev.print(device = png, file = "deces2000ouest.png", width = 1000)
 
@@ -130,14 +130,14 @@ deces_complet_annuel_analysable2000 <- deces_complet_annuel_analysable2000 %>%
 deces_complet_annuel_analysable2000_deuxannees <- deces_complet_annuel_analysable2000 %>% 
   filter(time>"2000-01-01") %>% 
   group_by(geo,deuxannees,location,zone) %>% 
-  summarise(deces=sum(deces),population=mean(population),pop20=mean(pop20),deces_theo_2020=sum(deces_theo_2020),deces_europe_theo_20=sum(deces_europe_theo_20))
+  summarise(deces=sum(deces),population=mean(population),pop20=mean(pop20),deces_theo_2020=sum(deces_theo_2020),deces_france_theo_20=sum(deces_france_theo_20))
 
 deces_complet_annuel_analysable2000_deuxannees20 <- deces_complet_annuel_analysable2000_deuxannees %>% 
   filter(deuxannees=="2019-2020")
 
 ggplot(deces_complet_annuel_analysable2000_deuxannees) + 
-  geom_point(aes(x = geo, y = deces_europe_theo_20, color = deuxannees), size = 2)+
-  geom_point(data=deces_complet_annuel_analysable2000_deuxannees20,aes(x = geo, y = deces_europe_theo_20), color = "red", size = 3)
+  geom_point(aes(x = geo, y = deces_france_theo_20, color = deuxannees), size = 2)+
+  geom_point(data=deces_complet_annuel_analysable2000_deuxannees20,aes(x = geo, y = deces_france_theo_20), color = "red", size = 3)
 
 
 
@@ -168,14 +168,14 @@ deces_complet_annuel_analysable2000 <- deces_complet_annuel_analysable2000 %>%
 
 deces_complet_annuel_analysable2000_troisannees <- deces_complet_annuel_analysable2000 %>% 
   group_by(geo,troisannees,location,zone) %>% 
-  summarise(deces=mean(deces),population=mean(population),pop20=mean(pop20),deces_theo_2020=mean(deces_theo_2020),deces_europe_theo_20=mean(deces_europe_theo_20))
+  summarise(deces=mean(deces),population=mean(population),pop20=mean(pop20),deces_theo_2020=mean(deces_theo_2020),deces_france_theo_20=mean(deces_france_theo_20))
 
 deces_complet_annuel_analysable2000_troisannees20 <- deces_complet_annuel_analysable2000_troisannees %>% 
   filter(troisannees=="2018-2020")
 
 ggplot(deces_complet_annuel_analysable2000_troisannees) + 
-  geom_point(aes(x = geo, y = deces_europe_theo_20, color = troisannees), size = 2)+
-  geom_point(data=deces_complet_annuel_analysable2000_troisannees20,aes(x = geo, y = deces_europe_theo_20), color = "red", size = 3)
+  geom_point(aes(x = geo, y = deces_france_theo_20, color = troisannees), size = 2)+
+  geom_point(data=deces_complet_annuel_analysable2000_troisannees20,aes(x = geo, y = deces_france_theo_20), color = "red", size = 3)
 
 dev.print(device = png, file = "deces3annees.png", width = 1000)
 

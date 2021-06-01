@@ -368,19 +368,30 @@ deces_completDE <- deces_completDE %>% select(-dc20,-pop20) %>%  left_join(deces
 deces_complet<-deces_complet %>% filter(geo!="DE")
 deces_complet<-deces_complet %>% rbind(deces_completDE)
 
-#calcul des deces theoriques en population europeenne
+#calcul des deces theoriques en population française
 
-deces_complet20<-deces_complet %>% filter(time=="2020-01-01") %>% filter(!is.na(population)) %>% filter(!is.na(pop20))  %>% filter(!is.na(dc20))
-pop_europe20 <- deces_complet20 %>% group_by(agequinq,sex) %>% summarise(pop_europe20 = sum(pop20))
-deces_complet <-deces_complet %>%  left_join(pop_europe20)
-deces_complet <-deces_complet %>%  mutate(deces_europe_theo_20 = case_when(
+deces_complet20<-deces_complet %>% filter(time=="2020-01-01") %>% 
+  filter(!is.na(population)) %>% 
+  filter(!is.na(pop20))  %>% 
+  filter(!is.na(dc20))%>% 
+  filter(geo=="FR")
+pop_france20 <- deces_complet20 %>% group_by(agequinq,sex) %>% summarise(pop_france20 = sum(pop20))
+#ajout du cas avec les Y_GE85
+pop_france20_85<- deces_complet20 %>%
+  filter(agequinq %in% c("Y85-89","Y_GE90")) %>% 
+  mutate (agequinq = "Y_GE85") %>% 
+  group_by(agequinq,sex) %>% summarise(pop_france20 = sum(pop20)) 
+
+pop_france20 <- pop_france20 %>% rbind(pop_france20_85)  
+deces_complet <-deces_complet %>%  left_join(pop_france20)
+deces_complet <-deces_complet %>%  mutate(deces_france_theo_20 = case_when(
   population == 0 ~ 0,
-  TRUE ~ deces/(population)*pop_europe20))
+  TRUE ~ deces/(population)*pop_france20))
 
 
 #groupement des donnees pour trouver les deces annuels
 deces_complet_annuel  <- deces_complet %>% filter(!is.na(population)) %>% group_by(geo,time) %>% 
-  summarise(population=sum(population),pop20=sum(pop20),deces=sum(deces),deces_theo_2020=sum(deces_theo_2020),dc20=sum(dc20),deces_europe_theo_20=sum(deces_europe_theo_20))
+  summarise(population=sum(population),pop20=sum(pop20),deces=sum(deces),deces_theo_2020=sum(deces_theo_2020),dc20=sum(dc20),deces_france_theo_20=sum(deces_france_theo_20))
 
 deces_complet_annuel<- deces_complet_annuel %>% filter(!is.na(dc20)) %>% filter(!is.na(deces_theo_2020))
 deces_complet_annuel<- deces_complet_annuel %>% mutate (augmentation20 = (dc20-deces_theo_2020)/deces_theo_2020)
@@ -461,51 +472,81 @@ pop_totale<-pjanquinq %>% filter(time=="2020-01-01") %>%
   summarise(population=sum(population)) %>% 
   select(-time) %>% 
   rename(pop20=population)
+#on calcule la population 2020 France 
+pop_france_20<-pjanquinq %>% filter(time=="2020-01-01") %>% filter(geo=="FR") %>% 
+  group_by(agequinq,geo,time) %>% 
+  summarise(population=sum(population)) 
+pop_france_20<-  ungroup(pop_france_20) %>% 
+  select(-time,-geo) %>% 
+  rename(pop20france=population)
+#ajout du cas avec les Y_GE85
+pop_france_20_85<- pop_france_20 %>%
+  filter(agequinq %in% c("Y85-89","Y_GE90")) %>% 
+  mutate (agequinq = "Y_GE85") %>% 
+  group_by(agequinq) %>% summarise(pop20france = sum(pop20france))
+pop_france_20 <- pop_france_20 %>% rbind(pop_france_20_85)  
+pop_totale<-pop_totale %>% left_join(pop_france_20)
+
 #on joint avec la table du taux de mortalite
 test3<-mortalite_week %>% left_join(pop_totale)
 #on calcule les deces standardises par pays et age quinquennal
-test3<-test3 %>% mutate(deces_standard=tx_mortalite*pop20)
+test3<-test3 %>% mutate(deces_standard=tx_mortalite*pop20,deces_standard20france=tx_mortalite*pop20france)
 #on somme pour avoir les deces par pays et par semaine
-deces_standard_pays_semaine<-test3 %>% group_by(geo,time) %>% summarise(deces_standard_tot=sum(deces_standard),deces_tot=sum(deces))
+deces_standard_pays_semaine<-test3 %>% group_by(geo,time) %>% 
+  summarise(deces_standard_tot=sum(deces_standard),deces_tot=sum(deces),deces_standard20france=sum(deces_standard20france))
 num_semaine<-numerosemaine %>% select(time,numerosemaine)
 deces_standard_pays_semaine<-deces_standard_pays_semaine %>% left_join(num_semaine)
 
 #on somme pour avoir les deces par pays et par semaine des plus de 40 ans, plus de 60 ans, 40-60 ans
 
 test4<-test3 %>% filter(agequinq %in% c("Y_GE85","Y40-44","Y45-49","Y50-54","Y55-59","Y60-64","Y65-69","Y70-74","Y75-79","Y80-84","Y85-89","Y_GE90")) 
-deces_standard_pays_semaine_plus_40<-test4 %>% group_by(geo,time) %>% summarise(deces_standard_tot_plus_40=sum(deces_standard),deces_tot_plus_40=sum(deces))
+deces_standard_pays_semaine_plus_40<-test4 %>% group_by(geo,time) %>% 
+  summarise(deces_standard_tot_plus_40=sum(deces_standard),deces_tot_plus_40=sum(deces),deces_standard20france_plus_40=sum(deces_standard20france))
 deces_standard_pays_semaine_plus_40<-deces_standard_pays_semaine_plus_40 %>% left_join(num_semaine)
 
 test5<-test3 %>% filter(agequinq %in% c("Y_GE85","Y60-64","Y65-69","Y70-74","Y75-79","Y80-84","Y85-89","Y_GE90")) 
-deces_standard_pays_semaine_plus_60<-test5 %>% group_by(geo,time) %>% summarise(deces_standard_tot_plus_60=sum(deces_standard),deces_tot_plus_60=sum(deces))
+deces_standard_pays_semaine_plus_60<-test5 %>% group_by(geo,time) %>% 
+  summarise(deces_standard_tot_plus_60=sum(deces_standard),deces_tot_plus_60=sum(deces),deces_standard20france_plus_60=sum(deces_standard20france))
 deces_standard_pays_semaine_plus_60<-deces_standard_pays_semaine_plus_60 %>% left_join(num_semaine)
 
 test6<-test3 %>% filter(agequinq %in% c("Y40-44","Y45-49","Y50-54","Y55-59")) 
-deces_standard_pays_semaine_40_60<-test6 %>% group_by(geo,time) %>% summarise(deces_standard_tot_40_60=sum(deces_standard),deces_tot_40_60=sum(deces))
+deces_standard_pays_semaine_40_60<-test6 %>% group_by(geo,time) %>% 
+  summarise(deces_standard_tot_40_60=sum(deces_standard),deces_tot_40_60=sum(deces),deces_standard20france_40_60=sum(deces_standard20france))
 deces_standard_pays_semaine_40_60<-deces_standard_pays_semaine_40_60 %>% left_join(num_semaine)
 
+test7<-test3 %>% filter(agequinq %in% c("Y_LT5","Y5-9","Y10-14","Y15-19","Y20-24","Y25-29","Y30-34","Y35-39")) 
+deces_standard_pays_semaine_moins40<-test7 %>% group_by(geo,time) %>% 
+  summarise(deces_standard_tot_moins40=sum(deces_standard),deces_tot_moins40=sum(deces),deces_standard20france_moins40=sum(deces_standard20france))
+deces_standard_pays_semaine_moins40<-deces_standard_pays_semaine_moins40 %>% left_join(num_semaine)
 
 #gestion du probleme des donnees de l'Allemagne pour lequel les donnees par age ne coniennent probablement qu'un sexe
 deces_standard_pays_semaine_plus_40<-deces_standard_pays_semaine_plus_40 %>% 
   mutate(deces_standard_tot_plus_40=if_else(geo=="DE",deces_standard_tot_plus_40*2,deces_standard_tot_plus_40)) %>% 
-  mutate(deces_tot_plus_40=if_else(geo=="DE",deces_tot_plus_40*2,deces_tot_plus_40))
+  mutate(deces_tot_plus_40=if_else(geo=="DE",deces_tot_plus_40*2,deces_tot_plus_40)) %>% 
+  mutate(deces_standard20france_plus_40=if_else(geo=="DE",deces_standard20france_plus_40*2,deces_standard20france_plus_40)) 
 
 deces_standard_pays_semaine_plus_60<-deces_standard_pays_semaine_plus_60 %>% 
   mutate(deces_standard_tot_plus_60=if_else(geo=="DE",deces_standard_tot_plus_60*2,deces_standard_tot_plus_60)) %>% 
-  mutate(deces_tot_plus_60=if_else(geo=="DE",deces_tot_plus_60*2,deces_tot_plus_60))
+  mutate(deces_tot_plus_60=if_else(geo=="DE",deces_tot_plus_60*2,deces_tot_plus_60))%>% 
+  mutate(deces_standard20france_plus_60=if_else(geo=="DE",deces_standard20france_plus_60*2,deces_standard20france_plus_60)) 
 
 deces_standard_pays_semaine_40_60<-deces_standard_pays_semaine_40_60 %>% 
   mutate(deces_standard_tot_40_60=if_else(geo=="DE",deces_standard_tot_40_60*2,deces_standard_tot_40_60)) %>% 
-  mutate(deces_tot_40_60=if_else(geo=="DE",deces_tot_40_60*2,deces_tot_40_60))
+  mutate(deces_tot_40_60=if_else(geo=="DE",deces_tot_40_60*2,deces_tot_40_60)) %>% 
+  mutate(deces_standard20france_40_60=if_else(geo=="DE",deces_standard20france_40_60*2,deces_standard20france_40_60)) 
+
 
 deces_standard_pays_semaine<-deces_standard_pays_semaine %>% 
   mutate(deces_standard_tot=if_else(geo=="DE",deces_standard_tot*2,deces_standard_tot)) %>% 
-  mutate(deces_tot=if_else(geo=="DE",deces_tot*2,deces_tot))
+  mutate(deces_tot=if_else(geo=="DE",deces_tot*2,deces_tot)) %>% 
+  mutate(deces_standard20france=if_else(geo=="DE",deces_standard20france*2,deces_standard20france)) 
+
 
 deces_standard_pays_semaine<-deces_standard_pays_semaine %>% 
   left_join(deces_standard_pays_semaine_plus_40) %>% 
   left_join(deces_standard_pays_semaine_plus_60) %>% 
-  left_join(deces_standard_pays_semaine_40_60) 
+  left_join(deces_standard_pays_semaine_40_60) %>% 
+  left_join(deces_standard_pays_semaine_moins40)
 
 
                      #--------------------------------------------------------------#
