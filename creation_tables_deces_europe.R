@@ -519,34 +519,29 @@ deces_standard_pays_semaine_moins40<-test7 %>% group_by(geo,time) %>%
   summarise(deces_standard_tot_moins40=sum(deces_standard),deces_tot_moins40=sum(deces),deces_standard20france_moins40=sum(deces_standard20france))
 deces_standard_pays_semaine_moins40<-deces_standard_pays_semaine_moins40 %>% left_join(num_semaine)
 
-#gestion du probleme des donnees de l'Allemagne pour lequel les donnees par age ne coniennent probablement qu'un sexe
-deces_standard_pays_semaine_plus_40<-deces_standard_pays_semaine_plus_40 %>% 
-  mutate(deces_standard_tot_plus_40=if_else(geo=="DE",deces_standard_tot_plus_40*2,deces_standard_tot_plus_40)) %>% 
-  mutate(deces_tot_plus_40=if_else(geo=="DE",deces_tot_plus_40*2,deces_tot_plus_40)) %>% 
-  mutate(deces_standard20france_plus_40=if_else(geo=="DE",deces_standard20france_plus_40*2,deces_standard20france_plus_40)) 
+test8<-test3 %>% filter(agequinq %in% c("Y60-64")) 
+deces_standard_pays_semaine_60_64<-test8 %>% group_by(geo,time) %>% 
+  summarise(deces_standard_tot_60_64=sum(deces_standard),deces_tot_60_64=sum(deces),deces_standard20france_60_64=sum(deces_standard20france))
+deces_standard_pays_semaine_60_64<-deces_standard_pays_semaine_60_64 %>% left_join(num_semaine)
 
-deces_standard_pays_semaine_plus_60<-deces_standard_pays_semaine_plus_60 %>% 
-  mutate(deces_standard_tot_plus_60=if_else(geo=="DE",deces_standard_tot_plus_60*2,deces_standard_tot_plus_60)) %>% 
-  mutate(deces_tot_plus_60=if_else(geo=="DE",deces_tot_plus_60*2,deces_tot_plus_60))%>% 
-  mutate(deces_standard20france_plus_60=if_else(geo=="DE",deces_standard20france_plus_60*2,deces_standard20france_plus_60)) 
-
-deces_standard_pays_semaine_40_60<-deces_standard_pays_semaine_40_60 %>% 
-  mutate(deces_standard_tot_40_60=if_else(geo=="DE",deces_standard_tot_40_60*2,deces_standard_tot_40_60)) %>% 
-  mutate(deces_tot_40_60=if_else(geo=="DE",deces_tot_40_60*2,deces_tot_40_60)) %>% 
-  mutate(deces_standard20france_40_60=if_else(geo=="DE",deces_standard20france_40_60*2,deces_standard20france_40_60)) 
+test9<-test3 %>% filter(agequinq %in% c("Y65-69")) 
+deces_standard_pays_semaine_65_69<-test9 %>% group_by(geo,time) %>% 
+  summarise(deces_standard_tot_65_69=sum(deces_standard),deces_tot_65_69=sum(deces),deces_standard20france_65_69=sum(deces_standard20france))
+deces_standard_pays_semaine_65_69<-deces_standard_pays_semaine_65_69 %>% left_join(num_semaine)
 
 
-deces_standard_pays_semaine<-deces_standard_pays_semaine %>% 
-  mutate(deces_standard_tot=if_else(geo=="DE",deces_standard_tot*2,deces_standard_tot)) %>% 
-  mutate(deces_tot=if_else(geo=="DE",deces_tot*2,deces_tot)) %>% 
-  mutate(deces_standard20france=if_else(geo=="DE",deces_standard20france*2,deces_standard20france)) 
+
+#jointure des colonnes
+
 
 
 deces_standard_pays_semaine<-deces_standard_pays_semaine %>% 
   left_join(deces_standard_pays_semaine_plus_40) %>% 
   left_join(deces_standard_pays_semaine_plus_60) %>% 
   left_join(deces_standard_pays_semaine_40_60) %>% 
-  left_join(deces_standard_pays_semaine_moins40)
+  left_join(deces_standard_pays_semaine_moins40)%>% 
+  left_join(deces_standard_pays_semaine_60_64)%>% 
+  left_join(deces_standard_pays_semaine_65_69)
 
 
                      #--------------------------------------------------------------#

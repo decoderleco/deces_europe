@@ -9,18 +9,32 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# La mise à disposition des données
+# Comprendre les données de mortalité européenne
 
-Depuis un peu plus d'un an, je vous propose sur cette chaîne des analyses sur la mortalité en France. Dans chacune de mes vidéos, je mets toujours à dispoistion les liens vers les sources que j'utilise, et aussi dernièrement, vers des fichiers de calculs pour que vous puissiez vérifier tout ce que je dis.
-Depuis 1 mois, j'ai décidé de passer à un autre niveau de partage. Je me suis formé au langage R et j'ai recodé tous mes calculs de mortalité. Je les ai tous mis àdisposition sur la plateforme GitHub.
-Ainsi, tous ceux d'entre vous qui souhaiteraient faire des analyses de mortalité peuvent bénéficier de tous mes travaux.
+Cet article a pour objectif d'analyser les données de mortalité de 33 pays européens afin de comprendre les dyanmaiques en jeu depuis plus d'un an.
 
+Toutes les données utilisées proviennent de sources officielles :
+- Eurostat pour les décès et la population par âge
+- Ourworldindata pour les données de malades, décès et vaccination en lien avec la Covid 19
+- Médicam pour les données des médicaments délivrés les les pharmacies de ville
+- Ecdc pour les donénes des mesures prises par les différents pays
 
-## Quelques rappels pour la France : l’année 2020 n’est pas exceptionnelle
+Cet article pésente en première partie le bilan de l'année 2020 pour montrer que dans sa gloablité, cette année est loin d'être exceptionnelle du point de vue de la mortalité. Ce résultat est confirmé pour tous les pays d'Europe pour lesquels nous avons des données de population et de décès.
 
-Dans les vidéos précédentes, par exemple celle qui compare les décès de toutes les années entre 1962 et 2020 : <https://youtu.be/IPu4QvUHaQE> nous avons vu que la mortalité en France depuis 2020 n’est finalement pas extraordinaire et est au niveau de l’année 2015. 
+En seconde partie, cet article présente les décès semaine après semaine de tous les pays européens. POur comprendre les dynamiques, 3 périodes de mortalité liés à la Covid-19 seront étudiées :
+- la période de mars-avril 2020 qui est spécifique à un nombre restreint de pays européens
+- la période d'ocotbre à décembre 2020 qui présente une hausse des décès inhabtiuelle
+- la période depuis début 2021 qui présente un rebond de mortalité lui-aussi inhabituel
 
-En effet, la France vieillit. Ainsi lorsque l’on regarde le nombre de morts chaque année, on voit une nette augmentation depuis 2010. 
+Dans les 3 cas, la mortalité est liée non pas à la seule présence d'une nouvelle maladie, mais directement aux choix de politique sanitaires pris. Dans tous les cas, la croyance dans des modèles de propagation épidémique a induit les pouvoirs publics en erreur. La lutte contre la propagation au détriment de la qualité des soins s'est finalement révélée catastrophique. Cette expérience prouve que les modèles épidémiques utilisés sont faux et que seule la qualité du soin prévaut.
+
+## 1. L’année 2020 n’est pas exceptionnelle du point de vue de la mortalité
+
+### 1.1 Quelques rappels pour la France : l’importance du vieillissement de la population
+
+Dans les vidéos précédentes, par exemple celle qui compare les décès de toutes les années entre 1962 et 2020 : <https://youtu.be/IPu4QvUHaQE> nous avons vu que la mortalité en France depuis 2020 n’est pas unique et est au niveau de l’année 2015. 
+
+En effet, la France vieillit. Ainsi le nombre de morts chaque année augmente naturellement depuis 2010. 
 
 ```{r, echo=FALSE}
 barplot_deces_france <- readRDS("barplot_deces_france.RDS")
@@ -28,12 +42,14 @@ barplot_deces_france
 
 ```
 
-Ce n’est pas le signe qu’en France la santé se dégrade, mais juste le signe que nous avons de plus en plus de personnes âgées, et à force de vieillir, tous les humains finissent par mourir. Pour l'illuster, voici le la pyramide des âges de la France en 2000 et en 2020, réalisée avec les données disponibles sur Eurostat.
+Cette hausse du nombre de décès n’est pas le signe que la santé des français se dégrade, mais uniquement le résultat de l'augmentation du nombre de personnes âgées. En effet, à force de vieillir, tous les humains finissent par mourir. Pour l'illuster, voici la pyramide des âges de la France en 2000 et en 2020, réalisée avec les données disponibles sur Eurostat.
 
  ![](pyramid_france_2000.png){width=450px} ![](pyramid_france_2020.png){width=450px}
-En 20 ans, la génération des baby-boomers est, logiquement, passée de la tranche des moins de 55 ans à celle des plus de 65 ans. Dès lors, il est tout à fait normal que le nombre de décès en France augmente chaque année, et cela va continuer à augmenter pendant encore 20 ans.
+En 20 ans, la génération des baby-boomers est, logiquement, passée de la tranche des moins de 55 ans à celle des plus de 65 ans. Dès lors, il est tout à fait normal que le nombre de décès en France augmente chaque année, et cela va continuer à augmenter pendant encore au moins 20 ans.
 
-Plutôt que de fantasmer sur ces nombres de décès bruts, on peut regarder les mêmes décès, mais cette fois en corrigeant de l’âge des gens. Il s'agit de standardiser les décès pour mettre la même population population partout, par exemple celle de la France de 2020. On constate alors que l’année 2020 n’est plus du tout une année de record de mortalité. 
+Ainsi, il ne faut jamais commenter des nombres de décès bruts qui augmentent ou baissent non pas selon l'arrivée des maladies, mais toujours selon la taille de la population et selon l'âge des personnes. En effet, s'il y a plus de décès en France qu'au Luxembourg, c'est parce que les français sont 100 fois plus nombreux que les Luxembourgeois. S'il y a plus de décès dans un EHPAD de 200 personnes que dans une école maternelle de 200 enfants, ce n'est pas parce que l'EHPAD est plus dangereux que l'école maternelle, mais uniquement parce que les résidents d'un EHPAD sont beaucoup plus vieux que les élèves d'une école maternelle. Ainsi, comparer des nombres de décès entre 2 populations ne peut pas se faire avec les seuls chiffres bruts, mais toujours en corrigeant de la taille de la population, mais aussi en corrigeant de l’âge des gens. Il s'agit de standardiser les décès pour mettre la même population partout.
+
+Pour comparer le nombre de décès en France de ces dernières années avec l'année 2020, nous avons standardisé les décès, en appliquant la population par âge de 2020 à toutes les années du passés. Il en est ressorit que l’année 2020 n’est pas du tout une année de record de mortalité. 
 
 ```{r, echo=FALSE}
 barplot_decestheo_france <- readRDS("barplot_decestheo_france.RDS")
@@ -41,81 +57,205 @@ barplot_decestheo_france
 
 ```
 
-L’année 2020 est au niveau de l'année 2015, c’est même la 6e année la moins mortelle de toute l’histoire de la France.POur être complètement exact, avec les données Eurostat, on trouve un nombre décès standardisé légèrement plus élevé en 2015 qu'en 2020, alors qu'avec les données de l'Insee utilisées dans la vidéo on trouve l'inverse. Cela vient du fait que les données Eurostat sont moins précises : elles sont par âge quinquennal et regroupent tous les âges au-delà de 90 ans, alors que l'Insee donne l'âge exact et ne regroupe qu'au-delà de 100 ans. D'une manière générale, plus on détaille les décès par âge et moins on trouvve que l'année 2020 est exceptionnelle. Toute la psychose actuelle repose sur un biais démographique.
+L’année 2020 est au niveau de l'année 2015. Il s'agit de la 6e année la moins mortelle de toute l’histoire de la France. Dès lorts, on ne peut justifier une panique sanitaire et des mesures exceptionnelles sur la base des décès de l'année 2020 en France.  
+
+Cette situation est la même quel que soit le pays en Européen.
 
 
-Enfin , dans une autre vidéo, on a vu que les épisodes de fortes mortalités que nous avons connu en 2020 ont tous eu lieu après le début des différentes mesures. En France, nous avons vu que l’interdiction de prescrire pour les médecins de ville l’abandon de soin organisé au moment des confinements expliquent en majeure partie la surmortalité de 2020. ON ne se trouve donc pas dans le sens où le gouvernement à réagit à une forte mortalité, puisque le nombre de décès n’avait pas encore commencé à augmenter au moment des mesures. On, se trouve dans le sens où les mesures ont été appliquées et ensuite seulement la mortalité a augmenter.
-Au vu des chiffres de mortalité, on doit se poser la question sérieusement de savoir si les morts dont on parle sont réellement la conséquence du seul virus ou plutôt directement des mesures que l’on a mis en place depuis le début de la panique.
+### 1.2 L’année 2020 en Europe : Une année dans la norme pour tous les pays
 
-La question a se poser, est comme toujours, : « le ratio bénéfice / risque est-il bon ? »
-
-Aujourd’hui, le nouveau combat du gouvernement c’est d’obliger tout le monde à se vacciner, malgré le caractère expérimental des vaccins, les incertitudes quand à leur efficacité et les risques inhérents à toute intervention de ce type. Une fois de plus, le ratio bénéfice / risque est complètement ignoré.
-
-Dans cette vidéo on va continuer de s’attaquer à l’argument « si on ne faisait rien ce serait pire ». Pour cela, on va regarder ce qui se passe dans tous les pays européens pour lesquels nous avons les données de population et de mortalité générale disponible.
-Toutes les données de population et de décès que j’utilise sont les statistiques officielles diffusées par Eurostat et Ourworldindata. Les mesures prises par les différents pays viennent de l’ecdc. J’ai mis à disposition tous mes programmes de récupération et de traitement des données en ligne sur GitHub. Comme ça tout est public, vérifiable et reproductible.
-
-Ce que je vais montrer dans cette vidéo, c’est qu’aucun pays européen n’a vécu une période exceptionnelle en terme de mortalité en 2020. Au pire l’année 2020 n’est que la 10e année la moins mortelle de l’histoire du pays. Pour certains pays, c’est juste l’année la moins mortelle de leur histoire. 
-On verra aussi qu’en Europe, ce qui compte pour savoir si vous avez plus de chance de vivre vieux, ce n’est pas s’il y a une pandémie, mais uniquement le pays dans lequel vous vivez.
-
-## L’année 2020 en Europe, finalement une année banale pour tous les pays
-
-Tous les pays européens vivent au rythme des nouvelles annoncent et mesures concernant la Covid-19 depuis plus d’un an. Mais qu’en est-il réellement du point de vue de la mortalité ? L’année 2020 est-elle vraiment une année d’hécatombe ?
-Voici une carte d’Europe qui représente l’année pour laquelle chaque pays européen, dont nous disposons des données a connu le plus de décès.
+Tous les pays européens vivent au rythme des nouvelles annoncent et mesures concernant la Covid-19 depuis plus d’un an. Mais qu’en est-il réellement du point de vue de la mortalité ? L’année 2020 est-elle vraiment une année d’hécatombe quelque part ?
+Voici une carte d’Europe qui représente l’année pour laquelle chaque pays européen, dont nous disposons des données, a connu le plus de décès.
 
  ![](annee_deces_maximum.png)
 
-En marron, nous retrouvons tous les pays pour lesquels l’année 2020 est l’année pour laquelle il y a eu le plus de décès. C’est bien le cas de la majorité des pays d’Europe. On note toutefois quelques exceptions, en particulier les pays nordiques. Cette carte est réalisée avec des données brutes. Il n’y a qu’avec les données brutes que l’on peut faire peur aux gens en leur faisant croire que 2020 est exceptionnelle.
+En marron, nous retrouvons tous les pays pour lesquels l’année 2020 est l’année pour laquelle il y a eu le plus de décès. C’est bien le cas de la majorité des pays d’Europe. On note toutefois quelques exceptions, en particulier les pays nordiques. Cette carte est réalisée avec des données brutes. Comme nous l'avons vu pour la France, les données brutes reflètent avant tout l'augmentation et le vieillissement de la population. 
 
-Nous allons maintenant regarder la pyramide des âges des pays Européens. On va regarder d’un côté celle des pays qui ont eu leur maximum de décès en 2020, et en face, les autres.
+La pyramide des âges des pays Européens révèle une situtation européenne semblable à celle de la France : la population vieillit. Il est tout à fait normal que le nombre de décès augmente chaque année du fait de ce simple constat.
 
- ![](pyramid2020.png){width=450px} ![](pyramide_avant2020.png){width=450px}
+ ![](pyramide_europe_2000.png){width=450px} ![](pyramide_europe_2020.png){width=450px}
 
-Sans surprise les pays qui ont eu leur maximum de décès en 2020 sont les pays avec une population plus âgée que les autres. Leur pyramide des âges est forme de cloche, signe qu’il y a très peu de jeunes et beaucoup de vieux. Ce sont donc des pays battent leur record de décès tous les ans, juste parce que leur population vieillit. Il est donc tout à fait normal que l’année 2020 soit un record de décès. Pour ces pays, 2021 sera un nouveau record de décès, qui sera battu par 2022 puis 2023 etc. jusqu’à ce que toute la grosse génération des baby-boomers soit décédée. Cela arrivera d’ici 30 ans. Si on doit rester confiner jusqu’à ce que le nombre de morts baisse, je vous préviens qu’on va trouver le temps long.
+Ainsi, plutôt que de regarder les décès bruts, il est nécessaire de les corriger par la pyramide des âges, de façon à prendre en compte l'augmentation et le vieillissement de la population dans les calculs. Cela permet de ne pas dire que la mortalité augmente, si cela vient juste du fait qu’il y a plus de personnes âgées.
 
-Le bilan, de ce constat, c’est que, plutôt que de regarder les décès bruts, il faut les corriger par la pyramide des âges, de façon à prendre en compte le vieillissement de la population dans les calculs. Cela permet de ne pas dire que la mortalité augmente, si cela vient juste du fait qu’il y a plus de personnes âgées.
-
-On va donc calculer pour chaque pays les décès standardisés par âge, pour toutes les années et les comparer aux décès 2020. Cela va nous permettre de savoir si à âge égal, l’année 2020 a été réellement plus mortelle que les autres. En faisant ce calcul, on se rend compte qu’il y a 5 type des pays que l’on va représenter sur une carte.
+En calculant pour chaque pays, les décès standardisés par âge, pour toutes les années, il est désormais possible de les comparer aux décès 2020. Cela permet de savoir si à population égale, l’année 2020 a été réellement plus mortelle que les autres. Ce calcul, permet de déger 5 profils type de pays que l’on peut représenter sur une carte.
 
  ![](typo_annee_deces.png)
 
-Pour l’Islande, la Norvège et le Danemark , l’année 2020 est en fait l’année la moins mortelle de toute leur histoire (la qualité des données de la Géorgie semble trop douteuse pour être citée ici). Dans ces pays, on n’est jamais moins mort qu’en 2020. Ce n’est pas pour autant qu’ils n’ont pas de morts attribués à la Covid-19, mais dans ces pays, malgré la « pandémie », l’année 2020 est le record absolu de faible mortalité.
+Pour l’Islande, la Norvège et le Danemark , l’année 2020 est en fait l’année la moins mortelle de toute leur histoire. Dans ces pays, les habitants ne sont jamais moins mort qu’en 2020. Ce n’est pas pour autant qu’ils n’ont pas de morts attribués à la Covid-19, mais dans ces pays, malgré la « pandémie » annoncée, l’année 2020 est le record absolu de faible mortalité.
 
-L'Allemagne, la Suède, la Finlande, l'Estonie et la Lituanie ont vécu la 2e année la moins mortelle de toute leur histoire. POur l'écrasante majorité des pays d'Europe, l'année 2019 a été un record de sous-mortalité qui sera très difficile à battre, même en enfermant tout le monde.
+L'Allemagne, la Suède, la Finlande, l'Estonie et la Lituanie ont vécu la 2e année la moins mortelle de toute leur histoire. Seule l'année 2019 a enregistré moins de décès. En effet, pOur l'écrasante majorité des pays d'Europe, l'année 2019 a été un record de sous-mortalité qui sera très difficile à battre, même en enfermant tout le monde.
 
-Un majorité des pays d'Europe, dont la France a vécu une année 2020 dans la norme de la décennie. Les pays en orange clair sont plutôt dans la 2e moitié de la décennie, autour des années 2015-2016. Les pays en orange foncé sont plus souvent autour de l'année 2012.
+Une majorité des pays d'Europe, dont la France a vécu une année 2020 dans la norme de la décennie. Les pays en orange clair sont plutôt dans la 2e moitié de la décennie, autour des années 2015-2016. Les pays en orange foncé sont plus souvent autour de l'année 2012.
 
-Seuls l'Espagne, l'Italie, la Belgique, la Roumanie, la Bulgarie la Pologne et le Monténégro ont connu une mortalité forte pour la décennie. Ainsi, les pays d'Europe ayant connu les plus fortes mortalités relativement à leur histoire, ont connu une mortalité de l'ordre de la 10e plus faible de toute leur histoire.
+Seuls l'Espagne, l'Italie, la Belgique, la Roumanie, la Bulgarie la Pologne et le Monténégro ont connu une mortalité forte pour la décennie. Ainsi, les pays d'Europe ayant connu les plus fortes mortalités relativement à ce qu'ils enregistrent habituellement, ont connu une mortalité de l'ordre de la 10e plus faible de toute leur histoire.
 
 L'année 2020 présentée comme une hécatombe modiale, n'est en fait qu'une année pendant laquelle, au pire, les humains sont morts dans les mêmes proportions que l'année 2010. Ce que je montre depuis 6 mois pour la France, est donc réplicable pour tous les pays dans lesquels ont trouve des données. 
 
-Pas un seul payus d'Europe n'a vécu une hécatombe en 2020. POur les pire cas, 2020 est juste aussi mortelle que 2010.
+Pas un seul pays d'Europe n'a vécu une "hécatombe" en 2020. POur les pire cas, 2020 est juste aussi mortelle que 2010.
 
-## La mortalité en Europe, où meurt-on le plus ?
+### 1.3 La mortalité en Europe : le pays de résidence bien plus déterminant que l'année 
 
-Nous venons de voir qu'en corrigeant les décès de la pyramide des âges de chaque pays, on montre que 2020 est finalement une année de faible mortalité. Afin de compléter notre vision, il est important de comparer les pays entre eux.  POur ce faire, nous allons appliquer la pyramide des âges de l'Europe de 2020 à tous les pays Européens. Ainsi nous pourrons savoir, dans quel pays et pendant quelle année, les européens sont le plus décédés.
+Nous venons de voir qu'en corrigeant les décès de la pyramide des âges de chaque pays, on montre que 2020 est finalement une année de faible mortalité. Afin de compléter notre vision, il est important de comparer les pays entre eux. 
+Seulement les populations des pays européens sont trop différentes pour être comparables. Entre l'Allemagne et ses 83 millions d'habitants et le Liechtenstein et ses 38 000 habitants, il est impossible de faire un graphique à lmême échelle. Il est donc nécessaire de les comparer sur une même base.
+Pour ce faire, nous allons appliquer la même pyramide des âges à tous les pays Européens. Ainsi nous pourrons savoir, dans quel pays et pendant quelle année, les européens sont le plus décédés.
 
-Ce graphique représente les décès théorique pour chaque pays et chaque année, s'ils avaient eu la population et la pyramide des âges de l'Europe.
+Ces graphiques représentent les décès théorique pour chaque pays et chaque année, s'ils avaient eu la population et la pyramide des âges de la France en 2020. Il sont sépraré entre les pays de l'Est et les pays de l'Ouest de l'Europe pour une question de visibilité, mais également parce que ces 2 zones de l'Europe sont assez différentes du point de vue de la mortalité.
 
 Le point rouge pour chaque pays représente ses décès théoriques en 2020 et les autres points, les décès théoriques des autres années.
 
-Par exemple, une Europe de 2020 dont les habitants décéderaient comme en Bulgarie en 2020 aurait 900 000 morts, alors qu'une Europe de 2020 dont les habitants décéderaient comme en France en 2020 aurait 450 000 morts.
-A population et pyramide des âges égales, ont meurt 2 fois plus en Bulgarie qu'en France.
-
-Ainsi si la Bulgarie n'a pas 2 fois plus de morts que la France chaque année, c'est parce que les Bulgares sont 7 millions et les français 67 millions, mais aussi parce que les Bulgares sont en moyenne plus jeunes que les français.
-
-Les Bulgare sont plus jeune que les français notamment parce qu'ils meurent plus jeunes. Il y a donc moins de Bulgare âgés dans leur population. Ils décèdent petit à petit plus fortement que les français.
+Par exemple, si la population de la France de 2020 étaient décédée de la même manière que la Bulgarie en 2020, il y aurait eu 1 300 000 morts au lieu des 660 000 qu'elle a vécu.
 
 
- ![](deces2000tot.png){width=1000px}
+![](deces2000est.png){width=1000px} 
+![](deces2000ouest.png){width=1000px}
 
-Ce graphique montre une forte disparité entre les pays de l'Est et les pays de l'Ouest de l'Europe. Il montre également que les français vivent dans l'un des pays d'Europe, et donc du monde, au sein duquel on meurt le moins.
+Cela montre qu'à population et pyramide des âges égales, les bulgares meurent deux fois plus que les français.
 
-Nous avons montré plus haut que l'année 2020 est la 6e année pour laquelle les français sont le moins mort. Ce graphique nous montre que la mortalité de la France en 2020 a été une des plus faible jamais enregistrée dans tous les pays du monde.
+Ainsi, si la Bulgarie n'a pas 2 fois plus de morts que la France chaque année, c'est d'abord parce que les Bulgares sont 7 millions et les français 67 millions, mais aussi parce que les Bulgares sont en plus jeunes que les français.
+
+Les Bulgares sont plus jeunes que les français notamment parce qu'ils meurent plus jeunes. Il y a donc moins de personnes dans leur population qui peuvent arriver à des âges avancés. Ils décèdent petit à petit plus fortement que les français.
+
+ 
+Les différences de mortalité d'une année à l'autre sont parfaitement négligeables devant les différences d'un pays à l'autre. La probabilité de décéder à chaque âge dépend avant tout de l'endroit où l'on vit et moins des années.
+
+Ce graphique montre également que les français vivent dans l'un des pays d'Europe, et donc du monde, au sein duquel on meurt le moins.
+
+Nous avons montré plus haut que l'année 2020 est la 6e année pour laquelle les français sont le moins mort. Ce graphique nous montre que la mortalité de la France en 2020 a été une des plus faibles jamais enregistrée dans tous les pays du monde.
 POur la quasi totalité des humains ayant jamais vécu sur cette planète, l'année 2020 en France est l'un des endroits et moment où on a connu le moins de morts.
 
+Il n'est donc à aucun moment justifiable de générer une panique et des mesures d'une ampleur colossale pour des décès qui ne sont nulle part exceptionnels, et surtout pas en France.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+### 1.4 Une baisse de mortalité aujourd'hui n'entraîne pas une baisse de la mortalité demain
+
+De nombreuse études commentent l'année 2020 au regard de son augmentation par rapport à 2019. LCes études considèrent que la baisse de mortalité observée ces dernières années et tout particulièrement en 2019 doit se poursuivre. Ainsi, les morts en plus de l'année 2020 sont considérées comme une catastrophe évitable attribuée à un virus.
+
+Seulement, imaginer que la biasse de mortalité peut se poursuivre indéfiniment, c'est tout bonnement nier le fait que les humains finissent par mourir.
+
+L'année 2019 a connu une mortalité extrêment faible partout en Europe. Il semble banal de penser que si des morts sont évitées une année, elles finiront par se répercuter sur les années suivantes et pas ne plus jamais arriver. Encore en 2020, on ne peut pas éviter la mort, au mieux on la repousse.
+
+Si on imagine un cas théorique où on trouverait un territoire sur lequel personne n'est mort pendant une année. Il ne viendrait à l'idée de personne que les habitants de ce territoire vivraient éternellement. Pourtant, la projection de la mortalité de ce territoire supposerait qu'il n'y ait pas de morts non plus l'année suivante. Avec cette méthode, tout mort serait alors suspect et compté comme de la surmortalité.
+
+Ce cas trivial est pourtant ce qui est fait lorsque l'on compare l'année 2020 à la seule année 2019, ou que l'on essaye de continuer de faire baisser indéfiniment des taux de mortalité.
+
+Sur le graphique du nombre de décès français, on observe certaines années plus ou moins élevées par rapport à la tendance générale. Dans la littérature, les années de fortes mortalité sont appelées années moissons.  
+
+```{r, echo=FALSE}
+barplot_deces_france <- readRDS("barplot_deces_france.RDS")
+barplot_deces_france
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Ces années appraraissent tous les 2 à 3 ans. Ainsi, pour comprendre si les décès d'une année ont un impact visible sur une période, une méthode peut consister à regarder les décès sur 3 années consécutives.
+Le dernier trio d'années, 2018-2019-2020 est en rouge pour plus de visibilité.
+
+![](deces3annees.png){width=1000px}
+
+Sans surprise, pour la quasi-totalité des pays européens, il n'est jamais décédé aussi peu de personnes relativement à leur âge que ces 3 dernières années. L'année 2020 n'a pas contrebalancé les faibles mortalités des années 2018 et 2019.
+
+### 1.5 La chute de l'espérance de vie n'est qu'une autre manière de présenter le même résultat
+
+Le 19 janvier 2021, l’Insee a sorti son bilan démographique de l’année 2020 en décidant de mettre comme titre « Avec la pandémie de Covid-19, nette baisse de l’espérance de vie et chute du nombre de mariages ». Bien évidemment, la presse s’est emparée de ce titre pour expliquer à quel point la situation était grave. Les journalistes ont bien évidemment déduit du titre de l’Insee, que les français ont vécu moins longtemps que d’habitude, et qu’en plus cette diminution était causée par la Covid-19.
+
+D’ailleurs, un des sous-titres de l’article de l’Insee est directement "En 2020, la pandémie a fait perdre 0,4 an d’espérance de vie aux femmes et 0,5 an aux hommes". Ainsi le lien est direct : c’est la pandémie qui tue.
+
+La vidéo dédiée <https://youtu.be/UKpOOtnCnCQ> explique que l’espérance de vie est un indicateur qui fait partie de la famille des agrégats. C’est-à-dire qu’il est construit en additionnant des choses qui vont dans tous les sens et finalement ne renseigne pas du tout sur ce qu’il se passe vraiment. Il a juste un joli nom qui induit les gens en erreur parce qu’ils pensent avoir compris ce qu’il signifie.
+
+Le mot « espérance » est un terme utilisé en mathématique qui signifie « moyenne pondérée ». Par exemple lorsque vous lancez 2 dés à 6 faces, et que vous additionnez le nombre de points sur vos 2 dés, en moyenne, vous faites 7, votre espérance mathématique est 7. On ne connaît pas le résultat de votre prochain lancé. L’indicateur « espérance de vie » n’est donc pas du tout à entendre au sens de « espoir » et encore moins « nombre d'années que vous pouvez espérer vivre ». L’espérance de vie ne vous renseigne pas du tout sur votre avenir, mais est juste une image du présent. L’espérance de vie 2020, est une moyenne standardisée de l’âge des gens morts en 2020. Elle nous donne une idée de l’âge des morts en 2020, en tenant compte de la structure par âge. L'espérance de vie 2020 ne correspond absolument pas à l'âge que vous pourrez espérer vivre. Si vous lisez cet article, vous n'êtes pas morts en 2020. Vous ne jouez pas avec les mêmes dés que ceux qui sont morts en 2020 ou avant.
+
+Dans le présent article nous utilisons une autre forme de standardisation que l'espérance de vie. Elle donne exactement la même conclusion que celle de l'article de l'INSEE. Sur l'article de l'INSEE nous pouvons lire que l'espérance de vie 2020 est la même que l'espérance de vie 2015, sur notre article nous concluons que les décès standardisés de 2020 sont ausi nombreux qu'en 2015. Se focaliser sur la chute, plutôt que sur le niveau n'est qu'un choix éditorial et pas une analyse apporfondie.
+
+## 2 Des pics de mortalités à relier aux décisions prises depuis 2020
+
+Depuis le début de l'année 2020, des décisions inédites ont été prises en France et dans beaucoup de pays du monde. Ces décisions avaient pour objectif de diminuer le nombre de décès. Nous avons vu dans la première partie de cet article que finalement, la mortalité de 2020 ne présente pas d'anomalie alarmante lorsqu'elle est prise dans son ensemble et comparée aux années de la dernière décennie. Il convient cependant pour mieux comprendre les mécanismes en jeu depuis plus d'un an, en étudiant finement les décès hebdomadaires des pays européens et de les confronter aux mesures prises.
+
+### 2.1 La mortalité hivernale n'est pas un phénomène de propagation
+
+L'étude de la carte des décès hebdomadaires standardisés en France depuis 2013 nous permet de visuliser les cycles de mortalité.
+![](deceshebdofrance.png){width=1000px}
+
+Chaque annnée, le nombre de décès augmente en hiver et diminue en été. Cette augmentation de décès l'hiver est concommitante des maladies hivernales, dont les infections respiratoires aigues comme les grippes ou les coronavirus.
+
+Certains hivers présentent des pics de mortalité nettement supérieurs à d'autres. L'hiver 2013-2014 a connu des pics de mortalité bien moins élevés que l'hiver 2014-2015. Cette différence fait partie des éléments expliquant les différences de décès d'une année sur l'autre.
+De plus, certaines années les pics de décès peuvent être plus ou moins précoces ou tardifs. L'année 2017 supporte ainsi la majorité de la mortalité de l'hiver 2016-2017, mais également une importante partie de celle de l'hiver 2017-2018. Ainsi, le décalage des mortalités hivernales entraînent des différences de nombres de décès sur l'année.
+
+Le découpage annuel n'est donc pas le plus adapté pour étudier la mortalité car elle découpe la mortalité hivernale de manière inégale selon les années. Il est cependant le plus facile à représenter car correspond aux données administratives et statistiques.
+
+Ce phénomène de mortalité hivernale est complètement simultané sur toute l'Europe. La standardisation des décès nous permet de représenter les différents pays et années sur un même graphique.
+
+![](deceshebdofrancesuedeportugal.png){width=1000px}
+De la Suède jusqu'au Portugal, les hausses de mortalité sont naturellement simultanées tous les hivers, et même les étés lors des épisodes caniculaires.
+La mortalité hivernale des pays européens n'est donc pas en lien avec un phénomène de diffusion sur de maladies l'hiver en Europe. Le Portugal et la Suède sont séparés par 3000 km. Si la diffusion entre individus de maladies l'hiver était responsable de l'augmentation de la mortalité, de décalages temporels devraient être visibles, ce qui n'est pas le cas.
+L'augmentation des décès ne représente pas le déplacement des maladies, mais leur apparition partout à la fois. Il s'agit d'une manifestation de la dégradation cyclique de l'état de santé. Cette dégradation simultanée partout en Europe se traduit par l'apparition de symptômes attribués à des maladies hivernales et par l'augmentation des décès. Le phénomène de courbe en cloche concernant la mortalité n'est pas le résultat d'un phénomène de propagation, mais d'une phénomène d'apparition. Il est évident que les portugais ne contaminent pas les suédois, ni inversement.
+
+### 2.2 Le phénomène de moisson
+
+
+
+
+
+
+### 2.2 le pic de mortalité de mars-avril 2020 ne concerne que peu de pays
+
+Contrairement à une idée largement répandue, le phénomène de pic de mortalité aux mois de mars-avril 2020 n'est absolument pas un phénomène mondial. Sur les 33 pays étudiés dans cet article, seuls 9 présentent une mortalité supérieure à la mortalité habituelle sur cette période : la Belgique, la Suisse, Chypre, l'Espagne, la France, l'Italie, le Luxembourg, les Pays-bas et la Suède (cf. annexes)
+
+Ce phénomène très limité doit alors s'analyser au regard de la situation particulière de chaque pays et surtout des mesures spécifiques prises sur la période. Cet article présente les liens trouvés entre la hausse de la mortalité française et les mesures exceptionnelles prises.
+
+En France, l'année 2020 comporte plus de décès que l'année 2019 notamment par la mortalité tardive visible aux mois de mars-avril, mais également à la mortalité précoce arrivant en octobre. Un lissage des décès sur 52 semaines, nous permet de connaître l'impact de ces augmentations sur la mortalité habituelle.
+
+La moyenne et les deux bornes des intervalles de confiance à 95 %, permettent de visualiser les périodes de mortalité anormale.
+
+![](deceshebdofrancelissage.png){width=1000px}
+
+Ainsi, arrivé au mois de mars 2020, la France était sur une moyenne très basse de décès relativement aux années précédentes. Le pic de mars-avril en France a entraîné un rapprochement vers la moyenne de décès habituels, sans la franchir. Il s'agit donc d'un phénomène violent avec un impact limité. La mortalité lissée sur 52 semaines ne dépasse la moyenne que depuis la hausse de mortalité en octobre.
+
+
+
+
+# Annexes
+## Les décès hebdomadaires par pays
+### Pays présentant un pic de mortalité en mars-avril
+![](deceshebdofrancelissage.png){width=1000px}
+![](deceshebdobelgiquelissage.png){width=1000px}
+
+![](deceshebdosuisselissage.png){width=1000px}
+![](deceshebdoespagnelissage.png){width=1000px}
+
+![](deceshebdoitalielissage.png){width=1000px}
+![](deceshebdoluxembourglissage.png){width=1000px}
+
+![](deceshebdopaysbaslissage.png){width=1000px}
+
+![](deceshebdosuedelissage.png){width=1000px}
+![](deceshebdochyprelissage.png){width=1000px}
+
+
+### Pays ne présentant pas de pic de mortalité en mars-avril 2020
+
+![](deceshebdoportugallissage.png){width=1000px}
+
+![](deceshebdomaltelissage.png){width=1000px}
+
+![](deceshebdoautrichelissage.png){width=1000px}
+![](deceshebdohongrielissage.png){width=1000px}
+![](deceshebdobulgarielissage.png){width=1000px}
+![](deceshebdortchequelissage.png){width=1000px}
+![](deceshebdodanmarklissage.png){width=1000px}
+![](deceshebdoestonielissage.png){width=1000px}
+![](deceshebdocroatielissage.png){width=1000px}
+![](deceshebdoislandelissage.png){width=1000px}
+![](deceshebdolichtensteinlissage.png){width=1000px}
+![](deceshebdolettonielissage.png){width=1000px}
+![](deceshebdomontenegrolissage.png){width=1000px}
+![](deceshebdonorvegelissage.png){width=1000px}
+![](deceshebdopolognelissage.png){width=1000px}
+![](deceshebdoserbielissage.png){width=1000px}
+![](deceshebdoslovaquielissage.png){width=1000px}
+![](deceshebdoslovenielissage.png){width=1000px}
+![](deceshebdoallemagnelissage.png){width=1000px}
+![](deceshebdoalbanielissage.png){width=1000px}
+
+![](deceshebdogrecelissage.png){width=1000px}
+![](deceshebdofinlandelissage.png){width=1000px}
+![](deceshebdoroumanielissage.png){width=1000px}
+
+![](deceshebdoarmenielissage.png){width=1000px}
