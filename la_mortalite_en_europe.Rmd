@@ -320,7 +320,8 @@ Il est évident qu'une intervention médicamenteuse ayant pour conséquence d'ac
 
 De nombreux pays européens présentent une mortalité saisonnière forte et précoce dès octobre 2020. Seuls quelques pays échappent à cette hausse des décès : Chypre, Malte, le Danemark, l'Islande, la Norvège et la Finlande.
 Pour les pays concernés cependant, la hausse de mortalité est simultanée, rendant impossible la seule cause d'un unique virus se propageant en Europe.
-Il s'agit de comprendre pourquoi, fin 2020, les habitants d'une majorité de pays européens semblent en moins bonne santé que les autres années. Les périodes de stress, le manque de sortie peuvent être des éléments favorisant la faiblesse des défenses immunitaires.
+Nous notons de surcroît, que la généralisation du port du masque, les gestes barrière, les fermetures de nombreux lieux publics, les jauges de publics dans les commerces, la profusion de gel hydroalcoolique ou encore la diffusion du télétravail, n'ont absoluement pas empêhché la mortalité hivernale d'être aux mêmes niveaux, voire légèrement supérieur à ce qui est observé d'habitude. Il s'agit d'un indice supplémentaire qu'elle n'est aucunement liée à un phénomène de propagation.
+Il s'agit alors de comprendre pourquoi, fin 2020, les habitants d'une majorité de pays européens semblent en moins bonne santé que les autres années. Les périodes de stress, le manque de sortie peuvent être des éléments favorisant la faiblesse des défenses immunitaires.
 En France, commme dans une grande parte des pays européens, une très vaste campagne de vaccination grippale a eu lieu à partir d'octobre 2020. Le taux de couverture vaccinale a gagné presque 10 points en 2020 par rapport aux années précédentes [^n14].
 
 La campagne de vaccinale grippale arrive tardivement dans l'année. Elle est concommitante à la hausse de mortalité hivernale.
@@ -382,7 +383,17 @@ A l'instar de la Norvège, la situation chez les jeunes semble dans la norme. Ra
 
 ![](decesvaccincroatiejeune.png){width=1000px}
 
+Pour la quasi-totalité des pays d'Europe dont nous disposons des données, il apparaît nettement une reprise de la mortalité (cf. annexes). Il convient alors de se poser la question du ratio bénéfices/risques de la politique actuelle.
 
+## Une politique sanitaire dont on questionne les liens avec la santé
+
+Nous observons que la mortalité observée depuis un peu plus d'un an partout en Europe est à un niveau comparable au reste de notre décennie. Il existe des variations entre les différents Etats, mais le lien entre les poltiques affichées et le niveau de mortalité ne semble pas évident, voire dans le sens inverse de l'attendu.
+POur la France, les différentes mesures identifiées participent mécaniquement à une augmentation des décès sans que l'on puisse quantifier un quelconque impact bénéfique.
+Dès lors, si la mortalité n'est finalement pas exceptionnelle, est-il raisonnable d'entretenir un climat de peur, de maintenir les règles liberticides en place et de lancer des campagnes de vaccinations d'une ampleur jamais connue réalisées à partir de produits expérimentaux.
+Nous observons que les campagnes de vaccination en période hivernale sont liée à des augmentations de mortalité. Il conviendrait d'analyser en profondeur ce lien avant de continuer à promouvoir des produits dans des périodes où la santé des européens baisse cycliquement.
+Nous observons que tous les pays européens ayant démarré en masse une campagne de vaccination contre la Covid-19 ont des taux de mortaltié inhabituels pour la saison. Les pays ayant le plus massivement vaccinés ont des taux de mortalité chez leurs jeunes jamais égalés jusqu'à maintenant.
+
+Est-il raisonnable de continuer cette politique sanitaire inconnue dans ces conditions ?
 
 
 [^n1]:<https://youtu.be/IPu4QvUHaQE>
@@ -452,3 +463,32 @@ A l'instar de la Norvège, la situation chez les jeunes semble dans la norme. Ra
 ![](deceshebdoroumanielissage.png){width=1000px}
 
 ![](deceshebdoarmenielissage.png){width=1000px}
+
+## Les décès confrontés à la vaccination Covid par pays
+
+![](decesvaccinhongrie.png){width=1000px}
+![](decesvaccinmalte.png){width=1000px}
+![](decesvaccinfrance.png){width=1000px}
+![](decesvaccinislande.png){width=1000px}
+![](decesvaccinchypre.png){width=1000px}
+![](decesvaccinallemagne.png){width=1000px}
+![](decesvaccinautriche.png){width=1000px}
+
+![](decesvaccinbelgique.png){width=1000px}
+
+![](decesvaccinsuisse.png){width=1000px}
+
+![](decesvaccinespagne.png){width=1000px}
+
+![](decesvaccinpaysbas.png){width=1000px}
+
+
+![](decesvaccinpologne.png){width=1000px}
+![](decesvaccindanmark.png){width=1000px}
+![](decesvaccinsuede.png){width=1000px}
+
+![](decesvaccingrece.png){width=1000px}
+
+![](decesvaccincroatie.png){width=1000px}
+![](decesvaccinnorvege.png){width=1000px}
+![](decesvaccinserbie.png){width=1000px}

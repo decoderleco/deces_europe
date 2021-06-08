@@ -2132,12 +2132,331 @@ box() # pour encadrer le graphique
 par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="red",cex=0,)
+dev.print(device = png, file = "decesvaccinpaysbas.png", width = 1000)
+
+
+#portugal
+
+moyenne_mobile_m40 <- running_mean(portugal$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+portugal <- portugal %>% left_join(moyenne_mobile_m40)
+portugal$moyenne_m40 <- moyenne_m40
+
+
+essai <- portugal %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
+     pch=16, axes=F, ylim=c(0,5000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation du Portugal")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
+mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
+mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
+     pch=16, axes=F, ylim=c(0,5000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
 plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="blue",cex=0,)
+     pch=16, axes=F, ylim=c(0,2000000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinpaysbas.png", width = 1000)
+dev.print(device = png, file = "decesvaccinportugal.png", width = 1000)
+
+
+#france
+
+moyenne_mobile_m40 <- running_mean(france$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+france <- france %>% left_join(moyenne_mobile_m40)
+france$moyenne_m40 <- moyenne_m40
+
+
+essai <- france %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
+     pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la France")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
+mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
+mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
+     pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations,
+     pch=16, axes=F, ylim=c(0,5000000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decesvaccinfrance.png", width = 1000)
+
+
+#pologne
+
+moyenne_mobile_m40 <- running_mean(pologne$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+pologne <- pologne %>% left_join(moyenne_mobile_m40)
+pologne$moyenne_m40 <- moyenne_m40
+
+
+essai <- pologne %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
+     pch=16, axes=F, ylim=c(0,15000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Pologne")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
+mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
+mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
+     pch=16, axes=F, ylim=c(0,15000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations,
+     pch=16, axes=F, ylim=c(0,2000000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decesvaccinpologne.png", width = 1000)
+
+
+#danmark
+
+moyenne_mobile_m40 <- running_mean(danmark$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+danmark <- danmark %>% left_join(moyenne_mobile_m40)
+danmark$moyenne_m40 <- moyenne_m40
+
+
+essai <- danmark %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
+     pch=16, axes=F, ylim=c(0,1500), xlab="", ylab="", type="o",col="black", cex=0, main="Situation du Danemark")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
+mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
+mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
+     pch=16, axes=F, ylim=c(0,1500), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations,
+     pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decesvaccindanmark.png", width = 1000)
+
+
+#grece
+
+moyenne_mobile_m40 <- running_mean(grece$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+grece <- grece %>% left_join(moyenne_mobile_m40)
+grece$moyenne_m40 <- moyenne_m40
+
+
+essai <- grece %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
+     pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Grèce")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
+mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
+mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
+     pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations,
+     pch=16, axes=F, ylim=c(0,500000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decesvaccingrece.png", width = 1000)
+
+
+#suisse
+
+moyenne_mobile_m40 <- running_mean(suisse$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+suisse <- suisse %>% left_join(moyenne_mobile_m40)
+suisse$moyenne_m40 <- moyenne_m40
+
+
+essai <- suisse %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
+     pch=16, axes=F, ylim=c(0,2500), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Suisse")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
+mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
+mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
+     pch=16, axes=F, ylim=c(0,2500), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations,
+     pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decesvaccinsuisse.png", width = 1000)
+
+
+#suede
+
+moyenne_mobile_m40 <- running_mean(suede$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+suede <- suede %>% left_join(moyenne_mobile_m40)
+suede$moyenne_m40 <- moyenne_m40
+
+
+essai <- suede %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
+     pch=16, axes=F, ylim=c(0,3000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Suède")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
+mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
+mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
+     pch=16, axes=F, ylim=c(0,3000), xlab="", ylab="", type="o",col="red",cex=0,)
+
+dev.print(device = png, file = "decesvaccinsuede.png", width = 1000)
+
+
+#serbie
+
+moyenne_mobile_m40 <- running_mean(serbie$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+serbie <- serbie %>% left_join(moyenne_mobile_m40)
+serbie$moyenne_m40 <- moyenne_m40
+
+
+essai <- serbie %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
+     pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Serbie")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
+mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
+mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
+     pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations,
+     pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decesvaccinserbie.png", width = 1000)
 
 ##realisation de cartes dynamiques avec 1 carte par semaine
 
