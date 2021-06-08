@@ -20,16 +20,16 @@ library(lsr)
 library(igraph)
 
 
-                                      #---------------------------------------#
-                                      ####analyse des donnees hebdomadaires####
-                                      #---------------------------------------#
+#---------------------------------------#
+####analyse des donnees hebdomadaires####
+#---------------------------------------#
 
 deces_standard_pays_semaine<-readRDS("deces_standard_pays_semaine.RDS")
 
 
-                              #-----------------------------------------------------------#
-                              #### complement de donnees pour etude de la surmortalite ####
-                              #-----------------------------------------------------------#
+#-----------------------------------------------------------#
+#### complement de donnees pour etude de la surmortalite ####
+#-----------------------------------------------------------#
 
 deces_standard_pays_semaine<-deces_standard_pays_semaine %>% 
   mutate(deces_hors_covid=deces_tot-new_deaths)
@@ -77,9 +77,9 @@ deces_standard_pays_semaine<-deces_standard_pays_semaine %>%
 
 
 
-                                      #---------------------------------------#
-                                      ####     analyse glissante           ####
-                                      #---------------------------------------#
+#---------------------------------------#
+####     analyse glissante           ####
+#---------------------------------------#
 
 
 
@@ -1349,9 +1349,9 @@ par(new=T)
 plot(roumanie$numerosemaine, roumanie$bsup, pch=16, axes=F,cex=0, ylim=c(0,10000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 dev.print(device = png, file = "deceshebdoroumanielissage.png", width = 1000)
 
-                                      #---------------------------------------#
-                                      ####    vaccinations et deces        ####
-                                      #---------------------------------------#
+#---------------------------------------#
+####    vaccinations et deces        ####
+#---------------------------------------#
 
 
 #France
@@ -1381,6 +1381,14 @@ plot(essai$numerosemaine, essai$deces_tot_moins40, pch=16, axes=F, ylim=c(0,600)
 #Hongrie
 
 essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>360) %>% filter(geo=="HU")
+
+
+moyenne_mobile <- running_mean(roumanie$deces_standard_tot, 52)
+moyenne <- mean(moyenne_mobile)
+moyenne_mobile<- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+157
+roumanie <- roumanie %>% left_join(moyenne_mobile)
+roumanie$moyenne <- moyenne
 
 par(mar=c(4,4,3,5))
 plot(essai$numerosemaine, essai$new_deaths, pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="red", main="Situation de la Hongrie")
@@ -1587,4 +1595,3 @@ deces_analysables<-deces_standard_pays_semaine %>% filter(time >"2015-01-01")
 
 surmortalite <- deces_standard_pays_semaine %>% filter(surmortalite=="surmortalite") %>% 
   filter(time>="2020W01") %>%   filter(time<="2020W40")
-

@@ -15,6 +15,7 @@ Cet article a pour objectif d'analyser les données de mortalité de 33 pays eur
 
 Toutes les données utilisées proviennent de sources officielles :
 - Eurostat pour les décès et la population par âge
+- Insee pour les données détaillées françaises
 - Ourworldindata pour les données de malades, décès et vaccination en lien avec la Covid 19
 - Médicam pour les données des médicaments délivrés les les pharmacies de ville
 - Ecdc pour les donénes des mesures prises par les différents pays
@@ -32,7 +33,7 @@ Dans les 3 cas, la mortalité est liée non pas à la seule présence d'une nouv
 
 ### 1.1 Quelques rappels pour la France : l’importance du vieillissement de la population
 
-Dans les vidéos précédentes, par exemple celle qui compare les décès de toutes les années entre 1962 et 2020 : <https://youtu.be/IPu4QvUHaQE> nous avons vu que la mortalité en France depuis 2020 n’est pas unique et est au niveau de l’année 2015. 
+Dans plusieurs vidéos de la chaîne Décoder l'écco, par exemple celle qui compare les décès de toutes les années entre 1962 et 2020 [^n1] nous avons vu que la mortalité en France depuis 2020 n’est pas unique et est au niveau de l’année 2015. 
 
 En effet, la France vieillit. Ainsi le nombre de morts chaque année augmente naturellement depuis 2010. 
 
@@ -154,11 +155,11 @@ Sans surprise, pour la quasi-totalité des pays européens, il n'est jamais déc
 
 ### 1.5 La chute de l'espérance de vie n'est qu'une autre manière de présenter le même résultat
 
-Le 19 janvier 2021, l’Insee a sorti son bilan démographique de l’année 2020 en décidant de mettre comme titre « Avec la pandémie de Covid-19, nette baisse de l’espérance de vie et chute du nombre de mariages ». Bien évidemment, la presse s’est emparée de ce titre pour expliquer à quel point la situation était grave. Les journalistes ont bien évidemment déduit du titre de l’Insee, que les français ont vécu moins longtemps que d’habitude, et qu’en plus cette diminution était causée par la Covid-19.
+Le 19 janvier 2021, l’Insee a sorti son bilan démographique de l’année 2020 [^n2] en décidant de mettre comme titre « Avec la pandémie de Covid-19, nette baisse de l’espérance de vie et chute du nombre de mariages ». Bien évidemment, la presse s’est emparée de ce titre pour expliquer à quel point la situation était grave. Les journalistes ont bien évidemment déduit du titre de l’Insee, que les français ont vécu moins longtemps que d’habitude, et qu’en plus cette diminution était causée par la Covid-19.
 
 D’ailleurs, un des sous-titres de l’article de l’Insee est directement "En 2020, la pandémie a fait perdre 0,4 an d’espérance de vie aux femmes et 0,5 an aux hommes". Ainsi le lien est direct : c’est la pandémie qui tue.
 
-La vidéo dédiée <https://youtu.be/UKpOOtnCnCQ> explique que l’espérance de vie est un indicateur qui fait partie de la famille des agrégats. C’est-à-dire qu’il est construit en additionnant des choses qui vont dans tous les sens et finalement ne renseigne pas du tout sur ce qu’il se passe vraiment. Il a juste un joli nom qui induit les gens en erreur parce qu’ils pensent avoir compris ce qu’il signifie.
+La vidéo dédiée sur la chaîne Décoder l'éco [^n3] détaille le calcul de l’espérance de vie. Cet indicateur fait partie de la famille des agrégats. C’est-à-dire qu’il est construit en additionnant des choses qui vont dans tous les sens et finalement ne renseigne pas du tout sur ce qu’il se passe vraiment. Il a juste un joli nom qui induit les gens en erreur parce qu’ils pensent avoir compris ce qu’il signifie.
 
 Le mot « espérance » est un terme utilisé en mathématique qui signifie « moyenne pondérée ». Par exemple lorsque vous lancez 2 dés à 6 faces, et que vous additionnez le nombre de points sur vos 2 dés, en moyenne, vous faites 7, votre espérance mathématique est 7. On ne connaît pas le résultat de votre prochain lancé. L’indicateur « espérance de vie » n’est donc pas du tout à entendre au sens de « espoir » et encore moins « nombre d'années que vous pouvez espérer vivre ». L’espérance de vie ne vous renseigne pas du tout sur votre avenir, mais est juste une image du présent. L’espérance de vie 2020, est une moyenne standardisée de l’âge des gens morts en 2020. Elle nous donne une idée de l’âge des morts en 2020, en tenant compte de la structure par âge. L'espérance de vie 2020 ne correspond absolument pas à l'âge que vous pourrez espérer vivre. Si vous lisez cet article, vous n'êtes pas morts en 2020. Vous ne jouez pas avec les mêmes dés que ceux qui sont morts en 2020 ou avant.
 
@@ -187,12 +188,6 @@ De la Suède jusqu'au Portugal, les hausses de mortalité sont naturellement sim
 La mortalité hivernale des pays européens n'est donc pas en lien avec un phénomène de diffusion sur de maladies l'hiver en Europe. Le Portugal et la Suède sont séparés par 3000 km. Si la diffusion entre individus de maladies l'hiver était responsable de l'augmentation de la mortalité, de décalages temporels devraient être visibles, ce qui n'est pas le cas.
 L'augmentation des décès ne représente pas le déplacement des maladies, mais leur apparition partout à la fois. Il s'agit d'une manifestation de la dégradation cyclique de l'état de santé. Cette dégradation simultanée partout en Europe se traduit par l'apparition de symptômes attribués à des maladies hivernales et par l'augmentation des décès. Le phénomène de courbe en cloche concernant la mortalité n'est pas le résultat d'un phénomène de propagation, mais d'une phénomène d'apparition. Il est évident que les portugais ne contaminent pas les suédois, ni inversement.
 
-### 2.2 Le phénomène de moisson
-
-
-
-
-
 
 ### 2.2 le pic de mortalité de mars-avril 2020 ne concerne que peu de pays
 
@@ -200,16 +195,177 @@ Contrairement à une idée largement répandue, le phénomène de pic de mortali
 
 Ce phénomène très limité doit alors s'analyser au regard de la situation particulière de chaque pays et surtout des mesures spécifiques prises sur la période. Cet article présente les liens trouvés entre la hausse de la mortalité française et les mesures exceptionnelles prises.
 
+### 2.3 Le lien entre les mesures françaises et les variations de mortalité 
+
 En France, l'année 2020 comporte plus de décès que l'année 2019 notamment par la mortalité tardive visible aux mois de mars-avril, mais également à la mortalité précoce arrivant en octobre. Un lissage des décès sur 52 semaines, nous permet de connaître l'impact de ces augmentations sur la mortalité habituelle.
 
 La moyenne et les deux bornes des intervalles de confiance à 95 %, permettent de visualiser les périodes de mortalité anormale.
 
 ![](deceshebdofrancelissage.png){width=1000px}
 
-Ainsi, arrivé au mois de mars 2020, la France était sur une moyenne très basse de décès relativement aux années précédentes. Le pic de mars-avril en France a entraîné un rapprochement vers la moyenne de décès habituels, sans la franchir. Il s'agit donc d'un phénomène violent avec un impact limité. La mortalité lissée sur 52 semaines ne dépasse la moyenne que depuis la hausse de mortalité en octobre.
+Ainsi, arrivé au mois de mars 2020, la France était sur une moyenne très basse de décès relativement aux années précédentes. Le pic de mars-avril en France a entraîné un rapprochement vers la moyenne de décès habituels, sans la franchir. Il s'agit donc d'un phénomène brutal avec un impact limité. La mortalité lissée sur 52 semaines ne dépasse la moyenne des 5 dernières années que depuis la hausse de mortalité en octobre 2020.
+
+Il s’agit ici de recenser les éléments qui peuvent expliquer une montée de la mortalité en France en mars-avril 2020, de façon à évaluer ce qui pourrait être imputable au seul virus et ce qui est imputable au reste.
+ 
+En France, deux mesures structurantes concernant la politique de santé publique ont été prises :
+
+- Le confinement, c’est-à-dire une limitation extrême des mouvements et l’ordre à tous les français de rester chez eux.
+
+- L’interdiction aux médecins de ville d’appliquer leur art, autrement-dit de proposer des traitements pour limiter le risque de complication. Le débat s’est focalisé sur l’hydorxychloroquine, mais l’interdiction ne se limite pas à cette molécule, mais à toute substance en dehors du doliprane.
+    
+Ces 2 mesures ont des impacts sur l'évolution des infections respiratoires chez les patients, mais également sur toutes les pathologies habituelles.
+ 
+#### 2.3.1 La mortalité des causes autres que les infections respiratoires aigües telles que la Covid-19
+
+Parmis les 9 pays ayant connu une surmortalité au mois de mars-avril, 7 ont mis en place un confinement à cette période. Dans tous ces pays, le seuil de surmortalité a été franchis après le début du confinement. En tenant compte du délai d'arrivée des données, on conclue que la décision du confinement n’a jamais pu être déclenchée par réaction à une surmortalité. Aucun décideur ou spécialiste ne pouvait savoir si la période connaîtrait plus de décès qu'habituellement. La décision a été prise notamment suite à la pression médiatique suivant des remontées de cas Covid. Il s’agit donc d’une mesure forte qui a des impacts très lourds sur l'organisation de la santé qui est prise avant de connaître le niveau de danger encouru.
+
+Il est notable qu'absolument tous les cas de figure existent en Europe, entre confinement ou non et sumrotalité ou non. Les deux effets ne sont pas entièrement liés. Pour conclure de l’effet positif ou négatif d’une telle mesure, il est possible de quantifier quelques effets.
+
+Beaucoup de journaliste écrivent que le confinement strict a permis de sauver de nombreuses vies par l’absence des accidents de voiture. Il est aisé de quantifier le nombre de vies sauvées au maximum par une telle mesure. Il y a environ 3 600 décès sur la route par an en France, soit 300 par mois, cela fait environ 600 décès sur la période de confinement. Les ¾ de ces décès concernent des moins de 65 ans [^n4].
+
+En effet, en écrasante majorité, les personnes qui prennent leur voiture tous les jours pour aller au travail on moins de 65 ans. La Covid au contraire touche les plus de 65 ans. L’impact du confinement sur la sécurité routière aura pu sauver une partir des 600 décès possibles, mais en écrasante majorité des jeunes, alors qu’ils ne risquent rien avec la Covid.
+
+Parallèlement, le 7 mai 2020, dans son bulletin épidémiologique [^n5], Santé publique France tire la sonnette d’alarme sur le renoncement au soin.
+En France, environ 120 000 infarctus sont dénombrés chaque année [^n6], soit 20 000 attendus pendant la période de confinement. De même, 150 000 AVC sont comptabilisés chaque année [^n7], soit 25 000 en 2 mois.
+Contrairement aux accidents de la route, les AVC et les infarctus touchent majoritairement le même public que les victimes de la Covid.
+Santé publique France nous révèle que pendant la dernière semaine de confinement, les hôpitaux ont relevé 300 personnes de moins aux urgences AVC et 300 personnes de moins aux urgences cardiaques qu’à la même époque en 2019. Deux hypothèses sont alors possibles :
+
+-Les français n’ont pas fait d’AVC ni de crises cardiaques pour laisser toute la place aux malades de la Covid.
+-Les français n’ont pas été pris en charge du fait de l’ordre de ne pas consulter et de rester chez soi. Ce ratio étalé sur 8 semaines représente 4 800 personnes non soignées.
 
 
+Les pathologies non soignées du fait de l'ordre de ne pas consulter et de rester chez soi, ainsi que la paur panique engendrée par la pression médiatique quotidienne peuvent expliquer la surmortalité à domicile en France sur cette période détaillée sur le site de l'Insee [^n8].
+Ces décès ne sont pas considérés comme ayant un quelconque rapport avec la Covid-19. Ils apparaissent pourtant aux mêmes périodes que ceux attribués à cette maladie.
 
+
+![](domicile.png){width=1000px}
+
+Ce résultat de non-prise en charge peu expliquer le caractère particulier des données de Chypre.
+
+![](deceshebdochyprelissage.png){width=1000px}
+
+De la même manière qu'en France, où l'on constate un nombre de décès inscrit à l'état civil plus imoprtant les lundis et mardis et très faibles les dimanches, à Chypre la fin du confinement n'est probablement pas liée à un excès mortalité, mais plutôt à la découverte tardive des décès non répertoriés.
+
+#### 2.3.2 La mortalité des infections respiratoires aigües telle que la Covid-19
+ 
+La période de mars-avril est extrêmement particulière dans toute l’histoire du soin, car il s’agit de la première fois que l’on demande à des malades de ne pas consulter de généraliste, en particulier si le patient souffre d’une infection respiratoire.
+
+![](flyerspf.png){width=1000px}
+
+Cet ordre a entraîné un comportement de la population inédit dont on peut voir les effets sur les statistiques d’achat de médicaments en pharmacie de la base de données Médicam.
+
+Ce graphique représente la base remboursable de tous les médicaments vendus par les pharmacies en France, chaque mois.
+
+![](medictot.png){width=1000px}
+
+Le mois de mars 2020 a connu une hausse de 13% des ventes de médicaments par rapport à la moyenne 2017-2019, représentant le provisionnement des français à la suite de l’annonce du confinement généralisé. Les mois d’avril et mai 2020 présentent au contraire, des baisses de 15% et 14% par rapport à la moyenne. Ces baisses sont le reflet de la non-prescription par les médecins à la suite de l’ordre de ne pas consulter.
+
+Cette chute est cependant bien plus forte concernant les traitements habituels prescrits dans le cadre des infections respiratoires aigües. En particulier les antibiotiques permettant d’éviter les surinfections ont connue une chute sans précédent.
+
+![](medicbac.png){width=1000px}
+
+En mars, le provisionnement n’a pas existé et le total d’antibiotiques vendus est inférieur de 1% à la moyenne 2017-2019. En mars et avril, les chutes de ventes furent respectivement de 40% et 47%. Depuis cette période, la vente d’antibiotiques est restée à des niveaux extrêmement bas, reflet du choix de ne pas proposer ce traitement en cas de Covid-19.
+ 
+ 
+Ce choix de ne pas laisser les médecins de ville proposer de traitements dans le cadre d’une infection respiratoire aigüe pendant les mois de mars et d’avril, a entraîné une dégradation sans précédent de l’état de santé des patients. La non-prescription d’antibiotiques aura permis aux bactéries de proliférer chez les patients âgés et affaiblis.
+Ainsi, à partir de fin mars, de nombreux français dont l’état de santé s’est dégradé à leur domicile affluent dans les services hospitaliers. Les coronavirus, comme la Covid-19, ont pu entraîner des lésions dans l’appareil respiratoire empêchant les patients de respirer. Ces lésions sont également des portes ouvertes aux surinfections bactériennes.
+Les sujets âgés se présentant à la l’hôpital ont à la fois des « trous » dans les poumons les empêchant de respirer, mais également des bactéries se développant à la suite de ces lésions et de la chute des défenses immunitaires. Ces 2 pathologies combinées empêchent de répondre rapidement aux besoins du patient. Si une injection de corticoïdes pouvait permettre au patient de réparer les trous des poumons, elle accélèrerait la prolifération des bactéries, entraînant la mort par surinfection. A l’inverse, ne pas agir sur la mécanique respiratoire entraîne le décès du patient dans les plus brefs délais.
+De nombreux patients sont décédés non pas à cause du caractère exceptionnel de la maladie, mais à cause du caractère exceptionnel de la situation : pas de prise en charge précoce, et pas de traitement anitbiotique.
+
+Ce défaut de prise en charge a été quantifié par les deux membres du Conseil Scientifique, Arnaud Fontanet et Simon Cauchemez, pourtant à l’origine de cette stratégie. Leur article dans Science [^n9], utilise les données hospitalières françaises et notamment le temps de passage et réanimation et de décès depuis la prise en charge du patient. Les courbes les plus intéressantes ont été supprimés depuis par les auteurs. Au pages 31 et 33, on pouvait consulter le nombre de jours que mettent les patients arrivant à l’hôpital avant d’aller en réanimation (graphique de gauche) et le nombre de jours qu’ils mettent avant de décéder (graphique de droite).
+
+![](fontanet.png){width=1000px}
+
+Ainsi, 50% des patients arrivant à l’hôpital sont placés en ranimation dès de le premier jour et 17% des patients décèdent dès le premier jour. Ces ratios énormes prouvent que les patient arrivent trop tard à l’hôpital. On observe d’ailleurs une très forte différence entre le nombre de décès au jour 1 et le nombre de décès au jour 2, illustrant qu’une grosse partie des arrivées n’est plus sauvable. Les auteurs en déduisent d’ailleurs qu’il y a 2 courbes séparés entre ceux arrivant trop tard et les autres. C'est l'explication restante dans l'aarticle toujours en ligne. 
+Une lecture moins orientée déduit de cet énorme ratio de décès au premier jour que les soins sont trop tardifs. Il est donc très probable que les décédés des jours suivants soient également pour beaucoup du fait de personnes dont l’état a eu le temps de s’aggraver et dont certain auraient pu survivre si les soins avaient été précoces.
+Ces 17% de patients arrivés trop tard représentent 3 000 personnes sur les 17 570 décès déclarés Covid-19 à l'hôpital sur cette période. Si on considère qu'un décès dans les 3 jours à l'hôpital est un signe d'une prise en charge trop tardive, le total de décès potentiellement évitable est alors de 6 000. 
+
+Dans la vidéo "100 000 morts, vraiment ?", nous détaillons par lieu les décès durant cette période pour trouver que la surmortalité à l'hôpital pendant l'épisode de mars-avril est de 6 000 personnes. Toute la surmortalité peut s'expliquer par la seule non prise en charge des patients de façon précoce par les médecins de ville.
+
+
+#### 2.3.3 L'accélération artificielle des décès
+
+L'article 12-3 du chapitre 7 du Décret n° 2020-293 du 23 mars 2020 prescrivant les mesures générales nécessaires pour faire face à l'épidémie de covid-19 dans le cadre de l'état d'urgence sanitaire décrète une dérogation au code de la santé publique [^n10] :
+
+        la spécialité pharmaceutique Rivotril ® sous forme injectable peut faire l'objet d'une dispensation, jusqu'au 15 avril 2020, par les pharmacies d'officine en vue de la prise en charge des patients atteints ou susceptibles d'être atteints par le virus SARS-CoV-2 dont l'état clinique le justifie sur présentation d'une ordonnance médicale portant la mention “ Prescription Hors AMM dans le cadre du covid-19 ”.
+
+Le Rivotril est un médicament antiépileptique dont l'utilisation n'a haibtuellement rien à voir les infections respiratoires, ni l'accompagnement palliatif par sédation. Dans la notice du vidal [^n11], il est mentionné comme contre-indications :
+
+    Ce médicament ne doit pas être utilisé dans les cas suivants :
+
+        insuffisance respiratoire grave,
+
+        syndrome d'apnée du sommeil,
+
+        insuffisance hépatique grave,
+
+        myasthénie.
+
+Ainsi, la dérogation du décret ne propose pas l'utilisation d'un sédatif, mais d'un médicament déclenchant l'arrêt de la respiration du patient et donc son décès anticipé. Le décret a eu cours du 28 mars au 11 mai, soit dans la période exacte sur laquelle est constatée le plus fort nombre de décès depuis la canicule de 2003. L'analyse des centes de Rivotril en pharmacie reflète l'ampleur de l'utilisation de ce produit.
+
+![](medicriv.png){width=1000px}
+
+Ainsi, contrairement aux antibiotiques, les ventes de Rivotril ont augmenté de 12% au mois de mars et n'ont que légèrement diminué en avril et en mai (respectivement 2% et 8% en dessous de la moyenne). Cette augmentation sur mars représente 10 000 boîtes du produit. Ces statistiques ne reflètent que partiellement l'utilisation de cette molécule car elles ne prennent pas en compte les doses qui ne sont pas distribuées par les pharmacies de ville, par exemple en provenance directe de l'hôpital.
+
+La comparaison des décès déclarés Covid  [^n12] et des décès toutes causes dans les EHPADs présente ainsi des incohérences massives. Celles-ci sont détaillées dans la vidéo précitée. Par exemple autour du 31 mars, la quasi-totalité des décès des EHPADs sont enregistrées dans les statistiques COvid alors que moins de la moitié des régions françaises connaissent une surmortalité et sont considérées touchées par cette pathologie.
+
+L'origine de ce comptage de peut aisément s'expliquer à la lumière de ce choix palliatif.
+
+![](EHPAD.png){width=1000px}
+On constate que les remontées de décès Covid arrivent massivement après la promulgation du décret dérogatoire concernant le Rivotril. De plus, même après la fin de la période de surmortalité française à partir du 1er mai, des décès Covid ont bien été enregistrés dans les EHPADs jusqu'à la fin de la validité du décret.
+
+Il est évident qu'une intervention médicamenteuse ayant pour conséquence d'accélérer le décès de patients en fin de vie, a des répercussions sur les statistiques de décès. Dès lors, la "surmortalité" constatée sur courte période n'est pas le signe d'un plus grand nombre de décès à moyen terme, mais uniquement d'un regroupement artificiel de décès sur les mêmes dates.
+
+###2.4 Le pic de mortalité précoce d'octobre 2020
+
+De nombreux pays européens présentent une mortalité saisonnière forte et précoce dès octobre 2020. Seuls quelques pays échappent à cette hausse des décès : Chypre, Malte, le Danemark, l'Islande, la Norvège et la Finlande.
+Pour les pays concernés cependant, la hausse de mortalité est simultanée, rendant impossible la seule cause d'un unique virus se propageant en Europe.
+Il s'agit de comprendre pourquoi, fin 2020, les habitants d'une majorité de pays européens semblent en moins bonne santé que les autres années. Les périodes de stress, le manque de sortie peuvent être des éléments favorisant la faiblesse des défenses immunitaires.
+En France, commme dans une grande parte des pays européens, une très vaste campagne de vaccination grippale a eu lieu à partir d'octobre 2020. Le taux de couverture vaccinale a gagné presque 10 points en 2020 par rapport aux années précédentes [^n14].
+
+La campagne de vaccinale grippale arrive tardivement dans l'année. Elle est concommitante à la hausse de mortalité hivernale.
+
+![](vaccins_distribues.png){width=1000px}
+
+Les débats sont ouverts sur l'utilité réelle du vaccin contre la grippe sur la mortalité hivernale. Rappelons que ce vaccin n'est pas conçu comme les autres. Il s'agit d'un mélange contenant plusieurs souches de grippes préconisés par l'OMS. Au moment de la préconisation, absolument aucune certitude n'existe sur les souches qui circuleront pendant l'hiver. Il s'agit donc d'un pari. Certains pays comme la Norvège ou la Finlande en ont une distribution plus faible que d'autres, en particulier depuis les polémiques ayant suivi la campagne vaccinale contre le virus H1N1. Pour autant, la Norvège et la Finlande semblent ne pas être soumis à des pics de mortalités hivernales ces dernières années, bien au contraire.
+Les données disponibles sur les vaccins ne sont disponibles que mensuellement, ne permettant pas un rapprochement de qualité avec les décès en France. Un lissage hebdomadaire des vaccins distribués comparé aux décès toutes causes des plus de 65 ans en France (population la plus vaccinée du fait de la gratuité à cet âge), montre une proximité entre ces 2 évènements.
+
+![](lien_deces_grippe.png){width=1000px}
+
+La hausse soudaine des décès en octobre 2020 comparativmement aux années précédentes correspond en dates et proportions aux observations du passé. Même si corrélation n'est pas causalité, les soupçons à ce niveau devraient soulever des recherches poussées complémentaires. Il serait nécessaire de comparer les dates de décès de tous les français depuis 2015, aux dates de vaccinations. Il s'agirait de déterminer si un lien statistique existe entre date de vaccination et date de décès. Les données précises et nominatives des décès de tous les français sont publiques et disponibles en ligne. Le rapprochement avec les dates de vaccinations devrait être possible pour les chercheurs disposant des droits d'accès aux données de vaccinations.
+
+Les liens entre vaccinations et déterioration temporaire des défenses immunitaires ont pourtant déjà fait l'objet d'études. Une étude de janvier 2020 [^n15] montre des liens statistiques entre la vaccination grippale et une augmentation du nombre de malades des autre pathologies, en particulier les coronavirus. Si on ajoute le fait que pendant l'hiver 2019-2020, la mortalité attribuée à la grippe est proche de 0, il paraît contradictoire de lancer en octobre 2020 une campagne de vaccination d'une ampleur jamais égalée contre une maladie qui ne paraît pas si mortelle. Le seul effet nocébo [^n16] engendrer un débat contradictoire sur le fait d'une opération à grande échelle conrenant la grippe dans un contexte de "guerre" affichée contre "un" coronavirus. Chaque personne ayant été vacciné a déjà été prévenu des effets secondaires des vaccins sur l'organisme. Les notices des vaccins disponibles sur le Vidal préviennent de l'ensemble de ces effets ainsi que de leur (haute) fréquence.
+
+Pour conclure, il est nécessaire de rappeler à ce stade qu'en France, cette hausse de mortalité intervient dans un contexte de 2e confinement dont nous avons détaillé les effets plus haut, ainsi que dans une consommation historiquement basse d'antibiotiques.
+
+Il convient alors de se demander aussi si l'augmentation de la mortalité visible à partir d'octobre provient comme relayé politiquement par la presse, d'un seul virus qui se déclencherai partout en même temps, ou de l'effet compbiné de la dégradation cyclique de l'état de santé combiné à des mesures favorisant la survenue précoce de maladies hivernales telles que les coronavirus, avec une dégradation de la qualité des soins.
+
+###2.5 Le rebond de mortalité depuis début 2021
+
+Il n'est pas exceptionnel d'avoir autour du 1er janvier de chaque année, deux périodes de hausse de mortalité visibles. C'est notamment le cas en France pendant l'hiver 2017-2018. Cependant ces périodes sont habituellement très rapprochées dans le temps. En 2021, pour certains pays, le deuxième pic de mortalité est fortement éloigné du premier. Pour la première fois, en 2021, une politique sanitaire d'une ampleur jamais égalée, à partir de vaccins expérimentaux sur lesquels aucun recul n'est disponible, a été décidé. Le suivi disponible de ce disponitif fait lui aussi l'objet d'un suivi hors norme. De nombreux pays envoient leurs données de vaccinations en quasi direct [^n18]. Il est difficile d'avoir une idée précise de la qualité des remontées de données, mais il offre des possiblités de comparaisons jamais égalées.
+
+![](ourworldindata.png){width=1000px}
+
+En particulier, Malte et la Hongrie déclarent une vaccination à très grande échelle sur leur territoire. Ainsi, les vaccinations concernent des jeunes depuis plusieurs semaines.
+
+[^n1]:<https://youtu.be/IPu4QvUHaQE>
+[^n2]:<https://www.insee.fr/fr/statistiques/5012724>
+[^n3]:<https://youtu.be/UKpOOtnCnCQ>
+[^n4]:<http://www.fiches-auto.fr/articles-auto/chiffres-infractions-securite-routiere/s-2319-nombre-d-accidents-mortels-selon-l-age-des-conducteurs.php> 
+[^n5]:<https://www.santepubliquefrance.fr/content/download/250807/2596023>
+[^n6]:<https://www.frm.org/recherches-maladies-cardiovasculaires/infarctus-du-myocarde/l-infarctus-du-myocarde-en-chiffres#:~:text=Environ%20120%20000%20infarctus%20du,d%C3%A9c%C3%A8s%20survient%20dans%20l'ann%C3%A9e>
+[^n7]:<https://www.iledefrance.ars.sante.fr/accidents-vasculaires-cerebraux-avc#:~:text=Chaque%20ann%C3%A9e%2C%20plus%20de%2018,qui%20gardent%20des%20s%C3%A9quelles%20lourdes>
+[^n8]:<https://www.insee.fr/fr/statistiques/4487988?sommaire=4487854>
+[^n9]:<https://science.sciencemag.org/content/369/6500/208>
+[^n10]:<https://www.legifrance.gouv.fr/loda/id/LEGIARTI000041767762/2020-03-29/>
+[^n11]:<https://www.vidal.fr/medicaments/gammes/rivotril-8874.html>
+[^n12]:<https://www.data.gouv.fr/fr/datasets/donnees-relatives-a-lepidemie-de-covid-19-en-france-vue-densemble/>
+[^n13]:<https://www.insee.fr/fr/statistiques/4487988?sommaire=4487854>
+[^n14]:<https://www.santepubliquefrance.fr/determinants-de-sante/vaccination/articles/donnees-regionales-de-couverture-vaccinale-grippe-par-saison-et-dans-chaque-groupe-d-age>
+[^n15]: <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7126676/>
+[^n16]:<https://pharmacomedicale.org/66-pharmacologie/medicaments-alternatifs/placebo/161-toxicite-effet-nocebo>
+[^n17]:<https://www.vidal.fr/medicaments/gammes/vaxigriptetra-79276.html>
+[^n18]:<https://ourworldindata.org/covid-vaccinations>
 
 # Annexes
 ## Les décès hebdomadaires par pays
