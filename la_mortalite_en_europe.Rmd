@@ -348,6 +348,43 @@ Il n'est pas exceptionnel d'avoir autour du 1er janvier de chaque année, deux p
 
 En particulier, Malte et la Hongrie déclarent une vaccination à très grande échelle sur leur territoire. Ainsi, les vaccinations concernent des jeunes depuis plusieurs semaines.
 
+Concernant la Hongrie, on note une concommitance parfaite entre le début de la campagne vaccinale contre la Covid-19 et une très forte hausse de la mortalité pour atteindre le maximum connu en décembre pour les plus de 65 ans. Pour les mois de 65 ans, la situation est pire que 2 mois auparavant. Il s'agit même d'un record absolu pour toute la période où nous disposons de données sur Eurostat (2013).
+
+![](decesvaccinhongrie.png){width=1000px}
+
+Le focus sur le moins de 40 ans qui ne décèdent que très peu lors des épisodes hivernaux confirment ce résultat.
+
+![](decesvaccinhongriejeune.png){width=1000px}
+
+Si on prend en compte l'évolution de la pyramide des âges en Hongrie et la forte baisse du nombre de moins de 40 ans, il s'agit également de la période connaissant le plus de décès de jeunes enregistrés. Etant communément admis que les jeunes ne décèdent quasiment jamais d'infections respiratoires aïgues contractées pendant l'hiver, il y a peu de causes probables à évoquer mis à part l'intervention en cours.
+
+La situation est similaire à Malte. le niveau de décès est important en 2021, mais surtout, il concerne cette fois des moins de 65 ans. Le faible nombre d'habitant de Malte ne permet toutefois pas de descendre au niveau des moins de 40 ans (il décède à Malte en moyenne 2 personnes de moins de 40 ans par semaine).
+
+![](decesvaccinmalte.png){width=1000px}
+
+En Islande, pays qui n'a pourtant pas connu d'épisode de sumrotalité en 2020, une vaccination extrêment massive a été effectuée en quelques jours. Ce pic de vaccination est parfaitement synchronisé a un pic de mortalité.
+
+![](decesvaccinislande.png){width=1000px}
+
+A l'inverse du côté des pays n'ayant que peu mis en place une politique vaccinale, le nombre de décès reste calme. POur la Norvège, pays ayant le moins vacciné ses habitants, la mortalité n'a connue qu'un léger rebond depuis le début de la campagne de vaccination.
+
+![](decesvaccinnorvege.png){width=1000px}
+
+Pour les jeunes également, la mortalité reste à son niveau bas, même si on note une dynamique en augmentation.
+
+
+![](decesvaccinnorvegejeune.png){width=1000px}
+La Croatie, a peu vacciné comme la Norvège, mais a regroupé la majorité de sa campagne vaccinale sur les mêmes jours. On constate un pic de mortalité conconmmittant à la vaccination.
+
+![](decesvaccincroatie.png){width=1000px}
+
+A l'instar de la Norvège, la situation chez les jeunes semble dans la norme. Rappelons ici que les campagnes vaccinales visent en premier chef, les personnes âgées.
+
+![](decesvaccincroatiejeune.png){width=1000px}
+
+
+
+
 [^n1]:<https://youtu.be/IPu4QvUHaQE>
 [^n2]:<https://www.insee.fr/fr/statistiques/5012724>
 [^n3]:<https://youtu.be/UKpOOtnCnCQ>
