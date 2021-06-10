@@ -54,4 +54,74 @@ ggplot(vaccins_grippes, aes(x = mois_annee, y = nombre_de_boites))+
   theme(axis.text.x = element_text(angle=45))
 dev.print(device = png, file = "vaccins_distribues.png", width = 1000)
 
+open_medic_2019 <-read.csv(file = "OPEN_MEDIC_2019.csv", sep=";")
+open_medic_2020 <-read.csv(file = "OPEN_MEDIC_2020.csv", sep=";")
+
+
+open_medic_2019<-open_medic_2019 %>% mutate(region = case_when(
+  BEN_REG=="11"~ "Ile-de-France",
+  BEN_REG=="24"~"Centre-Val de Loire",
+  BEN_REG=="27"~"Bourgogne-Franche-Comté",
+  BEN_REG=="28"~"Normandie",
+  BEN_REG=="32"~"Nord-Pas-de-Calais-Picardie",
+  BEN_REG=="44"~"Alsace-Champagne-Ardenne-Lorraine",
+  BEN_REG=="52"~"Pays de la Loire",
+  BEN_REG=="53"~"Bretagne",
+  BEN_REG=="75"~"Aquitaine-Limousin-Poitou-Charentes",
+  BEN_REG=="76"~"Languedoc-Roussillon-Midi-Pyrénées",
+  BEN_REG=="84"~"Auvergne-Rhône-Alpes",
+  BEN_REG=="93"~"Provence-Alpes-Côte d'Azur et Corse"))
+
+open_medic_2019<-open_medic_2019 %>% mutate(classe_age = case_when(
+  age==0 ~ "0-19 ANS",
+  age==20 ~ "20 - 59 ANS",
+  age==60 ~ "60 ANS ET +",
+  age==99 ~ "AGE INCONNU"))
+
+
+open_medic_2020<-open_medic_2020 %>% mutate(region = case_when(
+  BEN_REG=="11"~ "Ile-de-France",
+  BEN_REG=="24"~"Centre-Val de Loire",
+  BEN_REG=="27"~"Bourgogne-Franche-Comté",
+  BEN_REG=="28"~"Normandie",
+  BEN_REG=="32"~"Nord-Pas-de-Calais-Picardie",
+  BEN_REG=="44"~"Alsace-Champagne-Ardenne-Lorraine",
+  BEN_REG=="52"~"Pays de la Loire",
+  BEN_REG=="53"~"Bretagne",
+  BEN_REG=="75"~"Aquitaine-Limousin-Poitou-Charentes",
+  BEN_REG=="76"~"Languedoc-Roussillon-Midi-Pyrénées",
+  BEN_REG=="84"~"Auvergne-Rhône-Alpes",
+  BEN_REG=="93"~"Provence-Alpes-Côte d'Azur et Corse"))
+
+open_medic_2020<-open_medic_2020 %>% mutate(classe_age = case_when(
+  age==0 ~ "0-19 ANS",
+  age==20 ~ "20 - 59 ANS",
+  age==60 ~ "60 ANS ET +",
+  age==99 ~ "AGE INCONNU"))
+
+
+open_medic_2020<-open_medic_2020 %>% mutate(BSE=gsub(",",".",BSE))
+open_medic_2020<-open_medic_2020 %>% mutate(BSE=as.numeric(BSE))
+
+open_medic_2019<-open_medic_2019 %>% mutate(BSE=gsub(",",".",BSE))
+open_medic_2019<-open_medic_2019 %>% mutate(BSE=as.numeric(BSE))
+
+ANTIEPILEPTIQUES_2019 <- open_medic_2019 %>% filter(L_ATC2=="ANTIEPILEPTIQUES")
+ANTIBACTERIENS_2019 <- open_medic_2019 %>% filter(L_ATC2=="ANTIBACTERIENS A USAGE SYSTEMIQUE")
+CLONAZEPAM_2019 <- ANTIEPILEPTIQUES_2019%>% filter(L_ATC5=="CLONAZEPAM")
+
+ANTIEPILEPTIQUES_2020 <- open_medic_2020 %>% filter(L_ATC2=="ANTIEPILEPTIQUES")
+ANTIBACTERIENS_2020 <- open_medic_2020 %>% filter(L_ATC2=="ANTIBACTERIENS A USAGE SYSTEMIQUE")
+CLONAZEPAM_2020 <- ANTIEPILEPTIQUES_2020%>% filter(L_ATC5=="CLONAZEPAM")
+
+test20<-CLONAZEPAM_2020 %>% group_by(classe_age,region) %>% summarise(BOITES_2020=sum(BOITES),BSE_2020=sum(BSE))
+test19<-CLONAZEPAM_2019 %>% group_by(classe_age,region) %>% summarise(BOITES_2019=sum(BOITES),BSE_2019=sum(BSE))
+CLONAZEPAM <- test20 %>% full_join(test19)
+test20<-ANTIBACTERIENS_2020 %>% group_by(classe_age,region) %>% summarise(BOITES_2020=sum(BOITES),BSE_2020=sum(BSE))
+test19<-ANTIBACTERIENS_2019 %>% group_by(classe_age,region) %>% summarise(BOITES_2019=sum(BOITES),BSE_2019=sum(BSE))
+ANTIBACTERIENS <- test20 %>% full_join(test19)
+
+CLONAZEPAM<-CLONAZEPAM %>% mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2020,var_bse=(BSE_2020-BSE_2019)/BSE_2020)
+ANTIBACTERIENS<-ANTIBACTERIENS %>% mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2020,var_bse=(BSE_2020-BSE_2019)/BSE_2020)
+
 

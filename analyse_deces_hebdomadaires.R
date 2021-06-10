@@ -1353,7 +1353,6 @@ dev.print(device = png, file = "deceshebdoroumanielissage.png", width = 1000)
 ####    vaccinations et deces        ####
 #---------------------------------------#
 
-
 #Hongrie
 
 moyenne_mobile_m40 <- running_mean(hongrie$deces_tot_moins40, 8)
@@ -1387,9 +1386,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64 + essai$deces_tot_moins40,
      pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinhongrie.png", width = 1000)
 
@@ -1415,12 +1414,14 @@ par(new=T)
 plot(essai$numerosemaine, essai$moyenne_mobile_m40,
      pch=16, axes=F, ylim=c(0,80), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,1500000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinhongriejeune.png", width = 1000)
 
+pophongrie <-readRDS(file = "pjanquinq.RDS") %>% filter(geo=="HU") %>% 
+filter(time=="2020-01-01") %>% group_by(agequinq) %>% summarise(population=sum(population))
 
 #malte
 
@@ -1455,9 +1456,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64 + essai$deces_tot_moins40,
      pch=16, axes=F, ylim=c(0,120), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,100000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinmalte.png", width = 1000)
 
@@ -1483,9 +1484,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$moyenne_mobile_m40,
      pch=16, axes=F, ylim=c(0,10), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,1500000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinmaltejeune.png", width = 1000)
 
@@ -1523,9 +1524,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64 + essai$deces_tot_moins40,
      pch=16, axes=F, ylim=c(0,60), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,8500), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinislande.png", width = 1000)
 
@@ -1551,9 +1552,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$moyenne_mobile_m40,
      pch=16, axes=F, ylim=c(0,7), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,8500), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinislandejeune.png", width = 1000)
 
@@ -1591,9 +1592,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64 + essai$deces_tot_moins40,
      pch=16, axes=F, ylim=c(0,1200), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,85000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinarmenie.png", width = 1000)
 
@@ -1619,9 +1620,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$moyenne_mobile_m40,
      pch=16, axes=F, ylim=c(0,7), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,8500), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinarmeniejeune.png", width = 1000)
 
@@ -1659,9 +1660,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64 + essai$deces_tot_moins40,
      pch=16, axes=F, ylim=c(0,1000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,500000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinnorvege.png", width = 1000)
 
@@ -1687,9 +1688,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$moyenne_mobile_m40,
      pch=16, axes=F, ylim=c(0,35), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,500000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.15)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.15)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinnorvegejeune.png", width = 1000)
 
@@ -1727,9 +1728,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64 + essai$deces_tot_moins40,
      pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,300000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccincroatie.png", width = 1000)
 
@@ -1755,9 +1756,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$moyenne_mobile_m40,
      pch=16, axes=F, ylim=c(0,40), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,300000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccincroatiejeune.png", width = 1000)
 
@@ -1794,9 +1795,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64 + essai$deces_tot_moins40,
      pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,300000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinfinlande.png", width = 1000)
 
@@ -1822,9 +1823,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$moyenne_mobile_m40,
      pch=16, axes=F, ylim=c(0,40), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,300000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinfinlandejeune.png", width = 1000)
 
@@ -1861,9 +1862,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64 + essai$deces_tot_moins40,
      pch=16, axes=F, ylim=c(0,200), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,30000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinchypre.png", width = 1000)
 
@@ -1889,9 +1890,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$moyenne_mobile_m40,
      pch=16, axes=F, ylim=c(0,10), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,30000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinchyprejeune.png", width = 1000)
 
@@ -1929,9 +1930,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,30000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,20000000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinallemagne.png", width = 1000)
 
@@ -1969,9 +1970,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64+essai$deces_tot_moins40,
      pch=16, axes=F, ylim=c(0,3000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinautriche.png", width = 1000)
 
@@ -1994,7 +1995,6 @@ plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
 axis(2, ylim=c(0,400),col="red")
 mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
 mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
-mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
 abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
 text(26,1,"2013",cex=1.2)
 text(78,1,"2014",cex=1.2)
@@ -2010,9 +2010,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,5000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,2000000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinbelgique.png", width = 1000)
 
@@ -2035,7 +2035,6 @@ plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
 axis(2, ylim=c(0,400),col="red")
 mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
 mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
-mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
 abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
 text(26,1,"2013",cex=1.2)
 text(78,1,"2014",cex=1.2)
@@ -2051,9 +2050,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,5000000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinespagne.png", width = 1000)
 
@@ -2076,7 +2075,6 @@ plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
 axis(2, ylim=c(0,400),col="red")
 mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
 mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
-mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
 abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
 text(26,1,"2013",cex=1.2)
 text(78,1,"2014",cex=1.2)
@@ -2092,9 +2090,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,25000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,2000000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinitalie.png", width = 1000)
 
@@ -2117,7 +2115,6 @@ plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
 axis(2, ylim=c(0,400),col="red")
 mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
 mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
-mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
 abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
 text(26,1,"2013",cex=1.2)
 text(78,1,"2014",cex=1.2)
@@ -2132,6 +2129,11 @@ box() # pour encadrer le graphique
 par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinpaysbas.png", width = 1000)
 
 
@@ -2153,7 +2155,6 @@ plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
 axis(2, ylim=c(0,400),col="red")
 mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
 mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
-mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
 abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
 text(26,1,"2013",cex=1.2)
 text(78,1,"2014",cex=1.2)
@@ -2169,9 +2170,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,5000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,2000000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinportugal.png", width = 1000)
 
@@ -2194,7 +2195,6 @@ plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
 axis(2, ylim=c(0,400),col="red")
 mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
 mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
-mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
 abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
 text(26,1,"2013",cex=1.2)
 text(78,1,"2014",cex=1.2)
@@ -2210,9 +2210,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,5000000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinfrance.png", width = 1000)
 
@@ -2251,9 +2251,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,15000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,2000000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinpologne.png", width = 1000)
 
@@ -2292,9 +2292,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,1500), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccindanmark.png", width = 1000)
 
@@ -2333,9 +2333,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,500000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccingrece.png", width = 1000)
 
@@ -2358,7 +2358,6 @@ plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
 axis(2, ylim=c(0,400),col="red")
 mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
 mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
-mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
 abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
 text(26,1,"2013",cex=1.2)
 text(78,1,"2014",cex=1.2)
@@ -2374,9 +2373,9 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,2500), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinsuisse.png", width = 1000)
 
@@ -2399,7 +2398,6 @@ plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
 axis(2, ylim=c(0,400),col="red")
 mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
 mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
-mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
 abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
 text(26,1,"2013",cex=1.2)
 text(78,1,"2014",cex=1.2)
@@ -2414,7 +2412,11 @@ box() # pour encadrer le graphique
 par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,3000), xlab="", ylab="", type="o",col="red",cex=0,)
-
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinsuede.png", width = 1000)
 
 
@@ -2436,7 +2438,6 @@ plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
 axis(2, ylim=c(0,400),col="red")
 mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
 mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
-mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
 abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
 text(26,1,"2013",cex=1.2)
 text(78,1,"2014",cex=1.2)
@@ -2452,13 +2453,782 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
      pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
-plot(essai$numerosemaine, essai$new_vaccinations,
-     pch=16, axes=F, ylim=c(0,1000000), xlab="", ylab="", type="o",col="blue",cex=0,)
-mtext("nombre de vaccinés",side=4,col="blue",line=2.5)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "decesvaccinserbie.png", width = 1000)
 
-##realisation de cartes dynamiques avec 1 carte par semaine
+
+#---------------------------------------#
+####    morts VS morts Covid         ####
+#---------------------------------------#
+
+#Hongrie
+
+
+essai <- hongrie %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,4500), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Hongrie")
+axis(2, ylim=c(0,40000),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,4500), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine,essai$deces_tot - essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,4500), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+dev.print(device = png, file = "decescovidhongrie.png", width = 1000)
+
+
+#malte
+
+essai <- malte %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,120), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de Malte")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,120), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,120), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidmalte.png", width = 1000)
+
+
+
+#islande
+
+essai <- islande %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,60), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de l'Islande")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,60), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,60), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidislande.png", width = 1000)
+
+
+#armenie
+
+essai <- armenie %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,1500), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de l'armenie")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes des moins de 40 ans",side=2,line=3)
+mtext("nombre de décès toutes causes lissés sur 8 semaines des moins de 40 ans",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,1500), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,1500), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidarmenie.png", width = 1000)
+
+#norvege
+
+essai <- norvege %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,1000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Norvège")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,1000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,1000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidnorvege.png", width = 1000)
+
+
+
+#croatie
+
+essai <- croatie %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Croatie")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidcroatie.png", width = 1000)
+
+
+#finlande
+
+essai <- finlande %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la finlande")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidfinlande.png", width = 1000)
+
+#chypre
+
+essai <- chypre %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,200), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de Chypre")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,200), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,200), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidchypre.png", width = 1000)
+
+#allemagne
+
+essai <- allemagne %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,30000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de l'Allemagne")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,30000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,30000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidallemagne.png", width = 1000)
+
+
+#autriche
+
+essai <- autriche %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,3000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de l'Autriche")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,3000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,3000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidautriche.png", width = 1000)
+
+
+#belgique
+
+essai <- belgique %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,5000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Belgique")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,5000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,5000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidbelgique.png", width = 1000)
+
+
+#espagne
+
+essai <- espagne %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de l'espagne")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidespagne.png", width = 1000)
+
+
+#italie
+
+essai <- italie %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,25000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de l'Italie")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,25000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,25000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescoviditalie.png", width = 1000)
+
+
+#paysbas
+
+essai <- paysbas %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation des Pays-Bas")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidpaysbas.png", width = 1000)
+
+
+#portugal
+
+essai <- portugal %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,5000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation du Portugal")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,5000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,5000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidportugal.png", width = 1000)
+
+
+#france
+
+moyenne_mobile_m40 <- running_mean(france$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+france <- france %>% left_join(moyenne_mobile_m40)
+france$moyenne_m40 <- moyenne_m40
+
+
+essai <- france %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la France")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidfrance.png", width = 1000)
+
+
+#pologne
+
+moyenne_mobile_m40 <- running_mean(pologne$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+pologne <- pologne %>% left_join(moyenne_mobile_m40)
+pologne$moyenne_m40 <- moyenne_m40
+
+
+essai <- pologne %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,15000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Pologne")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,15000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,15000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidpologne.png", width = 1000)
+
+
+#danmark
+
+moyenne_mobile_m40 <- running_mean(danmark$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+danmark <- danmark %>% left_join(moyenne_mobile_m40)
+danmark$moyenne_m40 <- moyenne_m40
+
+
+essai <- danmark %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,1500), xlab="", ylab="", type="o",col="black", cex=0, main="Situation du Danemark")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+mtext("Attention, aucune donnée pour les moins de 40 ans",side=1,line=2, col="black")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,1500), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,1500), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescoviddanmark.png", width = 1000)
+
+
+#grece
+
+moyenne_mobile_m40 <- running_mean(grece$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+grece <- grece %>% left_join(moyenne_mobile_m40)
+grece$moyenne_m40 <- moyenne_m40
+
+
+essai <- grece %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Grèce")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidgrece.png", width = 1000)
+
+
+#suisse
+
+moyenne_mobile_m40 <- running_mean(suisse$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+suisse <- suisse %>% left_join(moyenne_mobile_m40)
+suisse$moyenne_m40 <- moyenne_m40
+
+
+essai <- suisse %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,2500), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Suisse")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,2500), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,2500), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidsuisse.png", width = 1000)
+
+
+#suede
+
+moyenne_mobile_m40 <- running_mean(suede$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+suede <- suede %>% left_join(moyenne_mobile_m40)
+suede$moyenne_m40 <- moyenne_m40
+
+
+essai <- suede %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,3000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Suède")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,3000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,3000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+dev.print(device = png, file = "decescovidsuede.png", width = 1000)
+
+
+#serbie
+
+moyenne_mobile_m40 <- running_mean(serbie$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+serbie <- serbie %>% left_join(moyenne_mobile_m40)
+serbie$moyenne_m40 <- moyenne_m40
+
+
+essai <- serbie %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot,
+     pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la Serbie")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes",side=2,line=3)
+mtext("nombre de décès déclarés Covid-19",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
+     pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "decescovidserbie.png", width = 1000)
+
+
+
+
+####realisation de cartes dynamiques avec 1 carte par semaine####
 
 
 map_data_init <- inner_join(geodata, deces_standard_pays_semaine_plus_40)
