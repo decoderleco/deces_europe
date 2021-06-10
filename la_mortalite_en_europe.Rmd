@@ -98,7 +98,7 @@ Seuls l'Espagne, l'Italie, la Belgique, la Roumanie, la Bulgarie la Pologne et l
 
 L'année 2020 présentée comme une hécatombe mondiale, n'est en fait qu'une année pendant laquelle, au pire, les humains sont morts dans les mêmes proportions que l'année 2010. Ce qui est montré depuis 6 mois pour la France sur la chaîne Décoder l'éco, est donc réplicable pour tous les pays pour lesquels des données sont disponibles. 
 
-Au bilan, pas un seul pays d'Europe n'a vécu une "hécatombe" en 2020. POur les pire cas, 2020 est juste aussi mortelle que 2010.
+Au bilan, pas un seul pays d'Europe n'a vécu une "hécatombe" en 2020. Pour les pire cas, 2020 est juste aussi mortelle que 2010.
 
 ### 1.3 La mortalité en Europe : le pays de résidence bien plus déterminant que l'année 
 
@@ -128,7 +128,7 @@ Les différences de mortalité d'une année à l'autre sont parfaitement néglig
 Ce graphique montre également que les français vivent dans l'un des pays d'Europe, et donc du monde, au sein duquel on meurt le moins.
 
 Nous avons montré plus haut que l'année 2020 est la 6e année pour laquelle les français sont le moins mort. Ce graphique nous montre que la mortalité de la France en 2020 a été une des plus faibles jamais enregistrée dans tous les pays du monde.
-POur la quasi totalité des humains ayant jamais vécu sur cette planète, l'année 2020 en France est l'un des endroits et moment où on a connu le moins de morts.
+Pour la quasi totalité des humains ayant jamais vécu sur cette planète, l'année 2020 en France est l'un des endroits et moment où on a connu le moins de morts.
 
 Il n'est donc à aucun moment justifiable de générer une panique et des mesures d'une ampleur colossale pour des décès qui ne sont nulle part exceptionnels, et surtout pas en France.
 
@@ -343,7 +343,7 @@ Les données disponibles sur les vaccins ne sont disponibles que mensuellement, 
 
 La hausse soudaine des décès en octobre 2020 comparativmement aux années précédentes correspond en dates et proportions aux observations du passé. Même si corrélation n'est pas causalité, les soupçons à ce niveau devraient soulever des recherches poussées complémentaires. Il serait nécessaire de comparer les dates de décès de tous les français depuis 2015, aux dates de vaccinations. Il s'agirait de déterminer si un lien statistique existe entre date de vaccination et date de décès. Les données précises et nominatives des décès de tous les français sont publiques et disponibles en ligne. Le rapprochement avec les dates de vaccinations devrait être possible pour les chercheurs disposant des droits d'accès aux données de vaccinations.
 
-Les liens entre vaccinations et déterioration temporaire des défenses immunitaires ont pourtant déjà fait l'objet d'études. Une étude de janvier 2020 [^n16] montre des liens statistiques entre la vaccination grippale et une augmentation du nombre de malades des autre pathologies, en particulier les coronavirus. Si on ajoute le fait que pendant l'hiver 2019-2020, la mortalité attribuée à la grippe est proche de 0, il paraît contradictoire de lancer en octobre 2020 une campagne de vaccination d'une ampleur jamais égalée contre une maladie qui ne paraît pas si mortelle. Les impacts du seul effet nocébo [^n17]devrait engendrer un débat contradictoire sur l'oppoortunité d'une opération à grande échelle concernant la grippe dans un contexte de "guerre" affichée contre "un" coronavirus. Chaque personne ayant été vacciné a déjà été prévenu des effets secondaires des vaccins sur l'organisme. Les notices des vaccins disponibles sur le Vidal préviennent de l'ensemble de ces effets ainsi que de leur (haute) fréquence.
+Les liens entre vaccinations et déterioration temporaire des défenses immunitaires ont pourtant déjà fait l'objet d'études. Une étude de janvier 2020 [^n16] montre des liens statistiques entre la vaccination grippale et une augmentation du nombre de malades des autre pathologies, en particulier les coronavirus. Si on ajoute le fait que pendant l'hiver 2019-2020, la mortalité attribuée à la grippe est proche de 0, il paraît contradictoire de lancer en octobre 2020 une campagne de vaccination d'une ampleur jamais égalée contre une maladie qui ne paraît pas si mortelle. Les impacts du seul effet nocébo [^n17]devrait engendrer un débat contradictoire sur l'oppoortunité d'une opération à grande échelle concernant la grippe dans un contexte de "guerre" affichée contre "un" coronavirus. Chaque personne ayant été vacciné a déjà été prévenu des effets secondaires des vaccins sur l'organisme. Les notices des vaccins disponibles sur le Vidal[^n18] préviennent de l'ensemble de ces effets ainsi que de leur (haute) fréquence.
 
 Pour conclure, il est nécessaire de rappeler à ce stade qu'en France, cette hausse de mortalité intervient dans un contexte de 2e confinement dont nous avons détaillé les effets plus haut, ainsi que dans une consommation historiquement basse d'antibiotiques.
 
@@ -357,6 +357,8 @@ Il n'est pas exceptionnel d'avoir autour du 1er janvier de chaque année, deux p
 
 En particulier, Malte et la Hongrie déclarent une vaccination à très grande échelle sur leur territoire. Ainsi, les vaccinations concernent des jeunes depuis plusieurs semaines.
 
+#### 2.5.1 La Hongrie, pays test de la politique vaccinale à grande échelle
+
 Concernant la Hongrie, on note une concomitance parfaite entre le début de la campagne vaccinale contre la Covid-19 et une très forte hausse de la mortalité pour atteindre le maximum connu en décembre pour les plus de 65 ans. Pour les moins de 65 ans, la situation est pire que 2 mois auparavant. Il s'agit même d'un record absolu pour toute la période où nous disposons de données sur Eurostat (2013).
 
 ![](decesvaccinhongrie.png){width=1000px}
@@ -367,10 +369,19 @@ Le focus sur le moins de 40 ans qui ne décèdent que très peu lors des épisod
 
 Si on prend en compte l'évolution de la pyramide des âges en Hongrie et la forte baisse du nombre de moins de 40 ans, il s'agit également de la période connaissant le plus de décès de jeunes enregistrés. Etant communément admis que les jeunes ne décèdent quasiment jamais d'infections respiratoires aïgues contractées pendant l'hiver, et pas plus de la Covid-19, le nombre de causes possibles de cette surmortalité est limitée. Même si certains affirmeront que la cause viendrait d'un nouveau virus, cela signifierait qu'il serait apparu uniquement depuis la campagne vaccinale.
 
-Les semaines 10 à 17 en Hongrie ont enregistrés 485 décès de personnes de moins de 40 ans. A la même époque, en 2020, 355 récès seulement ont été enregistrés, soit une hausse historique de 36%.
+Les semaines 10 à 17 en Hongrie ont enregistré 485 décès de personnes de moins de 40 ans. A la même époque, en 2020, 355 décès seulement ont été enregistrés, soit une hausse historique de 36%.
 Ces décès sont parfaitement indétectables par les méthodes de suivis habituels concernant les médicaments. La Hongrie possède 4,35 millions d'habitants de moins de 40 ans. Une surmortalité de 130 personnes représente dans la population 0,0002964%. Si l'on avait suivi un échatillon de 10 000 hongrois de moins de 40 ans, nous n'aurions trouvé aucun mort supplémentaire.
 Seuls les poisons violents peuvent être détectés par ce type de pratique.
+
+La pharmacovigilance ne permet pas non-plus de suivre efficacement les liens entre l'administration d'un produit et la mortalité qui suivrait.
+
+En premier lieu, le suivi des données est inadapté. D'une part, la pharmacovigilance est passive. Les institutions attendant que des individus (patients, professionnels de santé...) notifient les cas à la pharmacovigilance de l'ANSM ou du fabricant. Cependant, il est notoire que cette attente passive ne fonctionne pas et que les remontées sont bien plus rares que les cas, ce qu'on appelle la sous notification. Les études sur le sujet estiment que seulement 1% des évènements indésirables sont rapportés, donc que 99% ne sont jamais connus [^n20]. Dans le cas présent, on peut estimer qu'environ seulement 1 décès d'une personne de moins de 40 ans a pu remonter à la pharmacovigilance hongroise.
+
+Enfin, la méthode d'imputabilité utilisée ne permet pas de lier le décès à l'administration d'un vaccin. Cette méthode s'appuie sur le principe Challenge - Déchallenge - Rechallenge[^n21]. Ainsi, un effet devient identifié entre un produit et un évènement indésirable, lorsque que l'évènement est arrivé arpès la prise du produit (par exemple une éruption cutanée), puis que l'évènement s'est arrêté après l'arrêt de la prise du produit (fin de l'éruption cutanée) et enfin que l'évènement est revenu après la reprise du produit (nouvelle éruption cutanée). Dans le cas présent, un décès d'un jeune de moins de 40 suite à l'administration de la première dose ne pourra rentrer que dans la cas "Challenge". Il n'est pas possible de réveiller un mort pour lui administrer une seconde dose et vérifier qu'il décède de nouveau. Un tel cas serait dons codifié comme peu probant.
+
 Dès lors, la seule façon de détecter la létalité d'une intervention est malheureusement de le faire après la difffusion de cette dernière à grande échelle, par une étude de mortalité toute cause, comme la présente étude.
+
+#### 2.5.2 L'étude des autres pays européens confirment l'analyse
 
 La situation est similaire à Malte. le niveau de décès est important en 2021, mais surtout, il concerne cette fois des moins de 65 ans. Le faible nombre d'habitant de Malte ne permet toutefois pas de descendre au niveau des moins de 40 ans (il décède à Malte en moyenne 2 personnes de moins de 40 ans par semaine).
 
@@ -401,12 +412,21 @@ Pour la quasi-totalité des pays d'Europe dont nous disposons des données, il a
 ## Une politique sanitaire dont on questionne les liens avec la santé
 
 Nous observons que la mortalité observée depuis un peu plus d'un an partout en Europe est à un niveau comparable au reste de notre décennie. Il existe des variations entre les différents Etats, mais le lien entre les poltiques affichées et le niveau de mortalité ne semble pas évident, voire dans le sens inverse de l'attendu.
-POur la France, les différentes mesures identifiées participent mécaniquement à une augmentation des décès sans que l'on puisse quantifier un quelconque impact bénéfique.
+Pour la France, les différentes mesures identifiées participent mécaniquement à une augmentation des décès sans que l'on puisse quantifier un quelconque impact bénéfique.
 Dès lors, si la mortalité n'est finalement pas exceptionnelle, est-il raisonnable d'entretenir un climat de peur, de maintenir les règles liberticides en place et de lancer des campagnes de vaccinations d'une ampleur jamais connue réalisées à partir de produits expérimentaux ?
 Nous observons que les campagnes de vaccination en période hivernale sont liée à des augmentations de mortalité. Il conviendrait d'analyser en profondeur ce lien avant de continuer à promouvoir des produits dans des périodes où la santé des européens baisse cycliquement.
 Nous observons que tous les pays européens ayant démarré en masse une campagne de vaccination contre la Covid-19 ont des taux de mortaltié inhabituels pour la saison. Les pays ayant le plus massivement vaccinés ont des taux de mortalité chez leurs jeunes jamais égalés jusqu'à maintenant.
 
 Est-il raisonnable de continuer cette politique sanitaire inconnue dans ces conditions ? N'est-il pas urgent de reprendre le cours normal des consultations pour retrouver l'usage des médicaments que nous avions avant 2020 avec une mortalité plus faible au lieu de faire le pari de l'efficacité de nouveaux produits miracles ?
+
+Enfin, cette analyse est une analyse statistique. Aucune analyse statistique ne permet jamais d'obtenir une certitude. C'est d'ailleurs l'arme utilisé en permanence par tous les producteurs pour se défendre contre les plaignants ayant perdu un proche. Il appartient à chaque fois au juge de se contenter d'une vraisemblance de causalité en revenant à du "bon sens" pour statuer[^n22]. Jamais nous ne pourrons être "certains" par l'analyse des statistiques, ni de la dangerosité de la Covid-19, ni du vaccins. Jamais même, nous ne pourrons être certains de la qualité et de l'exactitude des données que nous manipulons.
+
+Cependant, si nous ne sommes pas sûrs du lien de causalité entre la vaccination massive en cours et la hausse de la mortalité, alors nous ne sommes pas sûrs non plus du lien de causalité entre la remontée de tests positifs Covid-19 et la hausse mortalité.
+
+Si nous ne sommes pas sûrs de la qualité des données de mortalité, alors la nouvelle politique sanitaire ne repose sur aucune base solide.
+Inversement, si nous sommes sûrs de la qualité des données de mortalité, alors leur analyse approfondie montre qu'il faut cesser immédiatement la stratégie actuelle.
+
+Dans tous les cas, il est urgent de retrouver ce qui manque cruellement depuis plus d'un an, et qui doit primer devant tout le reste : du bon sens.
 
 
 [^n1]:<https://youtu.be/IPu4QvUHaQE>
@@ -428,7 +448,9 @@ Est-il raisonnable de continuer cette politique sanitaire inconnue dans ces cond
 [^n17]:<https://pharmacomedicale.org/66-pharmacologie/medicaments-alternatifs/placebo/161-toxicite-effet-nocebo>
 [^n18]:<https://www.vidal.fr/medicaments/gammes/vaxigriptetra-79276.html>
 [^n19]:<https://ourworldindata.org/covid-vaccinations>
-
+[^n20]:<https://digital.ahrq.gov/ahrq-funded-projects/electronic-support-public-health-vaccine-adverse-event-reporting-system>,<https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4368609/>
+[^n21]:<https://pharmacomedicale.org/images/desc2016/Methodes_dimputabilite_-_DES_Pharmaco_Med_-_24112016.pdf>
+[^n22]:<https://www.lexbase.fr/revues-juridiques/61548960-jurisprudence-monsanto-et-les-sept-peches-capitaux-epilogue-de-la-saga-du-lasso-par-la-condamnation>
 
 # Annexes
 ## Les décès hebdomadaires par pays
