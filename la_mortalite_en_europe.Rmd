@@ -25,6 +25,13 @@ Toutes les données utilisées proviennent de sources officielles :
 
 - Ecdc pour les donénes des mesures prises par les différents pays
 
+Toutes les données de mortalité utilisées dans cet articles, sont des données de mortalités toutes causes confondues et pas uniquement des données de mortalité de la seule cause Covid-19. En effet pour considérer qu'une maladie est mortelle, il faut qu'elle ait un impact sur la mortalité générale, et pas uniquement compter les décès de personnes qui en sont porteuses. En effet, cela n'aurait aucun sens statistique de compter les décès survenus après la dégustation d'une glace à la vanille. Pourtant en le faisant nous verrions une forte augmentation de ces décès l'été, uniquement parce qu'en France 1500 personnes décèdent tous les jours l'été, et qu'à cette période, elles dégustent plus souvent des glaces à la vanille. Il s'agit de ce que l'on appelle un biais de perception.
+
+Le fait de présenter en permanence des statistiques de mortalité de personnes porteuses de la Covid induit un biais de perception. Il laisse imaginer que ce virus est la seule cause de mortalité aujourd'hui sans jamais confronter ces décès au nombre de décès habituels de chaque pays. Dans ce contexte, il est impossible de réaliser une recherche raisonnable des causes de décès depuis mars 2020 : c'est la Covid-19 qui s'impose et rien d'autre n'est envisageable. C'est le contraire d'une démarche scientifique.
+
+Pour cette raison, cet article se base uniquement sur les décès toutes causes et met en lien les différents évènements et choix qui ont cours dans les différents pays, afin de chercher des causes de décès sans biais préalable.
+
+Les décès des données toutes causes sont étonnament et malheureusement beaucoup plus difficiles à trouver. Elles ne bénéficient pas de la diffusion des statistiques de la Covid et ses nombreux sites internet redoublant d'interfaces graphiques. Ils doivent être téléchargé sur des sites spécilisés et retravaillés pour les rendre exploitables. Ils sont pourtant les seuls permettant une analyse objective la situation.
 
 Cet article pésente en première partie le bilan de l'année 2020 pour montrer que dans sa gloablité, cette année est loin d'être exceptionnelle du point de vue de la mortalité. Ce résultat est confirmé pour tous les pays d'Europe pour lesquels nous avons des données de population et de décès.
 
@@ -320,11 +327,11 @@ Le Rivotril est un médicament antiépileptique dont l'utilisation n'a haibtuell
 
         myasthénie.
 
-Ainsi, la dérogation du décret ne propose pas l'utilisation d'un sédatif, mais d'un médicament déclenchant l'arrêt de la respiration du patient et donc son décès anticipé. Le décret a eu cours du 28 mars au 11 mai, soit dans la période exacte sur laquelle est constatée le plus fort nombre de décès depuis la canicule de 2003. L'analyse des centes de Rivotril en pharmacie reflète l'ampleur de l'utilisation de ce produit.
+Ainsi, la dérogation du décret ne propose pas l'utilisation d'un sédatif, mais d'un médicament déclenchant l'arrêt de la respiration du patient et donc son décès anticipé. Le décret a eu cours du 28 mars au 11 mai, soit dans la période exacte sur laquelle est constatée le plus fort nombre de décès depuis la canicule de 2003. L'analyse des ventes de Rivotril en pharmacie dans sa forme injectable reflète l'ampleur de l'utilisation de ce produit.
 
-![](medicriv.png){width=1000px}
+![](rivotril.png){width=1000px}
 
-Ainsi, contrairement aux antibiotiques, les ventes de Rivotril ont augmenté de 12% au mois de mars et n'ont que légèrement diminué en avril et en mai (respectivement 2% et 8% en dessous de la moyenne). Cette augmentation sur mars représente 10 000 boîtes du produit. Ces statistiques ne reflètent que partiellement l'utilisation de cette molécule car elles ne prennent pas en compte les doses qui ne sont pas distribuées par les pharmacies de ville, par exemple en provenance directe de l'hôpital.
+Ainsi, contrairement aux antibiotiques, les ventes de boîtes Rivotril dans a forme injectable ont augmenté de 59% au mois de mars et de 227% en avril relativement à la moyenne observée entre 2017 et 2019. Cette augmentation sur mars représente 1 700 boîtes du produit et plus de l'habitude. Chaque boîte contient 6 ampoules dont une à 2 sont utilisées par patient dans le cadre d'une fin de vie. Ces statistiques ne reflètent que partiellement l'utilisation de cette molécule car elles ne prennent pas en compte les doses qui ne sont pas distribuées par les pharmacies de ville, par exemple en provenance directe de l'hôpital. On s'étonne par la suite que la consommation de ce produit dans sa forme injectable n'ait pas retrouvé son ancien niveau. Entre mars 2020 et mars 2021, ce sont 6 150 boîtes supplémentaires à l'habitude qui ont été vendues, soit plus de 36 000 ampoules.
 
 La comparaison des décès déclarés Covid  [^n13] et des décès toutes causes dans les EHPADs présente ainsi des incohérences massives. Celles-ci sont détaillées dans la vidéo précitée. Par exemple autour du 31 mars, la quasi-totalité des décès des EHPADs sont enregistrées dans les statistiques COvid alors que moins de la moitié des régions françaises connaissent une surmortalité et sont considérées touchées par cette pathologie.
 
