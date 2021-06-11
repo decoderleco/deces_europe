@@ -1,6 +1,6 @@
 ---
 title: "La mortalité en Europe"
-author: "Pierre CHAILLOT"
+author: "Pierre Décoder l'éco"
 date: "20/05/2021"
 output: html_document
 ---
@@ -194,12 +194,23 @@ De la Suède jusqu'au Portugal, les hausses de mortalité sont naturellement sim
 La mortalité hivernale des pays européens n'est donc pas en lien avec un phénomène de diffusion sur de maladies l'hiver en Europe. Le Portugal et la Suède sont séparés par 3000 km. Si la diffusion entre individus de maladies l'hiver était responsable de l'augmentation de la mortalité, de décalages temporels devraient être visibles, ce qui n'est pas le cas.
 L'augmentation des décès ne représente pas le déplacement des maladies, mais leur apparition partout à la fois. Il s'agit d'une manifestation de la dégradation cyclique de l'état de santé. Cette dégradation simultanée partout en Europe se traduit par l'apparition de symptômes attribués à des maladies hivernales et par l'augmentation des décès. Le phénomène de courbe en cloche concernant la mortalité n'est pas le résultat d'un phénomène de propagation, mais d'une phénomène d'apparition. Il est évident que les portugais ne contaminent pas les suédois, ni inversement.
 
+Le même résulat se constate à des niveaux plus fins que les pays. En France, pour lequel nous avons des résultats départementaux, les pics de mortalité sont synchronisés. Ils sont plus ou moins visibles selon l'âge et la taille de la population.
 
-### 2.2 le pic de mortalité de mars-avril 2020 ne concerne que peu de pays
+### 2.2 le pic de mortalité de mars-avril 2020 ne concerne que peu de territoires
 
 Contrairement à une idée largement répandue, le phénomène de pic de mortalité aux mois de mars-avril 2020 n'est absolument pas un phénomène mondial. Sur les 33 pays étudiés dans cet article, seuls 9 présentent une mortalité supérieure à la mortalité habituelle sur cette période : la Belgique, la Suisse, Chypre, l'Espagne, la France, l'Italie, le Luxembourg, les Pays-bas et la Suède (cf. annexes)
 
 Ce phénomène très limité doit alors s'analyser au regard de la situation particulière de chaque pays et surtout des mesures spécifiques prises sur la période. Cet article présente les liens trouvés entre la hausse de la mortalité française et les mesures exceptionnelles prises.
+
+Au niveau des départements français, le pic de mortalité de mars-avril 2020 n'a touché ni tous les territoires, ni avec la même intensité pour tous les terrritoires touchés. En revanche, tous les territoires touchés par cepix de mortalité l'ont été de manière synchronisé. Nous avons donc un pic de mortalité qui ne touche pas tous les pays d'Europe, et au sein de chaque pays, pas tous les territoires, mais dont tous les territoires touchés le sont en même temps.
+
+En Île-de-France par exemple, tous les départements connaissent une hausse de mortalité synchronisée débutant arpès le début du confinement identifié ici en bleu.
+
+![](ÎledeFrance.png){width=1000px}
+A l'inverse, en Nouvelle-Aquitaine, auncune hausse de mortalité n'est visible sur la période.
+
+![](NouvelleAquitaine.png){width=1000px}
+NOus constatons également que les territoires touchés par cette hausse de mortalité sont majoritairement des départements avec des villes de tailles importantes (cf. annexes) et donc des quartiers avec de très forts taux de pauvreté. L'Insee révèle logiquement [^n23] que la mortalité de cette période touche beaucoup plus fortement les communes denses et les personnes nées à l'étranger. Il est étonnant de la part de l'Insee qui produit les statistiques annuelles de pauvreté, de ne pas faire le lien entre les conditions de vie et de salubrité difficiles des quartiers pauvres et la hausse de la mortalité. Une fois de plus, il ne s'agit pas d'un problème de propagation, mais de santé publique sur des territoires particuliers.
 
 ### 2.3 Le lien entre les mesures françaises et les variations de mortalité 
 
@@ -229,7 +240,7 @@ Il est notable qu'absolument tous les cas de figure existent en Europe, entre co
 
 Beaucoup de journaliste écrivent que le confinement strict a permis de sauver de nombreuses vies par l’absence des accidents de voiture. Il est aisé de quantifier le nombre de vies sauvées au maximum par une telle mesure. Il y a environ 3 600 décès sur la route par an en France, soit 300 par mois, cela fait environ 600 décès sur la période de confinement. Les ¾ de ces décès concernent des moins de 65 ans [^n4].
 
-En effet, en écrasante majorité, les personnes qui prennent leur voiture tous les jours pour aller au travail on moins de 65 ans. La Covid au contraire touche les plus de 65 ans. L’impact du confinement sur la sécurité routière aura pu sauver une partir des 600 décès possibles, mais en écrasante majorité des jeunes, alors qu’ils ne risquent rien avec la Covid.
+En effet, en écrasante majorité, les personnes qui prennent leur voiture tous les jours pour aller au travail ont moins de 65 ans. La Covid au contraire touche les plus de 65 ans. L’impact du confinement sur la sécurité routière aura pu sauver une partir des 600 décès possibles, mais en écrasante majorité des jeunes, alors qu’ils ne risquent rien avec la Covid.
 
 Parallèlement, le 7 mai 2020, dans son bulletin épidémiologique [^n5], Santé publique France tire la sonnette d’alarme sur le renoncement au soin.
 En France, environ 120 000 infarctus sont dénombrés chaque année [^n6], soit 20 000 attendus pendant la période de confinement. De même, 150 000 AVC sont comptabilisés chaque année [^n7], soit 25 000 en 2 mois.
@@ -246,7 +257,7 @@ Ces décès ne sont pas considérés comme ayant un quelconque rapport avec la C
 
 ![](domicile.png){width=1000px}
 
-Ce résultat de non-prise en charge peu expliquer le caractère particulier des données de Chypre.
+Ce résultat de non-prise en charge peut expliquer le caractère particulier des données de Chypre.
 
 ![](deceshebdochyprelissage.png){width=1000px}
 
@@ -277,8 +288,10 @@ Ce choix de ne pas laisser les médecins de ville proposer de traitements dans l
 Ainsi, à partir de fin mars, de nombreux français dont l’état de santé s’est dégradé à leur domicile affluent dans les services hospitaliers. Les coronavirus, comme la Covid-19, ont pu entraîner des lésions dans l’appareil respiratoire empêchant les patients de respirer. Ces lésions sont également des portes ouvertes aux surinfections bactériennes.
 Les sujets âgés se présentant à la l’hôpital ont à la fois des « trous » dans les poumons les empêchant de respirer, mais également des bactéries se développant à la suite de ces lésions et de la chute des défenses immunitaires. Ces 2 pathologies combinées empêchent de répondre rapidement aux besoins du patient. Si une injection de corticoïdes pouvait permettre au patient de réparer les trous des poumons, elle accélèrerait la prolifération des bactéries, entraînant la mort par surinfection. A l’inverse, ne pas agir sur la mécanique respiratoire entraîne le décès du patient dans les plus brefs délais.
 De nombreux patients sont décédés non pas à cause du caractère exceptionnel de la maladie, mais à cause du caractère exceptionnel de la situation : pas de prise en charge précoce, et pas de traitement anitbiotique.
+Une fois de plus, pour les personnes les plus pauvres et vivant dans les logements les moins salubres, pour lesquelles nous avons vu plus haut une plus forte hausse de mortalité, il est normal qu'un confinement à domicile forcé engendre une probabilité plus importante de souffrir d'une infection, que le manque d'antibiotique ne manquera pas de laisser s'aggraver.
 
-Ce défaut de prise en charge a été quantifié par les deux membres du Conseil Scientifique, Arnaud Fontanet et Simon Cauchemez, pourtant à l’origine de cette stratégie. Leur article dans Science [^n9], utilise les données hospitalières françaises et notamment le temps de passage et réanimation et de décès depuis la prise en charge du patient. Les courbes les plus intéressantes ont été supprimés depuis par les auteurs. Au pages 31 et 33, on pouvait consulter le nombre de jours que mettent les patients arrivant à l’hôpital avant d’aller en réanimation (graphique de gauche) et le nombre de jours qu’ils mettent avant de décéder (graphique de droite).
+
+Ce défaut de prise en charge a été quantifié par les deux membres du Conseil Scientifique, Arnaud Fontanet et Simon Cauchemez, pourtant à l’origine de cette stratégie. Leur article dans Science [^n9], utilise les données hospitalières françaises et notamment le temps de passage et réanimation et de décès depuis la prise en charge du patient. Les courbes les plus intéressantes ont été supprimés depuis de l'article principal, maais sont toujours disponibles dans les données complémentaires. Au pages 15 et 16 sont détaillés les nombres de jours que mettent les patients arrivant à l’hôpital avant d’aller en réanimation (graphique de gauche) et le nombre de jours qu’ils mettent avant de décéder (graphique de droite).
 
 ![](fontanet.png){width=1000px}
 
@@ -343,7 +356,7 @@ Les données disponibles sur les vaccins ne sont disponibles que mensuellement, 
 
 La hausse soudaine des décès en octobre 2020 comparativmement aux années précédentes correspond en dates et proportions aux observations du passé. Même si corrélation n'est pas causalité, les soupçons à ce niveau devraient soulever des recherches poussées complémentaires. Il serait nécessaire de comparer les dates de décès de tous les français depuis 2015, aux dates de vaccinations. Il s'agirait de déterminer si un lien statistique existe entre date de vaccination et date de décès. Les données précises et nominatives des décès de tous les français sont publiques et disponibles en ligne. Le rapprochement avec les dates de vaccinations devrait être possible pour les chercheurs disposant des droits d'accès aux données de vaccinations.
 
-Les liens entre vaccinations et déterioration temporaire des défenses immunitaires ont pourtant déjà fait l'objet d'études. Une étude de janvier 2020 [^n16] montre des liens statistiques entre la vaccination grippale et une augmentation du nombre de malades des autre pathologies, en particulier les coronavirus. Si on ajoute le fait que pendant l'hiver 2019-2020, la mortalité attribuée à la grippe est proche de 0, il paraît contradictoire de lancer en octobre 2020 une campagne de vaccination d'une ampleur jamais égalée contre une maladie qui ne paraît pas si mortelle. Les impacts du seul effet nocébo [^n17]devrait engendrer un débat contradictoire sur l'oppoortunité d'une opération à grande échelle concernant la grippe dans un contexte de "guerre" affichée contre "un" coronavirus. Chaque personne ayant été vacciné a déjà été prévenu des effets secondaires des vaccins sur l'organisme. Les notices des vaccins disponibles sur le Vidal[^n18] préviennent de l'ensemble de ces effets ainsi que de leur (haute) fréquence.
+Les liens entre vaccinations et déterioration temporaire des défenses immunitaires ont pourtant déjà fait l'objet d'études. Une étude de janvier 2020 [^n16] montre des liens statistiques entre la vaccination grippale et une augmentation du nombre de malades des autre pathologies, en particulier les coronavirus. Si on ajoute le fait que pendant l'hiver 2019-2020, la mortalité attribuée à la grippe est proche de 0, il paraît contradictoire de lancer en octobre 2020 une campagne de vaccination d'une ampleur jamais égalée contre une maladie qui ne paraît pas si mortelle. Les impacts du seul effet nocébo [^n17]devrait engendrer un débat contradictoire sur l'oppoortunité d'une opération à grande échelle concernant la grippe dans un contexte de "guerre" affichée contre "un" coronavirus. Chaque personne ayant été vacciné a déjà été prévenu des effets indésirables des vaccins sur l'organisme. Les notices des vaccins disponibles sur le Vidal[^n18] préviennent de l'ensemble de ces effets ainsi que de leur (haute) fréquence.
 
 Pour conclure, il est nécessaire de rappeler à ce stade qu'en France, cette hausse de mortalité intervient dans un contexte de 2e confinement dont nous avons détaillé les effets plus haut, ainsi que dans une consommation historiquement basse d'antibiotiques.
 
@@ -451,6 +464,7 @@ Dans tous les cas, il est urgent de retrouver ce qui manque cruellement depuis p
 [^n20]:<https://digital.ahrq.gov/ahrq-funded-projects/electronic-support-public-health-vaccine-adverse-event-reporting-system>,<https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4368609/>
 [^n21]:<https://pharmacomedicale.org/images/desc2016/Methodes_dimputabilite_-_DES_Pharmaco_Med_-_24112016.pdf>
 [^n22]:<https://www.lexbase.fr/revues-juridiques/61548960-jurisprudence-monsanto-et-les-sept-peches-capitaux-epilogue-de-la-saga-du-lasso-par-la-condamnation>
+[^n23]:https://www.insee.fr/fr/statistiques/4627049
 
 # Annexes
 ## Les décès hebdomadaires par pays
@@ -529,3 +543,19 @@ Dans tous les cas, il est urgent de retrouver ce qui manque cruellement depuis p
 ![](decesvaccincroatie.png){width=1000px}
 ![](decesvaccinnorvege.png){width=1000px}
 ![](decesvaccinserbie.png){width=1000px}
+
+## Les décès quotidiens par département français
+
+![](BourgogneFrancheComté.png){width=1000px}
+![](AuvergneRhôneAlpes.png){width=1000px}
+![](PaysdelaLoire.png){width=1000px}
+![](PACA.png){width=1000px}
+![](ÎledeFrance.png){width=1000px}
+![](NouvelleAquitaine.png){width=1000px}
+![](HautsdeFrance.png){width=1000px}
+![](GrandEst.png){width=1000px}
+![](Occitanie.png){width=1000px}
+![](ÎledeFrance.png){width=1000px}
+![](Corse.png){width=1000px}
+![](Bretagne.png){width=1000px}
+![](CentreValdeLoire.png){width=1000px}
