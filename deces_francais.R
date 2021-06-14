@@ -206,6 +206,10 @@ db_clean <- db_clean %>% mutate(age_deces_millesime=deces_annee_complete-naissan
 
 ?summarise
 saveRDS(db_clean, file = 'data/deces_fr.rds')
+
+
+#### réalisation des graphiques ####
+
 db_clean <- readRDS('data/deces_fr.rds')
 deces_dep_jour <- db_clean %>% group_by(deces_date_complete,deces_departement) %>% summarise(effectif=n()) %>% filter(deces_date_complete>="2018-01-01")
 deces_dep_centre_reduit <- deces_dep_jour %>% group_by(deces_departement) %>% summarise(minimum=min(effectif),maximum=max(effectif),
@@ -217,6 +221,9 @@ deces_dep_jour <- deces_dep_jour %>% mutate(dece_centre_reduit=(effectif-moyenne
 
 nom_departement <- read.csv("departements-region.csv",sep=",",header = TRUE,encoding="UTF-8")
 deces_dep_jour <- deces_dep_jour %>% left_join(nom_departement,by=c("deces_departement"="num_dep"))
+deces_dep_jour <- deces_dep_jour %>% mutate(confinement = if_else(
+  (deces_date_complete>="2020-03-17" & deces_date_complete<="2020-05-11")|
+  (deces_date_complete>="2020-10-30" & deces_date_complete<="2020-12-15"),"confinement","pas de confinement"))
 
 BourgogneFrancheComté <-deces_dep_jour %>%filter(region_name=="Bourgogne-Franche-Comté")
 AuvergneRhôneAlpes<-deces_dep_jour %>%filter(region_name=="Auvergne-Rhône-Alpes")
@@ -233,50 +240,36 @@ Corse<-deces_dep_jour %>%filter(region_name=="Corse")
 CentreValdeLoire<-deces_dep_jour %>%filter(region_name=="Centre-Val de Loire")
 
 ggplot(data = BourgogneFrancheComté) + 
-  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit)) + 
+  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
+  scale_colour_manual(values=c("red","black"))+
   facet_wrap(~dep_name)+
-  geom_vline(xintercept = as.Date("2020-03-17"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-05-11"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-10-30"), color = "orange", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-12-15"), color = "orange", size=0.5)+ 
   ggtitle("Décès quotidiens par département") +
   xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
 
 dev.print(device = png, file = "BourgogneFrancheComté.png", width = 1000)
 
 ggplot(data = AuvergneRhôneAlpes) + 
-  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit)) + 
+  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
+  scale_colour_manual(values=c("red","black"))+
   facet_wrap(~dep_name)+
-  geom_vline(xintercept = as.Date("2020-03-17"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-05-11"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-10-30"), color = "orange", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-12-15"), color = "orange", size=0.5)+ 
   ggtitle("Décès quotidiens par département") +
   xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
-
 
 dev.print(device = png, file = "AuvergneRhôneAlpes.png", width = 1000)
 
 ggplot(data = PaysdelaLoire) + 
-  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit)) + 
+  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
+  scale_colour_manual(values=c("red","black"))+
   facet_wrap(~dep_name)+
-  geom_vline(xintercept = as.Date("2020-03-17"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-05-11"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-10-30"), color = "orange", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-12-15"), color = "orange", size=0.5)+ 
   ggtitle("Décès quotidiens par département") +
   xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
-
 
 dev.print(device = png, file = "PaysdelaLoire.png", width = 1000)
 
 ggplot(data = PACA) + 
-  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit)) + 
+  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
+  scale_colour_manual(values=c("red","black"))+
   facet_wrap(~dep_name)+
-  geom_vline(xintercept = as.Date("2020-03-17"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-05-11"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-10-30"), color = "orange", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-12-15"), color = "orange", size=0.5)+ 
   ggtitle("Décès quotidiens par département") +
   xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
 
@@ -284,12 +277,9 @@ ggplot(data = PACA) +
 dev.print(device = png, file = "PACA.png", width = 1000)
 
 ggplot(data = ÎledeFrance) + 
-  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit)) + 
+  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
+  scale_colour_manual(values=c("red","black"))+
   facet_wrap(~dep_name)+
-  geom_vline(xintercept = as.Date("2020-03-17"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-05-11"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-10-30"), color = "orange", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-12-15"), color = "orange", size=0.5)+ 
   ggtitle("Décès quotidiens par département") +
   xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
 
@@ -297,25 +287,18 @@ ggplot(data = ÎledeFrance) +
 dev.print(device = png, file = "ÎledeFrance.png", width = 1000)
 
 ggplot(data = NouvelleAquitaine) + 
-  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit)) + 
+  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
+  scale_colour_manual(values=c("red","black"))+
   facet_wrap(~dep_name)+
-  geom_vline(xintercept = as.Date("2020-03-17"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-05-11"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-10-30"), color = "orange", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-12-15"), color = "orange", size=0.5)+ 
   ggtitle("Décès quotidiens par département") +
   xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
-
 
 dev.print(device = png, file = "NouvelleAquitaine.png", width = 1000)
 
 ggplot(data = HautsdeFrance) + 
-  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit)) + 
+  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
+  scale_colour_manual(values=c("red","black"))+
   facet_wrap(~dep_name)+
-  geom_vline(xintercept = as.Date("2020-03-17"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-05-11"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-10-30"), color = "orange", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-12-15"), color = "orange", size=0.5)+ 
   ggtitle("Décès quotidiens par département") +
   xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
 
@@ -323,25 +306,18 @@ ggplot(data = HautsdeFrance) +
 dev.print(device = png, file = "HautsdeFrance.png", width = 1000)
 
 ggplot(data = GrandEst) + 
-  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit)) + 
+  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
+  scale_colour_manual(values=c("red","black"))+
   facet_wrap(~dep_name)+
-  geom_vline(xintercept = as.Date("2020-03-17"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-05-11"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-10-30"), color = "orange", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-12-15"), color = "orange", size=0.5)+ 
   ggtitle("Décès quotidiens par département") +
   xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
-
 
 dev.print(device = png, file = "GrandEst.png", width = 1000)
 
 ggplot(data = Occitanie) + 
-  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit)) + 
+  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
+  scale_colour_manual(values=c("red","black"))+
   facet_wrap(~dep_name)+
-  geom_vline(xintercept = as.Date("2020-03-17"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-05-11"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-10-30"), color = "orange", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-12-15"), color = "orange", size=0.5)+ 
   ggtitle("Décès quotidiens par département") +
   xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
 
@@ -349,12 +325,9 @@ ggplot(data = Occitanie) +
 dev.print(device = png, file = "Occitanie.png", width = 1000)
 
 ggplot(data = ÎledeFrance) + 
-  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit)) + 
+  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
+  scale_colour_manual(values=c("red","black"))+
   facet_wrap(~dep_name)+
-  geom_vline(xintercept = as.Date("2020-03-17"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-05-11"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-10-30"), color = "orange", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-12-15"), color = "orange", size=0.5)+ 
   ggtitle("Décès quotidiens par département") +
   xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
 
@@ -362,12 +335,9 @@ ggplot(data = ÎledeFrance) +
 dev.print(device = png, file = "ÎledeFrance.png", width = 1000)
 
 ggplot(data = Corse) + 
-  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit)) + 
+  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
+  scale_colour_manual(values=c("red","black"))+
   facet_wrap(~dep_name)+
-  geom_vline(xintercept = as.Date("2020-03-17"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-05-11"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-10-30"), color = "orange", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-12-15"), color = "orange", size=0.5)+ 
   ggtitle("Décès quotidiens par département") +
   xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
 
@@ -375,25 +345,18 @@ ggplot(data = Corse) +
 dev.print(device = png, file = "Corse.png", width = 1000)
 
 ggplot(data = Bretagne) + 
-  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit)) + 
+  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
+  scale_colour_manual(values=c("red","black"))+
   facet_wrap(~dep_name)+
-  geom_vline(xintercept = as.Date("2020-03-17"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-05-11"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-10-30"), color = "orange", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-12-15"), color = "orange", size=0.5)+ 
   ggtitle("Décès quotidiens par département") +
   xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
-
 
 dev.print(device = png, file = "Bretagne.png", width = 1000)
 
 ggplot(data = CentreValdeLoire) + 
-  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit)) + 
+  geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
+  scale_colour_manual(values=c("red","black"))+
   facet_wrap(~dep_name)+
-  geom_vline(xintercept = as.Date("2020-03-17"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-05-11"), color = "blue", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-10-30"), color = "orange", size=0.5)+
-  geom_vline(xintercept = as.Date("2020-12-15"), color = "orange", size=0.5)+ 
   ggtitle("Décès quotidiens par département") +
   xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
 
