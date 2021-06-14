@@ -55,7 +55,7 @@ deces_complet_annuel_analysable2000_ouest20 <- deces_complet_annuel_analysable20
 
 ggplot(deces_complet_annuel_analysable2000) + 
   geom_point(aes(x = geo, y = deces_france_theo_20, color = time), size = 2)+
-  geom_point(data=deces_complet_annuel_20,aes(x = geo, y = deces_france_theo_20), color = "red", size = 3)+
+  geom_label(data=deces_complet_annuel_20,aes(x = geo, y = deces_france_theo_20,label=format(time, format = "%Y")), color = "red", size = 3)+
   labs(title = "Décès standardisés par pays et année",
        subtitle = "selon la population de la France en 2020",
      caption = "Source des données : Eurostat",x="",y="nombre de décès standardisés")+
@@ -67,7 +67,7 @@ dev.print(device = png, file = "deces2000tot.png", width = 1000)
 
 ggplot(deces_complet_annuel_analysable2000_est) + 
   geom_point(aes(x = location, y = deces_france_theo_20, color = time), size = 2)+
-  geom_point(data=deces_complet_annuel_analysable2000_est20,aes(x = location, y = deces_france_theo_20), color = "red", size = 3)+
+  geom_label(data=deces_complet_annuel_analysable2000_est20,aes(x = location, y = deces_france_theo_20,label=format(time, format = "%Y")), color = "red", size = 3)+
 labs(title = "Décès standardisés par pays et année",
      subtitle = "selon la population de la France en 2020",
      caption = "Source des données : Eurostat",x="",y="nombre de décès standardisés")+
@@ -78,7 +78,7 @@ dev.print(device = png, file = "deces2000est.png", width = 1000)
 
 ggplot(deces_complet_annuel_analysable2000_ouest) + 
   geom_point(aes(x = location, y = deces_france_theo_20, color = time), size = 2)+
-  geom_point(data=deces_complet_annuel_analysable2000_ouest20,aes(x = location, y = deces_france_theo_20), color = "red", size = 3)+
+  geom_label(data=deces_complet_annuel_analysable2000_ouest20,aes(x = location, y = deces_france_theo_20,label=format(time, format = "%Y")), color = "red", size = 3)+
   labs(title = "Décès standardisés par pays et année",
        subtitle = "selon la population de la France en 2020",
        caption = "Source des données : Eurostat",x="",y="nombre de décès standardisés")+
