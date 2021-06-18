@@ -20,6 +20,8 @@ library(tidyr)
 library(ggplot2)
 library(scales)
 
+#les données se trouvent ici, mais je n'ai pas réussi à me connecter à cause de problèmes de format : https://assurance-maladie.ameli.fr/etudes-et-donnees/medicaments-type-prescripteur-medicam-2021
+
 medicam <-read.csv(file = "medicam.csv", sep=";")
 
 

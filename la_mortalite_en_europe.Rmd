@@ -33,12 +33,12 @@ Le fait de présenter en permanence des statistiques de mortalité de personnes 
 
 Pour cette raison, cet article se base uniquement sur les décès toutes causes et met en lien les différents évènements et choix qui ont été pris dans les différents pays, afin de chercher des causes de décès sans biais préalable.
 
-Les données des décès toutes causes sont étonnament et malheureusement beaucoup plus difficiles à trouver. On ne peut qu'être surpris de constater qu'elles ne bénéficient pas de la diffusion des statistiques de la Covid et ses nombreux sites internet redoublant d'interfaces graphiques. Elles doivent être téléchargées sur des sites spécialisés et retravaillées pour les rendre exploitables. Elles sont pourtant les seules permettant une analyse objective de la situation. Il "suffirait" pourtant à des sites tels qu'Ourworldindata de se "brancher" sur les sites officiels de dépôts de données statistiques tels qu'Eurostat pour proposer des graphiques et animations éclairant le débât sur de nombreux sujets. Eurostat propose même une interface de programmation d'application (API) permettant à toute personne de télécharger et d'utiliser n'importe quelle base de données. 
+Les données des décès toutes causes sont étonnamment et malheureusement beaucoup plus difficiles à trouver. On ne peut qu'être surpris de constater qu'elles ne bénéficient pas de la diffusion des statistiques de la Covid et ses nombreux sites internet redoublant d'interfaces graphiques. Elles doivent être téléchargées sur des sites spécialisés et retravaillées pour les rendre exploitables. Elles sont pourtant les seules permettant une analyse objective de la situation. Il "suffirait" pourtant à des sites tels qu'Ourworldindata de se "brancher" sur les sites officiels de dépôts de données statistiques tels qu'Eurostat pour proposer des graphiques et animations éclairant le débat sur de nombreux sujets. Eurostat propose même une interface de programmation d'application (API) permettant à toute personne de télécharger et d'utiliser n'importe quelle base de données. 
 
 Concernant Ourworldindata, il ne s'agit pas d'un problème de "place" puisque le site héberge déjà 300 thèmes et plus de 3000 visualisations de données. Il s'agit d'un choix éditorial. Les thèmes et graphiques proposés dans tout exercice de communication correspondent à des choix discutés et validés. Sur Ourworldindata, les données mises en valeur sont actuellement représentatifs des centres d'intérêts politiques et médiatiques aujourd'hui : croissance de la population, espérance de vie, pollution, dépenses gouvernementales, corruption et bien évidemment Covid-19. Il s'agit bien d'un site de communication dont l'enjeu est de convaincre (ou persuader), et non pas un site de recherche dont le but est de questionner pour comprendre.
 
 
-Cet article pésente en première partie le bilan de l'année 2020 pour montrer que dans sa gloablité, cette année est loin d'être exceptionnelle du point de vue de la mortalité. Ce résultat est confirmé pour tous les pays d'Europe pour lesquels nous avons des données de population et de décès.
+Cet article présente en première partie le bilan de l'année 2020 pour montrer que dans sa globalité, cette année est loin d'être exceptionnelle du point de vue de la mortalité. Ce résultat est confirmé pour tous les pays d'Europe pour lesquels nous avons des données de population et de décès.
 
 En seconde partie, cet article présente les décès semaine après semaine de tous les pays européens. Pour comprendre les dynamiques en jeu, 3 périodes de mortalité liées à la Covid-19 seront étudiées :
 
@@ -55,7 +55,7 @@ Nous verrons que dans les 3 cas, la mortalité est liée non pas à la seule pr�
 
 ### 1.1 Quelques rappels pour la France : l’importance du vieillissement de la population
 
-Dans plusieurs vidéos de la chaîne Décoder l'écco, par exemple celle qui compare les décès de toutes les années entre 1962 et 2020 [^n1] nous avons vu que la mortalité en France depuis 2020 n’est pas unique et est au niveau de l’année 2015. 
+Dans plusieurs vidéos de la chaîne Décoder l'éco, par exemple celle qui compare les décès de toutes les années entre 1962 et 2020 [^n1] nous avons vu que la mortalité en France depuis 2020 n’est pas unique et est au niveau de l’année 2015. 
 
 En effet, la France vieillit. Ainsi le nombre de morts chaque année augmente naturellement depuis 2010. 
 
@@ -66,7 +66,7 @@ barplot_deces_france
 
 ```
 
-Cette hausse du nombre de décès n’est pas le signe que la santé des français se dégrade, mais uniquement le résultat de l'augmentation du nombre de personnes âgées. En effet, à force de vieillir, tous les humains finissent par mourir. Pour l'illuster, voici la pyramide des âges de la France en 2000 et en 2020, réalisée avec les données disponibles sur Eurostat.
+Cette hausse du nombre de décès n’est pas le signe que la santé des français se dégrade, mais uniquement le résultat de l'augmentation du nombre de personnes âgées. En effet, à force de vieillir, tous les humains finissent par mourir. Pour l'illustrer, voici la pyramide des âges de la France en 2000 et en 2020, réalisée avec les données disponibles sur Eurostat.
 
  ![](pyramid_france_2000.png){width=450px} ![](pyramid_france_2020.png){width=450px}
 En 20 ans, la génération des baby-boomers est, logiquement, passée de la tranche des moins de 55 ans à celle des plus de 65 ans. Dès lors, il est tout à fait normal que le nombre de décès en France augmente chaque année, et cela va continuer à augmenter pendant encore au moins 20 ans.
@@ -96,7 +96,7 @@ Cette carte d’Europe représente l’année pour laquelle chaque pays europée
 
 En marron, nous retrouvons tous les pays pour lesquels l’année 2020 est l’année pour laquelle il y a eu le plus de décès. C’est bien le cas de la majorité des pays d’Europe. On note toutefois quelques exceptions, en particulier les pays nordiques. Cette carte est réalisée avec des données brutes. Comme nous l'avons vu pour la France, les données brutes reflètent avant tout l'augmentation et le vieillissement de la population. 
 
-La pyramide des âges des pays Européens révèle une situtation européenne semblable à celle de la France : la population vieillit. Il est tout à fait normal que le nombre de décès augmente chaque année du fait de ce simple constat.
+La pyramide des âges des pays Européens révèle une situation européenne semblable à celle de la France : la population vieillit. Il est tout à fait normal que le nombre de décès augmente chaque année du fait de ce simple constat.
 
  ![](pyramide_europe_2000.png){width=450px} ![](pyramide_europe_2020.png){width=450px}
 
@@ -124,9 +124,9 @@ Nous venons de voir qu'en corrigeant les décès de la pyramide des âges de cha
 Seulement les populations des pays européens sont trop différentes pour être comparables. Entre l'Allemagne et ses 83 millions d'habitants et le Liechtenstein et ses 38 000 habitants, il est impossible de faire un graphique à la même échelle. Il est donc nécessaire de les comparer sur une même base.
 Pour ce faire, nous allons appliquer la même pyramide des âges à tous les pays Européens. Ainsi nous pourrons savoir, dans quel pays et pendant quelle année, les européens sont le plus décédés.
 
-Ces graphiques représentent les décès théorique pour chaque pays et chaque année, s'ils avaient eu la population et la pyramide des âges de la France en 2020. Il sont séprarés entre les pays de l'Est et les pays de l'Ouest de l'Europe pour une question de visibilité, mais également parce que ces 2 zones de l'Europe sont assez différentes du point de vue de la mortalité.
+Ces graphiques représentent les décès théorique pour chaque pays et chaque année, s'ils avaient eu la population et la pyramide des âges de la France en 2020. Il sont séparés entre les pays de l'Est et les pays de l'Ouest de l'Europe pour une question de visibilité, mais également parce que ces 2 zones de l'Europe sont assez différentes du point de vue de la mortalité.
 
-Les décès théoriques de 2020 pour chaque pays sont signalés en rouge et les autres points en dégradé de bleau représentent les décès théoriques des autres années.
+Les décès théoriques de 2020 pour chaque pays sont signalés en rouge et les autres points en dégradé de bleu représentent les décès théoriques des autres années.
 
 Par exemple, si la population de la France de 2020 étaient décédée de la même manière que la Bulgarie en 2020, il y aurait eu 1 300 000 morts au lieu des 660 000 qu'elle a vécu.
 
@@ -140,8 +140,13 @@ Ainsi, si la Bulgarie n'a pas 2 fois plus de morts que la France chaque année, 
 
 Les Bulgares sont plus jeunes que les français notamment parce qu'ils meurent plus jeunes. Il y a donc moins de personnes dans leur population qui peuvent arriver à des âges avancés. Ils décèdent petit à petit plus fortement que les français.
 
- 
 Les différences de mortalité d'une année à l'autre sont parfaitement négligeables devant les différences d'un pays à l'autre. La probabilité de décéder à chaque âge dépend avant tout de l'endroit où l'on vit et moins des années.
+
+Si on se met à la place d’un Bulgare. Grace à se graphique, nous apprenons que la mortalité en Bulgarie est 2 fois plus élevée que celle de la France à population égale. Ne faudrait-il pas se dire qu’il y a certainement des choses à faire sur la pauvreté et la santé en Bulgarie pour se rapprocher de la situation de la France. Nous constatons que la Bulgarie constate juste une augmentation de 10% de mortalité en 2020 par rapport à 2019, pour se retrouver au niveau de la mortalité de l’année 2015, et que cela est sensé déclencher une énorme panique. En nombre de décès standardisé, c’est comme si chaque année, la Bulgarie avait 500 000 morts de plus que la France, et qu’elle trouvait ça tout à fait normal, mais qu’elle paniquait en 2020 pour 100 000 morts de plus que 2019.
+
+C’est comme si un éléphant et une colonie de fourmis montaient sur un bateau, que le bateau se mettait à couler et que l’éléphant réussissait à convaincre les fourmis de sauter une à une du bateau jusqu’à ce qu’il flotte de nouveau.
+
+Ce graphique montre que les évènements particuliers ont peu d’impact sur la mortalité et que ce sont les effets structurels, de la santé des habitants et de la qualité du système de santé qui prévalent.
 
 Ce graphique montre également que les français vivent dans l'un des pays d'Europe, et donc du monde, au sein duquel on meurt le moins.
 
@@ -156,7 +161,7 @@ De nombreuses études commentent l'année 2020 au regard de son augmentation par
 
 Seulement, imaginer que la baisse de mortalité peut se poursuivre indéfiniment revient tout bonnement à nier que les humains finissent par mourir.
 
-L'année 2019 a connu une mortalité extrêment faible partout en Europe. Il semble banal de penser que si des morts sont évités une année, elles finiront par se répercuter sur les années suivantes et non pas ne plus jamais survenir. Encore en 2020, on ne peut pas éviter la mort, au mieux on la repousse.
+L'année 2019 a connu une mortalité extrêmement faible partout en Europe. Il semble banal de penser que si des morts sont évités une année, elles finiront par se répercuter sur les années suivantes et non pas ne plus jamais survenir. Encore en 2020, on ne peut pas éviter la mort, au mieux on la repousse.
 
 Si on imagine un cas théorique où on trouverait un territoire sur lequel personne n'est mort pendant une année. Il ne viendrait à l'idée de personne que les habitants de ce territoire vivraient éternellement. Pourtant, la projection de la mortalité de ce territoire supposerait qu'il n'y ait pas de morts non plus l'année suivante. Avec cette méthode, tout mort serait alors suspect et compté comme de la surmortalité.
 
@@ -170,7 +175,7 @@ barplot_deces_france
 
 ```
 
-Ces années appraraissent tous les 2 à 3 ans. Ainsi, pour comprendre si les décès d'une année ont un impact visible sur une période, une méthode peut consister à regarder les décès sur 3 années consécutives.
+Ces années apparaissent tous les 2 à 3 ans. Ainsi, pour comprendre si les décès d'une année ont un impact visible sur une période, une méthode peut consister à regarder les décès sur 3 années consécutives.
 Le dernier trio d'années, 2018-2019-2020 est en rouge pour plus de visibilité.
 
 ![](deces3annees.png){width=1000px}
@@ -187,7 +192,7 @@ La vidéo dédiée sur la chaîne Décoder l'éco [^n3] détaille le calcul de l
 
 Le mot « espérance » est un terme utilisé en mathématiques qui signifie « moyenne sur un grand nombre de fois », en tenant compte de la pondération comme toute moyenne. Par exemple lorsque vous lancez 2 dés à 6 faces, et que vous additionnez le nombre de points sur vos 2 dés, en moyenne, vous faites 7, votre espérance mathématique est 7. On ne connaît pas le résultat de votre prochain lancé. L’indicateur « espérance de vie » n’est donc pas du tout à entendre au sens de « espoir » et encore moins « nombre d'années que vous pouvez espérer vivre ». L’espérance de vie ne vous renseigne pas du tout sur votre avenir, mais est juste une image du présent. L’espérance de vie 2020, est une moyenne standardisée de l’âge des gens morts en 2020. Elle nous donne une idée de l’âge des morts en 2020, en tenant compte de la structure par âge. L'espérance de vie 2020 ne correspond absolument pas à l'âge que vous pourrez espérer vivre. Si vous lisez cet article, vous n'êtes pas morts en 2020. Vous ne jouez pas avec les mêmes dés que ceux qui sont morts en 2020 ou avant.
 
-Dans le présent article nous utilisons une autre forme de standardisation que l'espérance de vie. Elle donne exactement la même conclusion que celle de l'article de l'INSEE. Sur l'article de l'INSEE nous pouvons lire que l'espérance de vie 2020 est la même que l'espérance de vie 2015, sur notre article nous concluons que les décès standardisés de 2020 sont ausi nombreux qu'en 2015. Se focaliser sur la chute plutôt que sur le niveau, et sur le terme "espérance de vie" sans l'expliquer n'est qu'un choix éditorial et pas une analyse approfondie.
+Dans le présent article nous utilisons une autre forme de standardisation que l'espérance de vie. Elle donne exactement la même conclusion que celle de l'article de l'INSEE. Sur l'article de l'INSEE nous pouvons lire que l'espérance de vie 2020 est la même que l'espérance de vie 2015, sur notre article nous concluons que les décès standardisés de 2020 sont aussi nombreux qu'en 2015. Se focaliser sur la chute plutôt que sur le niveau, et sur le terme "espérance de vie" sans l'expliquer n'est qu'un choix éditorial et pas une analyse approfondie.
 
 ## 2 Des pics de mortalités à relier aux décisions prises depuis 2020
 
@@ -198,7 +203,7 @@ Depuis le début de l'année 2020, des décisions inédites ont été prises en 
 L'étude de la carte des décès hebdomadaires standardisés en France depuis 2013 nous permet de visuliser les cycles de mortalité.
 ![](deceshebdofrance.png){width=1000px}
 
-Chaque annnée, le nombre de décès augmente en hiver et diminue en été. Cette augmentation de décès l'hiver est concomitante des maladies hivernales, dont les infections respiratoires aiguës comme les grippes ou les coronavirus.
+Chaque année, le nombre de décès augmente en hiver et diminue en été. Cette augmentation de décès l'hiver est concomitante des maladies hivernales, dont les infections respiratoires aiguës comme les grippes ou les coronavirus.
 
 Certains hivers présentent des pics de mortalité nettement supérieurs à d'autres. L'hiver 2013-2014 a connu des pics de mortalité bien moins élevés que l'hiver 2014-2015. Cette différence fait partie des éléments expliquant les différences de décès d'une année sur l'autre.
 De plus, certaines années les pics de décès peuvent être plus ou moins précoces ou tardifs. L'année 2017 supporte ainsi la majorité de la mortalité de l'hiver 2016-2017, mais également une importante partie de celle de l'hiver 2017-2018. Ainsi, le décalage des mortalités hivernales entraînent des différences de nombres de décès sur l'année.
@@ -220,7 +225,7 @@ Contrairement à une idée largement répandue, le phénomène de pic de mortali
 
 Ce phénomène très limité doit alors s'analyser au regard de la situation particulière de chaque pays et surtout des mesures spécifiques prises sur la période. Cet article présente les liens trouvés entre la hausse de la mortalité française et les mesures exceptionnelles prises.
 
-Au niveau des départements français, le pic de mortalité de mars-avril 2020 n'a touché ni tous les territoires, ni avec la même intensité pour tous les terrritoires touchés. En revanche, tous les territoires touchés par cepix de mortalité l'ont été de manière synchronisé. Nous avons donc un pic de mortalité qui ne touche pas tous les pays d'Europe, et au sein de chaque pays, pas tous les territoires, mais dont tous les territoires touchés le sont en même temps.
+Au niveau des départements français, le pic de mortalité de mars-avril 2020 n'a touché ni tous les territoires, ni avec la même intensité pour tous les territoires touchés. En revanche, tous les territoires touchés par cepix de mortalité l'ont été de manière synchronisé. Nous avons donc un pic de mortalité qui ne touche pas tous les pays d'Europe, et au sein de chaque pays, pas tous les territoires, mais dont tous les territoires touchés le sont en même temps.
 
 En Île-de-France par exemple, tous les départements connaissent une hausse de mortalité synchronisée débutant arpès le début du confinement identifié ici en bleu.
 
@@ -246,15 +251,15 @@ En France, deux mesures structurantes concernant la politique de santé publique
 
 - Le confinement, c’est-à-dire une limitation extrême des mouvements et l’ordre à tous les français de rester chez eux.
 
-- L’interdiction aux médecins de ville d’appliquer leur art, autrement-dit de proposer des traitements pour limiter le risque de complication. Le débat s’est focalisé sur l’hydorxychloroquine, mais l’interdiction ne se limite pas à cette molécule, mais à toute substance en dehors du doliprane.
+- L’interdiction aux médecins de ville d’appliquer leur art, autrement-dit de proposer des traitements pour limiter le risque de complication. Le débat s’est focalisé sur l’hydroxychloroquine, mais l’interdiction ne se limite pas à cette molécule, mais à toute substance en dehors du doliprane.
     
 Ces 2 mesures ont des impacts sur l'évolution des infections respiratoires chez les patients, mais également sur toutes les pathologies habituelles.
  
-#### 2.3.1 La mortalité des causes autres que les infections respiratoires aigües telles que la Covid-19
+#### 2.3.1 La mortalité des causes autres que les infections respiratoires aiguës telles que la Covid-19
 
 Parmis les 9 pays ayant connu une surmortalité au mois de mars-avril, 7 ont mis en place un confinement à cette période. Dans tous ces pays, le seuil de surmortalité a été franchis après le début du confinement. En tenant compte du délai d'arrivée des données, on conclue que la décision du confinement n’a jamais pu être déclenchée par réaction à une surmortalité. Aucun décideur ou spécialiste ne pouvait savoir si la période connaîtrait plus de décès qu'habituellement. La décision a été prise notamment suite à la pression médiatique suivant des remontées de cas Covid. Il s’agit donc d’une mesure forte qui a des impacts très lourds sur l'organisation de la santé qui est prise avant de connaître le niveau de danger encouru.
 
-Il est notable qu'absolument tous les cas de figure existent en Europe, entre confinement ou non et surmotalité ou non. Les deux effets ne sont pas entièrement liés. Pour conclure de l’effet positif ou négatif d’une telle mesure, il est possible de quantifier quelques effets.
+Il est notable qu'absolument tous les cas de figure existent en Europe, entre confinement ou non et surmortalité ou non. Les deux effets ne sont pas entièrement liés. Pour conclure de l’effet positif ou négatif d’une telle mesure, il est possible de quantifier quelques effets.
 
 Beaucoup de journaliste écrivent que le confinement strict a permis de sauver de nombreuses vies par l’absence des accidents de voiture. Il est aisé de quantifier le nombre de vies sauvées au maximum par une telle mesure. Il y a environ 3 600 décès sur la route par an en France, soit 300 par mois, cela fait environ 600 décès sur la période de confinement. Les ¾ de ces décès concernent des moins de 65 ans [^n4].
 
@@ -282,7 +287,7 @@ Ce résultat de non-prise en charge peut expliquer le caractère particulier des
 
 De la même manière qu'en France, où l'on constate un nombre de décès inscrits à l'état civil plus important les lundis et mardis et très faibles les dimanches, à Chypre la fin du confinement n'est probablement pas liée à un excès mortalité, mais plutôt à la découverte tardive des décès non répertoriés.
 
-#### 2.3.2 La mortalité des infections respiratoires aigües telle que la Covid-19
+#### 2.3.2 La mortalité des infections respiratoires aiguës telle que la Covid-19
  
 La période de mars-avril est extrêmement particulière dans toute l’histoire du soin, car il s’agit de la première fois que l’on demande à des malades de ne pas consulter de généraliste, en particulier si le patient souffre d’une infection respiratoire.
 
@@ -296,7 +301,7 @@ Ce graphique représente la base remboursable de tous les médicaments vendus pa
 
 Le mois de mars 2020 a connu une hausse de 13 % des ventes de médicaments par rapport à la moyenne 2017-2019, représentant le provisionnement des français à la suite de l’annonce du confinement généralisé. Les mois d’avril et mai 2020 présentent au contraire, des baisses de 15 % et 14 % par rapport à la moyenne. Ces baisses sont le reflet de la non-prescription par les médecins à la suite de l’ordre de ne pas consulter.
 
-Cette chute est cependant bien plus forte concernant les traitements habituels prescrits dans le cadre des infections respiratoires aigües. En particulier les antibiotiques permettant d’éviter les surinfections ont connu une chute sans précédent.
+Cette chute est cependant bien plus forte concernant les traitements habituels prescrits dans le cadre des infections respiratoires aiguës. En particulier les antibiotiques permettant d’éviter les surinfections ont connu une chute sans précédent.
 
 ![](medicbac.png){width=1000px}
 
@@ -306,12 +311,12 @@ En mars, le provisionnement n’a pas existé et le total d’antibiotiques vend
 Ce choix de ne pas laisser les médecins de ville proposer de traitements dans le cadre d’une infection respiratoire aiguë pendant les mois de mars et d’avril, a entraîné une dégradation sans précédent de l’état de santé des patients. La non-prescription d’antibiotiques aura permis aux bactéries de proliférer chez les patients âgés et affaiblis.
 Ainsi, à partir de fin mars, de nombreux français dont l’état de santé s’est dégradé à leur domicile affluent dans les services hospitaliers. Les coronavirus, comme la Covid-19, ont pu entraîner des lésions dans l’appareil respiratoire empêchant les patients de respirer. Ces lésions sont également des portes ouvertes aux surinfections bactériennes.
 Les sujets âgés se présentant à la l’hôpital ont à la fois des « trous » dans les poumons les empêchant de respirer, mais également des bactéries se développant à la suite de ces lésions et de la chute des défenses immunitaires. Ces 2 pathologies combinées empêchent de répondre rapidement aux besoins du patient. Si une injection de corticoïdes pouvait permettre au patient de réparer les trous des poumons, elle accélèrerait la prolifération des bactéries, entraînant la mort par surinfection. A l’inverse, ne pas agir sur la mécanique respiratoire entraîne le décès du patient dans les plus brefs délais.
-De nombreux patients sont décédés non pas à cause du caractère exceptionnel de la maladie, mais à cause du caractère exceptionnel de la situation : pas de prise en charge précoce, et pas de traitement anitbiotique.
+De nombreux patients sont décédés non pas à cause du caractère exceptionnel de la maladie, mais à cause du caractère exceptionnel de la situation : pas de prise en charge précoce, et pas de traitement antibiotique.
 
 Une fois de plus, pour les personnes les plus pauvres et vivant dans les logements les moins salubres, pour lesquelles nous avons vu plus haut une plus forte hausse de mortalité, il est normal qu'un confinement à domicile forcé engendre une probabilité plus importante de souffrir d'une infection, que le manque d'antibiotique ne manquera pas de laisser s'aggraver.
 
 
-Ce défaut de prise en charge a été quantifié par les deux membres du Conseil Scientifique, Arnaud Fontanet et Simon Cauchemez, pourtant à l’origine de cette stratégie. Leur article dans Science [^n9], utilise les données hospitalières françaises et notamment le temps de passage et réanimation et de décès depuis la prise en charge du patient. Les courbes les plus intéressantes ont été supprimés depuis de l'article principal, maais sont toujours disponibles dans les données complémentaires. Au pages 15 et 16 sont détaillés les nombres de jours que mettent les patients arrivant à l’hôpital avant d’aller en réanimation (graphique de gauche) et le nombre de jours qu’ils mettent avant de décéder (graphique de droite).
+Ce défaut de prise en charge a été quantifié par les deux membres du Conseil Scientifique, Arnaud Fontanet et Simon Cauchemez, pourtant à l’origine de cette stratégie. Leur article dans Science [^n9], utilise les données hospitalières françaises et notamment le temps de passage et réanimation et de décès depuis la prise en charge du patient. Les courbes les plus intéressantes ont été supprimés depuis de l'article principal, mais sont toujours disponibles dans les données complémentaires. Au pages 15 et 16 sont détaillés les nombres de jours que mettent les patients arrivant à l’hôpital avant d’aller en réanimation (graphique de gauche) et le nombre de jours qu’ils mettent avant de décéder (graphique de droite).
 
 ![](fontanet.png){width=1000px}
 
@@ -324,7 +329,7 @@ Dans la vidéo "100 000 morts, vraiment ?"[^n11], nous détaillons par lieu les
 
 #### 2.3.3 L'accélération artificielle des décès
 
-L'article 12-3 du chapitre 7 du Décret n° 2020-293 du 23 mars 2020 prescrivant les mesures générales nécessaires pour faire face à l'épidémie de covid-19 dans le cadre de l'état d'urgence sanitaire décrète une dérogation au code de la santé publique [^n10] :
+L'article 12-3 du chapitre 7 du Décret n° 2020-293 du 23 mars 2020 prescrivant les mesures générales nécessaires pour faire face à l'épidémie de Covid-19 dans le cadre de l'état d'urgence sanitaire décrète une dérogation au code de la santé publique [^n10] :
 
         la spécialité pharmaceutique Rivotril ® sous forme injectable peut faire l'objet d'une dispensation, jusqu'au 15 avril 2020, par les pharmacies d'officine en vue de la prise en charge des patients atteints ou susceptibles d'être atteints par le virus SARS-CoV-2 dont l'état clinique le justifie sur présentation d'une ordonnance médicale portant la mention “ Prescription Hors AMM dans le cadre du covid-19 ”.
 
@@ -362,7 +367,7 @@ Cette intervention médicamenteuse mériterait d'être quantifiée à l'hôpital
 
 De nombreux pays européens présentent une mortalité saisonnière forte et précoce dès octobre 2020. Seuls quelques pays échappent à cette hausse des décès : Chypre, Malte, le Danemark, l'Islande, la Norvège et la Finlande.
 Pour les pays concernés cependant, la hausse de mortalité est simultanée, rendant, encore une fois, impossible la seule cause d'un unique virus se propageant en Europe.
-Nous notons de surcroît, que la généralisation du port du masque, les gestes barrière, les fermetures de nombreux lieux publics, les jauges de publics dans les commerces, la profusion de gel hydroalcoolique ou encore la diffusion du télétravail, n'ont absoluement pas empêché la mortalité hivernale d'être aux mêmes niveaux, voire légèrement supérieur à ce qui est observé d'habitude. Il s'agit d'un indice supplémentaire qu'elle n'est aucunement liée à un phénomène de propagation.
+Nous notons de surcroît, que la généralisation du port du masque, les gestes barrière, les fermetures de nombreux lieux publics, les jauges de publics dans les commerces, la profusion de gel hydroalcoolique ou encore la diffusion du télétravail, n'ont absolument pas empêché la mortalité hivernale d'être aux mêmes niveaux, voire légèrement supérieur à ce qui est observé d'habitude. Il s'agit d'un indice supplémentaire qu'elle n'est aucunement liée à un phénomène de propagation.
 
 Il s'agit alors de comprendre pourquoi, fin 2020, les habitants d'une majorité de pays européens semblent en moins bonne santé que les autres années. Les périodes de stress, le manque de sortie peuvent être des éléments favorisant la faiblesse des défenses immunitaires.
 En France, comme dans une grande parte des pays européens, une très vaste campagne de vaccination grippale a eu lieu à partir d'octobre 2020. Le taux de couverture vaccinale a gagné presque 10 points en 2020 par rapport aux années précédentes [^n15].
@@ -378,7 +383,7 @@ Les données disponibles sur les vaccins ne sont disponibles que mensuellement, 
 
 La hausse soudaine des décès en octobre 2020 comparativement aux années précédentes correspond en dates et proportions aux observations du passé. Même si corrélation n'est pas causalité, les soupçons à ce niveau devraient soulever des recherches poussées complémentaires. Il serait nécessaire de comparer les dates de décès de tous les français depuis 2015, aux dates de vaccinations. Il s'agirait de déterminer si un lien statistique existe entre date de vaccination et date de décès. Les données précises et nominatives des décès de tous les français sont publiques et disponibles en ligne. Le rapprochement avec les dates de vaccinations devrait être possible pour les chercheurs disposant des droits d'accès aux données de vaccinations.
 
-Les liens entre vaccinations et déterioration temporaire des défenses immunitaires ont pourtant déjà fait l'objet d'études. Une étude de janvier 2020 [^n16] montre des liens statistiques entre la vaccination grippale et une augmentation du nombre de malades des autre pathologies, en particulier les coronavirus. Si on ajoute le fait que pendant l'hiver 2019-2020, la mortalité attribuée à la grippe est proche de 0, il paraît contradictoire de lancer en octobre 2020 une campagne de vaccination d'une ampleur jamais égalée contre une maladie qui ne paraît pas si mortelle. Les impacts du seul effet nocébo [^n17]devrait engendrer un débat contradictoire sur l'oppoortunité d'une opération à grande échelle concernant la grippe dans un contexte de "guerre" affichée contre "un" coronavirus. Chaque personne ayant été vacciné a déjà été prévenu des effets indésirables des vaccins sur l'organisme. Les notices des vaccins disponibles sur le Vidal[^n18] préviennent de l'ensemble de ces effets ainsi que de leur (haute) fréquence.
+Les liens entre vaccinations et détérioration temporaire des défenses immunitaires ont pourtant déjà fait l'objet d'études. Une étude de janvier 2020 [^n16] montre des liens statistiques entre la vaccination grippale et une augmentation du nombre de malades des autre pathologies, en particulier les coronavirus. Si on ajoute le fait que pendant l'hiver 2019-2020, la mortalité attribuée à la grippe est proche de 0, il paraît contradictoire de lancer en octobre 2020 une campagne de vaccination d'une ampleur jamais égalée contre une maladie qui ne paraît pas si mortelle. Les impacts du seul effet nocébo [^n17]devrait engendrer un débat contradictoire sur l'oppoortunité d'une opération à grande échelle concernant la grippe dans un contexte de "guerre" affichée contre "un" coronavirus. Chaque personne ayant été vacciné a déjà été prévenu des effets indésirables des vaccins sur l'organisme. Les notices des vaccins disponibles sur le Vidal[^n18] préviennent de l'ensemble de ces effets ainsi que de leur (haute) fréquence.
 
 Pour conclure, il est nécessaire de rappeler à ce stade qu'en France, cette hausse de mortalité intervient dans un contexte de 2e confinement dont nous avons détaillé les effets plus haut, ainsi que dans une consommation historiquement basse d'antibiotiques.
 
@@ -386,7 +391,7 @@ Il convient alors de se demander aussi si l'augmentation de la mortalité visibl
 
 ### 2.5 Le rebond de mortalité depuis début 2021
 
-Il n'est pas exceptionnel d'avoir autour du 1er janvier de chaque année, deux périodes de hausse de mortalité visibles. C'est notamment le cas en France pendant l'hiver 2017-2018. Cependant ces périodes sont habituellement très rapprochées dans le temps. En 2021, pour certains pays, le deuxième pic de mortalité est fortement éloigné du premier. Pour la première fois, en 2021, une politique sanitaire d'une ampleur jamais égalée, à partir de vaccins expérimentaux sur lesquels aucun recul n'est disponible, a été décidé. Ce disponitif fait lui aussi l'objet d'un suivi hors norme. De nombreux pays envoient leurs données de vaccinations en quasi direct [^n19]. Il est difficile d'avoir une idée précise de la qualité des remontées de données, mais il offre des possiblités de comparaisons jamais égalées.
+Il n'est pas exceptionnel d'avoir autour du 1er janvier de chaque année, deux périodes de hausse de mortalité visibles. C'est notamment le cas en France pendant l'hiver 2017-2018. Cependant ces périodes sont habituellement très rapprochées dans le temps. En 2021, pour certains pays, le deuxième pic de mortalité est fortement éloigné du premier. Pour la première fois, en 2021, une politique sanitaire d'une ampleur jamais égalée, à partir de vaccins expérimentaux sur lesquels aucun recul n'est disponible, a été décidé. Ce dispositif fait lui aussi l'objet d'un suivi hors norme. De nombreux pays envoient leurs données de vaccinations en quasi direct [^n19]. Il est difficile d'avoir une idée précise de la qualité des remontées de données, mais il offre des possibilités de comparaisons jamais égalées.
 
 ![](ourworldindata.png){width=1000px}
 
@@ -405,7 +410,7 @@ Le focus sur le moins de 40 ans qui ne décèdent que très peu lors des épisod
 Si on prend en compte l'évolution de la pyramide des âges en Hongrie et la forte baisse du nombre de moins de 40 ans, il s'agit également de la période connaissant le plus de décès de jeunes enregistrés. Etant communément admis que les jeunes ne décèdent quasiment jamais d'infections respiratoires aiguës contractées pendant l'hiver, et pas plus de la Covid-19, le nombre de causes possibles de cette surmortalité est limitée. Même si certains affirmeront que la cause viendrait d'un nouveau virus, cela signifierait qu'il serait apparu uniquement depuis la campagne vaccinale.
 
 Les semaines 10 à 17 en Hongrie ont enregistré 485 décès de personnes de moins de 40 ans. A la même époque, en 2020, 355 décès seulement ont été enregistrés, soit une hausse historique de 36%.
-Ces décès sont parfaitement indétectables par les méthodes de suivis habituels concernant les médicaments. La Hongrie possède 4,35 millions d'habitants de moins de 40 ans. Une surmortalité de 130 personnes représente dans la population 0,0002964%. Si l'on avait suivi un échatillon de 10 000 hongrois de moins de 40 ans, nous n'aurions trouvé aucun mort supplémentaire.
+Ces décès sont parfaitement indétectables par les méthodes de suivis habituels concernant les médicaments. La Hongrie possède 4,35 millions d'habitants de moins de 40 ans. Une surmortalité de 130 personnes représente dans la population 0,0002964%. Si l'on avait suivi un échantillon de 10 000 hongrois de moins de 40 ans, nous n'aurions trouvé aucun mort supplémentaire.
 Seuls les poisons violents peuvent être détectés par ce type de pratique.
 
 La pharmacovigilance ne permet pas non-plus de suivre efficacement les liens entre l'administration d'un produit et la mortalité qui suivrait.
@@ -422,7 +427,7 @@ La situation est similaire à Malte. le niveau de décès est important en 2021,
 
 ![](decesvaccinmalte.png){width=1000px}
 
-En Islande, pays qui n'a pourtant pas connu d'épisode de sumrotalité en 2020, une vaccination extrêment massive a été effectuée en quelques jours. Ce pic de vaccination est parfaitement synchronisé a un pic de mortalité.
+En Islande, pays qui n'a pourtant pas connu d'épisode de surmortalité en 2020, une vaccination extrêmement massive a été effectuée en quelques jours. Ce pic de vaccination est parfaitement synchronisé a un pic de mortalité.
 
 ![](decesvaccinislande.png){width=1000px}
 
@@ -450,7 +455,7 @@ Nous observons que la mortalité observée depuis un peu plus d'un an partout en
 Pour la France, les différentes mesures identifiées participent mécaniquement à une augmentation des décès sans que l'on puisse quantifier un quelconque impact bénéfique.
 Dès lors, si la mortalité n'est finalement pas exceptionnelle, est-il raisonnable d'entretenir un climat de peur, de maintenir les règles liberticides en place et de lancer des campagnes de vaccinations d'une ampleur jamais connue réalisées à partir de produits expérimentaux ?
 Nous observons que les campagnes de vaccination en période hivernale sont liées à des augmentations de mortalité. Il conviendrait d'analyser en profondeur ce lien avant de continuer à promouvoir des produits dans des périodes où la santé des européens baisse cycliquement.
-Nous observons que tous les pays européens ayant démarré en masse une campagne de vaccination contre la Covid-19 ont des taux de mortaltié inhabituels pour la saison. Les pays ayant le plus massivement vaccinés ont des taux de mortalité chez leurs jeunes jamais égalés jusqu'à maintenant.
+Nous observons que tous les pays européens ayant démarré en masse une campagne de vaccination contre la Covid-19 ont des taux de mortalité inhabituels pour la saison. Les pays ayant le plus massivement vaccinés ont des taux de mortalité chez leurs jeunes jamais égalés jusqu'à maintenant.
 
 Est-il raisonnable de continuer cette politique sanitaire inconnue dans ces conditions ? N'est-il pas urgent de reprendre le cours normal des consultations pour retrouver l'usage des médicaments que nous avions avant 2020 avec une mortalité plus faible au lieu de faire le pari de l'efficacité de nouveaux produits miracles ?
 
