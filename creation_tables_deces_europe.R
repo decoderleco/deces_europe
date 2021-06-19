@@ -12,6 +12,9 @@ install.packages("rnaturalearthdata")
 install.packages("rgeos")
 install.packages("readr")
 install.packages("lsr")
+install.packages("tinytex")
+install.packages("curl")
+
 
 library(maptools)
 library(rgdal)
@@ -30,37 +33,62 @@ library("rnaturalearthdata")
 library(readr)
 library(lsr)
 
-#recuperer les tables qui nous interessent
+#
+# recuperer les tables qui nous interessent chez EuroStat
+#
 
 pjan<-get_eurostat("demo_pjan")
 deces_week<-get_eurostat("demo_r_mwk_05")
 deces_annuel_age<-get_eurostat("demo_magec")
 
-#ajouter la population de l'annee correspondante pour chaque deces de pays*sexe*age*annee
+#
+# ajouter la population de l'annee correspondante pour chaque deces de pays*sexe*age*annee
+#
 
-pjan<-pjan %>% rename(population=values) %>% select(-unit) %>% filter(sex !="T",age!="TOTAL", age !="UNK")
+# Renommer la colonne values en population et supprimer la colonne unit
+pjan<-pjan %>% 
+  rename(population=values) %>% 
+  select(-unit)
+  
+# Filtrer le sexe T (T = M+F) et l'age "TOTAL"...
+pjan<-pjan %>% 
+      filter(sex !="T",age!="TOTAL", age !="UNK")
 
-deces_annuel_age<-deces_annuel_age %>% rename(deces=values) %>% select(-unit)  %>% filter(sex !="T",age!="TOTAL", age !="UNK")
-
-# identification des couples(geo,time) qui s'arrêtent à 84 ans
-deces_age <- deces_annuel_age %>% mutate(age = as.double(str_sub(age,2,length(age)))) %>% 
-  filter(age !="_LT1") %>% 
-  filter(age !="_OPEN") 
-
-age_max_deces <- deces_age %>% group_by(geo,time) %>% summarise( age_max = max(age))
-
-
+# Enlever le Y de l'age et le transformer en numérique
 pjan_age <- pjan %>% mutate(age = as.double(str_sub(age,2,length(age)))) %>% 
   filter(age !="_LT1") %>% 
   filter(age !="_OPEN")
 
+# Calculer l'Age max par population, année
 age_max_pop <- pjan_age %>% group_by(geo,time) %>% summarise( age_max = max(age))
 
-pb_age_max_deces <-age_max_deces %>% filter(age_max<89) %>% filter(str_sub(geo,1,2)!="EU")%>%
-  filter(str_sub(geo,1,2)!="EA") %>% 
-  filter(str_sub(geo,1,3)!="EEA") %>% 
-  filter(str_sub(geo,1,3)!="EFT") %>% 
-  rename (age_max_deces=age_max)
+
+# deces
+
+deces_annuel_age <- deces_annuel_age %>% 
+  rename(deces=values) %>% 
+  select(-unit)  %>% 
+  filter(sex !="T",age!="TOTAL", age !="UNK")
+
+# Enlever le Y de l'age et le transformer en numérique
+deces_age <-  deces_annuel_age %>% 
+              filter(age !="Y_LT1") %>% 
+              filter(age !="Y_OPEN") %>% 
+              mutate(age = as.double(str_sub(age,2,length(age)))) 
+
+# Age max des deces par population, année
+age_max_deces <- deces_age %>% group_by(geo,time) %>% summarise( age_max = max(age))
+
+# ??? identification des couples(geo,time) qui s'arrêtent à 89 ans
+
+# ??? Lignes qui ont moins de 89  ans et qui ne sont pas des prefixes EU, EA, EEA...
+pb_age_max_deces <- age_max_deces %>% 
+                    filter(age_max<89) %>% 
+                    filter(str_sub(geo,1,2)!="EU") %>%
+                    filter(str_sub(geo,1,2)!="EA") %>% 
+                    filter(str_sub(geo,1,3)!="EEA") %>% 
+                    filter(str_sub(geo,1,3)!="EFT") %>% 
+                    rename (age_max_deces=age_max)
 
 pb_age_max_pop <-age_max_pop %>% filter(age_max<89) %>% filter(str_sub(geo,1,2)!="EU")%>%
   filter(str_sub(geo,1,2)!="EA") %>% 
@@ -69,6 +97,8 @@ pb_age_max_pop <-age_max_pop %>% filter(age_max<89) %>% filter(str_sub(geo,1,2)!
   rename (age_max_pop=age_max)
 
 pb_age <-full_join(pb_age_max_deces,pb_age_max_pop,by=c("geo","time"))
+
+# ??? A remonter plus haut ?
 
 #on filtre sur les zones geographiques
 pjan<- pjan %>% filter(str_sub(geo,1,2)!="EU")%>%
@@ -104,11 +134,12 @@ pjan90 <- pjan %>% anti_join(pjan85)
 #### traitement de pjan85 ###############
 
 #mettre en age quinquennal
+
+#remplacer Y_LT1 par 0 et Y_OPEN par 100, l'age par l'age sans le prefixe Y
 pjan85quinq<-pjan85 %>% mutate(agequinq=case_when(
   age=="Y_LT1" ~ "0",
   age== "Y_OPEN" ~ "100",
   TRUE ~ str_sub(age,2,length(age))
-  
 ))
 pjan85quinq<-pjan85quinq %>% mutate(agequinq=as.numeric(agequinq))
 pjan85quinq<-pjan85quinq %>% mutate(agequinq=case_when(
