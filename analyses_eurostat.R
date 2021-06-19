@@ -278,6 +278,9 @@ pyramids(Left=hommes_femmes2000$part_hommes,Llab="Hommes",
          Center = hommes_femmes2000$agequinq,Laxis=c(0,2,4,6,8,10),
          main="Pyramide des âges \n des pays européens 2000",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
+dev.print(device = png, file = "pyramide_europe_2020.png", width = 600)
+
+
                                     #--------------------------#
                                     ####Analyse de la France####
                                     #--------------------------#
