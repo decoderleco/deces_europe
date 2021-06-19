@@ -1,4 +1,4 @@
-#commencer par installer le package eurostat et ses copains
+#commencer par installer tous les packages pour tous les scripts (eurostat et ses copains...)
 
 install.packages("eurostat")
 install.packages("maptools")
@@ -14,6 +14,7 @@ install.packages("readr")
 install.packages("lsr")
 install.packages("tinytex")
 install.packages("curl")
+install.packages("gsl")
 
 
 library(maptools)
