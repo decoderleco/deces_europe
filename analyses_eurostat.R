@@ -359,34 +359,55 @@ dev.print(device = png, file = "pyramid_france_2000.png", width = 600)
                                     #----------------------------------------#
 
 
-worldmap <- ne_countries(scale = 'medium', type = 'map_units',
+worldmap <- ne_countries(scale = 'medium', 
+                         type = 'map_units',
                          returnclass = 'sf')
-
 
 worldmap <- worldmap %>% mutate (location=geounit)
 worldmap <- worldmap %>% mutate (location=if_else(location == "Czech Republic","Czechia", location))
 worldmap <- worldmap %>% mutate (location=if_else(admin == "Belgium","Belgium", location))
-worldmap <- cbind(worldmap,st_coordinates(st_centroid(worldmap)))
+#worldmap <- worldmap %>% filter((continent == "Europe") & (name != "Flemish") & (name != "Walloon"))
+#plot(st_geometry(worldmap))
+centroid_coordinates <- st_coordinates(st_centroid(worldmap))
+worldmap <- cbind(worldmap, centroid_coordinates)
 
 #année record des décès
 
-temp <- annne_deces_maximum  %>% select(location, time)%>% 
-  mutate(time = as.character(time))%>% mutate(time = str_sub(time,1,4))
+temp <- annne_deces_maximum  %>% 
+        select(location, time) %>% 
+        mutate(time = as.character(time)) %>% 
+        mutate(time = str_sub(time,1,4))
 
-worldmap <- worldmap %>% left_join(temp)
-worldmap <- worldmap %>% mutate (location=case_when(geounit == "Flemish Region"~"", 
-                                                    geounit == "Walloon Region"~"",
-                                                    TRUE~location))
+worldmap <- worldmap %>% 
+            left_join(temp)
 
-p <- ggplot(data=worldmap) + geom_sf(aes(fill=time),color="dim grey", size=.1) +
-  scale_fill_brewer(palette = "Oranges") +
-  guides(fill = guide_legend(reverse=T, title = "Année de record de décès \n des pays européens")) +
-  geom_text( data = worldmap, aes(X,Y,label = location), size = 3, hjust = 0.5)+
-  labs(title= paste0("Année de record de décès des pays européens"),
-       caption="(C) EuroGeographics for the administrative boundaries
+worldmap <- worldmap %>% 
+            mutate (location=case_when(geounit == "Flemish Region"~"", 
+                                       geounit == "Walloon Region"~"",
+                                       TRUE~location))
+
+p <- ggplot(data=worldmap) +
+     geom_sf(aes(fill=time),
+             color="dim grey", 
+             size=.1) +
+     scale_fill_brewer(palette = "Oranges") +
+     guides(fill = guide_legend(reverse=T, 
+                                title = "Année de record de décès \n des pays européens")) +
+     geom_text(data = worldmap, 
+               aes(X,Y,label = location), 
+               size = 3, 
+               hjust = 0.5) +
+     labs(title   = paste0("Année de record de décès des pays européens"),
+          caption ="(C) EuroGeographics for the administrative boundaries
     Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
-  theme_light() + theme(legend.position=c(0,.5),plot.title = element_text(hjust = 0.5,color = "#0066CC", size = 16, face = "bold")) +
-  coord_sf(xlim=c(-22,45), ylim=c(35,70)) 
+     theme_light() +
+     theme(legend.position=c(0, 0.7),
+           plot.title = element_text(hjust = 0.5,
+                                     color = "#0066CC", 
+                                     size = 16, 
+                                     face = "bold")) +
+     coord_sf(xlim=c(-22,45),
+              ylim=c(35,70))
 
 plot(p)
 
