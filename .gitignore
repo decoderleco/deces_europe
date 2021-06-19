@@ -5,3 +5,8 @@
 *.png
 *.RDS
 /.project
+/la_mortalite_en_europe.tex
+/deces_complet.csv
+/deces_complet_annuel.csv
+/deces_standard_pays_semaine.csv
+/pjanquinq.csv
