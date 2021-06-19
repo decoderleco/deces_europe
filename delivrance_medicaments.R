@@ -20,6 +20,10 @@ library(tidyr)
 library(ggplot2)
 library(scales)
 
+#
+# Vaccins
+#
+
 #les données se trouvent ici, mais je n'ai pas réussi à me connecter à cause de problèmes de format : https://assurance-maladie.ameli.fr/etudes-et-donnees/medicaments-type-prescripteur-medicam-2021
 
 medicam <-read.csv(file = "medicam.csv", sep=";")
@@ -55,6 +59,11 @@ ggplot(vaccins_grippes, aes(x = mois_annee, y = nombre_de_boites))+
  scale_x_date(labels = date_format("%m/%y"),breaks = date_breaks("year")) +
   theme(axis.text.x = element_text(angle=45))
 dev.print(device = png, file = "vaccins_distribues.png", width = 1000)
+
+
+#
+# médicaments
+#
 
 open_medic_2019 <-read.csv(file = "OPEN_MEDIC_2019.csv", sep=";")
 open_medic_2020 <-read.csv(file = "OPEN_MEDIC_2020.csv", sep=";")
@@ -101,10 +110,15 @@ open_medic_2020<-open_medic_2020 %>% mutate(classe_age = case_when(
   age==60 ~ "60 ANS ET +",
   age==99 ~ "AGE INCONNU"))
 
-
+# remplacer . (separateur des milliers) par rien (Attention : gsub utilise des regexp. il faut donc escaper le .)
+open_medic_2020<-open_medic_2020 %>% mutate(BSE=gsub("\\.","",BSE))
+# remplacer , (separateur decimal) par .
 open_medic_2020<-open_medic_2020 %>% mutate(BSE=gsub(",",".",BSE))
 open_medic_2020<-open_medic_2020 %>% mutate(BSE=as.numeric(BSE))
 
+# remplacer . (separateur des milliers) par rien
+open_medic_2019<-open_medic_2019 %>% mutate(BSE=gsub("\\.","",BSE))
+# remplacer , (separateur decimal) par .
 open_medic_2019<-open_medic_2019 %>% mutate(BSE=gsub(",",".",BSE))
 open_medic_2019<-open_medic_2019 %>% mutate(BSE=as.numeric(BSE))
 
@@ -119,6 +133,7 @@ CLONAZEPAM_2020 <- ANTIEPILEPTIQUES_2020%>% filter(L_ATC5=="CLONAZEPAM")%>% filt
 test20<-CLONAZEPAM_2020 %>% group_by(classe_age,region) %>% summarise(BOITES_2020=sum(BOITES),BSE_2020=sum(BSE))
 test19<-CLONAZEPAM_2019 %>% group_by(classe_age,region) %>% summarise(BOITES_2019=sum(BOITES),BSE_2019=sum(BSE))
 CLONAZEPAM <- test20 %>% full_join(test19)
+
 test20<-ANTIBACTERIENS_2020 %>% group_by(classe_age,region) %>% summarise(BOITES_2020=sum(BOITES),BSE_2020=sum(BSE))
 test19<-ANTIBACTERIENS_2019 %>% group_by(classe_age,region) %>% summarise(BOITES_2019=sum(BOITES),BSE_2019=sum(BSE))
 ANTIBACTERIENS <- test20 %>% full_join(test19)
