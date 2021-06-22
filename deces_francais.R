@@ -50,15 +50,24 @@ dl_fichier <- function(
   nom_fichier <- basename(url_dl)
   chemin_fichier <- file.path(dossier_cible, nom_fichier)
   
-  if(!file.exists(chemin_fichier)) {
+  if (!file.exists(chemin_fichier)) {
+    # Le fichier n'existe pas
+    
+    # Telecharger
+    
     message("Téléchargement via l'url ", url_dl)
-    curl::curl_download(
-      url = url_dl, 
-      destfile = chemin_fichier, 
-      quiet = FALSE
-    )
+    
+    curl::curl_download(url = url_dl, 
+                        destfile = chemin_fichier, 
+                        quiet = FALSE)
+    
     message("Téléchargement terminé. Taille : ", file.size(chemin_fichier), " octets")
-  } else {message('Fichier déjà présent')}
+    
+  } else {
+    # Le fichier existe deja
+    
+    message('Fichier déjà présent')
+  }
   
   chemin_fichier
 }
