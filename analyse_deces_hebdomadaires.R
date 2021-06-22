@@ -1,5 +1,6 @@
 install.packages("pyramid")
 install.packages("igraph")
+
 library(pyramid)
 library(maptools)
 library(rgdal)
