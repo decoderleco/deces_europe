@@ -22,7 +22,7 @@ library(scales)
 
 #les données se trouvent ici, mais je n'ai pas réussi à me connecter à cause de problèmes de format : https://assurance-maladie.ameli.fr/etudes-et-donnees/medicaments-type-prescripteur-medicam-2021
 
-medicam <-read.csv(file = "medicam.csv", sep=";")
+medicam <-read.csv(file = "data/csv/medicam.csv", sep=";")
 
 
 vaccins_grippes <- medicam %>% filter(Nom_vaccin %in% c("AGRIPPAL",
@@ -56,8 +56,8 @@ ggplot(vaccins_grippes, aes(x = mois_annee, y = nombre_de_boites))+
   theme(axis.text.x = element_text(angle=45))
 dev.print(device = png, file = "gen/images/vaccins_distribues.png", width = 1000)
 
-open_medic_2019 <-read.csv(file = "OPEN_MEDIC_2019.csv", sep=";")
-open_medic_2020 <-read.csv(file = "OPEN_MEDIC_2020.csv", sep=";")
+open_medic_2019 <-read.csv(file = "data/csv/OPEN_MEDIC_2019.csv", sep=";")
+open_medic_2020 <-read.csv(file = "data/csv/OPEN_MEDIC_2020.csv", sep=";")
 
 
 open_medic_2019<-open_medic_2019 %>% mutate(region = case_when(

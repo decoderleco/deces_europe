@@ -24,7 +24,7 @@ library(igraph)
 ####analyse des donnees hebdomadaires####
 #---------------------------------------#
 
-deces_standard_pays_semaine<-readRDS("deces_standard_pays_semaine.RDS")
+deces_standard_pays_semaine<-readRDS("gen/rds/deces_standard_pays_semaine.RDS")
 
 
 #-----------------------------------------------------------#
@@ -1420,7 +1420,7 @@ mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "gen/images/decesvaccinhongriejeune.png", width = 1000)
 
-pophongrie <-readRDS(file = "pjanquinq.RDS") %>% filter(geo=="HU") %>% 
+pophongrie <-readRDS(file = "gen/rds/pjanquinq.RDS") %>% filter(geo=="HU") %>% 
 filter(time=="2020-01-01") %>% group_by(agequinq) %>% summarise(population=sum(population))
 
 #malte

@@ -28,7 +28,7 @@ library(tidyr)
 
 #répartition des décès annuels#
 
-deces_complet_annuel <- readRDS("deces_complet_annuel.RDS")
+deces_complet_annuel <- readRDS("gen/rds/deces_complet_annuel.RDS")
 
 #les données de la Géorgie semblent absurdes, à l'inverse de tous les autres et l'Arménie ne bénéficie que de 5 ans
 deces_complet_annuel <- deces_complet_annuel  %>% filter(geo!="GE")%>% filter(geo!="AR")
@@ -208,7 +208,7 @@ dev.print(device = png, file = "gen/images/deces3annees.png", width = 1000)
                             #-----------------------------------------------------------------#
 
 
-pjanquinq <- readRDS("pjanquinq.RDS")
+pjanquinq <- readRDS("gen/rds/pjanquinq.RDS")
 pjanquinq20 <- pjanquinq %>% filter(time=="2020-01-01")
 pjanquinq00 <- pjanquinq %>% filter(time=="2000-01-01")
 annne_deces_maximum2020 <- annne_deces_maximum2020 %>% left_join(pjanquinq20) %>% filter (geo!="AM")%>% filter (geo!="AL")
@@ -290,7 +290,7 @@ barplot_deces_france <-ggplot(data=deces_complet_annuel_france, aes(x=annee, y=d
   labs(title = "Décès annuels de la France",
        caption = "Source des données : Eurostat",x="",y="nombre de décès")+
   theme(plot.title = element_text(hjust = 0.5,color = "#0066CC", size = 16, face = "bold"))
-saveRDS(barplot_deces_france,"barplot_deces_france.RDS")
+saveRDS(barplot_deces_france,"gen/rds/barplot_deces_france.RDS")
 
 barplot_decestheo_france<-ggplot(data=deces_complet_annuel_france, aes(x=annee, y=deces_theo_2020)) +
   geom_bar(stat="identity", fill="steelblue")+
@@ -298,7 +298,7 @@ barplot_decestheo_france<-ggplot(data=deces_complet_annuel_france, aes(x=annee, 
        caption = "Source des données : Eurostat",x="",y="nombre de décès standaridsés")+
   theme(plot.title = element_text(hjust = 0.5,color = "#0066CC", size = 16, face = "bold"),
         plot.subtitle = element_text(hjust = 0.5,color = "#0066CC", size = 12, face = "bold"))
-saveRDS(barplot_decestheo_france,"barplot_decestheo_france.RDS")
+saveRDS(barplot_decestheo_france,"gen/rds/barplot_decestheo_france.RDS")
 
 #pyramide des âges de la France 2020
 
@@ -421,7 +421,7 @@ ggsave("typo_annee_deces.png",plot=p, width = 11, height = 8)
 
 #problème de formule car nous sommes en âge quinquennal. 
 
-deces_complet <- readRDS("deces_complet.RDS")
+deces_complet <- readRDS("gen/rds/deces_complet.RDS")
 esperance_vie <- deces_complet %>% group_by(time,geo, agequinq) %>% summarise(deces=sum(deces),population=sum(population))
 
 #caclul des taux de mortalité et taux de survie par âge

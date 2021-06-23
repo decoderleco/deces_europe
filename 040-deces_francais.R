@@ -219,7 +219,7 @@ deces_dep_centre_reduit <- deces_dep_jour %>% group_by(deces_departement) %>% su
 deces_dep_jour <- deces_dep_jour %>% left_join(deces_dep_centre_reduit)
 deces_dep_jour <- deces_dep_jour %>% mutate(dece_centre_reduit=(effectif-moyenne)/max(dernier_quartile-moyenne,moyenne-premier_quartile))
 
-nom_departement <- read.csv("departements-region.csv",sep=",",header = TRUE,encoding="UTF-8")
+nom_departement <- read.csv("data/csv/departements-region.csv",sep=",",header = TRUE,encoding="UTF-8")
 deces_dep_jour <- deces_dep_jour %>% left_join(nom_departement,by=c("deces_departement"="num_dep"))
 deces_dep_jour <- deces_dep_jour %>% mutate(confinement = if_else(
   (deces_date_complete>="2020-03-17" & deces_date_complete<="2020-05-11")|
