@@ -146,7 +146,7 @@ text(391,1000,"2020",cex=1.2)
 text(440,1000,"2021",cex=1.2)
 text(26,22000,"FRANCE",cex=1.2)
 
-dev.print(device = png, file = "deceshebdofrance.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdofrance.png", width = 1000)
 
 par(new=T)
 plot(suede$numerosemaine, suede$deces_standard20france_plus_40, pch=16, axes=F,cex=0, ylim=c(0,25000), xlab="",lwd=1,  ylab="", type="o",col="blue") 
@@ -155,7 +155,7 @@ par(new=T)
 plot(portugal$numerosemaine, portugal$deces_standard20france_plus_40, pch=16, axes=F,cex=0, ylim=c(0,25000), xlab="",lwd=1,  ylab="", type="o",col="green") 
 text(26,25000,"PORTUGAL",cex=1.2,col="green")
 
-dev.print(device = png, file = "deceshebdofrancesuedeportugal.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdofrancesuedeportugal.png", width = 1000)
 
 
 plot(france$numerosemaine, france$deces_standard20france_plus_40, pch=16,cex=0, axes=F, ylim=c(0,25000), xlab="", ylab="", type="o",col="black", main="Décès hebdomadaires standardisés")
@@ -182,7 +182,7 @@ par(new=T)
 plot(france$numerosemaine, france$bsup, pch=16, axes=F,cex=0, ylim=c(0,25000), xlab="",lwd=1.5,  ylab="",lty=2, type="o",col="purple") 
 par(new=T)
 plot(france$numerosemaine, france$binf, pch=16, axes=F,cex=0, ylim=c(0,25000), xlab="",lwd=1.5,  ylab="",lty=2, type="o",col="purple") 
-dev.print(device = png, file = "deceshebdofrancelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdofrancelissage.png", width = 1000)
 
 #autriche
 
@@ -220,7 +220,7 @@ par(new=T)
 plot(autriche$numerosemaine, autriche$bsup, pch=16, axes=F,cex=0, ylim=c(0,3000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 
 
-dev.print(device = png, file = "deceshebdoautrichelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoautrichelissage.png", width = 1000)
 
 #belgique
 
@@ -257,7 +257,7 @@ plot(belgique$numerosemaine, belgique$binf, pch=16, axes=F,cex=0, ylim=c(0,4000)
 par(new=T)
 plot(belgique$numerosemaine, belgique$bsup, pch=16, axes=F,cex=0, ylim=c(0,4000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 
-dev.print(device = png, file = "deceshebdobelgiquelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdobelgiquelissage.png", width = 1000)
 
 #bulgarie
 
@@ -293,7 +293,7 @@ par(new=T)
 plot(bulgarie$numerosemaine, bulgarie$binf, pch=16, axes=F,cex=0, ylim=c(0,5000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(bulgarie$numerosemaine, bulgarie$bsup, pch=16, axes=F,cex=0, ylim=c(0,5000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdobulgarielissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdobulgarielissage.png", width = 1000)
 
 #suisse
 
@@ -328,7 +328,7 @@ par(new=T)
 plot(suisse$numerosemaine, suisse$binf, pch=16, axes=F,cex=0, ylim=c(0,3000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(suisse$numerosemaine, suisse$bsup, pch=16, axes=F,cex=0, ylim=c(0,3000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdosuisselissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdosuisselissage.png", width = 1000)
 
 #rtcheque
 
@@ -364,7 +364,7 @@ par(new=T)
 plot(rtcheque$numerosemaine, rtcheque$binf, pch=16, axes=F,cex=0, ylim=c(0,5000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(rtcheque$numerosemaine, rtcheque$bsup, pch=16, axes=F,cex=0, ylim=c(0,5000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdortchequelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdortchequelissage.png", width = 1000)
 
 #danmark
 
@@ -400,7 +400,7 @@ par(new=T)
 plot(danmark$numerosemaine, danmark$binf, pch=16, axes=F,cex=0, ylim=c(0,2000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(danmark$numerosemaine, danmark$bsup, pch=16, axes=F,cex=0, ylim=c(0,2000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdodanmarklissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdodanmarklissage.png", width = 1000)
 
 #estonie
 
@@ -435,7 +435,7 @@ par(new=T)
 plot(estonie$numerosemaine, estonie$binf, pch=16, axes=F,cex=0, ylim=c(0,500), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(estonie$numerosemaine, estonie$bsup, pch=16, axes=F,cex=0, ylim=c(0,500), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdoestonielissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoestonielissage.png", width = 1000)
 
 #espagne
 
@@ -471,7 +471,7 @@ par(new=T)
 plot(espagne$numerosemaine, espagne$binf, pch=16, axes=F,cex=0, ylim=c(0,25000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(espagne$numerosemaine, espagne$bsup, pch=16, axes=F,cex=0, ylim=c(0,25000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdoespagnelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoespagnelissage.png", width = 1000)
 
 #croatie
 
@@ -507,7 +507,7 @@ par(new=T)
 plot(croatie$numerosemaine, croatie$binf, pch=16, axes=F,cex=0, ylim=c(0,2000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(croatie$numerosemaine, croatie$bsup, pch=16, axes=F,cex=0, ylim=c(0,2000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdocroatielissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdocroatielissage.png", width = 1000)
 
 #hongrie
 
@@ -543,7 +543,7 @@ par(new=T)
 plot(hongrie$numerosemaine, hongrie$binf, pch=16, axes=F,cex=0, ylim=c(0,5000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(hongrie$numerosemaine, hongrie$bsup, pch=16, axes=F,cex=0, ylim=c(0,5000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdohongrielissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdohongrielissage.png", width = 1000)
 
 
 #islande
@@ -580,7 +580,7 @@ par(new=T)
 plot(islande$numerosemaine, islande$binf, pch=16, axes=F,cex=0, ylim=c(0,100), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(islande$numerosemaine, islande$bsup, pch=16, axes=F,cex=0, ylim=c(0,100), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdoislandelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoislandelissage.png", width = 1000)
 
 #italie
 
@@ -616,7 +616,7 @@ par(new=T)
 plot(italie$numerosemaine, italie$binf, pch=16, axes=F,cex=0, ylim=c(0,30000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(italie$numerosemaine, italie$bsup, pch=16, axes=F,cex=0, ylim=c(0,30000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdoitalielissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoitalielissage.png", width = 1000)
 
 
 #lichtenstein
@@ -653,7 +653,7 @@ par(new=T)
 plot(lichtenstein$numerosemaine, lichtenstein$binf, pch=16, axes=F,cex=0, ylim=c(0,20), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(lichtenstein$numerosemaine, lichtenstein$bsup, pch=16, axes=F,cex=0, ylim=c(0,20), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdolichtensteinlissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdolichtensteinlissage.png", width = 1000)
 
 
 #lituanie
@@ -689,7 +689,7 @@ par(new=T)
 plot(lituanie$numerosemaine, lituanie$binf, pch=16, axes=F,cex=0, ylim=c(0,2000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(lituanie$numerosemaine, lituanie$bsup, pch=16, axes=F,cex=0, ylim=c(0,2000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdolituanielissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdolituanielissage.png", width = 1000)
 
 #luxembourg
 
@@ -724,7 +724,7 @@ par(new=T)
 plot(luxembourg$numerosemaine, luxembourg$binf, pch=16, axes=F,cex=0, ylim=c(0,200), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(luxembourg$numerosemaine, luxembourg$bsup, pch=16, axes=F,cex=0, ylim=c(0,200), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdoluxembourglissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoluxembourglissage.png", width = 1000)
 
 #lettonie
 
@@ -759,7 +759,7 @@ par(new=T)
 plot(lettonie$numerosemaine, lettonie$binf, pch=16, axes=F,cex=0, ylim=c(0,1000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(lettonie$numerosemaine, lettonie$bsup, pch=16, axes=F,cex=0, ylim=c(0,1000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdolettonielissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdolettonielissage.png", width = 1000)
 
 #montenegro
 
@@ -794,7 +794,7 @@ par(new=T)
 plot(montenegro$numerosemaine, montenegro$binf, pch=16, axes=F,cex=0, ylim=c(0,200), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(montenegro$numerosemaine, montenegro$bsup, pch=16, axes=F,cex=0, ylim=c(0,200), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdomontenegrolissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdomontenegrolissage.png", width = 1000)
 
 #malte
 
@@ -829,7 +829,7 @@ par(new=T)
 plot(malte$numerosemaine, malte$binf, pch=16, axes=F,cex=0, ylim=c(0,200), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(malte$numerosemaine, malte$bsup, pch=16, axes=F,cex=0, ylim=c(0,200), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdomaltelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdomaltelissage.png", width = 1000)
 
 #norvege
 
@@ -865,7 +865,7 @@ plot(norvege$numerosemaine, norvege$binf, pch=16, axes=F,cex=0, ylim=c(0,1500), 
 par(new=T)
 plot(norvege$numerosemaine, norvege$bsup, pch=16, axes=F,cex=0, ylim=c(0,1500), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 
-dev.print(device = png, file = "deceshebdonorvegelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdonorvegelissage.png", width = 1000)
 
 #paysbas
 
@@ -900,7 +900,7 @@ par(new=T)
 plot(paysbas$numerosemaine, paysbas$binf, pch=16, axes=F,cex=0, ylim=c(0,6000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(paysbas$numerosemaine, paysbas$bsup, pch=16, axes=F,cex=0, ylim=c(0,6000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdopaysbaslissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdopaysbaslissage.png", width = 1000)
 
 #portugal
 
@@ -935,7 +935,7 @@ par(new=T)
 plot(portugal$numerosemaine, portugal$binf, pch=16, axes=F,cex=0, ylim=c(0,6000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(portugal$numerosemaine, portugal$bsup, pch=16, axes=F,cex=0, ylim=c(0,6000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdoportugallissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoportugallissage.png", width = 1000)
 
 #pologne
 
@@ -970,7 +970,7 @@ par(new=T)
 plot(pologne$numerosemaine, pologne$binf, pch=16, axes=F,cex=0, ylim=c(0,17000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(pologne$numerosemaine, pologne$bsup, pch=16, axes=F,cex=0, ylim=c(0,17000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdopolognelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdopolognelissage.png", width = 1000)
 
 #serbie
 
@@ -1005,7 +1005,7 @@ par(new=T)
 plot(serbie$numerosemaine, serbie$binf, pch=16, axes=F,cex=0, ylim=c(0,5000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(serbie$numerosemaine, serbie$bsup, pch=16, axes=F,cex=0, ylim=c(0,5000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdoserbielissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoserbielissage.png", width = 1000)
 
 #suede
 
@@ -1040,7 +1040,7 @@ par(new=T)
 plot(suede$numerosemaine, suede$binf, pch=16, axes=F,cex=0, ylim=c(0,3000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(suede$numerosemaine, suede$bsup, pch=16, axes=F,cex=0, ylim=c(0,3000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdosuedelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdosuedelissage.png", width = 1000)
 
 #slovenie
 
@@ -1075,7 +1075,7 @@ par(new=T)
 plot(slovenie$numerosemaine, slovenie$binf, pch=16, axes=F,cex=0, ylim=c(0,1000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(slovenie$numerosemaine, slovenie$bsup, pch=16, axes=F,cex=0, ylim=c(0,1000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdoslovenielissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoslovenielissage.png", width = 1000)
 
 #slovaquie
 
@@ -1109,7 +1109,7 @@ par(new=T)
 plot(slovaquie$numerosemaine, slovaquie$binf, pch=16, axes=F,cex=0, ylim=c(0,3000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(slovaquie$numerosemaine, slovaquie$bsup, pch=16, axes=F,cex=0, ylim=c(0,3000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdoslovaquielissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoslovaquielissage.png", width = 1000)
 
 #allemagne
 
@@ -1143,7 +1143,7 @@ par(new=T)
 plot(allemagne$numerosemaine, allemagne$binf, pch=16, axes=F,cex=0, ylim=c(0,30000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(allemagne$numerosemaine, allemagne$bsup, pch=16, axes=F,cex=0, ylim=c(0,30000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdoallemagnelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoallemagnelissage.png", width = 1000)
 
 #chypre
 
@@ -1177,7 +1177,7 @@ par(new=T)
 plot(chypre$numerosemaine, chypre$binf, pch=16, axes=F,cex=0, ylim=c(0,300), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(chypre$numerosemaine, chypre$bsup, pch=16, axes=F,cex=0, ylim=c(0,300), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdochyprelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdochyprelissage.png", width = 1000)
 
 #albanie
 
@@ -1211,7 +1211,7 @@ par(new=T)
 plot(albanie$numerosemaine, albanie$binf, pch=16, axes=F,cex=0, ylim=c(0,1000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(albanie$numerosemaine, albanie$bsup, pch=16, axes=F,cex=0, ylim=c(0,1000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdoalbanielissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoalbanielissage.png", width = 1000)
 
 #armenie
 
@@ -1245,7 +1245,7 @@ par(new=T)
 plot(armenie$numerosemaine, armenie$binf, pch=16, axes=F,cex=0, ylim=c(0,2000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(armenie$numerosemaine, armenie$bsup, pch=16, axes=F,cex=0, ylim=c(0,2000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdoarmenielissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoarmenielissage.png", width = 1000)
 
 #grece
 
@@ -1279,7 +1279,7 @@ par(new=T)
 plot(grece$numerosemaine, grece$binf, pch=16, axes=F,cex=0, ylim=c(0,5000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(grece$numerosemaine, grece$bsup, pch=16, axes=F,cex=0, ylim=c(0,5000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdogrecelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdogrecelissage.png", width = 1000)
 
 #finlande
 
@@ -1313,7 +1313,7 @@ par(new=T)
 plot(finlande$numerosemaine, finlande$binf, pch=16, axes=F,cex=0, ylim=c(0,2000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(finlande$numerosemaine, finlande$bsup, pch=16, axes=F,cex=0, ylim=c(0,2000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdofinlandelissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdofinlandelissage.png", width = 1000)
 
 #roumanie
 
@@ -1347,7 +1347,7 @@ par(new=T)
 plot(roumanie$numerosemaine, roumanie$binf, pch=16, axes=F,cex=0, ylim=c(0,10000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 par(new=T)
 plot(roumanie$numerosemaine, roumanie$bsup, pch=16, axes=F,cex=0, ylim=c(0,10000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
-dev.print(device = png, file = "deceshebdoroumanielissage.png", width = 1000)
+dev.print(device = png, file = "gen/images/deceshebdoroumanielissage.png", width = 1000)
 
 #---------------------------------------#
 ####    vaccinations et deces        ####
@@ -1390,7 +1390,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinhongrie.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinhongrie.png", width = 1000)
 
 
 par(mar=c(4,4,3,5))
@@ -1418,7 +1418,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinhongriejeune.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinhongriejeune.png", width = 1000)
 
 pophongrie <-readRDS(file = "pjanquinq.RDS") %>% filter(geo=="HU") %>% 
 filter(time=="2020-01-01") %>% group_by(agequinq) %>% summarise(population=sum(population))
@@ -1460,7 +1460,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinmalte.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinmalte.png", width = 1000)
 
 
 par(mar=c(4,4,3,5))
@@ -1488,7 +1488,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinmaltejeune.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinmaltejeune.png", width = 1000)
 
 
 #islande
@@ -1528,7 +1528,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinislande.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinislande.png", width = 1000)
 
 
 par(mar=c(4,4,3,5))
@@ -1556,7 +1556,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinislandejeune.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinislandejeune.png", width = 1000)
 
 
 #armenie
@@ -1596,7 +1596,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinarmenie.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinarmenie.png", width = 1000)
 
 
 par(mar=c(4,4,3,5))
@@ -1624,7 +1624,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,8500), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinarmeniejeune.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinarmeniejeune.png", width = 1000)
 
 
 #norvege
@@ -1664,7 +1664,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinnorvege.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinnorvege.png", width = 1000)
 
 
 par(mar=c(4,4,3,5))
@@ -1692,7 +1692,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.15)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinnorvegejeune.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinnorvegejeune.png", width = 1000)
 
 
 #croatie
@@ -1732,7 +1732,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccincroatie.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccincroatie.png", width = 1000)
 
 
 par(mar=c(4,4,3,5))
@@ -1760,7 +1760,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccincroatiejeune.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccincroatiejeune.png", width = 1000)
 
 #finlande
 
@@ -1799,7 +1799,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinfinlande.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinfinlande.png", width = 1000)
 
 
 par(mar=c(4,4,3,5))
@@ -1827,7 +1827,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinfinlandejeune.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinfinlandejeune.png", width = 1000)
 
 #chypre
 
@@ -1866,7 +1866,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinchypre.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinchypre.png", width = 1000)
 
 
 par(mar=c(4,4,3,5))
@@ -1894,7 +1894,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinchyprejeune.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinchyprejeune.png", width = 1000)
 
 #allemagne
 
@@ -1934,7 +1934,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinallemagne.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinallemagne.png", width = 1000)
 
 
 #autriche
@@ -1974,7 +1974,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinautriche.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinautriche.png", width = 1000)
 
 
 #belgique
@@ -2014,7 +2014,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinbelgique.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinbelgique.png", width = 1000)
 
 
 #espagne
@@ -2054,7 +2054,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinespagne.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinespagne.png", width = 1000)
 
 
 #italie
@@ -2094,7 +2094,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinitalie.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinitalie.png", width = 1000)
 
 
 #paysbas
@@ -2134,7 +2134,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinpaysbas.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinpaysbas.png", width = 1000)
 
 
 #portugal
@@ -2174,7 +2174,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinportugal.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinportugal.png", width = 1000)
 
 
 #france
@@ -2214,7 +2214,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinfrance.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinfrance.png", width = 1000)
 
 
 #pologne
@@ -2255,7 +2255,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinpologne.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinpologne.png", width = 1000)
 
 
 #danmark
@@ -2296,7 +2296,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccindanmark.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccindanmark.png", width = 1000)
 
 
 #grece
@@ -2337,7 +2337,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccingrece.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccingrece.png", width = 1000)
 
 
 #suisse
@@ -2377,7 +2377,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinsuisse.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinsuisse.png", width = 1000)
 
 
 #suede
@@ -2417,7 +2417,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinsuede.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinsuede.png", width = 1000)
 
 
 #serbie
@@ -2457,7 +2457,7 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decesvaccinserbie.png", width = 1000)
+dev.print(device = png, file = "gen/images/decesvaccinserbie.png", width = 1000)
 
 
 #---------------------------------------#
@@ -2493,7 +2493,7 @@ par(new=T)
 plot(essai$numerosemaine,essai$deces_tot - essai$new_deaths,
      pch=16, axes=F, ylim=c(0,4500), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
-dev.print(device = png, file = "decescovidhongrie.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidhongrie.png", width = 1000)
 
 
 #malte
@@ -2525,7 +2525,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,120), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidmalte.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidmalte.png", width = 1000)
 
 
 
@@ -2558,7 +2558,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,60), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidislande.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidislande.png", width = 1000)
 
 
 #armenie
@@ -2590,7 +2590,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,1500), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidarmenie.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidarmenie.png", width = 1000)
 
 #norvege
 
@@ -2621,7 +2621,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,1000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidnorvege.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidnorvege.png", width = 1000)
 
 
 
@@ -2654,7 +2654,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidcroatie.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidcroatie.png", width = 1000)
 
 
 #finlande
@@ -2686,7 +2686,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,2000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidfinlande.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidfinlande.png", width = 1000)
 
 #chypre
 
@@ -2717,7 +2717,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,200), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidchypre.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidchypre.png", width = 1000)
 
 #allemagne
 
@@ -2749,7 +2749,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,30000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidallemagne.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidallemagne.png", width = 1000)
 
 
 #autriche
@@ -2781,7 +2781,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,3000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidautriche.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidautriche.png", width = 1000)
 
 
 #belgique
@@ -2813,7 +2813,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,5000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidbelgique.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidbelgique.png", width = 1000)
 
 
 #espagne
@@ -2845,7 +2845,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidespagne.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidespagne.png", width = 1000)
 
 
 #italie
@@ -2877,7 +2877,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,25000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescoviditalie.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescoviditalie.png", width = 1000)
 
 
 #paysbas
@@ -2909,7 +2909,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,6000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidpaysbas.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidpaysbas.png", width = 1000)
 
 
 #portugal
@@ -2941,7 +2941,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,5000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidportugal.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidportugal.png", width = 1000)
 
 
 #france
@@ -2982,7 +2982,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,20000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidfrance.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidfrance.png", width = 1000)
 
 
 #pologne
@@ -3023,7 +3023,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,15000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidpologne.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidpologne.png", width = 1000)
 
 
 #danmark
@@ -3064,7 +3064,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,1500), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescoviddanmark.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescoviddanmark.png", width = 1000)
 
 
 #grece
@@ -3104,7 +3104,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidgrece.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidgrece.png", width = 1000)
 
 
 #suisse
@@ -3144,7 +3144,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,2500), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidsuisse.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidsuisse.png", width = 1000)
 
 
 #suede
@@ -3183,7 +3183,7 @@ par(new=T)
 plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,3000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
-dev.print(device = png, file = "decescovidsuede.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidsuede.png", width = 1000)
 
 
 #serbie
@@ -3223,7 +3223,7 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
      pch=16, axes=F, ylim=c(0,4000), xlab="", ylab="", type="o",col="blue",cex=0,)
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes",side=4,col="blue",line=2.5)
 axis(4, ylim=c(0,3), col="blue",col.axis="blue")
-dev.print(device = png, file = "decescovidserbie.png", width = 1000)
+dev.print(device = png, file = "gen/images/decescovidserbie.png", width = 1000)
 
 
 

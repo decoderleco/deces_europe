@@ -62,7 +62,7 @@ ggplot(deces_complet_annuel_analysable2000) +
   theme(plot.title = element_text(hjust = 0.5,color = "#0066CC", size = 16, face = "bold"),
         plot.subtitle = element_text(hjust = 0.5,color = "#0066CC", size = 12, face = "bold"))
 
-dev.print(device = png, file = "deces2000tot.png", width = 1000)
+dev.print(device = png, file = "gen/images/deces2000tot.png", width = 1000)
 
 
 ggplot(deces_complet_annuel_analysable2000_est) + 
@@ -74,7 +74,7 @@ labs(title = "Décès standardisés par pays et année",
   theme(plot.title = element_text(hjust = 0.5,color = "#0066CC", size = 16, face = "bold"),
         plot.subtitle = element_text(hjust = 0.5,color = "#0066CC", size = 12, face = "bold"))
 
-dev.print(device = png, file = "deces2000est.png", width = 1000)
+dev.print(device = png, file = "gen/images/deces2000est.png", width = 1000)
 
 ggplot(deces_complet_annuel_analysable2000_ouest) + 
   geom_point(aes(x = location, y = deces_france_theo_20, color = time), size = 2)+
@@ -85,7 +85,7 @@ ggplot(deces_complet_annuel_analysable2000_ouest) +
   theme(plot.title = element_text(hjust = 0.5,color = "#0066CC", size = 16, face = "bold"),
         plot.subtitle = element_text(hjust = 0.5,color = "#0066CC", size = 12, face = "bold"))
 
-dev.print(device = png, file = "deces2000ouest.png", width = 1000)
+dev.print(device = png, file = "gen/images/deces2000ouest.png", width = 1000)
 
 #dernière année avec mortalité supérieure à 2020
 
@@ -201,7 +201,7 @@ ggplot(deces_complet_annuel_analysable2000_troisannees) +
   theme(plot.title = element_text(hjust = 0.5,color = "#0066CC", size = 16, face = "bold"),
         plot.subtitle = element_text(hjust = 0.5,color = "#0066CC", size = 12, face = "bold"))
 
-dev.print(device = png, file = "deces3annees.png", width = 1000)
+dev.print(device = png, file = "gen/images/deces3annees.png", width = 1000)
 
                             #-----------------------------------------------------------------#
                             ####           pyramide des âges des pays européens            ####
@@ -323,7 +323,7 @@ pyramids(Left=annne_deces_maximumFranceMF$part_hommes,Llab="Hommes",
          Center = annne_deces_maximumFranceMF$agequinq,Laxis=c(0,2,4,6,8,10),
          main="Pyramide des âges 2020 de la France",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
-dev.print(device = png, file = "pyramid_france_2020.png", width = 600)
+dev.print(device = png, file = "gen/images/pyramid_france_2020.png", width = 600)
 
 
 #pyramide des âges de la France 2000
@@ -351,7 +351,7 @@ pyramids(Left=annne_deces_maximumFranceMF0$part_hommes,Llab="Hommes",
          Center = annne_deces_maximumFranceMF0$agequinq,Laxis=c(0,2,4,6,8,10),
          main="Pyramide des âges 2000 de la France",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
-dev.print(device = png, file = "pyramid_france_2000.png", width = 600)
+dev.print(device = png, file = "gen/images/pyramid_france_2000.png", width = 600)
 
 
                                     #----------------------------------------#

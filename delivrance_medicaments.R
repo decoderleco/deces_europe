@@ -54,7 +54,7 @@ ggplot(vaccins_grippes, aes(x = mois_annee, y = nombre_de_boites))+
   xlab("") + ylab("nombre de vaccins")+
  scale_x_date(labels = date_format("%m/%y"),breaks = date_breaks("year")) +
   theme(axis.text.x = element_text(angle=45))
-dev.print(device = png, file = "vaccins_distribues.png", width = 1000)
+dev.print(device = png, file = "gen/images/vaccins_distribues.png", width = 1000)
 
 open_medic_2019 <-read.csv(file = "OPEN_MEDIC_2019.csv", sep=";")
 open_medic_2020 <-read.csv(file = "OPEN_MEDIC_2020.csv", sep=";")
