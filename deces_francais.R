@@ -205,12 +205,12 @@ db_clean <- db_clean %>% mutate(deces_departement=str_sub(deces_code_lieu,1,2))
 db_clean <- db_clean %>% mutate(age_deces_millesime=deces_annee_complete-naissance_annee_complete)
 
 ?summarise
-saveRDS(db_clean, file = 'data/deces_fr.rds')
+saveRDS(db_clean, file = 'gen/rds/deces_fr.rds')
 
 
 #### réalisation des graphiques ####
 
-db_clean <- readRDS('data/deces_fr.rds')
+db_clean <- readRDS('gen/rds/deces_fr.rds')
 deces_dep_jour <- db_clean %>% group_by(deces_date_complete,deces_departement) %>% summarise(effectif=n()) %>% filter(deces_date_complete>="2018-01-01")
 deces_dep_centre_reduit <- deces_dep_jour %>% group_by(deces_departement) %>% summarise(minimum=min(effectif),maximum=max(effectif),
                                                                                         moyenne=mean(effectif),

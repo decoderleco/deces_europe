@@ -1,0 +1,1 @@
+Dossier contenant des fichiers créés ou récupérés manuellement
