@@ -279,7 +279,7 @@ Les pathologies non soignées du fait de l'ordre de ne pas consulter et de reste
 Ces décès ne sont pas considérés comme ayant un quelconque rapport avec la Covid-19. Ils apparaissent pourtant aux mêmes périodes que ceux attribués à cette maladie.
 
 
-![](images/domicile.png){width=1000px}
+![](data/images/domicile.png){width=1000px}
 
 Ce résultat de non-prise en charge peut expliquer le caractère particulier des données de Chypre.
 
@@ -291,19 +291,19 @@ De la même manière qu'en France, où l'on constate un nombre de décès inscri
  
 La période de mars-avril est extrêmement particulière dans toute l’histoire du soin, car il s’agit de la première fois que l’on demande à des malades de ne pas consulter de généraliste, en particulier si le patient souffre d’une infection respiratoire.
 
-![](images/flyerspf.png){width=1000px}
+![](data/images/flyerspf.png){width=1000px}
 
 Cet ordre a entraîné un comportement de la population inédit dont on peut voir les effets sur les statistiques d’achat de médicaments en pharmacie de la base de données Médicam.
 
 Ce graphique représente la base remboursable de tous les médicaments vendus par les pharmacies en France, chaque mois.
 
-![](images/medictot.png){width=1000px}
+![](data/images/medictot.png){width=1000px}
 
 Le mois de mars 2020 a connu une hausse de 13 % des ventes de médicaments par rapport à la moyenne 2017-2019, représentant le provisionnement des français à la suite de l’annonce du confinement généralisé. Les mois d’avril et mai 2020 présentent au contraire, des baisses de 15 % et 14 % par rapport à la moyenne. Ces baisses sont le reflet de la non-prescription par les médecins à la suite de l’ordre de ne pas consulter.
 
 Cette chute est cependant bien plus forte concernant les traitements habituels prescrits dans le cadre des infections respiratoires aiguës. En particulier les antibiotiques permettant d’éviter les surinfections ont connu une chute sans précédent.
 
-![](images/medicbac.png){width=1000px}
+![](data/images/medicbac.png){width=1000px}
 
 En mars, le provisionnement n’a pas existé et le total d’antibiotiques vendus est inférieur de 1 % à la moyenne 2017-2019. En avril et mai, les chutes de ventes furent respectivement de 40 % et 47 %. Depuis cette période, la vente d’antibiotiques est restée à des niveaux extrêmement bas, reflet du choix de ne pas proposer ce traitement en cas de Covid-19.
  
@@ -318,7 +318,7 @@ Une fois de plus, pour les personnes les plus pauvres et vivant dans les logemen
 
 Ce défaut de prise en charge a été quantifié par les deux membres du Conseil Scientifique, Arnaud Fontanet et Simon Cauchemez, pourtant à l’origine de cette stratégie. Leur article dans Science [^n9], utilise les données hospitalières françaises et notamment le temps de passage et réanimation et de décès depuis la prise en charge du patient. Les courbes les plus intéressantes ont été supprimés depuis de l'article principal, mais sont toujours disponibles dans les données complémentaires. Au pages 15 et 16 sont détaillés les nombres de jours que mettent les patients arrivant à l’hôpital avant d’aller en réanimation (graphique de gauche) et le nombre de jours qu’ils mettent avant de décéder (graphique de droite).
 
-![](images/fontanet.png){width=1000px}
+![](data/images/fontanet.png){width=1000px}
 
 Ainsi, 50 % des patients arrivant à l’hôpital sont placés en réanimation dès de le premier jour et 17% des patients décèdent dès le premier jour. Ces ratios énormes prouvent que les patient arrivent trop tard à l’hôpital. On observe d’ailleurs une très forte différence entre le nombre de décès au jour 1 et le nombre de décès au jour 2, illustrant qu’une grosse partie des arrivées n’est plus sauvable. Les auteurs en déduisent d’ailleurs qu’il y a 2 courbes séparés entre ceux arrivant trop tard et les autres. C'est l'explication restante dans l'article toujours en ligne. 
 Une lecture moins orientée déduit de cet énorme ratio de décès au premier jour que les soins sont trop tardifs. Il est donc très probable que les décédés des jours suivants soient également pour beaucoup du fait de personnes dont l’état a eu le temps de s’aggraver et dont certain auraient pu survivre si les soins avaient été précoces.
@@ -347,7 +347,7 @@ Le Rivotril est un médicament antiépileptique dont l'utilisation n'a haibtuell
 
 Ainsi, la dérogation du décret ne propose pas l'utilisation d'un sédatif, mais d'un médicament déclenchant l'arrêt de la respiration du patient et donc son décès anticipé. Le décret a eu cours du 28 mars au 11 mai, soit dans la période exacte sur laquelle est constatée le plus fort nombre de décès depuis la canicule de 2003. L'analyse des ventes de Rivotril en pharmacie dans sa forme injectable reflète l'ampleur de l'utilisation de ce produit.
 
-![](images/rivotril.png){width=1000px}
+![](data/images/rivotril.png){width=1000px}
 
 Ainsi, contrairement aux antibiotiques, les ventes de boîtes Rivotril dans a forme injectable ont augmenté de 59 % au mois de mars et de 227 % en avril relativement à la moyenne observée entre 2017 et 2019. Cette augmentation sur mars-avril représente 1 700 boîtes du produit et plus de l'habitude. Précisons que chaque boîte contient 6 ampoules dont une à 2 sont utilisées par patient dans le cadre d'une fin de vie. 
 Ces statistiques ne reflètent que partiellement l'utilisation de cette molécule, car elles ne prennent pas en compte les doses qui ne sont pas distribuées par les pharmacies de ville, par exemple en provenance directe de l'hôpital. On s'étonne par la suite que la consommation de ce produit dans sa forme injectable n'ait pas retrouvé son ancien niveau. Entre mars 2020 et mars 2021, ce sont 6 150 boîtes supplémentaires à l'habitude qui ont été vendues, soit plus de 36 000 ampoules.
@@ -356,7 +356,7 @@ La comparaison des décès déclarés Covid  [^n13] et des décès toutes causes
 
 L'origine de ce comptage de peut aisément s'expliquer à la lumière de ce choix palliatif.
 
-![](images/EHPAD.png){width=1000px}
+![](data/images/EHPAD.png){width=1000px}
 On constate que les remontées de décès Covid arrivent massivement après la promulgation du décret dérogatoire concernant le Rivotril. De plus, même après la fin de la période de surmortalité française à partir du 1er mai, des décès Covid ont bien été enregistrés dans les EHPADs jusqu'à la fin de la validité du décret.
 
 Il est évident qu'une intervention médicamenteuse ayant pour conséquence d'accélérer le décès de patients en fin de vie, a des répercussions sur les statistiques de décès. Dès lors, la "surmortalité" constatée sur courte période n'est pas le signe d'un plus grand nombre de décès à moyen terme, mais uniquement d'un regroupement artificiel de décès sur les mêmes dates.
@@ -379,7 +379,7 @@ La campagne de vaccinale grippale arrive tardivement dans l'année. Elle est con
 Les débats sont ouverts sur l'utilité réelle du vaccin contre la grippe sur la mortalité hivernale. Rappelons que ce vaccin n'est pas conçu comme les autres. Il s'agit d'un mélange contenant plusieurs souches de grippes préconisés par l'OMS. Au moment de la préconisation, absolument aucune certitude n'existe sur les souches qui circuleront pendant l'hiver. Il s'agit donc d'un pari. Certains pays comme la Norvège ou la Finlande en ont une distribution plus faible que d'autres, en particulier depuis les polémiques ayant suivi la campagne vaccinale contre le virus H1N1. Pour autant, la Norvège et la Finlande semblent ne pas être soumis à des pics de mortalités hivernales ces dernières années, bien au contraire.
 Les données disponibles sur les vaccins ne sont disponibles que mensuellement, ne permettant pas un rapprochement de qualité avec les décès en France. Un lissage hebdomadaire des vaccins distribués comparé aux décès toutes causes des plus de 65 ans en France (population la plus vaccinée du fait de la gratuité à cet âge), montre une proximité entre ces 2 évènements.
 
-![](images/lien_deces_grippe.png){width=1000px}
+![](data/images/lien_deces_grippe.png){width=1000px}
 
 La hausse soudaine des décès en octobre 2020 comparativement aux années précédentes correspond en dates et proportions aux observations du passé. Même si corrélation n'est pas causalité, les soupçons à ce niveau devraient soulever des recherches poussées complémentaires. Il serait nécessaire de comparer les dates de décès de tous les français depuis 2015, aux dates de vaccinations. Il s'agirait de déterminer si un lien statistique existe entre date de vaccination et date de décès. Les données précises et nominatives des décès de tous les français sont publiques et disponibles en ligne. Le rapprochement avec les dates de vaccinations devrait être possible pour les chercheurs disposant des droits d'accès aux données de vaccinations.
 
@@ -393,7 +393,7 @@ Il convient alors de se demander aussi si l'augmentation de la mortalité visibl
 
 Il n'est pas exceptionnel d'avoir autour du 1er janvier de chaque année, deux périodes de hausse de mortalité visibles. C'est notamment le cas en France pendant l'hiver 2017-2018. Cependant ces périodes sont habituellement très rapprochées dans le temps. En 2021, pour certains pays, le deuxième pic de mortalité est fortement éloigné du premier. Pour la première fois, en 2021, une politique sanitaire d'une ampleur jamais égalée, à partir de vaccins expérimentaux sur lesquels aucun recul n'est disponible, a été décidé. Ce dispositif fait lui aussi l'objet d'un suivi hors norme. De nombreux pays envoient leurs données de vaccinations en quasi direct [^n19]. Il est difficile d'avoir une idée précise de la qualité des remontées de données, mais il offre des possibilités de comparaisons jamais égalées.
 
-![](images/ourworldindata.png){width=1000px}
+![](data/images/ourworldindata.png){width=1000px}
 
 En particulier, Malte et la Hongrie déclarent une vaccination à très grande échelle sur leur territoire. Ainsi, les vaccinations concernent des jeunes depuis plusieurs semaines.
 
