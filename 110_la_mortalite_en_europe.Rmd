@@ -63,7 +63,7 @@ En effet, la France vieillit. Ainsi le nombre de morts chaque année augmente na
 
 ```{r, echo=FALSE}
 options(scipen=999)
-barplot_deces_france <- readRDS("barplot_deces_france.RDS")
+barplot_deces_france <- readRDS("gen/rds/barplot_deces_france.RDS")
 barplot_deces_france
 
 ```
@@ -79,7 +79,7 @@ Pour comparer le nombre de décès en France de ces dernières années avec l'an
 
 ```{r, echo=FALSE}
 options(scipen=999)
-barplot_decestheo_france <- readRDS("barplot_decestheo_france.RDS")
+barplot_decestheo_france <- readRDS("gen/rds/barplot_decestheo_france.RDS")
 barplot_decestheo_france
 
 ```
@@ -172,7 +172,7 @@ Ce cas trivial est pourtant ce qui est fait lorsque l'on compare l'année 2020 �
 Sur le graphique du nombre de décès français, on observe certaines années plus ou moins élevées par rapport à la tendance générale. Dans la littérature, les années de fortes mortalité sont appelées années moissons.  
 
 ```{r, echo=FALSE}
-barplot_deces_france <- readRDS("barplot_deces_france.RDS")
+barplot_deces_france <- readRDS("gen/rds/barplot_deces_france.RDS")
 barplot_deces_france
 
 ```
