@@ -1,5 +1,3 @@
-install.packages("pyramid")
-install.packages("igraph")
 library(pyramid)
 library(maptools)
 library(rgdal)
@@ -63,8 +61,9 @@ test <- deces_standard_pays_semaine %>% mutate (numerosemaine=numerosemaine + 1,
                                                 new_cases_prec = new_cases,
                                                 new_vaccinations_prec=new_vaccinations,
                                                 Response_measure_prec = Response_measure,
-                                                surmortalité_prec = surmortalité) %>% 
-  select(geo,numerosemaine,deces_standard_tot_prec,new_deaths_prec,deces_tot_prec,new_cases_prec,new_vaccinations_prec,Response_measure_prec,surmortalité_prec)
+                                                #21
+                                                surmortalite_prec = surmortalite) %>% 
+  select(geo, numerosemaine, deces_standard_tot_prec, new_deaths_prec, deces_tot_prec, new_cases_prec, new_vaccinations_prec, Response_measure_prec, surmortalite_prec)
 
 deces_standard_pays_semaine <-left_join(deces_standard_pays_semaine ,test)
 
@@ -3230,7 +3229,7 @@ dev.print(device = png, file = "gen/images/decescovidserbie.png", width = 1000)
 
 ####realisation de cartes dynamiques avec 1 carte par semaine####
 
-
+#20 geodata is not defined !
 map_data_init <- inner_join(geodata, deces_standard_pays_semaine_plus_40)
 
 numerosemaine <- numerosemaine %>% mutate(saison=if_else(numerosemaineannee < 13 | numerosemaineannee > 51, "hiver","autre"))
@@ -3270,7 +3269,7 @@ for (i in 158:432) {
     theme_light() + theme(legend.position=c(.1,.5)) +
     coord_sf(xlim=c(-22,34), ylim=c(35,70)) 
   
-  ggsave(paste0("carte",i,".png"),plot=p, width = 11, height = 8)
+  ggsave(paste0("gen/images/carte",i,".png"),plot=p, width = 11, height = 8)
 }
 
 deces_analysables<-deces_standard_pays_semaine %>% filter(time >"2015-01-01")
