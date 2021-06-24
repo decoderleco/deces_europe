@@ -19,20 +19,26 @@ library(igraph)
 library(readr)
 library(dplyr)
 
+#
+# Preparer les espaces de telechargement de donnees
+#
+
+# Créer les repertoires
+if (!dir.exists("inst/extdata/deces")) dir.create("inst/extdata/deces")
+
 # Import des données de décès
 # 'https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/'
 
 
 dossier_donnees_externes <- 'inst/extdata'
 dossier_donnees_deces <- file.path(dossier_donnees_externes, 'deces')
-dossier_cible_donnees <- 'data'
 
 # Créer les données
-if(dir.exists(dossier_donnees_externes)) print("toto")
-  dir.create(dossier_donnees_externes)
+if(!dir.exists(dossier_donnees_externes)) dir.create(dossier_donnees_externes)
 if(!dir.exists(dossier_donnees_deces)) dir.create(dossier_donnees_deces)
-if(!dir.exists(dossier_cible_donnees)) dir.create(dossier_cible_donnees)
+
 getwd()
+
 # Liste des URLs des fichiers de patients décédés
 
 urls_listes_deces <- c(

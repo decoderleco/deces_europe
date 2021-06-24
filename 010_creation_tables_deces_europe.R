@@ -16,6 +16,15 @@ library(readr)
 library(lsr)
 
 #
+# Preparer les espaces de generation de donnees
+#
+
+# Créer les repertoires
+if (!dir.exists("gen/csv")) dir.create("gen/csv")
+if (!dir.exists("gen/images")) dir.create("gen/images")
+if (!dir.exists("gen/rds")) dir.create("gen/rds")
+
+#
 # recuperer les tables qui nous interessent chez EuroStat
 #
 
