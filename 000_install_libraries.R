@@ -1,3 +1,5 @@
+# Commencer par installer tous les packages pour tous les scripts (eurostat et ses copains...)
+#
 # Ce fichier n'est à executer qu'une seule fois
 
 # Installer le package eurostat et ses copains
