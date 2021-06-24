@@ -1,22 +1,3 @@
-#commencer par installer tous les packages pour tous les scripts (eurostat et ses copains...)
-
-install.packages("eurostat")
-install.packages("maptools")
-install.packages("rgdal")
-install.packages("maps");
-install.packages("leaflet");
-install.packages(("questionr"));
-install.packages("ggplot2");
-install.packages("rnaturalearth")
-install.packages("rnaturalearthdata")
-install.packages("rgeos")
-install.packages("readr")
-install.packages("lsr")
-install.packages("tinytex")
-install.packages("curl")
-install.packages("gsl")
-
-
 library(maptools)
 library(rgdal)
 library(maps)
@@ -33,6 +14,15 @@ library(rgeos)
 library("rnaturalearthdata")
 library(readr)
 library(lsr)
+
+#
+# Preparer les espaces de generation de donnees
+#
+
+# Créer les repertoires
+if (!dir.exists("gen/csv")) dir.create("gen/csv")
+if (!dir.exists("gen/images")) dir.create("gen/images")
+if (!dir.exists("gen/rds")) dir.create("gen/rds")
 
 #
 # recuperer les tables qui nous interessent chez EuroStat
@@ -292,8 +282,8 @@ deces90quinq <- deces90quinq %>% group_by(agequinq,sex,geo,time) %>%
 deces_annuel_agequinq<-bind_rows(deces90quinq,deces85quinq)
 pjanquinq <-bind_rows(pjan90quinq,pjan85quinq)
 
-write.table(pjanquinq, "pjanquinq.csv", row.names=FALSE, sep="t",dec=",", na=" ")
-saveRDS(pjanquinq,file="pjanquinq.RDS")
+write.table(pjanquinq, "gen/csv/pjanquinq.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+saveRDS(pjanquinq,file="gen/rds/pjanquinq.RDS")
 
 
 #### on joint les deces et les pop ###############
@@ -428,7 +418,7 @@ deces_complet_annuel  <- deces_complet %>% filter(!is.na(population)) %>% group_
 deces_complet_annuel<- deces_complet_annuel %>% filter(!is.na(dc20)) %>% filter(!is.na(deces_theo_2020))
 deces_complet_annuel<- deces_complet_annuel %>% mutate (augmentation20 = (dc20-deces_theo_2020)/deces_theo_2020)
 
-write.table(deces_complet_annuel, "deces_complet_annuel.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+write.table(deces_complet_annuel, "gen/csv/deces_complet_annuel.csv", row.names=FALSE, sep="t",dec=",", na=" ")
 
 
                                        #----------------------------------#
@@ -712,15 +702,15 @@ nom_pays <-nom_pays %>% mutate(zone=case_when(geo=="AL"~ "Est",
 
 deces_standard_pays_semaine<- left_join(deces_standard_pays_semaine,nom_pays)
 
-saveRDS(deces_standard_pays_semaine,file="deces_standard_pays_semaine.RDS")
-write.table(deces_standard_pays_semaine, "deces_standard_pays_semaine.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+saveRDS(deces_standard_pays_semaine,file="gen/rds/deces_standard_pays_semaine.RDS")
+write.table(deces_standard_pays_semaine, "gen/csv/deces_standard_pays_semaine.csv", row.names=FALSE, sep="t",dec=",", na=" ")
 
 deces_complet_annuel<- left_join(deces_complet_annuel,nom_pays)
 
-write.table(deces_complet_annuel, "deces_complet_annuel.csv", row.names=FALSE, sep="t",dec=",", na=" ")
-saveRDS(deces_complet_annuel,file="deces_complet_annuel.RDS")
+write.table(deces_complet_annuel, "gen/csv/deces_complet_annuel.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+saveRDS(deces_complet_annuel,file="gen/rds/deces_complet_annuel.RDS")
 
 deces_complet<- left_join(deces_complet,nom_pays)
 
-write.table(deces_complet, "deces_complet.csv", row.names=FALSE, sep="t",dec=",", na=" ")
-saveRDS(deces_complet,file="deces_complet.RDS")
+write.table(deces_complet, "gen/csv/deces_complet.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+saveRDS(deces_complet,file="gen/rds/deces_complet.RDS")

@@ -1,15 +1,1 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
-*.png
-*.RDS
-/.project
-/la_mortalite_en_europe.tex
-/deces_complet.csv
-/deces_complet_annuel.csv
-/deces_standard_pays_semaine.csv
-/pjanquinq.csv
-/la_mortalite_en_europe.html
-/OPEN_MEDIC_2019.CSV
-/OPEN_MEDIC_2020.CSV
+/110_la_mortalite_en_europe.html
