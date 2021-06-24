@@ -1,7 +1,3 @@
-install.packages("pyramid")
-install.packages("reshape2")
-install.packages("tidyr")
-
 library(pyramid)
 library(maptools)
 library(rgdal)

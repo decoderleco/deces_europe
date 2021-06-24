@@ -1,4 +1,3 @@
-
 library(pyramid)
 library(maptools)
 library(rgdal)
