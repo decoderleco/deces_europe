@@ -65,6 +65,12 @@ dev.print(device = png, file = "gen/images/vaccins_distribues.png", width = 1000
 # médicaments
 #
 
+# les deux fichiers ci-dessous sont a telecharger depuis :
+#    https://www.data.gouv.fr/fr/datasets/open-medic-base-complete-sur-les-depenses-de-medicaments-interregimes/
+#
+# Il faut cliquer sur "VOIR LES 50 RESSOURCES DU FICHIER PRINCIPAL" pour les trouver
+#
+
 open_medic_2019 <-read.csv(file = "data/csv/OPEN_MEDIC_2019.csv", sep=";")
 open_medic_2020 <-read.csv(file = "data/csv/OPEN_MEDIC_2020.csv", sep=";")
 
