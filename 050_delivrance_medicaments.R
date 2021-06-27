@@ -92,7 +92,7 @@ https://assurance-maladie.ameli.fr/etudes-et-donnees/medicaments-type-prescripte
        scale_x_date(labels = date_format("%m/%y"),breaks = date_breaks("year")) +
        theme(axis.text.x = element_text(angle=45))
 
-dev.print(device = png, file = "gen/images/vaccins_distribues.png", width = 1000)
+dev.print(device = png, file = "gen/images/Medicam_vaccins_distribues.png", width = 1000)
 
 
 #
