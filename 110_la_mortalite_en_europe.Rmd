@@ -63,14 +63,14 @@ En effet, la France vieillit. Ainsi le nombre de morts chaque année augmente na
 
 ```{r, echo=FALSE}
 options(scipen=999)
-barplot_deces_france <- readRDS("gen/rds/barplot_deces_france.RDS")
+barplot_deces_france <- readRDS("gen/rds/Eurostat_barplot_deces_france.RDS")
 barplot_deces_france
 
 ```
 
 Cette hausse du nombre de décès n’est pas le signe que la santé des français se dégrade, mais uniquement le résultat de l'augmentation du nombre de personnes âgées. En effet, à force de vieillir, tous les humains finissent par mourir. Pour l'illustrer, voici la pyramide des âges de la France en 2000 et en 2020, réalisée avec les données disponibles sur Eurostat.
 
- ![](gen/images/pyramid_france_2000.png){width=450px} ![](gen/images/pyramid_france_2020.png){width=450px}
+ ![](gen/images/Eurostat_Pyramide_france_2000.png){width=450px} ![](gen/images/Eurostat_Pyramide_france_2020.png){width=450px}
 En 20 ans, la génération des baby-boomers est, logiquement, passée de la tranche des moins de 55 ans à celle des plus de 65 ans. Dès lors, il est tout à fait normal que le nombre de décès en France augmente chaque année, et cela va continuer à augmenter pendant encore au moins 20 ans.
 
 Ainsi, il ne faut jamais commenter des nombres de décès bruts qui augmentent ou baissent non pas selon l'arrivée des maladies, mais toujours selon la taille de la population et selon l'âge des personnes. En effet, s'il y a plus de décès en France qu'au Luxembourg, c'est parce que les français sont 100 fois plus nombreux que les Luxembourgeois. S'il y a plus de décès dans un EHPAD de 200 personnes que dans une école maternelle de 200 enfants, ce n'est pas parce que l'EHPAD est plus dangereux que l'école maternelle, mais uniquement parce que les résidents d'un EHPAD sont beaucoup plus vieux que les élèves d'une école maternelle. Ainsi, comparer des nombres de décès entre 2 populations ne peut pas se faire avec les seuls chiffres bruts, mais toujours en corrigeant de la taille de la population, et aussi en corrigeant de l’âge des gens. Il s'agit de standardiser les décès pour mettre la même population partout.
@@ -79,7 +79,7 @@ Pour comparer le nombre de décès en France de ces dernières années avec l'an
 
 ```{r, echo=FALSE}
 options(scipen=999)
-barplot_decestheo_france <- readRDS("gen/rds/barplot_decestheo_france.RDS")
+barplot_decestheo_france <- readRDS("gen/rds/Eurostat_barplot_deces_theo_france.RDS")
 barplot_decestheo_france
 
 ```
@@ -100,7 +100,7 @@ En marron, nous retrouvons tous les pays pour lesquels l’année 2020 est l’a
 
 La pyramide des âges des pays Européens révèle une situation européenne semblable à celle de la France : la population vieillit. Il est tout à fait normal que le nombre de décès augmente chaque année du fait de ce simple constat.
 
- ![](gen/images/pyramide_europe_2000.png){width=450px} ![](gen/images/pyramide_europe_2020.png){width=450px}
+ ![](gen/images/Eurostat_Pyramide_europe_2000.png){width=450px} ![](gen/images/Eurostat_Pyramide_europe_2020.png){width=450px}
 
 Ainsi, plutôt que de regarder les décès bruts, il est nécessaire de les corriger par la pyramide des âges, de façon à prendre en compte l'augmentation et le vieillissement de la population dans les calculs. Cela permet de ne pas dire que la mortalité augmente, si cela vient juste du fait qu’il y a plus de personnes âgées.
 
@@ -133,8 +133,8 @@ Les décès théoriques de 2020 pour chaque pays sont signalés en rouge et les 
 Par exemple, si la population de la France de 2020 étaient décédée de la même manière que la Bulgarie en 2020, il y aurait eu 1 300 000 morts au lieu des 660 000 qu'elle a vécu.
 
 
-![](gen/images/deces2000est.png){width=1000px} 
-![](gen/images/deces2000ouest.png){width=1000px}
+![](gen/images/Eurostat_Deces_2000est.png){width=1000px} 
+![](gen/images/Eurostat_Deces_2000ouest.png){width=1000px}
 
 Cela montre qu'à population et pyramide des âges égales, les bulgares meurent deux fois plus que les français.
 
@@ -172,7 +172,7 @@ Ce cas trivial est pourtant ce qui est fait lorsque l'on compare l'année 2020 �
 Sur le graphique du nombre de décès français, on observe certaines années plus ou moins élevées par rapport à la tendance générale. Dans la littérature, les années de fortes mortalité sont appelées années moissons.  
 
 ```{r, echo=FALSE}
-barplot_deces_france <- readRDS("gen/rds/barplot_deces_france.RDS")
+barplot_deces_france <- readRDS("gen/rds/Eurostat_barplot_deces_france.RDS")
 barplot_deces_france
 
 ```
@@ -180,7 +180,7 @@ barplot_deces_france
 Ces années apparaissent tous les 2 à 3 ans. Ainsi, pour comprendre si les décès d'une année ont un impact visible sur une période, une méthode peut consister à regarder les décès sur 3 années consécutives.
 Le dernier trio d'années, 2018-2019-2020 est en rouge pour plus de visibilité.
 
-![](gen/images/deces3annees.png){width=1000px}
+![](gen/images/Eurostat_Deces_3annees.png){width=1000px}
 
 Sans surprise, pour la quasi-totalité des pays européens, il n'est jamais décédé aussi peu de personnes relativement à leur âge que ces 3 dernières années. L'année 2020 n'a pas entièrement contrebalancé les faibles mortalités des années 2018 et 2019.
 
@@ -203,7 +203,7 @@ Depuis le début de l'année 2020, des décisions inédites ont été prises en 
 ### 2.1 La mortalité hivernale n'est pas un phénomène de propagation
 
 L'étude de la carte des décès hebdomadaires standardisés en France depuis 2013 nous permet de visuliser les cycles de mortalité.
-![](gen/images/deceshebdofrance.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_france.png){width=1000px}
 
 Chaque année, le nombre de décès augmente en hiver et diminue en été. Cette augmentation de décès l'hiver est concomitante des maladies hivernales, dont les infections respiratoires aiguës comme les grippes ou les coronavirus.
 
@@ -214,7 +214,7 @@ Le découpage annuel n'est donc pas le plus adapté pour étudier la mortalité,
 
 Ce phénomène de mortalité hivernale est complètement simultané sur toute l'Europe. La standardisation des décès nous permet de représenter les différents pays et années sur un même graphique.
 
-![](gen/images/deceshebdofrancesuedeportugal.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_france_suede_portugal.png){width=1000px}
 De la Suède jusqu'au Portugal, les hausses de mortalité sont naturellement simultanées tous les hivers, et même les étés lors des épisodes caniculaires.
 La mortalité hivernale des pays européens n'est donc pas en lien avec un phénomène de diffusion de maladies l'hiver en Europe. Le Portugal et la Suède sont séparés par 3000 km. Si la diffusion entre individus de maladies l'hiver était responsable de l'augmentation de la mortalité, de décalages temporels devraient être visibles, ce qui n'est pas le cas.
 L'augmentation des décès ne représente pas le déplacement des maladies, mais leur apparition partout à la fois. Il s'agit d'une manifestation de la dégradation cyclique de l'état de santé. Cette dégradation simultanée partout en Europe se traduit par l'apparition de symptômes attribués à des maladies hivernales et par l'augmentation des décès. Le phénomène de courbe en cloche concernant la mortalité n'est pas le résultat d'un phénomène de propagation, mais d'une phénomène d'apparition. Il est évident que les portugais ne contaminent pas les suédois, ni inversement.
@@ -231,10 +231,10 @@ Au niveau des départements français, le pic de mortalité de mars-avril 2020 n
 
 En Île-de-France par exemple, tous les départements connaissent une hausse de mortalité synchronisée débutant arpès le début du confinement identifié ici en bleu.
 
-![](gen/images/ÎledeFrance.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_ÎledeFrance.png){width=1000px}
 A l'inverse, en Nouvelle-Aquitaine, auncune hausse de mortalité n'est visible sur la période.
 
-![](gen/images/NouvelleAquitaine.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_NouvelleAquitaine.png){width=1000px}
 Nous constatons également que les territoires touchés par cette hausse de mortalité sont majoritairement des départements avec des villes de tailles importantes (cf. annexes) et donc des quartiers avec de très forts taux de pauvreté. L'Insee révèle logiquement [^n23] que la mortalité de cette période touche beaucoup plus fortement les communes denses et les personnes nées à l'étranger. Il est étonnant de la part de l'Insee qui produit les statistiques annuelles de pauvreté, de ne pas faire le lien entre les conditions de vie et de salubrité difficiles des quartiers pauvres, et la hausse de la mortalité. Une fois de plus, il ne s'agit pas d'un problème de propagation, mais de santé publique sur des territoires particuliers.
 
 ### 2.3 Le lien entre les mesures françaises et les variations de mortalité 
@@ -243,7 +243,7 @@ En France, l'année 2020 comporte plus de décès que l'année 2019 notamment pa
 
 La moyenne et les deux bornes des intervalles de confiance à 95 %, permettent de visualiser les périodes de mortalité anormale.
 
-![](gen/images/deceshebdofrancelissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_france_lissage.png){width=1000px}
 
 Ainsi, arrivé au mois de mars 2020, la France était sur une moyenne très basse de décès relativement aux années précédentes. Le pic de mars-avril en France a entraîné un rapprochement vers la moyenne de décès habituels, sans la franchir. Il s'agit donc d'un phénomène brutal avec un impact limité. La mortalité lissée sur 52 semaines ne dépasse la moyenne des 5 dernières années que depuis la hausse de mortalité en octobre 2020.
 
@@ -285,7 +285,7 @@ Ces décès ne sont pas considérés comme ayant un quelconque rapport avec la C
 
 Ce résultat de non-prise en charge peut expliquer le caractère particulier des données de Chypre.
 
-![](gen/images/deceshebdochyprelissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_chypre_lissage.png){width=1000px}
 
 De la même manière qu'en France, où l'on constate un nombre de décès inscrits à l'état civil plus important les lundis et mardis et très faibles les dimanches, à Chypre la fin du confinement n'est probablement pas liée à un excès mortalité, mais plutôt à la découverte tardive des décès non répertoriés.
 
@@ -376,7 +376,7 @@ En France, comme dans une grande parte des pays européens, une très vaste camp
 
 La campagne de vaccinale grippale arrive tardivement dans l'année. Elle est concomitante à la hausse de mortalité hivernale.
 
-![](gen/images/vaccins_distribues.png){width=1000px}
+![](gen/images/Medicam_vaccins_distribues.png){width=1000px}
 
 Les débats sont ouverts sur l'utilité réelle du vaccin contre la grippe sur la mortalité hivernale. Rappelons que ce vaccin n'est pas conçu comme les autres. Il s'agit d'un mélange contenant plusieurs souches de grippes préconisés par l'OMS. Au moment de la préconisation, absolument aucune certitude n'existe sur les souches qui circuleront pendant l'hiver. Il s'agit donc d'un pari. Certains pays comme la Norvège ou la Finlande en ont une distribution plus faible que d'autres, en particulier depuis les polémiques ayant suivi la campagne vaccinale contre le virus H1N1. Pour autant, la Norvège et la Finlande semblent ne pas être soumis à des pics de mortalités hivernales ces dernières années, bien au contraire.
 Les données disponibles sur les vaccins ne sont disponibles que mensuellement, ne permettant pas un rapprochement de qualité avec les décès en France. Un lissage hebdomadaire des vaccins distribués comparé aux décès toutes causes des plus de 65 ans en France (population la plus vaccinée du fait de la gratuité à cet âge), montre une proximité entre ces 2 évènements.
@@ -403,11 +403,11 @@ En particulier, Malte et la Hongrie déclarent une vaccination à très grande �
 
 Concernant la Hongrie, on note une concomitance parfaite entre le début de la campagne vaccinale contre la Covid-19 et une très forte hausse de la mortalité pour atteindre le maximum connu en décembre pour les plus de 65 ans. Pour les moins de 65 ans, la situation est pire que 2 mois auparavant. Il s'agit même d'un record absolu pour toute la période où nous disposons de données sur Eurostat (2013).
 
-![](gen/images/decesvaccinhongrie.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_hongrie.png){width=1000px}
 
 Le focus sur le moins de 40 ans qui ne décèdent que très peu lors des épisodes hivernaux confirme ce résultat.
 
-![](gen/images/decesvaccinhongriejeune.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_hongrie_jeune.png){width=1000px}
 
 Si on prend en compte l'évolution de la pyramide des âges en Hongrie et la forte baisse du nombre de moins de 40 ans, il s'agit également de la période connaissant le plus de décès de jeunes enregistrés. Etant communément admis que les jeunes ne décèdent quasiment jamais d'infections respiratoires aiguës contractées pendant l'hiver, et pas plus de la Covid-19, le nombre de causes possibles de cette surmortalité est limitée. Même si certains affirmeront que la cause viendrait d'un nouveau virus, cela signifierait qu'il serait apparu uniquement depuis la campagne vaccinale.
 
@@ -427,27 +427,27 @@ Dès lors, la seule façon de détecter la létalité d'une intervention est mal
 
 La situation est similaire à Malte. le niveau de décès est important en 2021, mais surtout, il concerne cette fois des moins de 65 ans. Le faible nombre d'habitant de Malte ne permet toutefois pas de descendre au niveau des moins de 40 ans (il décède à Malte en moyenne 2 personnes de moins de 40 ans par semaine).
 
-![](gen/images/decesvaccinmalte.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_malte.png){width=1000px}
 
 En Islande, pays qui n'a pourtant pas connu d'épisode de surmortalité en 2020, une vaccination extrêmement massive a été effectuée en quelques jours. Ce pic de vaccination est parfaitement synchronisé a un pic de mortalité.
 
-![](gen/images/decesvaccinislande.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_islande.png){width=1000px}
 
 A l'inverse du côté des pays n'ayant que peu mis en place une politique vaccinale, le nombre de décès reste calme. Pour la Norvège, pays ayant le moins vacciné ses habitants, la mortalité n'a connue qu'un léger rebond depuis le début de la campagne de vaccination.
 
-![](gen/images/decesvaccinnorvege.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_norvege.png){width=1000px}
 
 Pour les jeunes également, la mortalité reste à son niveau bas, même si on note une dynamique en augmentation.
 
 
-![](gen/images/decesvaccinnorvegejeune.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_norvege_jeune.png){width=1000px}
 La Croatie, a peu vacciné comme la Norvège, mais a regroupé la majorité de sa campagne vaccinale sur les mêmes jours. On constate un pic de mortalité concomitant à la vaccination.
 
-![](gen/images/decesvaccincroatie.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_croatie.png){width=1000px}
 
 A l'instar de la Norvège, la situation chez les jeunes semble dans la norme. Rappelons ici que les campagnes vaccinales visent en premier chef les personnes âgées.
 
-![](gen/images/decesvaccincroatiejeune.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_croatie_jeune.png){width=1000px}
 
 Pour la quasi-totalité des pays d'Europe dont nous disposons des données, il apparaît nettement une reprise de la mortalité (cf. annexes). Il convient alors de se poser la question du ratio bénéfices/risques de la politique actuelle.
 
@@ -498,93 +498,93 @@ Dans tous les cas, il est urgent de retrouver ce qui manque cruellement depuis p
 # Annexes
 ## Les décès hebdomadaires par pays
 ### Pays présentant un pic de mortalité en mars-avril
-![](gen/images/deceshebdofrancelissage.png){width=1000px}
-![](gen/images/deceshebdobelgiquelissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_france_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_belgique_lissage.png){width=1000px}
 
-![](gen/images/deceshebdosuisselissage.png){width=1000px}
-![](gen/images/deceshebdoespagnelissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_suisse_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_espagne_lissage.png){width=1000px}
 
-![](gen/images/deceshebdoitalielissage.png){width=1000px}
-![](gen/images/deceshebdoluxembourglissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_italie_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_luxembourg_lissage.png){width=1000px}
 
-![](gen/images/deceshebdopaysbaslissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_paysbas_lissage.png){width=1000px}
 
-![](gen/images/deceshebdosuedelissage.png){width=1000px}
-![](gen/images/deceshebdochyprelissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_suede_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_chypre_lissage.png){width=1000px}
 
 
 ### Pays ne présentant pas de pic de mortalité en mars-avril 2020
 
-![](gen/images/deceshebdoportugallissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_portugal_lissage.png){width=1000px}
 
-![](gen/images/deceshebdomaltelissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_malte_lissage.png){width=1000px}
 
-![](gen/images/deceshebdoautrichelissage.png){width=1000px}
-![](gen/images/deceshebdohongrielissage.png){width=1000px}
-![](gen/images/deceshebdobulgarielissage.png){width=1000px}
-![](gen/images/deceshebdortchequelissage.png){width=1000px}
-![](gen/images/deceshebdodanmarklissage.png){width=1000px}
-![](gen/images/deceshebdoestonielissage.png){width=1000px}
-![](gen/images/deceshebdocroatielissage.png){width=1000px}
-![](gen/images/deceshebdoislandelissage.png){width=1000px}
-![](gen/images/deceshebdolichtensteinlissage.png){width=1000px}
-![](gen/images/deceshebdolettonielissage.png){width=1000px}
-![](gen/images/deceshebdomontenegrolissage.png){width=1000px}
-![](gen/images/deceshebdonorvegelissage.png){width=1000px}
-![](gen/images/deceshebdopolognelissage.png){width=1000px}
-![](gen/images/deceshebdoserbielissage.png){width=1000px}
-![](gen/images/deceshebdoslovaquielissage.png){width=1000px}
-![](gen/images/deceshebdoslovenielissage.png){width=1000px}
-![](gen/images/deceshebdoallemagnelissage.png){width=1000px}
-![](gen/images/deceshebdoalbanielissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_autriche_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_hongrie_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_bulgarie_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_rtcheque_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_danmark_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_estonie_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_croatie_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_islande_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_lichtenstein_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_lettonie_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_montenegro_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_norvege_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_pologne_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_serbie_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_slovaquie_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_slovenie_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_allemagne_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_albanie_lissage.png){width=1000px}
 
-![](gen/images/deceshebdogrecelissage.png){width=1000px}
-![](gen/images/deceshebdofinlandelissage.png){width=1000px}
-![](gen/images/deceshebdoroumanielissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_grece_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_finlande_lissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_roumanie_lissage.png){width=1000px}
 
-![](gen/images/deceshebdoarmenielissage.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Hebdo_armenie_lissage.png){width=1000px}
 
 ## Les décès confrontés à la vaccination Covid par pays
 
-![](gen/images/decesvaccinhongrie.png){width=1000px}
-![](gen/images/decesvaccinmalte.png){width=1000px}
-![](gen/images/decesvaccinfrance.png){width=1000px}
-![](gen/images/decesvaccinislande.png){width=1000px}
-![](gen/images/decesvaccinchypre.png){width=1000px}
-![](gen/images/decesvaccinallemagne.png){width=1000px}
-![](gen/images/decesvaccinautriche.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_hongrie.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_malte.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_france.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_islande.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_chypre.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_allemagne.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_autriche.png){width=1000px}
 
-![](gen/images/decesvaccinbelgique.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_belgique.png){width=1000px}
 
-![](gen/images/decesvaccinsuisse.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_suisse.png){width=1000px}
 
-![](gen/images/decesvaccinespagne.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_espagne.png){width=1000px}
 
-![](gen/images/decesvaccinpaysbas.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_paysbas.png){width=1000px}
 
 
-![](gen/images/decesvaccinpologne.png){width=1000px}
-![](gen/images/decesvaccindanmark.png){width=1000px}
-![](gen/images/decesvaccinsuede.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_pologne.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_danmark.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_suede.png){width=1000px}
 
-![](gen/images/decesvaccingrece.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_grece.png){width=1000px}
 
-![](gen/images/decesvaccincroatie.png){width=1000px}
-![](gen/images/decesvaccinnorvege.png){width=1000px}
-![](gen/images/decesvaccinserbie.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_croatie.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_norvege.png){width=1000px}
+![](gen/images/Eurostat_owid_Deces_Pays_Vaccin_serbie.png){width=1000px}
 
 ## Les décès quotidiens par département français
 
-![](gen/images/BourgogneFrancheComté.png){width=1000px}
-![](gen/images/AuvergneRhôneAlpes.png){width=1000px}
-![](gen/images/PaysdelaLoire.png){width=1000px}
-![](gen/images/PACA.png){width=1000px}
-![](gen/images/ÎledeFrance.png){width=1000px}
-![](gen/images/NouvelleAquitaine.png){width=1000px}
-![](gen/images/HautsdeFrance.png){width=1000px}
-![](gen/images/GrandEst.png){width=1000px}
-![](gen/images/Occitanie.png){width=1000px}
-![](gen/images/ÎledeFrance.png){width=1000px}
-![](gen/images/Corse.png){width=1000px}
-![](gen/images/Bretagne.png){width=1000px}
-![](gen/images/CentreValdeLoire.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_BourgogneFrancheComté.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_AuvergneRhôneAlpes.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_PaysdelaLoire.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_PACA.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_ÎledeFrance.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_NouvelleAquitaine.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_HautsdeFrance.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_GrandEst.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_Occitanie.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_ÎledeFrance.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_Corse.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_Bretagne.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_CentreValdeLoire.png){width=1000px}
