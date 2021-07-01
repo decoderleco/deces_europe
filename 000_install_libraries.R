@@ -15,8 +15,10 @@ install.packages("rnaturalearthdata")
 install.packages("rgeos")
 install.packages("readr")
 install.packages("lsr")
+
 install.packages("igraph")
 install.packages("Rtools")
+
 install.packages("pyramid")
 install.packages("reshape2")
 install.packages("tidyr")

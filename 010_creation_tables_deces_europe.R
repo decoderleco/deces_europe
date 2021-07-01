@@ -1,4 +1,5 @@
 
+
 #commencer par installer tous les packages pour tous les scripts (eurostat et ses copains...)
 
 install.packages("eurostat")
@@ -18,6 +19,7 @@ install.packages("curl")
 install.packages("gsl")
 
 
+
 library(maptools)
 library(rgdal)
 library(maps)
@@ -35,6 +37,7 @@ library("rnaturalearthdata")
 library(readr)
 library(lsr)
 
+
 # Preparer les espaces de generation de donnees
 #
 
@@ -42,6 +45,7 @@ library(lsr)
 if (!dir.exists("gen/csv")) dir.create("gen/csv")
 if (!dir.exists("gen/images")) dir.create("gen/images")
 if (!dir.exists("gen/rds")) dir.create("gen/rds")
+
 
 # recuperer les tables qui nous interessent chez EuroStat
 #
