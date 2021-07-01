@@ -1,7 +1,3 @@
-install.packages("pyramid")
-install.packages("reshape2")
-install.packages("tidyr")
-
 library(pyramid)
 library(maptools)
 library(rgdal)
@@ -28,7 +24,7 @@ library(tidyr)
 
 #répartition des décès annuels#
 
-deces_complet_annuel <- readRDS("deces_complet_annuel.RDS")
+deces_complet_annuel <- readRDS("gen/rds/Eurostat_deces_complet_annuel.RDS")
 
 #les données de la Géorgie semblent absurdes, à l'inverse de tous les autres et l'Arménie ne bénéficie que de 5 ans
 deces_complet_annuel <- deces_complet_annuel  %>% filter(geo!="GE")%>% filter(geo!="AR")
@@ -62,7 +58,7 @@ ggplot(deces_complet_annuel_analysable2000) +
   theme(plot.title = element_text(hjust = 0.5,color = "#0066CC", size = 16, face = "bold"),
         plot.subtitle = element_text(hjust = 0.5,color = "#0066CC", size = 12, face = "bold"))
 
-dev.print(device = png, file = "deces2000tot.png", width = 1000)
+dev.print(device = png, file = "gen/images/Eurostat_Deces_2000tot.png", width = 1000)
 
 
 ggplot(deces_complet_annuel_analysable2000_est) + 
@@ -74,7 +70,7 @@ labs(title = "Décès standardisés par pays et année",
   theme(plot.title = element_text(hjust = 0.5,color = "#0066CC", size = 16, face = "bold"),
         plot.subtitle = element_text(hjust = 0.5,color = "#0066CC", size = 12, face = "bold"))
 
-dev.print(device = png, file = "deces2000est.png", width = 1000)
+dev.print(device = png, file = "gen/images/Eurostat_Deces_2000est.png", width = 1000)
 
 ggplot(deces_complet_annuel_analysable2000_ouest) + 
   geom_point(aes(x = location, y = deces_france_theo_20, color = time), size = 2)+
@@ -85,7 +81,7 @@ ggplot(deces_complet_annuel_analysable2000_ouest) +
   theme(plot.title = element_text(hjust = 0.5,color = "#0066CC", size = 16, face = "bold"),
         plot.subtitle = element_text(hjust = 0.5,color = "#0066CC", size = 12, face = "bold"))
 
-dev.print(device = png, file = "deces2000ouest.png", width = 1000)
+dev.print(device = png, file = "gen/images/Eurostat_Deces_2000ouest.png", width = 1000)
 
 #dernière année avec mortalité supérieure à 2020
 
@@ -201,14 +197,14 @@ ggplot(deces_complet_annuel_analysable2000_troisannees) +
   theme(plot.title = element_text(hjust = 0.5,color = "#0066CC", size = 16, face = "bold"),
         plot.subtitle = element_text(hjust = 0.5,color = "#0066CC", size = 12, face = "bold"))
 
-dev.print(device = png, file = "deces3annees.png", width = 1000)
+dev.print(device = png, file = "gen/images/Eurostat_Deces_3annees.png", width = 1000)
 
                             #-----------------------------------------------------------------#
                             ####           pyramide des âges des pays européens            ####
                             #-----------------------------------------------------------------#
 
 
-pjanquinq <- readRDS("pjanquinq.RDS")
+pjanquinq <- readRDS("gen/rds/Eurostat_pjanquinq.RDS")
 pjanquinq20 <- pjanquinq %>% filter(time=="2020-01-01")
 pjanquinq00 <- pjanquinq %>% filter(time=="2000-01-01")
 annne_deces_maximum2020 <- annne_deces_maximum2020 %>% left_join(pjanquinq20) %>% filter (geo!="AM")%>% filter (geo!="AL")
@@ -246,7 +242,11 @@ pyramids(Left=hommes_femmes2020$part_hommes,Llab="Hommes",
          Center = hommes_femmes2020$agequinq,Laxis=c(0,2,4,6,8,10),
          main="Pyramide des âges \n des pays européens 2020",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
+<<<<<<< HEAD:analyses_eurostat.R
 dev.print(device = png, file = "pyramide_europe_2020.png", width = 600)
+=======
+dev.print(device = png, file = "gen/images/Eurostat_Pyramide_europe_2020.png", width = 600)
+>>>>>>> dcb783487d59ad3355c8bf2d561d2ce01b4b9270:020_analyses_eurostat.R
 
 #pyramide des pays européens 2000
 
@@ -280,7 +280,11 @@ pyramids(Left=hommes_femmes2000$part_hommes,Llab="Hommes",
          Center = hommes_femmes2000$agequinq,Laxis=c(0,2,4,6,8,10),
          main="Pyramide des âges \n des pays européens 2000",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
+<<<<<<< HEAD:analyses_eurostat.R
 dev.print(device = png, file = "pyramide_europe_2000.png", width = 600)
+=======
+dev.print(device = png, file = "gen/images/Eurostat_Pyramide_europe_2000.png", width = 600)
+>>>>>>> dcb783487d59ad3355c8bf2d561d2ce01b4b9270:020_analyses_eurostat.R
 
 
                                     #--------------------------#
@@ -295,7 +299,9 @@ barplot_deces_france <-ggplot(data=deces_complet_annuel_france, aes(x=annee, y=d
   labs(title = "Décès annuels de la France",
        caption = "Source des données : Eurostat",x="",y="nombre de décès")+
   theme(plot.title = element_text(hjust = 0.5,color = "#0066CC", size = 16, face = "bold"))
-saveRDS(barplot_deces_france,"barplot_deces_france.RDS")
+
+saveRDS(barplot_deces_france,"gen/rds/Eurostat_barplot_deces_france.RDS")
+
 
 barplot_decestheo_france<-ggplot(data=deces_complet_annuel_france, aes(x=annee, y=deces_theo_2020)) +
   geom_bar(stat="identity", fill="steelblue")+
@@ -303,7 +309,8 @@ barplot_decestheo_france<-ggplot(data=deces_complet_annuel_france, aes(x=annee, 
        caption = "Source des données : Eurostat",x="",y="nombre de décès standaridsés")+
   theme(plot.title = element_text(hjust = 0.5,color = "#0066CC", size = 16, face = "bold"),
         plot.subtitle = element_text(hjust = 0.5,color = "#0066CC", size = 12, face = "bold"))
-saveRDS(barplot_decestheo_france,"barplot_decestheo_france.RDS")
+
+saveRDS(barplot_decestheo_france,"gen/rds/Eurostat_barplot_deces_theo_france.RDS")
 
 #pyramide des âges de la France 2020
 
@@ -328,7 +335,7 @@ pyramids(Left=annne_deces_maximumFranceMF$part_hommes,Llab="Hommes",
          Center = annne_deces_maximumFranceMF$agequinq,Laxis=c(0,2,4,6,8,10),
          main="Pyramide des âges 2020 de la France",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
-dev.print(device = png, file = "pyramid_france_2020.png", width = 600)
+dev.print(device = png, file = "gen/images/Eurostat_Pyramide_france_2020.png", width = 600)
 
 
 #pyramide des âges de la France 2000
@@ -356,7 +363,7 @@ pyramids(Left=annne_deces_maximumFranceMF0$part_hommes,Llab="Hommes",
          Center = annne_deces_maximumFranceMF0$agequinq,Laxis=c(0,2,4,6,8,10),
          main="Pyramide des âges 2000 de la France",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
-dev.print(device = png, file = "pyramid_france_2000.png", width = 600)
+dev.print(device = png, file = "gen/images/Eurostat_Pyramide_france_2000.png", width = 600)
 
 
                                     #----------------------------------------#
@@ -416,7 +423,7 @@ p <- ggplot(data=worldmap) +
 
 plot(p)
 
-ggsave("annee_deces_maximum.png",plot=p, width = 11, height = 8)
+ggsave("gen/images/annee_deces_maximum.png",plot=p, width = 11, height = 8)
 
 #typologie des décès de l'année 2020
 
@@ -438,7 +445,7 @@ p <- ggplot(data=worldmap) + geom_sf(aes(fill=typo),color="dim grey", size=.1) +
 
 plot(p)
 
-ggsave("typo_annee_deces.png",plot=p, width = 11, height = 8)
+ggsave("gen/images/typo_annee_deces.png",plot=p, width = 11, height = 8)
 
 
                             #----------------------------------------#
@@ -447,7 +454,7 @@ ggsave("typo_annee_deces.png",plot=p, width = 11, height = 8)
 
 #problème de formule car nous sommes en âge quinquennal. 
 
-deces_complet <- readRDS("deces_complet.RDS")
+deces_complet <- readRDS("gen/rds/Eurostat_deces_complet.RDS")
 esperance_vie <- deces_complet %>% group_by(time,geo, agequinq) %>% summarise(deces=sum(deces),population=sum(population))
 
 #caclul des taux de mortalité et taux de survie par âge

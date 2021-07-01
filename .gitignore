@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .Rproj.user
 .Rhistory
 .RData
@@ -10,3 +11,9 @@
 /deces_complet_annuel.csv
 /deces_standard_pays_semaine.csv
 /pjanquinq.csv
+=======
+/110_la_mortalite_en_europe.html
+/.Rproj.user/
+/.RData
+/.project
+>>>>>>> dcb783487d59ad3355c8bf2d561d2ce01b4b9270
