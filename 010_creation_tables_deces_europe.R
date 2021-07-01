@@ -1,4 +1,4 @@
-<<<<<<< HEAD:creation_tables_deces_europe.R
+
 #commencer par installer tous les packages pour tous les scripts (eurostat et ses copains...)
 
 install.packages("eurostat")
@@ -18,8 +18,6 @@ install.packages("curl")
 install.packages("gsl")
 
 
-=======
->>>>>>> dcb783487d59ad3355c8bf2d561d2ce01b4b9270:010_creation_tables_deces_europe.R
 library(maptools)
 library(rgdal)
 library(maps)
@@ -37,9 +35,6 @@ library("rnaturalearthdata")
 library(readr)
 library(lsr)
 
-#
-<<<<<<< HEAD:creation_tables_deces_europe.R
-=======
 # Preparer les espaces de generation de donnees
 #
 
@@ -48,8 +43,6 @@ if (!dir.exists("gen/csv")) dir.create("gen/csv")
 if (!dir.exists("gen/images")) dir.create("gen/images")
 if (!dir.exists("gen/rds")) dir.create("gen/rds")
 
-#
->>>>>>> dcb783487d59ad3355c8bf2d561d2ce01b4b9270:010_creation_tables_deces_europe.R
 # recuperer les tables qui nous interessent chez EuroStat
 #
 
