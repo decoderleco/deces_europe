@@ -2060,6 +2060,46 @@ axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_espagne.png", width = 1000)
 
 
+#estonie
+
+moyenne_mobile_m40 <- running_mean(estonie$deces_tot_moins40, 8)
+moyenne_m40 <- mean(moyenne_mobile_m40)
+moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+estonie <- estonie %>% left_join(moyenne_mobile_m40)
+estonie$moyenne_m40 <- moyenne_m40
+
+
+essai <- estonie %>% filter(numerosemaine>250)
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
+     pch=16, axes=F, ylim=c(0,400), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de l'estonie")
+axis(2, ylim=c(0,400),col="red")
+mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
+mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$deces_tot_40_60+essai$deces_tot_60_64,
+     pch=16, axes=F, ylim=c(0,400), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_estonie.png", width = 1000)
+
+
 #italie
 
 moyenne_mobile_m40 <- running_mean(italie$deces_tot_moins40, 8)
