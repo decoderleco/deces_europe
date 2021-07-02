@@ -901,6 +901,7 @@ par(new=T)
 plot(paysbas$numerosemaine, paysbas$bsup, pch=16, axes=F,cex=0, ylim=c(0,6000), xlab="",lwd=1.5,lty=2,  ylab="", type="o",col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_paysbas_lissage.png", width = 1000)
 
+
 #portugal
 
 
@@ -1566,7 +1567,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_islan
 moyenne_mobile_m40 <- running_mean(armenie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+113
 armenie <- armenie %>% left_join(moyenne_mobile_m40)
 armenie$moyenne_m40 <- moyenne_m40
 
@@ -1577,8 +1578,8 @@ par(mar=c(4,4,3,5))
 plot(essai$numerosemaine, essai$deces_tot_plus_60-essai$deces_tot_60_64 ,
      pch=16, axes=F, ylim=c(0,1200), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de l'armenie")
 axis(2, ylim=c(0,400),col="red")
-mtext("nombre de décès toutes causes des moins de 40 ans",side=2,line=3)
-mtext("nombre de décès toutes causes lissés sur 8 semaines des moins de 40 ans",side=2,line=2, col="red")
+mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
+mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
 abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
 text(26,1,"2013",cex=1.2)
 text(78,1,"2014",cex=1.2)
@@ -1603,10 +1604,10 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_armen
 
 par(mar=c(4,4,3,5))
 plot(essai$numerosemaine, essai$deces_tot_moins40 ,
-     pch=16, axes=F, ylim=c(0,7), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la armenie")
-axis(2, ylim=c(0,20),col="red")
-mtext("nombre de décès toutes causes des plus de 65 ans",side=2,line=3)
-mtext("nombre de décès toutes causes des moins de 65 ans",side=2,line=2, col="red")
+     pch=16, axes=F, ylim=c(0,80), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la armenie")
+axis(2, ylim=c(0,40),col="red")
+mtext("nombre de décès toutes causes des moins de 40 ans",side=2,line=3)
+mtext("nombre de décès toutes causes lissés des moins de 40 ans",side=2,line=2, col="red")
 abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
 text(26,1,"2013",cex=1.2)
 text(78,1,"2014",cex=1.2)
@@ -1620,7 +1621,7 @@ text(435,1,"2021",cex=1.2)
 box() # pour encadrer le graphique
 par(new=T)
 plot(essai$numerosemaine, essai$moyenne_mobile_m40,
-     pch=16, axes=F, ylim=c(0,7), xlab="", ylab="", type="o",col="red",cex=0,)
+     pch=16, axes=F, ylim=c(0,80), xlab="", ylab="", type="o",col="red",cex=0,)
 par(new=T)
 plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
      pch=16, axes=F, ylim=c(0,8500), xlab="", ylab="", type="o",col="blue",cex=0,)
@@ -1836,7 +1837,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_finla
 moyenne_mobile_m40 <- running_mean(chypre$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+134
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+113
 chypre <- chypre %>% left_join(moyenne_mobile_m40)
 chypre$moyenne_m40 <- moyenne_m40
 
@@ -1903,7 +1904,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_chypr
 moyenne_mobile_m40 <- running_mean(allemagne$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+166
 allemagne <- allemagne %>% left_join(moyenne_mobile_m40)
 allemagne$moyenne_m40 <- moyenne_m40
 
@@ -1944,7 +1945,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_allem
 moyenne_mobile_m40 <- running_mean(autriche$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
 autriche <- autriche %>% left_join(moyenne_mobile_m40)
 autriche$moyenne_m40 <- moyenne_m40
 
@@ -1984,7 +1985,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_autri
 moyenne_mobile_m40 <- running_mean(belgique$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
 belgique <- belgique %>% left_join(moyenne_mobile_m40)
 belgique$moyenne_m40 <- moyenne_m40
 
@@ -2024,7 +2025,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_belgi
 moyenne_mobile_m40 <- running_mean(espagne$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
 espagne <- espagne %>% left_join(moyenne_mobile_m40)
 espagne$moyenne_m40 <- moyenne_m40
 
@@ -2064,7 +2065,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_espag
 moyenne_mobile_m40 <- running_mean(italie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
 italie <- italie %>% left_join(moyenne_mobile_m40)
 italie$moyenne_m40 <- moyenne_m40
 
@@ -2104,7 +2105,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_itali
 moyenne_mobile_m40 <- running_mean(paysbas$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
 paysbas <- paysbas %>% left_join(moyenne_mobile_m40)
 paysbas$moyenne_m40 <- moyenne_m40
 
@@ -2139,12 +2140,40 @@ axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_paysbas.png", width = 1000)
 
 
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot_moins40 ,
+     pch=16, axes=F, ylim=c(0,100), xlab="", ylab="", type="o",col="black", cex=0, main="Situation des Pays-Bas")
+axis(2, ylim=c(0,80),col="red")
+mtext("nombre de décès toutes causes des moins de 40 ans",side=2,line=3)
+mtext("nombre de décès toutes causes lissés sur 8 semaines des moins de 40 ans",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$moyenne_mobile_m40,
+     pch=16, axes=F, ylim=c(0,100), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_paysbas_jeune.png", width = 1000)
+
+
 #portugal
 
 moyenne_mobile_m40 <- running_mean(portugal$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
 portugal <- portugal %>% left_join(moyenne_mobile_m40)
 portugal$moyenne_m40 <- moyenne_m40
 
@@ -2184,7 +2213,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_portu
 moyenne_mobile_m40 <- running_mean(france$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
 france <- france %>% left_join(moyenne_mobile_m40)
 france$moyenne_m40 <- moyenne_m40
 
@@ -2219,12 +2248,45 @@ axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_france.png", width = 1000)
 
 
+
+essai <- france %>% filter(numerosemaine>250)
+
+
+
+par(mar=c(4,4,3,5))
+plot(essai$numerosemaine, essai$deces_tot_moins40 ,
+     pch=16, axes=F, ylim=c(0,500), xlab="", ylab="", type="o",col="black", cex=0, main="Situation de la France")
+axis(2, ylim=c(0,80),col="red")
+mtext("nombre de décès toutes causes des moins de 40 ans",side=2,line=3)
+mtext("nombre de décès toutes causes lissés sur 8 semaines des moins de 40 ans",side=2,line=2, col="red")
+abline(v=c(53,105,158,210,262,314,366,419), col="blue",lty=3)
+text(26,1,"2013",cex=1.2)
+text(78,1,"2014",cex=1.2)
+text(130,1,"2015",cex=1.2)
+text(183,1,"2016",cex=1.2)
+text(235,1,"2017",cex=1.2)
+text(287,1,"2018",cex=1.2)
+text(339,1,"2019",cex=1.2)
+text(391,1,"2020",cex=1.2)
+text(435,1,"2021",cex=1.2)
+box() # pour encadrer le graphique
+par(new=T)
+plot(essai$numerosemaine, essai$moyenne_mobile_m40,
+     pch=16, axes=F, ylim=c(0,500), xlab="", ylab="", type="o",col="red",cex=0,)
+par(new=T)
+plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
+     pch=16, axes=F, ylim=c(0,150000), xlab="", ylab="", type="o",col="blue",cex=0,)
+mtext("nombre de vaccinés par million d'habitants",side=4,col="blue",line=2.5)
+axis(4, ylim=c(0,3), col="blue",col.axis="blue")
+dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_france_jeune.png", width = 1000)
+
+
 #pologne
 
 moyenne_mobile_m40 <- running_mean(pologne$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
 pologne <- pologne %>% left_join(moyenne_mobile_m40)
 pologne$moyenne_m40 <- moyenne_m40
 
@@ -2265,7 +2327,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_polog
 moyenne_mobile_m40 <- running_mean(danmark$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
 danmark <- danmark %>% left_join(moyenne_mobile_m40)
 danmark$moyenne_m40 <- moyenne_m40
 
@@ -2306,7 +2368,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_danma
 moyenne_mobile_m40 <- running_mean(grece$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+113
 grece <- grece %>% left_join(moyenne_mobile_m40)
 grece$moyenne_m40 <- moyenne_m40
 
@@ -2347,7 +2409,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_grece
 moyenne_mobile_m40 <- running_mean(suisse$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
 suisse <- suisse %>% left_join(moyenne_mobile_m40)
 suisse$moyenne_m40 <- moyenne_m40
 
@@ -2387,7 +2449,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_suiss
 moyenne_mobile_m40 <- running_mean(suede$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
 suede <- suede %>% left_join(moyenne_mobile_m40)
 suede$moyenne_m40 <- moyenne_m40
 
@@ -2427,7 +2489,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_suede
 moyenne_mobile_m40 <- running_mean(serbie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
 serbie <- serbie %>% left_join(moyenne_mobile_m40)
 serbie$moyenne_m40 <- moyenne_m40
 
