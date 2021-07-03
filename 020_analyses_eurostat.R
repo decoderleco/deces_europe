@@ -242,7 +242,9 @@ pyramids(Left=hommes_femmes2020$part_hommes,Llab="Hommes",
          Center = hommes_femmes2020$agequinq,Laxis=c(0,2,4,6,8,10),
          main="Pyramide des âges \n des pays européens 2020",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
+
 dev.print(device = png, file = "gen/images/Eurostat_Pyramide_europe_2020.png", width = 600)
+
 
 #pyramide des pays européens 2000
 
@@ -276,7 +278,12 @@ pyramids(Left=hommes_femmes2000$part_hommes,Llab="Hommes",
          Center = hommes_femmes2000$agequinq,Laxis=c(0,2,4,6,8,10),
          main="Pyramide des âges \n des pays européens 2000",Ldens=5, Rdens=10,Lcol="blue", Rcol = "red")
 
+
 dev.print(device = png, file = "gen/images/Eurostat_Pyramide_europe_2000.png", width = 600)
+
+=======
+dev.print(device = png, file = "gen/images/Eurostat_Pyramide_europe_2000.png", width = 600)
+
 
 
                                     #--------------------------#
@@ -370,10 +377,10 @@ worldmap <- ne_countries(scale = 'medium',
 worldmap <- worldmap %>% mutate (location=geounit)
 worldmap <- worldmap %>% mutate (location=if_else(location == "Czech Republic","Czechia", location))
 worldmap <- worldmap %>% mutate (location=if_else(admin == "Belgium","Belgium", location))
-#worldmap <- worldmap %>% filter((continent == "Europe") & (name != "Flemish") & (name != "Walloon"))
-#plot(st_geometry(worldmap))
+
 centroid_coordinates <- st_coordinates(st_centroid(worldmap))
 worldmap <- cbind(worldmap, centroid_coordinates)
+
 
 #année record des décès
 
@@ -386,8 +393,9 @@ worldmap <- worldmap %>%
             left_join(temp)
 
 worldmap <- worldmap %>% 
-            mutate (location=case_when(geounit == "Flemish Region"~"", 
-                                       geounit == "Walloon Region"~"",
+
+            mutate (location=case_when(geounit == "Flemish Region"~"Belgium", 
+                                       geounit == "Walloon Region"~"Belgium",
                                        TRUE~location))
 
 p <- ggplot(data=worldmap) +
@@ -397,10 +405,7 @@ p <- ggplot(data=worldmap) +
      scale_fill_brewer(palette = "Oranges") +
      guides(fill = guide_legend(reverse=T, 
                                 title = "Année de record de décès \n des pays européens")) +
-     geom_text(data = worldmap, 
-               aes(X,Y,label = location), 
-               size = 3, 
-               hjust = 0.5) +
+
      labs(title   = paste0("Année de record de décès des pays européens"),
           caption ="(C) EuroGeographics for the administrative boundaries
     Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
@@ -421,14 +426,15 @@ ggsave("gen/images/annee_deces_maximum.png",plot=p, width = 11, height = 8)
 
 test <- annee_comparaison_2020 %>% select(location, typo)
 worldmap <- worldmap %>% left_join(test)
-worldmap <- worldmap %>% mutate (location=case_when(geounit == "Flemish Region"~"", 
-                                                    geounit == "Walloon Region"~"",
+
+worldmap <- worldmap %>% mutate (location=case_when(geounit == "Flemish Region"~"Belgium", 
+                                                    geounit == "Walloon Region"~"Belgium",
                                                     TRUE~location))
 
 p <- ggplot(data=worldmap) + geom_sf(aes(fill=typo),color="dim grey", size=.1) +
   scale_fill_brewer(palette = "Oranges") +
   guides(fill = guide_legend(reverse=T, title = "Typologie \n des pays européens", size = 1)) +
-  geom_text( data = worldmap, aes(X,Y,label = location), size = 3, hjust = 0.5)+
+
   labs(title= paste0("Typologie des décès relativement à l'année 2020"),
        caption="(C) EuroGeographics for the administrative boundaries
     Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
