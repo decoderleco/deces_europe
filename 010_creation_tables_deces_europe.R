@@ -1,4 +1,6 @@
-#commencer par installer le package eurostat et ses copains
+
+
+#commencer par installer tous les packages pour tous les scripts (eurostat et ses copains...)
 
 install.packages("eurostat")
 install.packages("maptools")
@@ -12,6 +14,11 @@ install.packages("rnaturalearthdata")
 install.packages("rgeos")
 install.packages("readr")
 install.packages("lsr")
+install.packages("tinytex")
+install.packages("curl")
+install.packages("gsl")
+
+
 
 library(maptools)
 library(rgdal)
@@ -30,37 +37,71 @@ library("rnaturalearthdata")
 library(readr)
 library(lsr)
 
-#recuperer les tables qui nous interessent
+
+# Preparer les espaces de generation de donnees
+#
+
+# Créer les repertoires
+if (!dir.exists("gen/csv")) dir.create("gen/csv")
+if (!dir.exists("gen/images")) dir.create("gen/images")
+if (!dir.exists("gen/rds")) dir.create("gen/rds")
+
+
+# recuperer les tables qui nous interessent chez EuroStat
+#
 
 pjan<-get_eurostat("demo_pjan")
 deces_week<-get_eurostat("demo_r_mwk_05")
 deces_annuel_age<-get_eurostat("demo_magec")
 
-#ajouter la population de l'annee correspondante pour chaque deces de pays*sexe*age*annee
+#
+# ajouter la population de l'annee correspondante pour chaque deces de pays*sexe*age*annee
+#
 
-pjan<-pjan %>% rename(population=values) %>% select(-unit) %>% filter(sex !="T",age!="TOTAL", age !="UNK")
+# Renommer la colonne values en population et supprimer la colonne unit
+pjan<-pjan %>% 
+  rename(population=values) %>% 
+  select(-unit)
+  
+# Filtrer le sexe T (T = M+F) et l'age "TOTAL"...
+pjan<-pjan %>% 
+      filter(sex !="T",age!="TOTAL", age !="UNK")
 
-deces_annuel_age<-deces_annuel_age %>% rename(deces=values) %>% select(-unit)  %>% filter(sex !="T",age!="TOTAL", age !="UNK")
-
-# identification des couples(geo,time) qui s'arrêtent à 84 ans
-deces_age <- deces_annuel_age %>% mutate(age = as.double(str_sub(age,2,length(age)))) %>% 
-  filter(age !="_LT1") %>% 
-  filter(age !="_OPEN") 
-
-age_max_deces <- deces_age %>% group_by(geo,time) %>% summarise( age_max = max(age))
-
-
+# Enlever le Y de l'age et le transformer en numérique
 pjan_age <- pjan %>% mutate(age = as.double(str_sub(age,2,length(age)))) %>% 
   filter(age !="_LT1") %>% 
   filter(age !="_OPEN")
 
+# Calculer l'Age max par population, année
 age_max_pop <- pjan_age %>% group_by(geo,time) %>% summarise( age_max = max(age))
 
-pb_age_max_deces <-age_max_deces %>% filter(age_max<89) %>% filter(str_sub(geo,1,2)!="EU")%>%
-  filter(str_sub(geo,1,2)!="EA") %>% 
-  filter(str_sub(geo,1,3)!="EEA") %>% 
-  filter(str_sub(geo,1,3)!="EFT") %>% 
-  rename (age_max_deces=age_max)
+
+# deces
+
+deces_annuel_age <- deces_annuel_age %>% 
+  rename(deces=values) %>% 
+  select(-unit)  %>% 
+  filter(sex !="T",age!="TOTAL", age !="UNK")
+
+# Enlever le Y de l'age et le transformer en numérique
+deces_age <-  deces_annuel_age %>% 
+              filter(age !="Y_LT1") %>% 
+              filter(age !="Y_OPEN") %>% 
+              mutate(age = as.double(str_sub(age,2,length(age)))) 
+
+# Age max des deces par population, année
+age_max_deces <- deces_age %>% group_by(geo,time) %>% summarise( age_max = max(age))
+
+# ??? identification des couples(geo,time) qui s'arrêtent à 89 ans
+
+# ??? Lignes qui ont moins de 89  ans et qui ne sont pas des prefixes EU, EA, EEA...
+pb_age_max_deces <- age_max_deces %>% 
+                    filter(age_max<89) %>% 
+                    filter(str_sub(geo,1,2)!="EU") %>%
+                    filter(str_sub(geo,1,2)!="EA") %>% 
+                    filter(str_sub(geo,1,3)!="EEA") %>% 
+                    filter(str_sub(geo,1,3)!="EFT") %>% 
+                    rename (age_max_deces=age_max)
 
 pb_age_max_pop <-age_max_pop %>% filter(age_max<89) %>% filter(str_sub(geo,1,2)!="EU")%>%
   filter(str_sub(geo,1,2)!="EA") %>% 
@@ -69,6 +110,8 @@ pb_age_max_pop <-age_max_pop %>% filter(age_max<89) %>% filter(str_sub(geo,1,2)!
   rename (age_max_pop=age_max)
 
 pb_age <-full_join(pb_age_max_deces,pb_age_max_pop,by=c("geo","time"))
+
+# ??? A remonter plus haut ?
 
 #on filtre sur les zones geographiques
 pjan<- pjan %>% filter(str_sub(geo,1,2)!="EU")%>%
@@ -104,11 +147,12 @@ pjan90 <- pjan %>% anti_join(pjan85)
 #### traitement de pjan85 ###############
 
 #mettre en age quinquennal
+
+#remplacer Y_LT1 par 0 et Y_OPEN par 100, l'age par l'age sans le prefixe Y
 pjan85quinq<-pjan85 %>% mutate(agequinq=case_when(
   age=="Y_LT1" ~ "0",
   age== "Y_OPEN" ~ "100",
   TRUE ~ str_sub(age,2,length(age))
-  
 ))
 pjan85quinq<-pjan85quinq %>% mutate(agequinq=as.numeric(agequinq))
 pjan85quinq<-pjan85quinq %>% mutate(agequinq=case_when(
@@ -260,8 +304,8 @@ deces90quinq <- deces90quinq %>% group_by(agequinq,sex,geo,time) %>%
 deces_annuel_agequinq<-bind_rows(deces90quinq,deces85quinq)
 pjanquinq <-bind_rows(pjan90quinq,pjan85quinq)
 
-write.table(pjanquinq, "pjanquinq.csv", row.names=FALSE, sep="t",dec=",", na=" ")
-saveRDS(pjanquinq,file="pjanquinq.RDS")
+write.table(pjanquinq, "gen/csv/Eurostat_pjanquinq.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+saveRDS(pjanquinq,file="gen/rds/Eurostat_pjanquinq.RDS")
 
 
 #### on joint les deces et les pop ###############
@@ -396,7 +440,8 @@ deces_complet_annuel  <- deces_complet %>% filter(!is.na(population)) %>% group_
 deces_complet_annuel<- deces_complet_annuel %>% filter(!is.na(dc20)) %>% filter(!is.na(deces_theo_2020))
 deces_complet_annuel<- deces_complet_annuel %>% mutate (augmentation20 = (dc20-deces_theo_2020)/deces_theo_2020)
 
-write.table(deces_complet_annuel, "deces_complet_annuel.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+# JG : Inutile de créer ce fichier, car il sera écrasé plus bas dans owid
+#write.table(deces_complet_annuel, "gen/csv/Eurostat_deces_complet_annuel.csv", row.names=FALSE, sep="t",dec=",", na=" ")
 
 
                                        #----------------------------------#
@@ -620,75 +665,119 @@ deces_standard_pays_semaine  <- deces_standard_pays_semaine %>%
                                     #-----------------------------------------------#
 
 ourworldindata <-read_csv(file = "https://covid.ourworldindata.org/data/owid-covid-data.csv")
+
 ourworldindata <- ourworldindata %>% mutate(date=as.Date(date))
-ourworldindata <- ourworldindata %>% mutate(time = paste0(isoyear(date),"W",as.integer(isoweek(date)/10),isoweek(date)-as.integer(isoweek(date)/10)*10))
-ourworldindata <- ourworldindata %>% mutate(new_vaccinations = if_else(is.na(new_vaccinations),0,new_vaccinations)) %>% 
-  mutate(new_deaths = if_else(is.na(new_deaths),0,new_deaths)) %>% 
-  mutate(new_cases = if_else(is.na(new_cases),0,new_cases))%>% 
-  mutate(new_vaccinations_smoothed_per_million = if_else(is.na(new_vaccinations_smoothed_per_million),0,new_vaccinations_smoothed_per_million))
 
-ourworldindata_week <- ourworldindata  %>% filter(continent=="Europe"|iso_code=="ARM"|iso_code=="GEO")%>% 
-  group_by(location,iso_code,time) %>% 
-  summarise(new_cases=sum(new_cases),new_deaths=sum(new_deaths),new_vaccinations=sum(new_vaccinations),new_vaccinations_smoothed_per_million=sum(new_vaccinations_smoothed_per_million))
-ourworldindata_week <- ourworldindata_week  %>% 
-  mutate(geo=case_when(iso_code=="DNK"~"DK",
-                       iso_code=="SRB"~"RS",
-                       iso_code=="EST"~"EE",
-                       iso_code=="GRC"~"EL",
-                       iso_code=="MNE"~"ME",
-                       iso_code=="MLT"~"MT",
-                       iso_code=="SWE"~"SE",
-                       iso_code=="SVN"~"SI",
-                       iso_code=="SVK"~"SK",
-                       iso_code=="POL"~"PL",
-                       iso_code=="PRT"~"PT",
-                       iso_code=="ARM"~"AM",
-                       iso_code=="AUT"~"AT",
-                       iso_code=="FRO"~"FO",
-                       TRUE~substr(iso_code,1,2))) 
-ourworldindata_week <- ourworldindata_week  %>% left_join(numerosemaine)
-test <- ungroup(ourworldindata_week) %>% select(geo,time,new_deaths,new_cases,new_vaccinations,new_vaccinations_smoothed_per_million)
+ourworldindata <- ourworldindata %>% 
+                  mutate(time = paste0(isoyear(date),
+                                       "W",
+                                       as.integer(isoweek(date)/10),
+                                       isoweek(date) - as.integer(isoweek(date)/10)*10))
 
-deces_standard_pays_semaine<- left_join(deces_standard_pays_semaine,test)
+ourworldindata <- ourworldindata %>% 
+                  mutate(new_vaccinations = if_else(is.na(new_vaccinations),
+                                                    0,
+                                                    new_vaccinations)) %>% 
+                  mutate(new_deaths = if_else(is.na(new_deaths),
+                                              0,
+                                              new_deaths)) %>% 
+                  mutate(new_cases = if_else(is.na(new_cases),
+                                             0,
+                                             new_cases))%>% 
+                  mutate(new_vaccinations_smoothed_per_million = if_else(is.na(new_vaccinations_smoothed_per_million),
+                                                                         0,
+                                                                         new_vaccinations_smoothed_per_million))
+
+ourworldindata_week <-  ourworldindata  %>% 
+                        filter(continent=="Europe"|iso_code=="ARM"|iso_code=="GEO") %>% 
+                        group_by(location,
+                                 iso_code,
+                                 time) %>% 
+                        summarise(new_cases = sum(new_cases),
+                                  new_deaths = sum(new_deaths),
+                                  new_vaccinations = sum(new_vaccinations),
+                                  new_vaccinations_smoothed_per_million = sum(new_vaccinations_smoothed_per_million))
+
+ourworldindata_week <-  ourworldindata_week  %>% 
+                        mutate(geo=case_when(iso_code=="DNK"~"DK",
+                                             iso_code=="SRB"~"RS",
+                                             iso_code=="EST"~"EE",
+                                             iso_code=="GRC"~"EL",
+                                             iso_code=="MNE"~"ME",
+                                             iso_code=="MLT"~"MT",
+                                             iso_code=="SWE"~"SE",
+                                             iso_code=="SVN"~"SI",
+                                             iso_code=="SVK"~"SK",
+                                             iso_code=="POL"~"PL",
+                                             iso_code=="PRT"~"PT",
+                                             iso_code=="ARM"~"AM",
+                                             iso_code=="AUT"~"AT",
+                                             iso_code=="FRO"~"FO",
+                                             TRUE~substr(iso_code,1,2))) 
+
+ourworldindata_week <-  ourworldindata_week  %>% 
+                        left_join(numerosemaine)
+
+test <- ungroup(ourworldindata_week) %>% 
+        select(geo,
+               time,
+               new_deaths,
+               new_cases,
+               new_vaccinations,
+               new_vaccinations_smoothed_per_million)
+
+deces_standard_pays_semaine <- left_join(deces_standard_pays_semaine,
+                                        test)
                                     
                                     #-----------------------------------------------#
                                     #### ajout du nom des pays et zone est-ouest ####
                                     #-----------------------------------------------#
 
 
-nom_pays<- ungroup(ourworldindata_week) %>% select(geo,location) %>% distinct(geo,location)
+nom_pays<-  ungroup(ourworldindata_week) %>% 
+            select(geo, location) %>% 
+            distinct(geo, location)
 
-nom_pays <-nom_pays %>% mutate(zone=case_when(geo=="AL"~ "Est",
-                                                                      geo=="AM"~ "Est",
-                                                                      geo=="BG"~ "Est",
-                                                                      geo=="CY"~ "Est",
-                                                                      geo=="EE"~ "Est",
-                                                                      geo=="EL"~ "Est",
-                                                                      geo=="FI"~ "Est",
-                                                                      geo=="GE"~ "Est",
-                                                                      geo=="HR"~ "Est",
-                                                                      geo=="HU"~ "Est",
-                                                                      geo=="LT"~ "Est",
-                                                                      geo=="LV"~ "Est",
-                                                                      geo=="ME"~ "Est",
-                                                                      geo=="PL"~ "Est",
-                                                                      geo=="RO"~ "Est",
-                                                                      geo=="RS"~ "Est",
-                                                                      geo=="SI"~ "Est",
-                                                                      geo=="SK"~ "Est",
-                                                                      TRUE~ "Ouest",))
+nom_pays <- nom_pays %>% mutate(zone=case_when( geo=="AL"~ "Est",
+                                                geo=="AM"~ "Est",
+                                                geo=="BG"~ "Est",
+                                                geo=="CY"~ "Est",
+                                                geo=="EE"~ "Est",
+                                                geo=="EL"~ "Est",
+                                                geo=="FI"~ "Est",
+                                                geo=="GE"~ "Est",
+                                                geo=="HR"~ "Est",
+                                                geo=="HU"~ "Est",
+                                                geo=="LT"~ "Est",
+                                                geo=="LV"~ "Est",
+                                                geo=="ME"~ "Est",
+                                                geo=="PL"~ "Est",
+                                                geo=="RO"~ "Est",
+                                                geo=="RS"~ "Est",
+                                                geo=="SI"~ "Est",
+                                                geo=="SK"~ "Est",
+                                                TRUE~ "Ouest",))
 
-deces_standard_pays_semaine<- left_join(deces_standard_pays_semaine,nom_pays)
+deces_standard_pays_semaine<- left_join(deces_standard_pays_semaine,
+                                        nom_pays)
 
-saveRDS(deces_standard_pays_semaine,file="deces_standard_pays_semaine.RDS")
-write.table(deces_standard_pays_semaine, "deces_standard_pays_semaine.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+saveRDS(deces_standard_pays_semaine, file="gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS")
 
-deces_complet_annuel<- left_join(deces_complet_annuel,nom_pays)
+# Generer un csv séparé par "t"
+write.table(deces_standard_pays_semaine, "gen/csv/Eurostat_owid_deces_standard_pays_semaine.csv", row.names=FALSE, sep="t",dec=",", na=" ")
 
-write.table(deces_complet_annuel, "deces_complet_annuel.csv", row.names=FALSE, sep="t",dec=",", na=" ")
-saveRDS(deces_complet_annuel,file="deces_complet_annuel.RDS")
+deces_complet_annuel<- left_join(deces_complet_annuel,
+                                 nom_pays)
 
-deces_complet<- left_join(deces_complet,nom_pays)
+saveRDS(deces_complet_annuel,file="gen/rds/Eurostat_deces_complet_annuel.RDS")
 
-write.table(deces_complet, "deces_complet.csv", row.names=FALSE, sep="t",dec=",", na=" ")
-saveRDS(deces_complet,file="deces_complet.RDS")
+write.table(deces_complet_annuel, "gen/csv/Eurostat_deces_complet_annuel.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+
+#
+deces_complet<- left_join(deces_complet,
+                          nom_pays)
+
+saveRDS(deces_complet, file="gen/rds/Eurostat_deces_complet.RDS")
+
+# Generer un tsv
+write.table(deces_complet, "gen/csv/Eurostat_deces_complet.csv", row.names=FALSE, sep="t",dec=",", na=" ")
