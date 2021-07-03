@@ -16,15 +16,18 @@ install.packages("rgeos")
 install.packages("readr")
 install.packages("lsr")
 
+install.packages("tinytex")
+install.packages("curl")
+install.packages("gsl")
+
 install.packages("igraph")
 install.packages("Rtools")
 
 install.packages("pyramid")
 install.packages("reshape2")
+
+install.packages("plyr")
 install.packages("tidyr")
-
-install.packages("igraph")
-
 
 # Pour la generation de l'article
 install.packages("knitr")
