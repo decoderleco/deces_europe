@@ -23,27 +23,21 @@ library(dplyr)
 # Preparer les espaces de telechargement de donnees
 #
 
-# Créer les repertoires
-if (!dir.exists("inst/extdata/deces")) dir.create("inst/extdata/deces")
-
-# Import des données de décès
-# 'https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/'
-
-
 dossier_donnees_externes <- 'inst/extdata'
 dossier_donnees_deces <- file.path(dossier_donnees_externes, 'deces')
 
-# Créer les dossiers
+# Créer les dossiers s'ils n'existent pas
 if(!dir.exists(dossier_donnees_externes)) dir.create(dossier_donnees_externes)
 if(!dir.exists(dossier_donnees_deces)) dir.create(dossier_donnees_deces)
 
 #getwd()
 
-
 #
 # Telechargement des donnees
 #
 
+# Import des données de décès
+# 'https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/'
 
 # Liste des URLs des fichiers de patients décédés
 
