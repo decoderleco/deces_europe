@@ -281,10 +281,6 @@ pyramids(Left=hommes_femmes2000$part_hommes,Llab="Hommes",
 
 dev.print(device = png, file = "gen/images/Eurostat_Pyramide_europe_2000.png", width = 600)
 
-=======
-dev.print(device = png, file = "gen/images/Eurostat_Pyramide_europe_2000.png", width = 600)
-
-
 
                                     #--------------------------#
                                     ####Analyse de la France####
