@@ -32,7 +32,6 @@ es_deces_complet_annuel <- es_deces_complet_annuel %>%
 		filter(geo != "GE") %>%
 		filter(geo != "AR")
 
-
 #ajout de la nuance est-ouest pour la visualisation
 
 deces_complet_annuel_est <- es_deces_complet_annuel %>%

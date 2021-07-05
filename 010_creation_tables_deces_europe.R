@@ -156,9 +156,6 @@ es_deces_annuel_age_max <- es_deces_annuel_age %>%
 				time) %>%
 		summarise(age_max_deces = max(age))
 
-# ??? identification des couples(geo,time) qui s'arrêtent à 89 ans
-# ??? Lignes qui ont moins de 89  ans et qui ne sont pas des prefixes EU, EA, EEA...
-
 # JG : Pourquoi retirer les moins de 89 ans ?			
 es_deces_annuel_pb_age_max_deces <- es_deces_annuel_pb_age_max_deces %>%
 		filter(age_max_deces < 89)
