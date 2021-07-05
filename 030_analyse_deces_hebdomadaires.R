@@ -22,39 +22,39 @@ library(igraph)
 ####analyse des donnees hebdomadaires####
 #---------------------------------------#
 
-deces_standard_pays_semaine<-readRDS("gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS")
+owid_deces_standard_pays_semaine <- readRDS("gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS")
 
 
 #-----------------------------------------------------------#
 #### complement de donnees pour etude de la surmortalite ####
 #-----------------------------------------------------------#
 
-deces_standard_pays_semaine<-deces_standard_pays_semaine %>% 
+owid_deces_standard_pays_semaine <- owid_deces_standard_pays_semaine %>% 
   mutate(deces_hors_covid=deces_tot-new_deaths)
 
-deces_standard_pays_semaine<-deces_standard_pays_semaine %>% 
+owid_deces_standard_pays_semaine <- owid_deces_standard_pays_semaine %>% 
   mutate(part_deces_covid=new_deaths/deces_tot)
 
 
-IC_deces <- deces_standard_pays_semaine %>% group_by(geo) %>% 
+IC_deces <- owid_deces_standard_pays_semaine %>% group_by(geo) %>% 
   summarise(moyenne=mean(deces_standard_tot),variance=sd(deces_standard_tot)) %>% 
   mutate(bsup = moyenne + 2*variance, binf = moyenne - 2*variance )
 
-deces_standard_pays_semaine <- left_join(deces_standard_pays_semaine,IC_deces)
-deces_standard_pays_semaine <- deces_standard_pays_semaine %>% 
-  mutate(surmortalite = case_when(deces_standard_tot<=binf~"sous-mortalite",
-                                  deces_standard_tot>=bsup~"surmortalite",
+owid_deces_standard_pays_semaine <- left_join(owid_deces_standard_pays_semaine,IC_deces)
+owid_deces_standard_pays_semaine <- owid_deces_standard_pays_semaine %>% 
+  mutate(surmortalite = case_when(deces_standard_tot <= binf~"sous-mortalite",
+                                  deces_standard_tot >= bsup~"surmortalite",
                                   TRUE~"mortalite normale"))
 
-deces_standard_pays_semaine <- deces_standard_pays_semaine %>% 
-  mutate(valeur_surmortalite = case_when(surmortalite=="sous-mortalite"~deces_standard_tot-binf,
-                                         surmortalite=="surmortalite"~deces_standard_tot-bsup,
+owid_deces_standard_pays_semaine <- owid_deces_standard_pays_semaine %>% 
+  mutate(valeur_surmortalite = case_when(surmortalite == "sous-mortalite"~deces_standard_tot-binf,
+                                         surmortalite == "surmortalite"~deces_standard_tot-bsup,
                                          TRUE~0)) %>% 
   
   mutate(part_surmortalite = valeur_surmortalite/deces_standard_tot*100) %>% 
   mutate(ecart_moyenne = (deces_standard_tot-moyenne)/moyenne*100)
 
-test <- deces_standard_pays_semaine %>% mutate (numerosemaine=numerosemaine + 1, 
+owid_test <- owid_deces_standard_pays_semaine %>% mutate (numerosemaine=numerosemaine + 1, 
                                                 deces_standard_tot_prec = deces_standard_tot, 
                                                 new_deaths_prec=new_deaths,
                                                 deces_tot_prec =deces_tot,
@@ -65,9 +65,9 @@ test <- deces_standard_pays_semaine %>% mutate (numerosemaine=numerosemaine + 1,
                                                 surmortalite_prec = surmortalite) %>% 
   select(geo, numerosemaine, deces_standard_tot_prec, new_deaths_prec, deces_tot_prec, new_cases_prec, new_vaccinations_prec, Response_measure_prec, surmortalite_prec)
 
-deces_standard_pays_semaine <-left_join(deces_standard_pays_semaine ,test)
+owid_deces_standard_pays_semaine <- left_join(owid_deces_standard_pays_semaine ,owid_test)
 
-deces_standard_pays_semaine<-deces_standard_pays_semaine %>% 
+owid_deces_standard_pays_semaine <- owid_deces_standard_pays_semaine %>% 
   mutate(deces_tot_var = deces_tot - deces_tot_prec,
          deces_standard_tot_var = deces_standard_tot - deces_standard_tot_prec,
          new_deaths_var = new_deaths - new_deaths_prec,
@@ -83,48 +83,48 @@ deces_standard_pays_semaine<-deces_standard_pays_semaine %>%
 
 
 
-autriche <- deces_standard_pays_semaine %>% filter(geo =="AT")
-belgique <- deces_standard_pays_semaine %>% filter(geo =="BE")
-bulgarie <- deces_standard_pays_semaine %>% filter(geo =="BG")
-suisse <- deces_standard_pays_semaine %>% filter(geo =="CH")
-rtcheque <- deces_standard_pays_semaine %>% filter(geo =="CZ")
-danmark<- deces_standard_pays_semaine %>% filter(geo =="DK")
-estonie<- deces_standard_pays_semaine %>% filter(geo =="EE")
-espagne<- deces_standard_pays_semaine %>% filter(geo =="ES")
-france <- deces_standard_pays_semaine %>% filter(geo =="FR")
-croatie <- deces_standard_pays_semaine %>% filter(geo =="HR") %>% filter(numerosemaine>52)
-hongrie <- deces_standard_pays_semaine %>% filter(geo =="HU")
-islande <- deces_standard_pays_semaine %>% filter(geo =="IS")
-italie <- deces_standard_pays_semaine %>% filter(geo =="IT")
-lichtenstein <- deces_standard_pays_semaine %>% filter(geo =="LI")
-lituanie <- deces_standard_pays_semaine %>% filter(geo =="LT")
-luxembourg <- deces_standard_pays_semaine %>% filter(geo =="LU")
-lettonie <- deces_standard_pays_semaine %>% filter(geo =="LV")
-montenegro <- deces_standard_pays_semaine %>% filter(geo =="ME")
-malte<- deces_standard_pays_semaine %>% filter(geo =="MT")
-norvege<- deces_standard_pays_semaine %>% filter(geo =="NO")
-paysbas<- deces_standard_pays_semaine %>% filter(geo =="NL")
-portugal <- deces_standard_pays_semaine %>% filter(geo =="PT")
-pologne <- deces_standard_pays_semaine %>% filter(geo =="PL")
-serbie <- deces_standard_pays_semaine %>% filter(geo =="RS")
-suede <- deces_standard_pays_semaine %>% filter(geo =="SE")
-slovenie <- deces_standard_pays_semaine %>% filter(geo =="SI")
-slovaquie <- deces_standard_pays_semaine %>% filter(geo =="SK")
-allemagne<- deces_standard_pays_semaine %>% filter(geo =="DE")
-chypre<- deces_standard_pays_semaine %>% filter(geo =="CY")
-albanie<- deces_standard_pays_semaine %>% filter(geo =="AL")
-armenie<- deces_standard_pays_semaine %>% filter(geo =="AM")
-grece<- deces_standard_pays_semaine %>% filter(geo =="EL")
-finlande<- deces_standard_pays_semaine %>% filter(geo =="FI")
-roumanie<- deces_standard_pays_semaine %>% filter(geo =="RO")
+autriche <- owid_deces_standard_pays_semaine %>% filter(geo == "AT")
+belgique <- owid_deces_standard_pays_semaine %>% filter(geo == "BE")
+bulgarie <- owid_deces_standard_pays_semaine %>% filter(geo == "BG")
+suisse <- owid_deces_standard_pays_semaine %>% filter(geo == "CH")
+rtcheque <- owid_deces_standard_pays_semaine %>% filter(geo == "CZ")
+danmark <- owid_deces_standard_pays_semaine %>% filter(geo == "DK")
+estonie <- owid_deces_standard_pays_semaine %>% filter(geo == "EE")
+espagne <- owid_deces_standard_pays_semaine %>% filter(geo == "ES")
+france <- owid_deces_standard_pays_semaine %>% filter(geo == "FR")
+croatie <- owid_deces_standard_pays_semaine %>% filter(geo == "HR") %>% filter(numerosemaine>52)
+hongrie <- owid_deces_standard_pays_semaine %>% filter(geo == "HU")
+islande <- owid_deces_standard_pays_semaine %>% filter(geo == "IS")
+italie <- owid_deces_standard_pays_semaine %>% filter(geo == "IT")
+lichtenstein <- owid_deces_standard_pays_semaine %>% filter(geo == "LI")
+lituanie <- owid_deces_standard_pays_semaine %>% filter(geo == "LT")
+luxembourg <- owid_deces_standard_pays_semaine %>% filter(geo == "LU")
+lettonie <- owid_deces_standard_pays_semaine %>% filter(geo == "LV")
+montenegro <- owid_deces_standard_pays_semaine %>% filter(geo == "ME")
+malte <- owid_deces_standard_pays_semaine %>% filter(geo == "MT")
+norvege <- owid_deces_standard_pays_semaine %>% filter(geo == "NO")
+paysbas <- owid_deces_standard_pays_semaine %>% filter(geo == "NL")
+portugal <- owid_deces_standard_pays_semaine %>% filter(geo == "PT")
+pologne <- owid_deces_standard_pays_semaine %>% filter(geo == "PL")
+serbie <- owid_deces_standard_pays_semaine %>% filter(geo == "RS")
+suede <- owid_deces_standard_pays_semaine %>% filter(geo == "SE")
+slovenie <- owid_deces_standard_pays_semaine %>% filter(geo == "SI")
+slovaquie <- owid_deces_standard_pays_semaine %>% filter(geo == "SK")
+allemagne <- owid_deces_standard_pays_semaine %>% filter(geo == "DE")
+chypre <- owid_deces_standard_pays_semaine %>% filter(geo == "CY")
+albanie <- owid_deces_standard_pays_semaine %>% filter(geo == "AL")
+armenie <- owid_deces_standard_pays_semaine %>% filter(geo == "AM")
+grece <- owid_deces_standard_pays_semaine %>% filter(geo == "EL")
+finlande <- owid_deces_standard_pays_semaine %>% filter(geo == "FI")
+roumanie <- owid_deces_standard_pays_semaine %>% filter(geo == "RO")
 
 
 #France
 
 moyenne_mobile <- running_mean(france$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 france <- france %>% left_join(moyenne_mobile)
 france$moyenne <- moyenne
 
@@ -188,8 +188,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_france
 
 moyenne_mobile <- running_mean(autriche$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 autriche <- autriche %>% left_join(moyenne_mobile)
 autriche$moyenne <- moyenne
 
@@ -226,8 +226,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_autric
 
 moyenne_mobile <- running_mean(belgique$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 belgique <- belgique %>% left_join(moyenne_mobile)
 belgique$moyenne <- moyenne
 
@@ -263,8 +263,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_belgiq
 
 moyenne_mobile <- running_mean(bulgarie$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 bulgarie <- bulgarie %>% left_join(moyenne_mobile)
 bulgarie$moyenne <- moyenne
 
@@ -299,8 +299,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_bulgar
 
 moyenne_mobile <- running_mean(suisse$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 suisse <- suisse %>% left_join(moyenne_mobile)
 suisse$moyenne <- moyenne
 
@@ -334,8 +334,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_suisse
 
 moyenne_mobile <- running_mean(rtcheque$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 rtcheque <- rtcheque %>% left_join(moyenne_mobile)
 rtcheque$moyenne <- moyenne
 
@@ -370,8 +370,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_rtcheq
 
 moyenne_mobile <- running_mean(danmark$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 danmark <- danmark %>% left_join(moyenne_mobile)
 danmark$moyenne <- moyenne
 
@@ -406,8 +406,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_danmar
 
 moyenne_mobile <- running_mean(estonie$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 estonie <- estonie %>% left_join(moyenne_mobile)
 estonie$moyenne <- moyenne
 
@@ -441,8 +441,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_estoni
 
 moyenne_mobile <- running_mean(espagne$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 espagne <- espagne %>% left_join(moyenne_mobile)
 espagne$moyenne <- moyenne
 
@@ -477,8 +477,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_espagn
 
 moyenne_mobile <- running_mean(croatie$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+104
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+104
 croatie <- croatie %>% left_join(moyenne_mobile)
 croatie$moyenne <- moyenne
 
@@ -513,8 +513,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_croati
 
 moyenne_mobile <- running_mean(hongrie$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 hongrie <- hongrie %>% left_join(moyenne_mobile)
 hongrie$moyenne <- moyenne
 
@@ -550,8 +550,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_hongri
 
 moyenne_mobile <- running_mean(islande$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 islande <- islande %>% left_join(moyenne_mobile)
 islande$moyenne <- moyenne
 
@@ -586,8 +586,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_island
 
 moyenne_mobile <- running_mean(italie$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 italie <- italie %>% left_join(moyenne_mobile)
 italie$moyenne <- moyenne
 
@@ -623,8 +623,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_italie
 
 moyenne_mobile <- running_mean(lichtenstein$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 lichtenstein <- lichtenstein %>% left_join(moyenne_mobile)
 lichtenstein$moyenne <- moyenne
 
@@ -660,8 +660,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_lichte
 
 moyenne_mobile <- running_mean(lituanie$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 lituanie <- lituanie %>% left_join(moyenne_mobile)
 lituanie$moyenne <- moyenne
 
@@ -695,8 +695,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_lituan
 
 moyenne_mobile <- running_mean(luxembourg$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 luxembourg <- luxembourg %>% left_join(moyenne_mobile)
 luxembourg$moyenne <- moyenne
 
@@ -730,8 +730,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_luxemb
 
 moyenne_mobile <- running_mean(lettonie$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 lettonie <- lettonie %>% left_join(moyenne_mobile)
 lettonie$moyenne <- moyenne
 
@@ -765,8 +765,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_letton
 
 moyenne_mobile <- running_mean(montenegro$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 montenegro <- montenegro %>% left_join(moyenne_mobile)
 montenegro$moyenne <- moyenne
 
@@ -800,8 +800,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_monten
 
 moyenne_mobile <- running_mean(malte$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 malte <- malte %>% left_join(moyenne_mobile)
 malte$moyenne <- moyenne
 
@@ -835,8 +835,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_malte_
 
 moyenne_mobile <- running_mean(norvege$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 norvege <- norvege %>% left_join(moyenne_mobile)
 norvege$moyenne <- moyenne
 
@@ -871,8 +871,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_norveg
 
 moyenne_mobile <- running_mean(paysbas$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 paysbas <- paysbas %>% left_join(moyenne_mobile)
 paysbas$moyenne <- moyenne
 
@@ -907,8 +907,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_paysba
 
 moyenne_mobile <- running_mean(portugal$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 portugal <- portugal %>% left_join(moyenne_mobile)
 portugal$moyenne <- moyenne
 
@@ -942,8 +942,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_portug
 
 moyenne_mobile <- running_mean(pologne$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 pologne <- pologne %>% left_join(moyenne_mobile)
 pologne$moyenne <- moyenne
 
@@ -977,8 +977,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_pologn
 
 moyenne_mobile <- running_mean(serbie$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 serbie <- serbie %>% left_join(moyenne_mobile)
 serbie$moyenne <- moyenne
 
@@ -1012,8 +1012,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_serbie
 
 moyenne_mobile <- running_mean(suede$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 suede <- suede %>% left_join(moyenne_mobile)
 suede$moyenne <- moyenne
 
@@ -1047,8 +1047,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_suede_
 
 moyenne_mobile <- running_mean(slovenie$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 slovenie <- slovenie %>% left_join(moyenne_mobile)
 slovenie$moyenne <- moyenne
 
@@ -1081,8 +1081,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_sloven
 
 moyenne_mobile <- running_mean(slovaquie$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 slovaquie <- slovaquie %>% left_join(moyenne_mobile)
 slovaquie$moyenne <- moyenne
 
@@ -1115,8 +1115,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_slovaq
 
 moyenne_mobile <- running_mean(allemagne$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+209
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+209
 allemagne <- allemagne %>% left_join(moyenne_mobile)
 allemagne$moyenne <- moyenne
 
@@ -1149,8 +1149,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_allema
 
 moyenne_mobile <- running_mean(chypre$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+157
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+157
 chypre <- chypre %>% left_join(moyenne_mobile)
 chypre$moyenne <- moyenne
 
@@ -1183,8 +1183,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_chypre
 
 moyenne_mobile <- running_mean(albanie$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+157
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+157
 albanie <- albanie %>% left_join(moyenne_mobile)
 albanie$moyenne <- moyenne
 
@@ -1217,8 +1217,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_albani
 
 moyenne_mobile <- running_mean(armenie$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+157
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+157
 armenie <- armenie %>% left_join(moyenne_mobile)
 armenie$moyenne <- moyenne
 
@@ -1251,8 +1251,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_armeni
 
 moyenne_mobile <- running_mean(grece$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+157
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+157
 grece <- grece %>% left_join(moyenne_mobile)
 grece$moyenne <- moyenne
 
@@ -1285,8 +1285,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_grece_
 
 moyenne_mobile <- running_mean(finlande$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+51
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
 finlande <- finlande %>% left_join(moyenne_mobile)
 finlande$moyenne <- moyenne
 
@@ -1319,8 +1319,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_finlan
 
 moyenne_mobile <- running_mean(roumanie$deces_standard_tot, 52)
 moyenne <- mean(moyenne_mobile)
-moyenne_mobile<- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine<-1:nrow(moyenne_mobile)+157
+moyenne_mobile <- data_frame(moyenne_mobile)
+moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+157
 roumanie <- roumanie %>% left_join(moyenne_mobile)
 roumanie$moyenne <- moyenne
 
@@ -1357,8 +1357,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_rouman
 
 moyenne_mobile_m40 <- running_mean(hongrie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 hongrie <- hongrie %>% left_join(moyenne_mobile_m40)
 hongrie$moyenne_m40 <- moyenne_m40
 
@@ -1421,8 +1421,8 @@ axis(4, ylim=c(0,3), col="blue",col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_hongrie_jeune.png", width = 1000)
 
 pophongrie <- readRDS(file = "gen/rds/Eurostat_pjanquinq.RDS") %>% 
-              filter(geo=="HU") %>% 
-              filter(time=="2020-01-01") %>% 
+              filter(geo == "HU") %>% 
+              filter(time == "2020-01-01") %>% 
               group_by(agequinq) %>% 
               summarise(population=sum(population))
 
@@ -1430,8 +1430,8 @@ pophongrie <- readRDS(file = "gen/rds/Eurostat_pjanquinq.RDS") %>%
 
 moyenne_mobile_m40 <- running_mean(malte$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 malte <- malte %>% left_join(moyenne_mobile_m40)
 malte$moyenne_m40 <- moyenne_m40
 
@@ -1498,8 +1498,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_malte
 
 moyenne_mobile_m40 <- running_mean(islande$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 islande <- islande %>% left_join(moyenne_mobile_m40)
 islande$moyenne_m40 <- moyenne_m40
 
@@ -1566,8 +1566,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_islan
 
 moyenne_mobile_m40 <- running_mean(armenie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+113
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+113
 armenie <- armenie %>% left_join(moyenne_mobile_m40)
 armenie$moyenne_m40 <- moyenne_m40
 
@@ -1634,8 +1634,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_armen
 
 moyenne_mobile_m40 <- running_mean(norvege$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 norvege <- norvege %>% left_join(moyenne_mobile_m40)
 norvege$moyenne_m40 <- moyenne_m40
 
@@ -1702,8 +1702,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_norve
 
 moyenne_mobile_m40 <- running_mean(croatie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
 croatie <- croatie %>% left_join(moyenne_mobile_m40)
 croatie$moyenne_m40 <- moyenne_m40
 
@@ -1769,8 +1769,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_croat
 
 moyenne_mobile_m40 <- running_mean(finlande$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 finlande <- finlande %>% left_join(moyenne_mobile_m40)
 finlande$moyenne_m40 <- moyenne_m40
 
@@ -1836,8 +1836,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_finla
 
 moyenne_mobile_m40 <- running_mean(chypre$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+113
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+113
 chypre <- chypre %>% left_join(moyenne_mobile_m40)
 chypre$moyenne_m40 <- moyenne_m40
 
@@ -1903,8 +1903,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_chypr
 
 moyenne_mobile_m40 <- running_mean(allemagne$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+166
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+166
 allemagne <- allemagne %>% left_join(moyenne_mobile_m40)
 allemagne$moyenne_m40 <- moyenne_m40
 
@@ -1944,8 +1944,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_allem
 
 moyenne_mobile_m40 <- running_mean(autriche$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 autriche <- autriche %>% left_join(moyenne_mobile_m40)
 autriche$moyenne_m40 <- moyenne_m40
 
@@ -1984,8 +1984,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_autri
 
 moyenne_mobile_m40 <- running_mean(belgique$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 belgique <- belgique %>% left_join(moyenne_mobile_m40)
 belgique$moyenne_m40 <- moyenne_m40
 
@@ -2024,8 +2024,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_belgi
 
 moyenne_mobile_m40 <- running_mean(espagne$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 espagne <- espagne %>% left_join(moyenne_mobile_m40)
 espagne$moyenne_m40 <- moyenne_m40
 
@@ -2064,8 +2064,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_espag
 
 moyenne_mobile_m40 <- running_mean(estonie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 estonie <- estonie %>% left_join(moyenne_mobile_m40)
 estonie$moyenne_m40 <- moyenne_m40
 
@@ -2104,8 +2104,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_eston
 
 moyenne_mobile_m40 <- running_mean(italie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 italie <- italie %>% left_join(moyenne_mobile_m40)
 italie$moyenne_m40 <- moyenne_m40
 
@@ -2144,8 +2144,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_itali
 
 moyenne_mobile_m40 <- running_mean(paysbas$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 paysbas <- paysbas %>% left_join(moyenne_mobile_m40)
 paysbas$moyenne_m40 <- moyenne_m40
 
@@ -2212,8 +2212,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_paysb
 
 moyenne_mobile_m40 <- running_mean(portugal$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 portugal <- portugal %>% left_join(moyenne_mobile_m40)
 portugal$moyenne_m40 <- moyenne_m40
 
@@ -2252,8 +2252,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_portu
 
 moyenne_mobile_m40 <- running_mean(france$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 france <- france %>% left_join(moyenne_mobile_m40)
 france$moyenne_m40 <- moyenne_m40
 
@@ -2325,8 +2325,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_franc
 
 moyenne_mobile_m40 <- running_mean(pologne$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 pologne <- pologne %>% left_join(moyenne_mobile_m40)
 pologne$moyenne_m40 <- moyenne_m40
 
@@ -2366,8 +2366,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_polog
 
 moyenne_mobile_m40 <- running_mean(danmark$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 danmark <- danmark %>% left_join(moyenne_mobile_m40)
 danmark$moyenne_m40 <- moyenne_m40
 
@@ -2407,8 +2407,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_danma
 
 moyenne_mobile_m40 <- running_mean(grece$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+113
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+113
 grece <- grece %>% left_join(moyenne_mobile_m40)
 grece$moyenne_m40 <- moyenne_m40
 
@@ -2448,8 +2448,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_grece
 
 moyenne_mobile_m40 <- running_mean(suisse$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 suisse <- suisse %>% left_join(moyenne_mobile_m40)
 suisse$moyenne_m40 <- moyenne_m40
 
@@ -2488,8 +2488,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_suiss
 
 moyenne_mobile_m40 <- running_mean(suede$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 suede <- suede %>% left_join(moyenne_mobile_m40)
 suede$moyenne_m40 <- moyenne_m40
 
@@ -2528,8 +2528,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_suede
 
 moyenne_mobile_m40 <- running_mean(serbie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+8
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
 serbie <- serbie %>% left_join(moyenne_mobile_m40)
 serbie$moyenne_m40 <- moyenne_m40
 
@@ -3052,8 +3052,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_portug
 
 moyenne_mobile_m40 <- running_mean(france$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
 france <- france %>% left_join(moyenne_mobile_m40)
 france$moyenne_m40 <- moyenne_m40
 
@@ -3093,8 +3093,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_france
 
 moyenne_mobile_m40 <- running_mean(pologne$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
 pologne <- pologne %>% left_join(moyenne_mobile_m40)
 pologne$moyenne_m40 <- moyenne_m40
 
@@ -3134,8 +3134,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_pologn
 
 moyenne_mobile_m40 <- running_mean(danmark$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
 danmark <- danmark %>% left_join(moyenne_mobile_m40)
 danmark$moyenne_m40 <- moyenne_m40
 
@@ -3175,8 +3175,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_danmar
 
 moyenne_mobile_m40 <- running_mean(grece$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
 grece <- grece %>% left_join(moyenne_mobile_m40)
 grece$moyenne_m40 <- moyenne_m40
 
@@ -3215,8 +3215,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_grece.
 
 moyenne_mobile_m40 <- running_mean(suisse$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
 suisse <- suisse %>% left_join(moyenne_mobile_m40)
 suisse$moyenne_m40 <- moyenne_m40
 
@@ -3255,8 +3255,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_suisse
 
 moyenne_mobile_m40 <- running_mean(suede$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
 suede <- suede %>% left_join(moyenne_mobile_m40)
 suede$moyenne_m40 <- moyenne_m40
 
@@ -3294,8 +3294,8 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_suede.
 
 moyenne_mobile_m40 <- running_mean(serbie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40<- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine<-1:nrow(moyenne_mobile_m40)+61
+moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
+moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
 serbie <- serbie %>% left_join(moyenne_mobile_m40)
 serbie$moyenne_m40 <- moyenne_m40
 
@@ -3344,24 +3344,24 @@ numerosemaine <- numerosemaine %>% mutate(saison=if_else(numerosemaineannee > 38
 
 
 
-classe1<- map_data %>% filter(geo=="FR")
+classe1 <- map_data %>% filter(geo == "FR")
 
-classe1<- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[0,1.203e+05)")
-classe2<- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[1.203e+05,1.503e+05)")
-classe3<- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[1.503e+05,1.763e+05)")
-classe4<- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[1.763e+05,2.028e+05)")
-classe5<- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[2.028e+05,2.328e+05)")
-classe6<- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[2.328e+05,2.652e+05)")
-classe7<- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[2.652e+05,3.023e+05)")
-classe8<- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[3.023e+05,3.563e+05)")
-classe9<- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[3.563e+05,4.677e+05)")
+classe1 <- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[0,1.203e+05)")
+classe2 <- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[1.203e+05,1.503e+05)")
+classe3 <- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[1.503e+05,1.763e+05)")
+classe4 <- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[1.763e+05,2.028e+05)")
+classe5 <- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[2.028e+05,2.328e+05)")
+classe6 <- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[2.328e+05,2.652e+05)")
+classe7 <- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[2.652e+05,3.023e+05)")
+classe8 <- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[3.023e+05,3.563e+05)")
+classe9 <- classe1 %>%  mutate (id="classe1",geo = "classe1",geometry=geocanada,deces_standard_tot_rec="[3.563e+05,4.677e+05)")
 
 for (i in 158:432) {
-  map_data <- map_data_init %>% filter(numerosemaine==i)
+  map_data <- map_data_init %>% filter(numerosemaine == i)
   
-  semaine <- numerosemaine %>% filter(numerosemaine==i) %>% select(numerosemaineannee)
-  annee <- numerosemaine %>% filter(numerosemaine==i) %>% select(annee)
-  saison <-numerosemaine %>% filter(numerosemaine==i) %>% select(saison)
+  semaine <- numerosemaine %>% filter(numerosemaine == i) %>% select(numerosemaineannee)
+  annee <- numerosemaine %>% filter(numerosemaine == i) %>% select(annee)
+  saison <- numerosemaine %>% filter(numerosemaine == i) %>% select(saison)
   
   map_data <- map_data %>% rbind(classe1,classe2,classe3,classe4,classe5,classe6,classe7,classe8,classe9)
   
@@ -3377,7 +3377,7 @@ for (i in 158:432) {
   ggsave(paste0("gen/images/carte",i,".png"),plot=p, width = 11, height = 8)
 }
 
-deces_analysables<-deces_standard_pays_semaine %>% filter(time >"2015-01-01")
+deces_analysables <- owid_deces_standard_pays_semaine %>% filter(time >"2015-01-01")
 
-surmortalite <- deces_standard_pays_semaine %>% filter(surmortalite=="surmortalite") %>% 
-  filter(time>="2020W01") %>%   filter(time<="2020W40")
+surmortalite <- owid_deces_standard_pays_semaine %>% filter(surmortalite == "surmortalite") %>% 
+  filter(time >= "2020W01") %>%   filter(time <= "2020W40")

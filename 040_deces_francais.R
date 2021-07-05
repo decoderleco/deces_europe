@@ -122,7 +122,7 @@ nettoyer_partie_date <- function(
     substr(debut, fin) %>% 
     as.integer()
   
-  rez[rez==0] <- NA
+  rez[rez == 0] <- NA
   rez
 }
 
@@ -298,19 +298,19 @@ deces_dep_jour <- deces_dep_jour %>%
   "pas de confinement"))
 
 # Filtrer les deces par region
-BourgogneFrancheComté <-deces_dep_jour %>%filter(region_name=="Bourgogne-Franche-Comté")
-AuvergneRhôneAlpes<-deces_dep_jour %>%filter(region_name=="Auvergne-Rhône-Alpes")
-ÎledeFrance <-deces_dep_jour %>%filter(region_name=="Île-de-France")
-PaysdelaLoire <-deces_dep_jour %>%filter(region_name=="Pays de la Loire")
-Normandie <-deces_dep_jour %>%filter(region_name=="Normandie")
-NouvelleAquitaine <-deces_dep_jour %>%filter(region_name=="Nouvelle-Aquitaine")
-HautsdeFrance <-deces_dep_jour %>%filter(region_name=="Hauts-de-France")
-Occitanie <-deces_dep_jour %>%filter(region_name=="Occitanie")
-PACA <-deces_dep_jour %>%filter(region_name=="Provence-Alpes-Côte d'Azur")
-GrandEst <-deces_dep_jour %>%filter(region_name=="Grand Est")
-Bretagne<-deces_dep_jour %>%filter(region_name=="Bretagne")
-Corse<-deces_dep_jour %>%filter(region_name=="Corse")
-CentreValdeLoire<-deces_dep_jour %>%filter(region_name=="Centre-Val de Loire")
+BourgogneFrancheComté <- deces_dep_jour %>%filter(region_name == "Bourgogne-Franche-Comté")
+AuvergneRhôneAlpes <- deces_dep_jour %>%filter(region_name == "Auvergne-Rhône-Alpes")
+ÎledeFrance <- deces_dep_jour %>%filter(region_name == "Île-de-France")
+PaysdelaLoire <- deces_dep_jour %>%filter(region_name == "Pays de la Loire")
+Normandie <- deces_dep_jour %>%filter(region_name == "Normandie")
+NouvelleAquitaine <- deces_dep_jour %>%filter(region_name == "Nouvelle-Aquitaine")
+HautsdeFrance <- deces_dep_jour %>%filter(region_name == "Hauts-de-France")
+Occitanie <- deces_dep_jour %>%filter(region_name == "Occitanie")
+PACA <- deces_dep_jour %>%filter(region_name == "Provence-Alpes-Côte d'Azur")
+GrandEst <- deces_dep_jour %>%filter(region_name == "Grand Est")
+Bretagne <- deces_dep_jour %>%filter(region_name == "Bretagne")
+Corse <- deces_dep_jour %>%filter(region_name == "Corse")
+CentreValdeLoire <- deces_dep_jour %>%filter(region_name == "Centre-Val de Loire")
 
 ggplot(data = BourgogneFrancheComté) + 
   

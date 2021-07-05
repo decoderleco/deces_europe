@@ -33,7 +33,7 @@ library(scales)
 # 		onglet MedicAM_20xxmois_tous_presc
 # 		colonnes K, N, ...
 
-medicam <-read.csv(file = "data/csv/medicam.csv", sep=";")
+medicam <- read.csv(file = "data/csv/medicam.csv", sep=";")
 
 
 vaccins_grippes <- medicam %>% filter(Nom_vaccin %in% c("AGRIPPAL",
@@ -52,7 +52,7 @@ vaccins_grippes <- medicam %>% filter(Nom_vaccin %in% c("AGRIPPAL",
                                                         "VAXIGRIP",
                                                         "VAXIGRIPTETRA"))
 
-vaccins_grippes <-  vaccins_grippes %>% 
+vaccins_grippes <- vaccins_grippes %>% 
                     # Creer une colonne "mois_annee" pour les en-tête de colonne, 
                     #       une colonne "nombre_de_boites" pour la valeur
                     #       -Nom_vaccin indique que l'on prend toutes les colonnes sauf Nom_vaccin
@@ -109,29 +109,29 @@ dev.print(device = png, file = "gen/images/Medicam_Vaccins_Grippe_Distribues.png
 
 open_medic_2019 <- read.csv(file = "data/csv/OPEN_MEDIC_2019.csv", sep=";")
 
-open_medic_2019 <-  open_medic_2019 %>% 
+open_medic_2019 <- open_medic_2019 %>% 
                     # Créer une colonne "region" avec le nom de la région correspondant au n° indiqué dans la colonne BEN_REG
                     mutate(region = case_when(
-                        BEN_REG=="11"~ "Ile-de-France",
-                        BEN_REG=="24"~"Centre-Val de Loire",
-                        BEN_REG=="27"~"Bourgogne-Franche-Comté",
-                        BEN_REG=="28"~"Normandie",
-                        BEN_REG=="32"~"Nord-Pas-de-Calais-Picardie",
-                        BEN_REG=="44"~"Alsace-Champagne-Ardenne-Lorraine",
-                        BEN_REG=="52"~"Pays de la Loire",
-                        BEN_REG=="53"~"Bretagne",
-                        BEN_REG=="75"~"Aquitaine-Limousin-Poitou-Charentes",
-                        BEN_REG=="76"~"Languedoc-Roussillon-Midi-Pyrénées",
-                        BEN_REG=="84"~"Auvergne-Rhône-Alpes",
-                        BEN_REG=="93"~"Provence-Alpes-Côte d'Azur et Corse"))
+                        BEN_REG == "11"~ "Ile-de-France",
+                        BEN_REG == "24"~"Centre-Val de Loire",
+                        BEN_REG == "27"~"Bourgogne-Franche-Comté",
+                        BEN_REG == "28"~"Normandie",
+                        BEN_REG == "32"~"Nord-Pas-de-Calais-Picardie",
+                        BEN_REG == "44"~"Alsace-Champagne-Ardenne-Lorraine",
+                        BEN_REG == "52"~"Pays de la Loire",
+                        BEN_REG == "53"~"Bretagne",
+                        BEN_REG == "75"~"Aquitaine-Limousin-Poitou-Charentes",
+                        BEN_REG == "76"~"Languedoc-Roussillon-Midi-Pyrénées",
+                        BEN_REG == "84"~"Auvergne-Rhône-Alpes",
+                        BEN_REG == "93"~"Provence-Alpes-Côte d'Azur et Corse"))
 
-open_medic_2019 <-  open_medic_2019 %>% 
+open_medic_2019 <- open_medic_2019 %>% 
                     # Ajouter une colonne "classe_age"
                     mutate(classe_age = case_when(
-                      age==0 ~ "0-19 ANS",
-                      age==20 ~ "20 - 59 ANS",
-                      age==60 ~ "60 ANS ET +",
-                      age==99 ~ "AGE INCONNU"))
+                      age == 0 ~ "0-19 ANS",
+                      age == 20 ~ "20 - 59 ANS",
+                      age == 60 ~ "60 ANS ET +",
+                      age == 99 ~ "AGE INCONNU"))
 
 
 # remplacer . (separateur des milliers) par rien dans la colonne BSE
@@ -146,61 +146,61 @@ open_medic_2019 <- open_medic_2019 %>% mutate(BSE=as.numeric(BSE))
 
 open_medic_2020 <- read.csv(file = "data/csv/OPEN_MEDIC_2020.csv", sep=";")
 
-open_medic_2020<-open_medic_2020 %>% mutate(region = case_when(
-  BEN_REG=="11"~ "Ile-de-France",
-  BEN_REG=="24"~"Centre-Val de Loire",
-  BEN_REG=="27"~"Bourgogne-Franche-Comté",
-  BEN_REG=="28"~"Normandie",
-  BEN_REG=="32"~"Nord-Pas-de-Calais-Picardie",
-  BEN_REG=="44"~"Alsace-Champagne-Ardenne-Lorraine",
-  BEN_REG=="52"~"Pays de la Loire",
-  BEN_REG=="53"~"Bretagne",
-  BEN_REG=="75"~"Aquitaine-Limousin-Poitou-Charentes",
-  BEN_REG=="76"~"Languedoc-Roussillon-Midi-Pyrénées",
-  BEN_REG=="84"~"Auvergne-Rhône-Alpes",
-  BEN_REG=="93"~"Provence-Alpes-Côte d'Azur et Corse"))
+open_medic_2020 <- open_medic_2020 %>% mutate(region = case_when(
+  BEN_REG == "11"~ "Ile-de-France",
+  BEN_REG == "24"~"Centre-Val de Loire",
+  BEN_REG == "27"~"Bourgogne-Franche-Comté",
+  BEN_REG == "28"~"Normandie",
+  BEN_REG == "32"~"Nord-Pas-de-Calais-Picardie",
+  BEN_REG == "44"~"Alsace-Champagne-Ardenne-Lorraine",
+  BEN_REG == "52"~"Pays de la Loire",
+  BEN_REG == "53"~"Bretagne",
+  BEN_REG == "75"~"Aquitaine-Limousin-Poitou-Charentes",
+  BEN_REG == "76"~"Languedoc-Roussillon-Midi-Pyrénées",
+  BEN_REG == "84"~"Auvergne-Rhône-Alpes",
+  BEN_REG == "93"~"Provence-Alpes-Côte d'Azur et Corse"))
 
-open_medic_2020<-open_medic_2020 %>% mutate(classe_age = case_when(
-  age==0 ~ "0-19 ANS",
-  age==20 ~ "20 - 59 ANS",
-  age==60 ~ "60 ANS ET +",
-  age==99 ~ "AGE INCONNU"))
+open_medic_2020 <- open_medic_2020 %>% mutate(classe_age = case_when(
+  age == 0 ~ "0-19 ANS",
+  age == 20 ~ "20 - 59 ANS",
+  age == 60 ~ "60 ANS ET +",
+  age == 99 ~ "AGE INCONNU"))
 
 # remplacer . (separateur des milliers) par rien (Attention : gsub utilise des regexp. il faut donc escaper le .)
-open_medic_2020<-open_medic_2020 %>% mutate(BSE=gsub("\\.","",BSE))
+open_medic_2020 <- open_medic_2020 %>% mutate(BSE=gsub("\\.","",BSE))
 # remplacer , (separateur decimal) par .
-open_medic_2020<-open_medic_2020 %>% mutate(BSE=gsub(",",".",BSE))
-open_medic_2020<-open_medic_2020 %>% mutate(BSE=as.numeric(BSE))
+open_medic_2020 <- open_medic_2020 %>% mutate(BSE=gsub(",",".",BSE))
+open_medic_2020 <- open_medic_2020 %>% mutate(BSE=as.numeric(BSE))
 
 
 # 2019 : Antibiotiques et Rivotril
 
-ANTIEPILEPTIQUES_2019 <- open_medic_2019 %>% filter(L_ATC2=="ANTIEPILEPTIQUES")
+ANTIEPILEPTIQUES_2019 <- open_medic_2019 %>% filter(L_ATC2 == "ANTIEPILEPTIQUES")
 # CLONAZEPAM = RIVOTRIL
-CLONAZEPAM_2019 <- ANTIEPILEPTIQUES_2019 %>% filter(L_ATC5=="CLONAZEPAM") %>% filter(CIP13==3400934428272)
+CLONAZEPAM_2019 <- ANTIEPILEPTIQUES_2019 %>% filter(L_ATC5 == "CLONAZEPAM") %>% filter(CIP13 == 3400934428272)
 
-ANTIBACTERIENS_2019 <- open_medic_2019 %>% filter(L_ATC2=="ANTIBACTERIENS A USAGE SYSTEMIQUE")
+ANTIBACTERIENS_2019 <- open_medic_2019 %>% filter(L_ATC2 == "ANTIBACTERIENS A USAGE SYSTEMIQUE")
 
 # 2020: Antibiotiques et Rivotril
 
-ANTIEPILEPTIQUES_2020 <- open_medic_2020 %>% filter(L_ATC2=="ANTIEPILEPTIQUES")
-CLONAZEPAM_2020 <- ANTIEPILEPTIQUES_2020%>% filter(L_ATC5=="CLONAZEPAM")%>% filter(CIP13==3400934428272)
+ANTIEPILEPTIQUES_2020 <- open_medic_2020 %>% filter(L_ATC2 == "ANTIEPILEPTIQUES")
+CLONAZEPAM_2020 <- ANTIEPILEPTIQUES_2020%>% filter(L_ATC5 == "CLONAZEPAM")%>% filter(CIP13 == 3400934428272)
 
-ANTIBACTERIENS_2020 <- open_medic_2020 %>% filter(L_ATC2=="ANTIBACTERIENS A USAGE SYSTEMIQUE")
+ANTIBACTERIENS_2020 <- open_medic_2020 %>% filter(L_ATC2 == "ANTIBACTERIENS A USAGE SYSTEMIQUE")
 
 # Synthese de l'evolution (par age) du Rivotril entre 2019 et 2020
-test20<-CLONAZEPAM_2020 %>% group_by(classe_age,region) %>% summarise(BOITES_2020=sum(BOITES),BSE_2020=sum(BSE))
-test19<-CLONAZEPAM_2019 %>% group_by(classe_age,region) %>% summarise(BOITES_2019=sum(BOITES),BSE_2019=sum(BSE))
+test20 <- CLONAZEPAM_2020 %>% group_by(classe_age,region) %>% summarise(BOITES_2020=sum(BOITES),BSE_2020=sum(BSE))
+test19 <- CLONAZEPAM_2019 %>% group_by(classe_age,region) %>% summarise(BOITES_2019=sum(BOITES),BSE_2019=sum(BSE))
 CLONAZEPAM <- test20 %>% full_join(test19)
 
 # Synthese de l'evolution (par age)  des anti-biotiques entre 2019 et 2020
-test20<-ANTIBACTERIENS_2020 %>% group_by(classe_age,region) %>% summarise(BOITES_2020=sum(BOITES),BSE_2020=sum(BSE))
-test19<-ANTIBACTERIENS_2019 %>% group_by(classe_age,region) %>% summarise(BOITES_2019=sum(BOITES),BSE_2019=sum(BSE))
+test20 <- ANTIBACTERIENS_2020 %>% group_by(classe_age,region) %>% summarise(BOITES_2020=sum(BOITES),BSE_2020=sum(BSE))
+test19 <- ANTIBACTERIENS_2019 %>% group_by(classe_age,region) %>% summarise(BOITES_2019=sum(BOITES),BSE_2019=sum(BSE))
 ANTIBACTERIENS <- test20 %>% full_join(test19)
 
 # Calculer les variations 2019 => 2020
-CLONAZEPAM<-CLONAZEPAM %>% mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2019,var_bse=(BSE_2020-BSE_2019)/BSE_2019)
-ANTIBACTERIENS<-ANTIBACTERIENS %>% mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2019,var_bse=(BSE_2020-BSE_2019)/BSE_2019)
+CLONAZEPAM <- CLONAZEPAM %>% mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2019,var_bse=(BSE_2020-BSE_2019)/BSE_2019)
+ANTIBACTERIENS <- ANTIBACTERIENS %>% mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2019,var_bse=(BSE_2020-BSE_2019)/BSE_2019)
 
 # 
 
@@ -212,21 +212,21 @@ tmp <- tmp  %>% filter(!is.na(BOITES_2019)) %>%
 tmp <- tmp  %>% group_by(classe_age) %>% 
                 summarise("2019" = sum(BOITES_2019), "2020" = sum(BOITES_2020))
 
-#tmp <-  tmp %>% pivot_longer(!classe_age, names_to = "annee", values_to = "boites")
-tmp <-  tmp %>% 
+#tmp <- tmp %>% pivot_longer(!classe_age, names_to = "annee", values_to = "boites")
+tmp <- tmp %>% 
         pivot_longer(cols=!classe_age, names_to = "annee", values_to = "boites")
 
-# tmp <-  tmp %>% 
+# tmp <- tmp %>% 
 #         group_by(annee) %>% 
 #         summarise(boites=sum(boites))
 
-# tmp <-  tmp %>% 
+# tmp <- tmp %>% 
 #         mutate(annee = as.numeric(annee))
 
-tmp <-  tmp %>% 
+tmp <- tmp %>% 
         arrange(annee, classe_age)
 
-JG_CLONAZEPAM <-  tmp 
+JG_CLONAZEPAM <- tmp 
                 
 
 ggplot(data = arrange(JG_CLONAZEPAM, annee, classe_age),

@@ -12,14 +12,14 @@ memoize <- function (def, fun, lng) {
     i <- j + 1
     ml <- length(memo)
     if (ml <= i) {
-      memo[max(2 * ml, i + 1)] <<- NA
+      memo[max(2 * ml, i + 1)] < <- NA
     }
     if (is.na(memo[i])) {
       v <- fun(j)
       if (is.nan(v) | is.infinite(v)) {
-        memo[i] <<- 0
+        memo[i] < <- 0
       } else {
-        memo[i] <<- v
+        memo[i] < <- v
       }
     } 
     memo[i]
@@ -341,7 +341,7 @@ if (TRUE) {
     446,614,350,344,821,241,195,456,726,358,0,1008,191,171,460,724,296,360,645,199,167,412,587,310,
     271,572,157,159,334,431,278,261,539,185,122,375,418,322,293,439,170,130,363,365,252,277,223,169,
     207,341,400,87,422,285,177,138,343,288,246,225,897,191,131,360,381,303,308,332,1,0)
-  essai <- deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo=="FR")
+  essai <- owid_deces_standard_pays_semaine  %>% filter(numerosemaine>400) %>% filter(geo == "FR")
   decesFr <- essai$deces_tot-10844
   popFr <- 68147687
   vague <- chercheVague(decesFr)
