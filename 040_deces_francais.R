@@ -278,7 +278,7 @@ dbp %>%
 # Ceci devrait suffire pour notre pyramide des ages en france (hors COM)
 
 db_clean <- db_clean %>%
-		mutate(deces_departement = str_sub(deces_code_lieu,1,2))
+		mutate(deces_departement = str_sub(deces_code_lieu, 1, 2))
 
 db_clean <- db_clean %>%
 		mutate(age_deces_millesime = deces_annee_complete - naissance_annee_complete)
@@ -316,7 +316,7 @@ deces_dep_jour <- deces_dep_jour %>%
 						moyenne - premier_quartile))
 
 # Lire le fichier des departements-regions
-nom_departement <- read.csv("data/csv/departements-region.csv",sep=",",header = TRUE,encoding="UTF-8")
+nom_departement <- read.csv("data/csv/departements-region.csv", sep=", ", header = TRUE, encoding="UTF-8")
 
 deces_dep_jour <- deces_dep_jour %>%
 		left_join(nom_departement,
@@ -377,7 +377,7 @@ ggplot(data = BourgogneFrancheComté) +
 						y = dece_centre_reduit,
 						colour=confinement)) + 
 		
-		scale_colour_manual(values=c("red","black"))+
+		scale_colour_manual(values=c("red", "black"))+
 		
 		facet_wrap(~dep_name)+
 		
@@ -389,8 +389,8 @@ ggplot(data = BourgogneFrancheComté) +
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_BourgogneFrancheComté.png", width = 1000)
 
 ggplot(data = AuvergneRhôneAlpes) + 
-		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
-		scale_colour_manual(values=c("red","black"))+
+		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
+		scale_colour_manual(values=c("red", "black"))+
 		facet_wrap(~dep_name)+
 		ggtitle("Décès quotidiens par département") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
@@ -398,8 +398,8 @@ ggplot(data = AuvergneRhôneAlpes) +
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_AuvergneRhôneAlpes.png", width = 1000)
 
 ggplot(data = PaysdelaLoire) + 
-		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
-		scale_colour_manual(values=c("red","black"))+
+		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
+		scale_colour_manual(values=c("red", "black"))+
 		facet_wrap(~dep_name)+
 		ggtitle("Décès quotidiens par département") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
@@ -407,8 +407,8 @@ ggplot(data = PaysdelaLoire) +
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_PaysdelaLoire.png", width = 1000)
 
 ggplot(data = PACA) + 
-		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
-		scale_colour_manual(values=c("red","black"))+
+		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
+		scale_colour_manual(values=c("red", "black"))+
 		facet_wrap(~dep_name)+
 		ggtitle("Décès quotidiens par département") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
@@ -416,8 +416,8 @@ ggplot(data = PACA) +
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_PACA.png", width = 1000)
 
 ggplot(data = ÎledeFrance) + 
-		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
-		scale_colour_manual(values=c("red","black"))+
+		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
+		scale_colour_manual(values=c("red", "black"))+
 		facet_wrap(~dep_name)+
 		ggtitle("Décès quotidiens par département") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
@@ -425,8 +425,8 @@ ggplot(data = ÎledeFrance) +
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_ÎledeFrance.png", width = 1000)
 
 ggplot(data = NouvelleAquitaine) + 
-		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
-		scale_colour_manual(values=c("red","black"))+
+		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
+		scale_colour_manual(values=c("red", "black"))+
 		facet_wrap(~dep_name)+
 		ggtitle("Décès quotidiens par département") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
@@ -434,8 +434,8 @@ ggplot(data = NouvelleAquitaine) +
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_NouvelleAquitaine.png", width = 1000)
 
 ggplot(data = HautsdeFrance) + 
-		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
-		scale_colour_manual(values=c("red","black"))+
+		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
+		scale_colour_manual(values=c("red", "black"))+
 		facet_wrap(~dep_name)+
 		ggtitle("Décès quotidiens par département") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
@@ -444,8 +444,8 @@ ggplot(data = HautsdeFrance) +
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_HautsdeFrance.png", width = 1000)
 
 ggplot(data = GrandEst) + 
-		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
-		scale_colour_manual(values=c("red","black"))+
+		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
+		scale_colour_manual(values=c("red", "black"))+
 		facet_wrap(~dep_name)+
 		ggtitle("Décès quotidiens par département") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
@@ -453,8 +453,8 @@ ggplot(data = GrandEst) +
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_GrandEst.png", width = 1000)
 
 ggplot(data = Occitanie) + 
-		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
-		scale_colour_manual(values=c("red","black"))+
+		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
+		scale_colour_manual(values=c("red", "black"))+
 		facet_wrap(~dep_name)+
 		ggtitle("Décès quotidiens par département") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
@@ -462,8 +462,8 @@ ggplot(data = Occitanie) +
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_Occitanie.png", width = 1000)
 
 ggplot(data = Corse) + 
-		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
-		scale_colour_manual(values=c("red","black"))+
+		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
+		scale_colour_manual(values=c("red", "black"))+
 		facet_wrap(~dep_name)+
 		ggtitle("Décès quotidiens par département") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
@@ -472,8 +472,8 @@ ggplot(data = Corse) +
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_Corse.png", width = 1000)
 
 ggplot(data = Bretagne) + 
-		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
-		scale_colour_manual(values=c("red","black"))+
+		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
+		scale_colour_manual(values=c("red", "black"))+
 		facet_wrap(~dep_name)+
 		ggtitle("Décès quotidiens par département") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
@@ -481,8 +481,8 @@ ggplot(data = Bretagne) +
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_Bretagne.png", width = 1000)
 
 ggplot(data = CentreValdeLoire) + 
-		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit,colour=confinement)) + 
-		scale_colour_manual(values=c("red","black"))+
+		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
+		scale_colour_manual(values=c("red", "black"))+
 		facet_wrap(~dep_name)+
 		ggtitle("Décès quotidiens par département") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")

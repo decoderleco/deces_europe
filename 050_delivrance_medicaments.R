@@ -59,11 +59,11 @@ vaccins_grippes <- vaccins_grippes %>%
 		#       -Nom_vaccin indique que l'on prend toutes les colonnes sauf Nom_vaccin
 		gather(mois_annee, nombre_de_boites, -Nom_vaccin) %>%
 # Retirer le "X" qui est devant la date dans la colonne mois_annee
-		mutate(mois_annee = str_sub(mois_annee,2,9)) %>%
+		mutate(mois_annee = str_sub(mois_annee, 2, 9)) %>%
 # Remplacer les NA dans la colonne nombre_de_boites par 0
-		mutate(nombre_de_boites = ifelse(is.na(nombre_de_boites),0,nombre_de_boites)) %>%
+		mutate(nombre_de_boites = ifelse(is.na(nombre_de_boites), 0, nombre_de_boites)) %>%
 # Convertir les dates string en Date
-		mutate(mois_annee=as.Date(mois_annee,format="%d.%m.%y"))
+		mutate(mois_annee=as.Date(mois_annee, format="%d.%m.%y"))
 
 # Nombre de boites de vaccin pour la grippe (toutes marques confondues) par mois
 # nombre_vaccins_grippes <- vaccins_grippes %>%
@@ -91,7 +91,7 @@ ggplot(vaccins_grippes,
 		ylab("nombre de vaccins")+
 		
 		xlab("") + 
-		scale_x_date(labels = date_format("%m/%y"),breaks = date_breaks("year")) +
+		scale_x_date(labels = date_format("%m/%y"), breaks = date_breaks("year")) +
 		theme(axis.text.x = element_text(angle=45))
 
 dev.print(device = png, file = "gen/images/Medicam_Vaccins_Grippe_Distribues.png", width = 1000)
@@ -138,11 +138,11 @@ open_medic_2019 <- open_medic_2019 %>%
 
 # remplacer . (separateur des milliers) par rien dans la colonne BSE
 open_medic_2019 <- open_medic_2019 %>%
-		mutate(BSE=gsub("\\.","",BSE))
+		mutate(BSE=gsub("\\.", "", BSE))
 
 # remplacer , (separateur decimal) par .
 open_medic_2019 <- open_medic_2019 %>%
-		mutate(BSE=gsub(",",".",BSE))
+		mutate(BSE=gsub(", ", ".", BSE))
 
 # Convertir les données de la colonne BSE en nombre
 open_medic_2019 <- open_medic_2019 %>%
@@ -178,11 +178,11 @@ open_medic_2020 <- open_medic_2020 %>%
 # remplacer . (separateur des milliers) par rien (Attention : gsub utilise des regexp. il faut donc escaper le .)
 
 open_medic_2020 <- open_medic_2020 %>%
-		mutate(BSE=gsub("\\.","",BSE))
+		mutate(BSE=gsub("\\.", "", BSE))
 
 # remplacer , (separateur decimal) par .
 open_medic_2020 <- open_medic_2020 %>%
-		mutate(BSE=gsub(",",".",BSE))
+		mutate(BSE=gsub(", ", ".", BSE))
 
 open_medic_2020 <- open_medic_2020 %>%
 		mutate(BSE=as.numeric(BSE))
@@ -215,34 +215,34 @@ ANTIBACTERIENS_2020 <- open_medic_2020 %>%
 
 # Synthese de l'evolution (par age) du Rivotril entre 2019 et 2020
 test20 <- CLONAZEPAM_2020 %>%
-		group_by(classe_age,region) %>%
-		summarise(BOITES_2020=sum(BOITES),BSE_2020=sum(BSE))
+		group_by(classe_age, region) %>%
+		summarise(BOITES_2020=sum(BOITES), BSE_2020=sum(BSE))
 
 test19 <- CLONAZEPAM_2019 %>%
-		group_by(classe_age,region) %>%
-		summarise(BOITES_2019=sum(BOITES),BSE_2019=sum(BSE))
+		group_by(classe_age, region) %>%
+		summarise(BOITES_2019=sum(BOITES), BSE_2019=sum(BSE))
 
 CLONAZEPAM <- test20 %>%
 		full_join(test19)
 
 # Synthese de l'evolution (par age)  des anti-biotiques entre 2019 et 2020
 test20 <- ANTIBACTERIENS_2020 %>%
-		group_by(classe_age,region) %>%
-		summarise(BOITES_2020=sum(BOITES),BSE_2020=sum(BSE))
+		group_by(classe_age, region) %>%
+		summarise(BOITES_2020=sum(BOITES), BSE_2020=sum(BSE))
 
 test19 <- ANTIBACTERIENS_2019 %>%
-		group_by(classe_age,region) %>%
-		summarise(BOITES_2019=sum(BOITES),BSE_2019=sum(BSE))
+		group_by(classe_age, region) %>%
+		summarise(BOITES_2019=sum(BOITES), BSE_2019=sum(BSE))
 
 ANTIBACTERIENS <- test20 %>%
 		full_join(test19)
 
 # Calculer les variations 2019 => 2020
 CLONAZEPAM <- CLONAZEPAM %>%
-		mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2019,var_bse=(BSE_2020-BSE_2019)/BSE_2019)
+		mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2019, var_bse=(BSE_2020-BSE_2019)/BSE_2019)
 
 ANTIBACTERIENS <- ANTIBACTERIENS %>%
-		mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2019,var_bse=(BSE_2020-BSE_2019)/BSE_2019)
+		mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2019, var_bse=(BSE_2020-BSE_2019)/BSE_2019)
 
 # 
 
