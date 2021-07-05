@@ -22,39 +22,42 @@ library(igraph)
 ####analyse des donnees hebdomadaires####
 #---------------------------------------#
 
-owid_deces_standard_pays_semaine <- readRDS("gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS")
+es_deces_standard_pays_semaine <- readRDS("gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS")
 
 
 #-----------------------------------------------------------#
 #### complement de donnees pour etude de la surmortalite ####
 #-----------------------------------------------------------#
 
-owid_deces_standard_pays_semaine <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
 		mutate(deces_hors_covid=deces_tot-new_deaths)
 
-owid_deces_standard_pays_semaine <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
 		mutate(part_deces_covid=new_deaths/deces_tot)
 
 
-IC_deces <- owid_deces_standard_pays_semaine %>%
+IC_deces <- es_deces_standard_pays_semaine %>%
 		group_by(geo) %>% 
 		summarise(moyenne=mean(deces_standard_tot), variance=sd(deces_standard_tot)) %>%
 		mutate(bsup = moyenne + 2*variance, binf = moyenne - 2*variance )
 
-owid_deces_standard_pays_semaine <- left_join(owid_deces_standard_pays_semaine, IC_deces)
-owid_deces_standard_pays_semaine <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine <- left_join(es_deces_standard_pays_semaine, IC_deces)
+
+rm(IC_deces)
+
+es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
 		mutate(surmortalite = case_when(deces_standard_tot <= binf~"sous-mortalite",
 						deces_standard_tot >= bsup~"surmortalite",
 						TRUE~"mortalite normale"))
 
-owid_deces_standard_pays_semaine <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
 		mutate(valeur_surmortalite = case_when(surmortalite == "sous-mortalite"~deces_standard_tot-binf,
 						surmortalite == "surmortalite"~deces_standard_tot-bsup,
 						TRUE~0)) %>%
 		mutate(part_surmortalite = valeur_surmortalite/deces_standard_tot*100) %>%
 		mutate(ecart_moyenne = (deces_standard_tot-moyenne)/moyenne*100)
 
-owid_test <- owid_deces_standard_pays_semaine %>%
+test <- es_deces_standard_pays_semaine %>%
 		mutate (numerosemaine=numerosemaine + 1, 
 				deces_standard_tot_prec = deces_standard_tot, 
 				new_deaths_prec=new_deaths,
@@ -66,9 +69,11 @@ owid_test <- owid_deces_standard_pays_semaine %>%
 				surmortalite_prec = surmortalite) %>%
 		select(geo, numerosemaine, deces_standard_tot_prec, new_deaths_prec, deces_tot_prec, new_cases_prec, new_vaccinations_prec, Response_measure_prec, surmortalite_prec)
 
-owid_deces_standard_pays_semaine <- left_join(owid_deces_standard_pays_semaine , owid_test)
+es_deces_standard_pays_semaine <- left_join(es_deces_standard_pays_semaine , test)
 
-owid_deces_standard_pays_semaine <- owid_deces_standard_pays_semaine %>%
+rm(test)
+
+es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
 		mutate(deces_tot_var = deces_tot - deces_tot_prec,
 				deces_standard_tot_var = deces_standard_tot - deces_standard_tot_prec,
 				new_deaths_var = new_deaths - new_deaths_prec,
@@ -84,89 +89,92 @@ owid_deces_standard_pays_semaine <- owid_deces_standard_pays_semaine %>%
 
 
 
-autriche <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_autriche <- es_deces_standard_pays_semaine %>%
 		filter(geo == "AT")
-belgique <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_belgique <- es_deces_standard_pays_semaine %>%
 		filter(geo == "BE")
-bulgarie <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_bulgarie <- es_deces_standard_pays_semaine %>%
 		filter(geo == "BG")
-suisse <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_suisse <- es_deces_standard_pays_semaine %>%
 		filter(geo == "CH")
-rtcheque <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_rtcheque <- es_deces_standard_pays_semaine %>%
 		filter(geo == "CZ")
-danmark <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_danmark <- es_deces_standard_pays_semaine %>%
 		filter(geo == "DK")
-estonie <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_estonie <- es_deces_standard_pays_semaine %>%
 		filter(geo == "EE")
-espagne <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_espagne <- es_deces_standard_pays_semaine %>%
 		filter(geo == "ES")
-france <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_france <- es_deces_standard_pays_semaine %>%
 		filter(geo == "FR")
-croatie <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_croatie <- es_deces_standard_pays_semaine %>%
 		filter(geo == "HR") %>%
 		filter(numerosemaine>52)
-hongrie <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_hongrie <- es_deces_standard_pays_semaine %>%
 		filter(geo == "HU")
-islande <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_islande <- es_deces_standard_pays_semaine %>%
 		filter(geo == "IS")
-italie <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_italie <- es_deces_standard_pays_semaine %>%
 		filter(geo == "IT")
-lichtenstein <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_lichtenstein <- es_deces_standard_pays_semaine %>%
 		filter(geo == "LI")
-lituanie <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_lituanie <- es_deces_standard_pays_semaine %>%
 		filter(geo == "LT")
-luxembourg <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_luxembourg <- es_deces_standard_pays_semaine %>%
 		filter(geo == "LU")
-lettonie <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_lettonie <- es_deces_standard_pays_semaine %>%
 		filter(geo == "LV")
-montenegro <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_montenegro <- es_deces_standard_pays_semaine %>%
 		filter(geo == "ME")
-malte <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_malte <- es_deces_standard_pays_semaine %>%
 		filter(geo == "MT")
-norvege <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_norvege <- es_deces_standard_pays_semaine %>%
 		filter(geo == "NO")
-paysbas <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_paysbas <- es_deces_standard_pays_semaine %>%
 		filter(geo == "NL")
-portugal <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_portugal <- es_deces_standard_pays_semaine %>%
 		filter(geo == "PT")
-pologne <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_pologne <- es_deces_standard_pays_semaine %>%
 		filter(geo == "PL")
-serbie <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_serbie <- es_deces_standard_pays_semaine %>%
 		filter(geo == "RS")
-suede <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_suede <- es_deces_standard_pays_semaine %>%
 		filter(geo == "SE")
-slovenie <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_slovenie <- es_deces_standard_pays_semaine %>%
 		filter(geo == "SI")
-slovaquie <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_slovaquie <- es_deces_standard_pays_semaine %>%
 		filter(geo == "SK")
-allemagne <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_allemagne <- es_deces_standard_pays_semaine %>%
 		filter(geo == "DE")
-chypre <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_chypre <- es_deces_standard_pays_semaine %>%
 		filter(geo == "CY")
-albanie <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_albanie <- es_deces_standard_pays_semaine %>%
 		filter(geo == "AL")
-armenie <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_armenie <- es_deces_standard_pays_semaine %>%
 		filter(geo == "AM")
-grece <- owid_deces_standard_pays_semaine %>%
+# JG : Est-ce bien la Grece EL ?
+es_deces_standard_pays_semaine_grece <- es_deces_standard_pays_semaine %>%
 		filter(geo == "EL")
-finlande <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_finlande <- es_deces_standard_pays_semaine %>%
 		filter(geo == "FI")
-roumanie <- owid_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_roumanie <- es_deces_standard_pays_semaine %>%
 		filter(geo == "RO")
 
 
 #France
 
-moyenne_mobile <- running_mean(france$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-france <- france %>%
-		left_join(moyenne_mobile)
-france$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_france$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_france <- es_deces_standard_pays_semaine_france %>%
+		left_join(es_moyenne_mobile)
 
 
-plot(france$numerosemaine, france$deces_standard20france_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 25000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés")
+es_deces_standard_pays_semaine_france$moyenne <- moyenne
+
+
+plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$deces_standard20france_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 25000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés")
 axis(2, ylim=c(0, 60000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -185,16 +193,16 @@ text(26, 22000, "FRANCE", cex=1.2)
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_france.png", width = 1000)
 
 par(new=T)
-plot(suede$numerosemaine, suede$deces_standard20france_plus_40, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1,  ylab="", type="o", col="blue") 
+plot(es_deces_standard_pays_semaine_suede$numerosemaine, es_deces_standard_pays_semaine_suede$deces_standard20france_plus_40, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1,  ylab="", type="o", col="blue") 
 text(26, 23500, "SUEDE", cex=1.2, col="blue")
 par(new=T)
-plot(portugal$numerosemaine, portugal$deces_standard20france_plus_40, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1,  ylab="", type="o", col="green") 
+plot(es_deces_standard_pays_semaine_portugal$numerosemaine, es_deces_standard_pays_semaine_portugal$deces_standard20france_plus_40, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1,  ylab="", type="o", col="green") 
 text(26, 25000, "PORTUGAL", cex=1.2, col="green")
 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_france_suede_portugal.png", width = 1000)
 
 
-plot(france$numerosemaine, france$deces_standard20france_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 25000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés")
+plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$deces_standard20france_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 25000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés")
 axis(2, ylim=c(0, 60000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
@@ -211,27 +219,27 @@ text(391, 1000, "2020", cex=1.2)
 text(440, 1000, "2021", cex=1.2)
 text(26, 22000, "FRANCE", cex=1.2)
 par(new=T)
-plot(france$numerosemaine, france$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(france$numerosemaine, france$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(france$numerosemaine, france$bsup, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5,  ylab="", lty=2, type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$bsup, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5,  ylab="", lty=2, type="o", col="purple") 
 par(new=T)
-plot(france$numerosemaine, france$binf, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5,  ylab="", lty=2, type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$binf, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5,  ylab="", lty=2, type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_france_lissage.png", width = 1000)
 
 #autriche
 
 
-moyenne_mobile <- running_mean(autriche$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-autriche <- autriche %>%
-		left_join(moyenne_mobile)
-autriche$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_autriche$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_autriche <- es_deces_standard_pays_semaine_autriche %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_autriche$moyenne <- moyenne
 
-plot(autriche$numerosemaine, autriche$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de autriche")
+plot(es_deces_standard_pays_semaine_autriche$numerosemaine, es_deces_standard_pays_semaine_autriche$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de autriche")
 axis(2, ylim=c(0, 3000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
@@ -248,13 +256,13 @@ text(391, 1000, "2020", cex=1.2)
 text(440, 1000, "2021", cex=1.2)
 text(26, 22000, "autriche", cex=1.2)
 par(new=T)
-plot(autriche$numerosemaine, autriche$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_autriche$numerosemaine, es_deces_standard_pays_semaine_autriche$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(autriche$numerosemaine, autriche$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_autriche$numerosemaine, es_deces_standard_pays_semaine_autriche$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(autriche$numerosemaine, autriche$binf, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_autriche$numerosemaine, es_deces_standard_pays_semaine_autriche$binf, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(autriche$numerosemaine, autriche$bsup, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_autriche$numerosemaine, es_deces_standard_pays_semaine_autriche$bsup, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 
 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_autriche_lissage.png", width = 1000)
@@ -262,15 +270,15 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_autric
 #belgique
 
 
-moyenne_mobile <- running_mean(belgique$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-belgique <- belgique %>%
-		left_join(moyenne_mobile)
-belgique$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_belgique$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_belgique <- es_deces_standard_pays_semaine_belgique %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_belgique$moyenne <- moyenne
 
-plot(belgique$numerosemaine, belgique$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 4000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de belgique")
+plot(es_deces_standard_pays_semaine_belgique$numerosemaine, es_deces_standard_pays_semaine_belgique$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 4000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de belgique")
 axis(2, ylim=c(0, 4000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -287,28 +295,28 @@ text(391, 1000, "2020", cex=1.2)
 text(440, 1000, "2021", cex=1.2)
 text(26, 22000, "belgique", cex=1.2)
 par(new=T)
-plot(belgique$numerosemaine, belgique$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 4000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_belgique$numerosemaine, es_deces_standard_pays_semaine_belgique$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 4000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(belgique$numerosemaine, belgique$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 4000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_belgique$numerosemaine, es_deces_standard_pays_semaine_belgique$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 4000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(belgique$numerosemaine, belgique$binf, pch=16, axes=F, cex=0, ylim=c(0, 4000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_belgique$numerosemaine, es_deces_standard_pays_semaine_belgique$binf, pch=16, axes=F, cex=0, ylim=c(0, 4000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(belgique$numerosemaine, belgique$bsup, pch=16, axes=F, cex=0, ylim=c(0, 4000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_belgique$numerosemaine, es_deces_standard_pays_semaine_belgique$bsup, pch=16, axes=F, cex=0, ylim=c(0, 4000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_belgique_lissage.png", width = 1000)
 
 #bulgarie
 
 
-moyenne_mobile <- running_mean(bulgarie$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-bulgarie <- bulgarie %>%
-		left_join(moyenne_mobile)
-bulgarie$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_bulgarie$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_bulgarie <- es_deces_standard_pays_semaine_bulgarie %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_bulgarie$moyenne <- moyenne
 
-plot(bulgarie$numerosemaine, bulgarie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de bulgarie")
+plot(es_deces_standard_pays_semaine_bulgarie$numerosemaine, es_deces_standard_pays_semaine_bulgarie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de bulgarie")
 axis(2, ylim=c(0, 5000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -325,27 +333,27 @@ text(391, 1000, "2020", cex=1.2)
 text(440, 1000, "2021", cex=1.2)
 text(26, 22000, "bulgarie", cex=1.2)
 par(new=T)
-plot(bulgarie$numerosemaine, bulgarie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_bulgarie$numerosemaine, es_deces_standard_pays_semaine_bulgarie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(bulgarie$numerosemaine, bulgarie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_bulgarie$numerosemaine, es_deces_standard_pays_semaine_bulgarie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(bulgarie$numerosemaine, bulgarie$binf, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_bulgarie$numerosemaine, es_deces_standard_pays_semaine_bulgarie$binf, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(bulgarie$numerosemaine, bulgarie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_bulgarie$numerosemaine, es_deces_standard_pays_semaine_bulgarie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_bulgarie_lissage.png", width = 1000)
 
 #suisse
 
 
-moyenne_mobile <- running_mean(suisse$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-suisse <- suisse %>%
-		left_join(moyenne_mobile)
-suisse$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_suisse$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_suisse <- es_deces_standard_pays_semaine_suisse %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_suisse$moyenne <- moyenne
 
-plot(suisse$numerosemaine, suisse$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de suisse")
+plot(es_deces_standard_pays_semaine_suisse$numerosemaine, es_deces_standard_pays_semaine_suisse$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de suisse")
 axis(2, ylim=c(0, 3000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -361,27 +369,27 @@ text(339, 100, "2019", cex=1.2)
 text(391, 100, "2020", cex=1.2)
 text(440, 100, "2021", cex=1.2)
 par(new=T)
-plot(suisse$numerosemaine, suisse$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_suisse$numerosemaine, es_deces_standard_pays_semaine_suisse$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(suisse$numerosemaine, suisse$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_suisse$numerosemaine, es_deces_standard_pays_semaine_suisse$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(suisse$numerosemaine, suisse$binf, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_suisse$numerosemaine, es_deces_standard_pays_semaine_suisse$binf, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(suisse$numerosemaine, suisse$bsup, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_suisse$numerosemaine, es_deces_standard_pays_semaine_suisse$bsup, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_suisse_lissage.png", width = 1000)
 
 #rtcheque
 
 
-moyenne_mobile <- running_mean(rtcheque$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-rtcheque <- rtcheque %>%
-		left_join(moyenne_mobile)
-rtcheque$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_rtcheque$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_rtcheque <- es_deces_standard_pays_semaine_rtcheque %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_rtcheque$moyenne <- moyenne
 
-plot(rtcheque$numerosemaine, rtcheque$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de République Tchèque")
+plot(es_deces_standard_pays_semaine_rtcheque$numerosemaine, es_deces_standard_pays_semaine_rtcheque$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de République Tchèque")
 axis(2, ylim=c(0, 5000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -398,27 +406,27 @@ text(391, 1000, "2020", cex=1.2)
 text(440, 1000, "2021", cex=1.2)
 text(26, 22000, "rtcheque", cex=1.2)
 par(new=T)
-plot(rtcheque$numerosemaine, rtcheque$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_rtcheque$numerosemaine, es_deces_standard_pays_semaine_rtcheque$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(rtcheque$numerosemaine, rtcheque$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_rtcheque$numerosemaine, es_deces_standard_pays_semaine_rtcheque$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(rtcheque$numerosemaine, rtcheque$binf, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_rtcheque$numerosemaine, es_deces_standard_pays_semaine_rtcheque$binf, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(rtcheque$numerosemaine, rtcheque$bsup, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_rtcheque$numerosemaine, es_deces_standard_pays_semaine_rtcheque$bsup, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_rtcheque_lissage.png", width = 1000)
 
 #danmark
 
 
-moyenne_mobile <- running_mean(danmark$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-danmark <- danmark %>%
-		left_join(moyenne_mobile)
-danmark$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_danmark$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_danmark <- es_deces_standard_pays_semaine_danmark %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_danmark$moyenne <- moyenne
 
-plot(danmark$numerosemaine, danmark$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de danmark")
+plot(es_deces_standard_pays_semaine_danmark$numerosemaine, es_deces_standard_pays_semaine_danmark$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de danmark")
 axis(2, ylim=c(0, 2000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -435,27 +443,27 @@ text(391, 100, "2020", cex=1.2)
 text(440, 100, "2021", cex=1.2)
 text(26, 22000, "danmark", cex=1.2)
 par(new=T)
-plot(danmark$numerosemaine, danmark$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_danmark$numerosemaine, es_deces_standard_pays_semaine_danmark$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(danmark$numerosemaine, danmark$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_danmark$numerosemaine, es_deces_standard_pays_semaine_danmark$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(danmark$numerosemaine, danmark$binf, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_danmark$numerosemaine, es_deces_standard_pays_semaine_danmark$binf, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(danmark$numerosemaine, danmark$bsup, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_danmark$numerosemaine, es_deces_standard_pays_semaine_danmark$bsup, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_danmark_lissage.png", width = 1000)
 
 #estonie
 
 
-moyenne_mobile <- running_mean(estonie$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-estonie <- estonie %>%
-		left_join(moyenne_mobile)
-estonie$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_estonie$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_estonie <- es_deces_standard_pays_semaine_estonie %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_estonie$moyenne <- moyenne
 
-plot(estonie$numerosemaine, estonie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 500), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de estonie")
+plot(es_deces_standard_pays_semaine_estonie$numerosemaine, es_deces_standard_pays_semaine_estonie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 500), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de estonie")
 axis(2, ylim=c(0, 500), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -471,27 +479,27 @@ text(339, 100, "2019", cex=1.2)
 text(391, 100, "2020", cex=1.2)
 text(440, 100, "2021", cex=1.2)
 par(new=T)
-plot(estonie$numerosemaine, estonie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 500), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_estonie$numerosemaine, es_deces_standard_pays_semaine_estonie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 500), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(estonie$numerosemaine, estonie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 500), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_estonie$numerosemaine, es_deces_standard_pays_semaine_estonie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 500), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(estonie$numerosemaine, estonie$binf, pch=16, axes=F, cex=0, ylim=c(0, 500), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_estonie$numerosemaine, es_deces_standard_pays_semaine_estonie$binf, pch=16, axes=F, cex=0, ylim=c(0, 500), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(estonie$numerosemaine, estonie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 500), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_estonie$numerosemaine, es_deces_standard_pays_semaine_estonie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 500), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_estonie_lissage.png", width = 1000)
 
 #espagne
 
 
-moyenne_mobile <- running_mean(espagne$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-espagne <- espagne %>%
-		left_join(moyenne_mobile)
-espagne$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_espagne$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_espagne <- es_deces_standard_pays_semaine_espagne %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_espagne$moyenne <- moyenne
 
-plot(espagne$numerosemaine, espagne$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 25000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de espagne")
+plot(es_deces_standard_pays_semaine_espagne$numerosemaine, es_deces_standard_pays_semaine_espagne$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 25000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de espagne")
 axis(2, ylim=c(0, 25000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -508,27 +516,27 @@ text(391, 1000, "2020", cex=1.2)
 text(440, 1000, "2021", cex=1.2)
 text(26, 22000, "espagne", cex=1.2)
 par(new=T)
-plot(espagne$numerosemaine, espagne$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_espagne$numerosemaine, es_deces_standard_pays_semaine_espagne$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(espagne$numerosemaine, espagne$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_espagne$numerosemaine, es_deces_standard_pays_semaine_espagne$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(espagne$numerosemaine, espagne$binf, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_espagne$numerosemaine, es_deces_standard_pays_semaine_espagne$binf, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(espagne$numerosemaine, espagne$bsup, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_espagne$numerosemaine, es_deces_standard_pays_semaine_espagne$bsup, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_espagne_lissage.png", width = 1000)
 
 #croatie
 
 
-moyenne_mobile <- running_mean(croatie$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+104
-croatie <- croatie %>%
-		left_join(moyenne_mobile)
-croatie$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_croatie$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+104
+es_deces_standard_pays_semaine_croatie <- es_deces_standard_pays_semaine_croatie %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_croatie$moyenne <- moyenne
 
-plot(croatie$numerosemaine, croatie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de croatie")
+plot(es_deces_standard_pays_semaine_croatie$numerosemaine, es_deces_standard_pays_semaine_croatie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de croatie")
 axis(2, ylim=c(0, 2000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -545,27 +553,27 @@ text(440, 100, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 
 par(new=T)
-plot(croatie$numerosemaine, croatie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_croatie$numerosemaine, es_deces_standard_pays_semaine_croatie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(croatie$numerosemaine, croatie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_croatie$numerosemaine, es_deces_standard_pays_semaine_croatie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(croatie$numerosemaine, croatie$binf, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_croatie$numerosemaine, es_deces_standard_pays_semaine_croatie$binf, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(croatie$numerosemaine, croatie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_croatie$numerosemaine, es_deces_standard_pays_semaine_croatie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_croatie_lissage.png", width = 1000)
 
 #hongrie
 
 
-moyenne_mobile <- running_mean(hongrie$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-hongrie <- hongrie %>%
-		left_join(moyenne_mobile)
-hongrie$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_hongrie$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_hongrie <- es_deces_standard_pays_semaine_hongrie %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_hongrie$moyenne <- moyenne
 
-plot(hongrie$numerosemaine, hongrie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Hongrie")
+plot(es_deces_standard_pays_semaine_hongrie$numerosemaine, es_deces_standard_pays_semaine_hongrie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Hongrie")
 axis(2, ylim=c(0, 5000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -582,28 +590,28 @@ text(440, 1000, "2021", cex=1.2)
 text(26, 22000, "hongrie", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(hongrie$numerosemaine, hongrie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_hongrie$numerosemaine, es_deces_standard_pays_semaine_hongrie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(hongrie$numerosemaine, hongrie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_hongrie$numerosemaine, es_deces_standard_pays_semaine_hongrie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(hongrie$numerosemaine, hongrie$binf, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_hongrie$numerosemaine, es_deces_standard_pays_semaine_hongrie$binf, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(hongrie$numerosemaine, hongrie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_hongrie$numerosemaine, es_deces_standard_pays_semaine_hongrie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_hongrie_lissage.png", width = 1000)
 
 
 #islande
 
 
-moyenne_mobile <- running_mean(islande$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-islande <- islande %>%
-		left_join(moyenne_mobile)
-islande$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_islande$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_islande <- es_deces_standard_pays_semaine_islande %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_islande$moyenne <- moyenne
 
-plot(islande$numerosemaine, islande$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 100), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de islande")
+plot(es_deces_standard_pays_semaine_islande$numerosemaine, es_deces_standard_pays_semaine_islande$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 100), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de islande")
 axis(2, ylim=c(0, 100), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -620,27 +628,27 @@ text(440, 1, "2021", cex=1.2)
 text(26, 1, "islande", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(islande$numerosemaine, islande$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 100), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_islande$numerosemaine, es_deces_standard_pays_semaine_islande$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 100), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(islande$numerosemaine, islande$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 100), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_islande$numerosemaine, es_deces_standard_pays_semaine_islande$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 100), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(islande$numerosemaine, islande$binf, pch=16, axes=F, cex=0, ylim=c(0, 100), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_islande$numerosemaine, es_deces_standard_pays_semaine_islande$binf, pch=16, axes=F, cex=0, ylim=c(0, 100), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(islande$numerosemaine, islande$bsup, pch=16, axes=F, cex=0, ylim=c(0, 100), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_islande$numerosemaine, es_deces_standard_pays_semaine_islande$bsup, pch=16, axes=F, cex=0, ylim=c(0, 100), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_islande_lissage.png", width = 1000)
 
 #italie
 
 
-moyenne_mobile <- running_mean(italie$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-italie <- italie %>%
-		left_join(moyenne_mobile)
-italie$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_italie$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_italie <- es_deces_standard_pays_semaine_italie %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_italie$moyenne <- moyenne
 
-plot(italie$numerosemaine, italie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 30000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de italie")
+plot(es_deces_standard_pays_semaine_italie$numerosemaine, es_deces_standard_pays_semaine_italie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 30000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de italie")
 axis(2, ylim=c(0, 30000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -657,28 +665,28 @@ text(440, 1000, "2021", cex=1.2)
 text(26, 22000, "italie", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(italie$numerosemaine, italie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_italie$numerosemaine, es_deces_standard_pays_semaine_italie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(italie$numerosemaine, italie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_italie$numerosemaine, es_deces_standard_pays_semaine_italie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(italie$numerosemaine, italie$binf, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_italie$numerosemaine, es_deces_standard_pays_semaine_italie$binf, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(italie$numerosemaine, italie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_italie$numerosemaine, es_deces_standard_pays_semaine_italie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_italie_lissage.png", width = 1000)
 
 
 #lichtenstein
 
 
-moyenne_mobile <- running_mean(lichtenstein$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-lichtenstein <- lichtenstein %>%
-		left_join(moyenne_mobile)
-lichtenstein$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_lichtenstein$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_lichtenstein <- es_deces_standard_pays_semaine_lichtenstein %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_lichtenstein$moyenne <- moyenne
 
-plot(lichtenstein$numerosemaine, lichtenstein$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 20), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de lichtenstein")
+plot(es_deces_standard_pays_semaine_lichtenstein$numerosemaine, es_deces_standard_pays_semaine_lichtenstein$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 20), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de lichtenstein")
 axis(2, ylim=c(0, 20), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -695,28 +703,28 @@ text(440, 1, "2021", cex=1.2)
 text(26, 15, "lichtenstein", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(lichtenstein$numerosemaine, lichtenstein$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 20), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_lichtenstein$numerosemaine, es_deces_standard_pays_semaine_lichtenstein$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 20), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(lichtenstein$numerosemaine, lichtenstein$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 20), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_lichtenstein$numerosemaine, es_deces_standard_pays_semaine_lichtenstein$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 20), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(lichtenstein$numerosemaine, lichtenstein$binf, pch=16, axes=F, cex=0, ylim=c(0, 20), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_lichtenstein$numerosemaine, es_deces_standard_pays_semaine_lichtenstein$binf, pch=16, axes=F, cex=0, ylim=c(0, 20), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(lichtenstein$numerosemaine, lichtenstein$bsup, pch=16, axes=F, cex=0, ylim=c(0, 20), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_lichtenstein$numerosemaine, es_deces_standard_pays_semaine_lichtenstein$bsup, pch=16, axes=F, cex=0, ylim=c(0, 20), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_lichtenstein_lissage.png", width = 1000)
 
 
 #lituanie
 
 
-moyenne_mobile <- running_mean(lituanie$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-lituanie <- lituanie %>%
-		left_join(moyenne_mobile)
-lituanie$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_lituanie$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_lituanie <- es_deces_standard_pays_semaine_lituanie %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_lituanie$moyenne <- moyenne
 
-plot(lituanie$numerosemaine, lituanie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de lituanie")
+plot(es_deces_standard_pays_semaine_lituanie$numerosemaine, es_deces_standard_pays_semaine_lituanie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de lituanie")
 axis(2, ylim=c(0, 2000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -732,27 +740,27 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(lituanie$numerosemaine, lituanie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_lituanie$numerosemaine, es_deces_standard_pays_semaine_lituanie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(lituanie$numerosemaine, lituanie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_lituanie$numerosemaine, es_deces_standard_pays_semaine_lituanie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(lituanie$numerosemaine, lituanie$binf, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_lituanie$numerosemaine, es_deces_standard_pays_semaine_lituanie$binf, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(lituanie$numerosemaine, lituanie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_lituanie$numerosemaine, es_deces_standard_pays_semaine_lituanie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_lituanie_lissage.png", width = 1000)
 
 #luxembourg
 
 
-moyenne_mobile <- running_mean(luxembourg$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-luxembourg <- luxembourg %>%
-		left_join(moyenne_mobile)
-luxembourg$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_luxembourg$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_luxembourg <- es_deces_standard_pays_semaine_luxembourg %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_luxembourg$moyenne <- moyenne
 
-plot(luxembourg$numerosemaine, luxembourg$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 200), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de luxembourg")
+plot(es_deces_standard_pays_semaine_luxembourg$numerosemaine, es_deces_standard_pays_semaine_luxembourg$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 200), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de luxembourg")
 axis(2, ylim=c(0, 200), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -768,27 +776,27 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(luxembourg$numerosemaine, luxembourg$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_luxembourg$numerosemaine, es_deces_standard_pays_semaine_luxembourg$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(luxembourg$numerosemaine, luxembourg$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_luxembourg$numerosemaine, es_deces_standard_pays_semaine_luxembourg$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(luxembourg$numerosemaine, luxembourg$binf, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_luxembourg$numerosemaine, es_deces_standard_pays_semaine_luxembourg$binf, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(luxembourg$numerosemaine, luxembourg$bsup, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_luxembourg$numerosemaine, es_deces_standard_pays_semaine_luxembourg$bsup, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_luxembourg_lissage.png", width = 1000)
 
 #lettonie
 
 
-moyenne_mobile <- running_mean(lettonie$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-lettonie <- lettonie %>%
-		left_join(moyenne_mobile)
-lettonie$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_lettonie$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_lettonie <- es_deces_standard_pays_semaine_lettonie %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_lettonie$moyenne <- moyenne
 
-plot(lettonie$numerosemaine, lettonie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 1000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de lettonie")
+plot(es_deces_standard_pays_semaine_lettonie$numerosemaine, es_deces_standard_pays_semaine_lettonie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 1000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de lettonie")
 axis(2, ylim=c(0, 1000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -804,27 +812,27 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(lettonie$numerosemaine, lettonie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_lettonie$numerosemaine, es_deces_standard_pays_semaine_lettonie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(lettonie$numerosemaine, lettonie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_lettonie$numerosemaine, es_deces_standard_pays_semaine_lettonie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(lettonie$numerosemaine, lettonie$binf, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_lettonie$numerosemaine, es_deces_standard_pays_semaine_lettonie$binf, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(lettonie$numerosemaine, lettonie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_lettonie$numerosemaine, es_deces_standard_pays_semaine_lettonie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_lettonie_lissage.png", width = 1000)
 
 #montenegro
 
 
-moyenne_mobile <- running_mean(montenegro$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-montenegro <- montenegro %>%
-		left_join(moyenne_mobile)
-montenegro$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_montenegro$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_montenegro <- es_deces_standard_pays_semaine_montenegro %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_montenegro$moyenne <- moyenne
 
-plot(montenegro$numerosemaine, montenegro$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 200), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de montenegro")
+plot(es_deces_standard_pays_semaine_montenegro$numerosemaine, es_deces_standard_pays_semaine_montenegro$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 200), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de montenegro")
 axis(2, ylim=c(0, 200), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -840,27 +848,27 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(montenegro$numerosemaine, montenegro$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_montenegro$numerosemaine, es_deces_standard_pays_semaine_montenegro$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(montenegro$numerosemaine, montenegro$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_montenegro$numerosemaine, es_deces_standard_pays_semaine_montenegro$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(montenegro$numerosemaine, montenegro$binf, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_montenegro$numerosemaine, es_deces_standard_pays_semaine_montenegro$binf, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(montenegro$numerosemaine, montenegro$bsup, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_montenegro$numerosemaine, es_deces_standard_pays_semaine_montenegro$bsup, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_montenegro_lissage.png", width = 1000)
 
 #malte
 
 
-moyenne_mobile <- running_mean(malte$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-malte <- malte %>%
-		left_join(moyenne_mobile)
-malte$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_malte$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_malte <- es_deces_standard_pays_semaine_malte %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_malte$moyenne <- moyenne
 
-plot(malte$numerosemaine, malte$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 200), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de malte")
+plot(es_deces_standard_pays_semaine_malte$numerosemaine, es_deces_standard_pays_semaine_malte$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 200), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de malte")
 axis(2, ylim=c(0, 200), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -876,27 +884,27 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(malte$numerosemaine, malte$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_malte$numerosemaine, es_deces_standard_pays_semaine_malte$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(malte$numerosemaine, malte$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_malte$numerosemaine, es_deces_standard_pays_semaine_malte$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(malte$numerosemaine, malte$binf, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_malte$numerosemaine, es_deces_standard_pays_semaine_malte$binf, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(malte$numerosemaine, malte$bsup, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_malte$numerosemaine, es_deces_standard_pays_semaine_malte$bsup, pch=16, axes=F, cex=0, ylim=c(0, 200), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_malte_lissage.png", width = 1000)
 
 #norvege
 
 
-moyenne_mobile <- running_mean(norvege$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-norvege <- norvege %>%
-		left_join(moyenne_mobile)
-norvege$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_norvege$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_norvege <- es_deces_standard_pays_semaine_norvege %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_norvege$moyenne <- moyenne
 
-plot(norvege$numerosemaine, norvege$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 1500), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de norvege")
+plot(es_deces_standard_pays_semaine_norvege$numerosemaine, es_deces_standard_pays_semaine_norvege$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 1500), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de norvege")
 axis(2, ylim=c(0, 1500), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -912,28 +920,28 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(norvege$numerosemaine, norvege$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 1500), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_norvege$numerosemaine, es_deces_standard_pays_semaine_norvege$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 1500), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(norvege$numerosemaine, norvege$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 1500), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_norvege$numerosemaine, es_deces_standard_pays_semaine_norvege$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 1500), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(norvege$numerosemaine, norvege$binf, pch=16, axes=F, cex=0, ylim=c(0, 1500), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_norvege$numerosemaine, es_deces_standard_pays_semaine_norvege$binf, pch=16, axes=F, cex=0, ylim=c(0, 1500), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(norvege$numerosemaine, norvege$bsup, pch=16, axes=F, cex=0, ylim=c(0, 1500), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_norvege$numerosemaine, es_deces_standard_pays_semaine_norvege$bsup, pch=16, axes=F, cex=0, ylim=c(0, 1500), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_norvege_lissage.png", width = 1000)
 
 #paysbas
 
 
-moyenne_mobile <- running_mean(paysbas$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-paysbas <- paysbas %>%
-		left_join(moyenne_mobile)
-paysbas$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_paysbas$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_paysbas <- es_deces_standard_pays_semaine_paysbas %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_paysbas$moyenne <- moyenne
 
-plot(paysbas$numerosemaine, paysbas$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 6000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de paysbas")
+plot(es_deces_standard_pays_semaine_paysbas$numerosemaine, es_deces_standard_pays_semaine_paysbas$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 6000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de paysbas")
 axis(2, ylim=c(0, 6000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -949,28 +957,28 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(paysbas$numerosemaine, paysbas$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_paysbas$numerosemaine, es_deces_standard_pays_semaine_paysbas$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(paysbas$numerosemaine, paysbas$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_paysbas$numerosemaine, es_deces_standard_pays_semaine_paysbas$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(paysbas$numerosemaine, paysbas$binf, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_paysbas$numerosemaine, es_deces_standard_pays_semaine_paysbas$binf, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(paysbas$numerosemaine, paysbas$bsup, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_paysbas$numerosemaine, es_deces_standard_pays_semaine_paysbas$bsup, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_paysbas_lissage.png", width = 1000)
 
 
 #portugal
 
 
-moyenne_mobile <- running_mean(portugal$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-portugal <- portugal %>%
-		left_join(moyenne_mobile)
-portugal$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_portugal$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_portugal <- es_deces_standard_pays_semaine_portugal %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_portugal$moyenne <- moyenne
 
-plot(portugal$numerosemaine, portugal$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 6000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de portugal")
+plot(es_deces_standard_pays_semaine_portugal$numerosemaine, es_deces_standard_pays_semaine_portugal$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 6000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de portugal")
 axis(2, ylim=c(0, 6000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -986,27 +994,27 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(portugal$numerosemaine, portugal$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_portugal$numerosemaine, es_deces_standard_pays_semaine_portugal$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(portugal$numerosemaine, portugal$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_portugal$numerosemaine, es_deces_standard_pays_semaine_portugal$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(portugal$numerosemaine, portugal$binf, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_portugal$numerosemaine, es_deces_standard_pays_semaine_portugal$binf, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(portugal$numerosemaine, portugal$bsup, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_portugal$numerosemaine, es_deces_standard_pays_semaine_portugal$bsup, pch=16, axes=F, cex=0, ylim=c(0, 6000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_portugal_lissage.png", width = 1000)
 
 #pologne
 
 
-moyenne_mobile <- running_mean(pologne$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-pologne <- pologne %>%
-		left_join(moyenne_mobile)
-pologne$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_pologne$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_pologne <- es_deces_standard_pays_semaine_pologne %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_pologne$moyenne <- moyenne
 
-plot(pologne$numerosemaine, pologne$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 17000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de pologne")
+plot(es_deces_standard_pays_semaine_pologne$numerosemaine, es_deces_standard_pays_semaine_pologne$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 17000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de pologne")
 axis(2, ylim=c(0, 17000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -1022,27 +1030,27 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(pologne$numerosemaine, pologne$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 17000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_pologne$numerosemaine, es_deces_standard_pays_semaine_pologne$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 17000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(pologne$numerosemaine, pologne$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 17000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_pologne$numerosemaine, es_deces_standard_pays_semaine_pologne$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 17000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(pologne$numerosemaine, pologne$binf, pch=16, axes=F, cex=0, ylim=c(0, 17000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_pologne$numerosemaine, es_deces_standard_pays_semaine_pologne$binf, pch=16, axes=F, cex=0, ylim=c(0, 17000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(pologne$numerosemaine, pologne$bsup, pch=16, axes=F, cex=0, ylim=c(0, 17000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_pologne$numerosemaine, es_deces_standard_pays_semaine_pologne$bsup, pch=16, axes=F, cex=0, ylim=c(0, 17000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_pologne_lissage.png", width = 1000)
 
 #serbie
 
 
-moyenne_mobile <- running_mean(serbie$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-serbie <- serbie %>%
-		left_join(moyenne_mobile)
-serbie$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_serbie$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_serbie <- es_deces_standard_pays_semaine_serbie %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_serbie$moyenne <- moyenne
 
-plot(serbie$numerosemaine, serbie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Serbie")
+plot(es_deces_standard_pays_semaine_serbie$numerosemaine, es_deces_standard_pays_semaine_serbie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Serbie")
 axis(2, ylim=c(0, 5000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -1058,27 +1066,27 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(serbie$numerosemaine, serbie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_serbie$numerosemaine, es_deces_standard_pays_semaine_serbie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(serbie$numerosemaine, serbie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_serbie$numerosemaine, es_deces_standard_pays_semaine_serbie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(serbie$numerosemaine, serbie$binf, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_serbie$numerosemaine, es_deces_standard_pays_semaine_serbie$binf, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(serbie$numerosemaine, serbie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_serbie$numerosemaine, es_deces_standard_pays_semaine_serbie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_serbie_lissage.png", width = 1000)
 
 #suede
 
 
-moyenne_mobile <- running_mean(suede$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-suede <- suede %>%
-		left_join(moyenne_mobile)
-suede$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_suede$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_suede <- es_deces_standard_pays_semaine_suede %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_suede$moyenne <- moyenne
 
-plot(suede$numerosemaine, suede$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Suède")
+plot(es_deces_standard_pays_semaine_suede$numerosemaine, es_deces_standard_pays_semaine_suede$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Suède")
 axis(2, ylim=c(0, 3000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -1094,27 +1102,27 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(suede$numerosemaine, suede$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_suede$numerosemaine, es_deces_standard_pays_semaine_suede$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(suede$numerosemaine, suede$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_suede$numerosemaine, es_deces_standard_pays_semaine_suede$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(suede$numerosemaine, suede$binf, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_suede$numerosemaine, es_deces_standard_pays_semaine_suede$binf, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(suede$numerosemaine, suede$bsup, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_suede$numerosemaine, es_deces_standard_pays_semaine_suede$bsup, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_suede_lissage.png", width = 1000)
 
 #slovenie
 
 
-moyenne_mobile <- running_mean(slovenie$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-slovenie <- slovenie %>%
-		left_join(moyenne_mobile)
-slovenie$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_slovenie$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_slovenie <- es_deces_standard_pays_semaine_slovenie %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_slovenie$moyenne <- moyenne
 
-plot(slovenie$numerosemaine, slovenie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 1000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Slovénie")
+plot(es_deces_standard_pays_semaine_slovenie$numerosemaine, es_deces_standard_pays_semaine_slovenie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 1000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Slovénie")
 axis(2, ylim=c(0, 1000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -1130,26 +1138,26 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(slovenie$numerosemaine, slovenie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_slovenie$numerosemaine, es_deces_standard_pays_semaine_slovenie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(slovenie$numerosemaine, slovenie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_slovenie$numerosemaine, es_deces_standard_pays_semaine_slovenie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(slovenie$numerosemaine, slovenie$binf, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_slovenie$numerosemaine, es_deces_standard_pays_semaine_slovenie$binf, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(slovenie$numerosemaine, slovenie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_slovenie$numerosemaine, es_deces_standard_pays_semaine_slovenie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_slovenie_lissage.png", width = 1000)
 
 #slovaquie
 
-moyenne_mobile <- running_mean(slovaquie$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-slovaquie <- slovaquie %>%
-		left_join(moyenne_mobile)
-slovaquie$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_slovaquie$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_slovaquie <- es_deces_standard_pays_semaine_slovaquie %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_slovaquie$moyenne <- moyenne
 
-plot(slovaquie$numerosemaine, slovaquie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de slovaquie")
+plot(es_deces_standard_pays_semaine_slovaquie$numerosemaine, es_deces_standard_pays_semaine_slovaquie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de slovaquie")
 axis(2, ylim=c(0, 3000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -1165,26 +1173,26 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(slovaquie$numerosemaine, slovaquie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_slovaquie$numerosemaine, es_deces_standard_pays_semaine_slovaquie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(slovaquie$numerosemaine, slovaquie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_slovaquie$numerosemaine, es_deces_standard_pays_semaine_slovaquie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(slovaquie$numerosemaine, slovaquie$binf, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_slovaquie$numerosemaine, es_deces_standard_pays_semaine_slovaquie$binf, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(slovaquie$numerosemaine, slovaquie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_slovaquie$numerosemaine, es_deces_standard_pays_semaine_slovaquie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 3000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_slovaquie_lissage.png", width = 1000)
 
 #allemagne
 
-moyenne_mobile <- running_mean(allemagne$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+209
-allemagne <- allemagne %>%
-		left_join(moyenne_mobile)
-allemagne$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_allemagne$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+209
+es_deces_standard_pays_semaine_allemagne <- es_deces_standard_pays_semaine_allemagne %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_allemagne$moyenne <- moyenne
 
-plot(allemagne$numerosemaine, allemagne$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 30000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés d'Allemagne")
+plot(es_deces_standard_pays_semaine_allemagne$numerosemaine, es_deces_standard_pays_semaine_allemagne$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 30000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés d'Allemagne")
 axis(2, ylim=c(0, 30000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -1200,26 +1208,26 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(allemagne$numerosemaine, allemagne$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_allemagne$numerosemaine, es_deces_standard_pays_semaine_allemagne$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(allemagne$numerosemaine, allemagne$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_allemagne$numerosemaine, es_deces_standard_pays_semaine_allemagne$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(allemagne$numerosemaine, allemagne$binf, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_allemagne$numerosemaine, es_deces_standard_pays_semaine_allemagne$binf, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(allemagne$numerosemaine, allemagne$bsup, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_allemagne$numerosemaine, es_deces_standard_pays_semaine_allemagne$bsup, pch=16, axes=F, cex=0, ylim=c(0, 30000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_allemagne_lissage.png", width = 1000)
 
 #chypre
 
-moyenne_mobile <- running_mean(chypre$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+157
-chypre <- chypre %>%
-		left_join(moyenne_mobile)
-chypre$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_chypre$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+157
+es_deces_standard_pays_semaine_chypre <- es_deces_standard_pays_semaine_chypre %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_chypre$moyenne <- moyenne
 
-plot(chypre$numerosemaine, chypre$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 300), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Chypre")
+plot(es_deces_standard_pays_semaine_chypre$numerosemaine, es_deces_standard_pays_semaine_chypre$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 300), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Chypre")
 axis(2, ylim=c(0, 300), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -1235,26 +1243,26 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(chypre$numerosemaine, chypre$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 300), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_chypre$numerosemaine, es_deces_standard_pays_semaine_chypre$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 300), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(chypre$numerosemaine, chypre$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 300), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_chypre$numerosemaine, es_deces_standard_pays_semaine_chypre$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 300), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(chypre$numerosemaine, chypre$binf, pch=16, axes=F, cex=0, ylim=c(0, 300), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_chypre$numerosemaine, es_deces_standard_pays_semaine_chypre$binf, pch=16, axes=F, cex=0, ylim=c(0, 300), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(chypre$numerosemaine, chypre$bsup, pch=16, axes=F, cex=0, ylim=c(0, 300), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_chypre$numerosemaine, es_deces_standard_pays_semaine_chypre$bsup, pch=16, axes=F, cex=0, ylim=c(0, 300), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_chypre_lissage.png", width = 1000)
 
 #albanie
 
-moyenne_mobile <- running_mean(albanie$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+157
-albanie <- albanie %>%
-		left_join(moyenne_mobile)
-albanie$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_albanie$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+157
+es_deces_standard_pays_semaine_albanie <- es_deces_standard_pays_semaine_albanie %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_albanie$moyenne <- moyenne
 
-plot(albanie$numerosemaine, albanie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 1000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés d'Albanie")
+plot(es_deces_standard_pays_semaine_albanie$numerosemaine, es_deces_standard_pays_semaine_albanie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 1000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés d'Albanie")
 axis(2, ylim=c(0, 1000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -1270,26 +1278,26 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(albanie$numerosemaine, albanie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_albanie$numerosemaine, es_deces_standard_pays_semaine_albanie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(albanie$numerosemaine, albanie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_albanie$numerosemaine, es_deces_standard_pays_semaine_albanie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(albanie$numerosemaine, albanie$binf, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_albanie$numerosemaine, es_deces_standard_pays_semaine_albanie$binf, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(albanie$numerosemaine, albanie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_albanie$numerosemaine, es_deces_standard_pays_semaine_albanie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_albanie_lissage.png", width = 1000)
 
 #armenie
 
-moyenne_mobile <- running_mean(armenie$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+157
-armenie <- armenie %>%
-		left_join(moyenne_mobile)
-armenie$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_armenie$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+157
+es_deces_standard_pays_semaine_armenie <- es_deces_standard_pays_semaine_armenie %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_armenie$moyenne <- moyenne
 
-plot(armenie$numerosemaine, armenie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés d'Arménie")
+plot(es_deces_standard_pays_semaine_armenie$numerosemaine, es_deces_standard_pays_semaine_armenie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés d'Arménie")
 axis(2, ylim=c(0, 2000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -1305,26 +1313,26 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(armenie$numerosemaine, armenie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_armenie$numerosemaine, es_deces_standard_pays_semaine_armenie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(armenie$numerosemaine, armenie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_armenie$numerosemaine, es_deces_standard_pays_semaine_armenie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(armenie$numerosemaine, armenie$binf, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_armenie$numerosemaine, es_deces_standard_pays_semaine_armenie$binf, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(armenie$numerosemaine, armenie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_armenie$numerosemaine, es_deces_standard_pays_semaine_armenie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_armenie_lissage.png", width = 1000)
 
 #grece
 
-moyenne_mobile <- running_mean(grece$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+157
-grece <- grece %>%
-		left_join(moyenne_mobile)
-grece$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_grece$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+157
+es_deces_standard_pays_semaine_grece <- es_deces_standard_pays_semaine_grece %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_grece$moyenne <- moyenne
 
-plot(grece$numerosemaine, grece$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Grèce")
+plot(es_deces_standard_pays_semaine_grece$numerosemaine, es_deces_standard_pays_semaine_grece$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Grèce")
 axis(2, ylim=c(0, 5000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -1340,26 +1348,26 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(grece$numerosemaine, grece$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_grece$numerosemaine, es_deces_standard_pays_semaine_grece$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(grece$numerosemaine, grece$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_grece$numerosemaine, es_deces_standard_pays_semaine_grece$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(grece$numerosemaine, grece$binf, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_grece$numerosemaine, es_deces_standard_pays_semaine_grece$binf, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(grece$numerosemaine, grece$bsup, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_grece$numerosemaine, es_deces_standard_pays_semaine_grece$bsup, pch=16, axes=F, cex=0, ylim=c(0, 5000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_grece_lissage.png", width = 1000)
 
 #finlande
 
-moyenne_mobile <- running_mean(finlande$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+51
-finlande <- finlande %>%
-		left_join(moyenne_mobile)
-finlande$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_finlande$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+51
+es_deces_standard_pays_semaine_finlande <- es_deces_standard_pays_semaine_finlande %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_finlande$moyenne <- moyenne
 
-plot(finlande$numerosemaine, finlande$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Finlande")
+plot(es_deces_standard_pays_semaine_finlande$numerosemaine, es_deces_standard_pays_semaine_finlande$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Finlande")
 axis(2, ylim=c(0, 2000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -1375,26 +1383,27 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(finlande$numerosemaine, finlande$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_finlande$numerosemaine, es_deces_standard_pays_semaine_finlande$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(finlande$numerosemaine, finlande$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_finlande$numerosemaine, es_deces_standard_pays_semaine_finlande$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(finlande$numerosemaine, finlande$binf, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_finlande$numerosemaine, es_deces_standard_pays_semaine_finlande$binf, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(finlande$numerosemaine, finlande$bsup, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_finlande$numerosemaine, es_deces_standard_pays_semaine_finlande$bsup, pch=16, axes=F, cex=0, ylim=c(0, 2000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_finlande_lissage.png", width = 1000)
 
 #roumanie
 
-moyenne_mobile <- running_mean(roumanie$deces_standard_tot, 52)
-moyenne <- mean(moyenne_mobile)
-moyenne_mobile <- data_frame(moyenne_mobile)
-moyenne_mobile$numerosemaine <- 1:nrow(moyenne_mobile)+157
-roumanie <- roumanie %>%
-		left_join(moyenne_mobile)
-roumanie$moyenne <- moyenne
+es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_roumanie$deces_standard_tot, 52)
+moyenne <- mean(es_moyenne_mobile)
+es_moyenne_mobile <- data_frame(es_moyenne_mobile)
+es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile)+157
+es_deces_standard_pays_semaine_roumanie <- es_deces_standard_pays_semaine_roumanie %>%
+		left_join(es_moyenne_mobile)
+es_deces_standard_pays_semaine_roumanie$moyenne <- moyenne
 
-plot(roumanie$numerosemaine, roumanie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 10000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Roumanie")
+
+plot(es_deces_standard_pays_semaine_roumanie$numerosemaine, es_deces_standard_pays_semaine_roumanie$deces_standard_tot_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 10000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés de Roumanie")
 axis(2, ylim=c(0, 10000), col="black")
 mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
@@ -1410,14 +1419,17 @@ text(391, 1, "2020", cex=1.2)
 text(440, 1, "2021", cex=1.2)
 mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
 par(new=T)
-plot(roumanie$numerosemaine, roumanie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 10000), xlab="", lwd=3,  ylab="", type="o", col="red") 
+plot(es_deces_standard_pays_semaine_roumanie$numerosemaine, es_deces_standard_pays_semaine_roumanie$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 10000), xlab="", lwd=3,  ylab="", type="o", col="red") 
 par(new=T)
-plot(roumanie$numerosemaine, roumanie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 10000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_roumanie$numerosemaine, es_deces_standard_pays_semaine_roumanie$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 10000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(roumanie$numerosemaine, roumanie$binf, pch=16, axes=F, cex=0, ylim=c(0, 10000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_roumanie$numerosemaine, es_deces_standard_pays_semaine_roumanie$binf, pch=16, axes=F, cex=0, ylim=c(0, 10000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 par(new=T)
-plot(roumanie$numerosemaine, roumanie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 10000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
+plot(es_deces_standard_pays_semaine_roumanie$numerosemaine, es_deces_standard_pays_semaine_roumanie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 10000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_roumanie_lissage.png", width = 1000)
+
+rm(moyenne)
+rm(es_moyenne_mobile)
 
 #---------------------------------------#
 ####    vaccinations et deces        ####
@@ -1425,16 +1437,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_rouman
 
 #Hongrie
 
-moyenne_mobile_m40 <- running_mean(hongrie$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_hongrie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-hongrie <- hongrie %>%
+es_deces_standard_pays_semaine_hongrie <- es_deces_standard_pays_semaine_hongrie %>%
 		left_join(moyenne_mobile_m40)
-hongrie$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_hongrie$moyenne_m40 <- moyenne_m40
 
 
-essai <- hongrie %>%
+essai <- es_deces_standard_pays_semaine_hongrie %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -1492,24 +1504,24 @@ mtext("nombre de vaccinés par million d'habitants", side=4, col="blue", line=2.
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_hongrie_jeune.png", width = 1000)
 
-pophongrie <- readRDS(file = "gen/rds/Eurostat_pjanquinq.RDS") %>%
-		filter(geo == "HU") %>%
-		filter(time == "2020-01-01") %>%
-		group_by(agequinq) %>% 
-		summarise(population=sum(population))
+## es_pjan_quinq_pop_hongrie <- readRDS(file = "gen/rds/Eurostat_pjanquinq.RDS") %>%
+##         filter(geo == "HU") %>%
+##         filter(time == "2020-01-01") %>%
+##         group_by(agequinq) %>% 
+##         summarise(population=sum(population))
 
 #malte
 
-moyenne_mobile_m40 <- running_mean(malte$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_malte$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-malte <- malte %>%
+es_deces_standard_pays_semaine_malte <- es_deces_standard_pays_semaine_malte %>%
 		left_join(moyenne_mobile_m40)
-malte$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_malte$moyenne_m40 <- moyenne_m40
 
 
-essai <- malte %>%
+essai <- es_deces_standard_pays_semaine_malte %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -1570,16 +1582,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_malte
 
 #islande
 
-moyenne_mobile_m40 <- running_mean(islande$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_islande$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-islande <- islande %>%
+es_deces_standard_pays_semaine_islande <- es_deces_standard_pays_semaine_islande %>%
 		left_join(moyenne_mobile_m40)
-islande$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_islande$moyenne_m40 <- moyenne_m40
 
 
-essai <- islande %>%
+essai <- es_deces_standard_pays_semaine_islande %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -1640,16 +1652,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_islan
 
 #armenie
 
-moyenne_mobile_m40 <- running_mean(armenie$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_armenie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+113
-armenie <- armenie %>%
+es_deces_standard_pays_semaine_armenie <- es_deces_standard_pays_semaine_armenie %>%
 		left_join(moyenne_mobile_m40)
-armenie$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_armenie$moyenne_m40 <- moyenne_m40
 
 
-essai <- armenie %>%
+essai <- es_deces_standard_pays_semaine_armenie %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -1710,16 +1722,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_armen
 
 #norvege
 
-moyenne_mobile_m40 <- running_mean(norvege$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_norvege$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-norvege <- norvege %>%
+es_deces_standard_pays_semaine_norvege <- es_deces_standard_pays_semaine_norvege %>%
 		left_join(moyenne_mobile_m40)
-norvege$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_norvege$moyenne_m40 <- moyenne_m40
 
 
-essai <- norvege %>%
+essai <- es_deces_standard_pays_semaine_norvege %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -1780,16 +1792,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_norve
 
 #croatie
 
-moyenne_mobile_m40 <- running_mean(croatie$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_croatie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-croatie <- croatie %>%
+es_deces_standard_pays_semaine_croatie <- es_deces_standard_pays_semaine_croatie %>%
 		left_join(moyenne_mobile_m40)
-croatie$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_croatie$moyenne_m40 <- moyenne_m40
 
 
-essai <- croatie %>%
+essai <- es_deces_standard_pays_semaine_croatie %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -1849,16 +1861,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_croat
 
 #finlande
 
-moyenne_mobile_m40 <- running_mean(finlande$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_finlande$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-finlande <- finlande %>%
+es_deces_standard_pays_semaine_finlande <- es_deces_standard_pays_semaine_finlande %>%
 		left_join(moyenne_mobile_m40)
-finlande$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_finlande$moyenne_m40 <- moyenne_m40
 
 
-essai <- finlande %>%
+essai <- es_deces_standard_pays_semaine_finlande %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -1918,16 +1930,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_finla
 
 #chypre
 
-moyenne_mobile_m40 <- running_mean(chypre$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_chypre$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+113
-chypre <- chypre %>%
+es_deces_standard_pays_semaine_chypre <- es_deces_standard_pays_semaine_chypre %>%
 		left_join(moyenne_mobile_m40)
-chypre$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_chypre$moyenne_m40 <- moyenne_m40
 
 
-essai <- chypre %>%
+essai <- es_deces_standard_pays_semaine_chypre %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -1987,16 +1999,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_chypr
 
 #allemagne
 
-moyenne_mobile_m40 <- running_mean(allemagne$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_allemagne$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+166
-allemagne <- allemagne %>%
+es_deces_standard_pays_semaine_allemagne <- es_deces_standard_pays_semaine_allemagne %>%
 		left_join(moyenne_mobile_m40)
-allemagne$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_allemagne$moyenne_m40 <- moyenne_m40
 
 
-essai <- allemagne %>%
+essai <- es_deces_standard_pays_semaine_allemagne %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2030,16 +2042,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_allem
 
 #autriche
 
-moyenne_mobile_m40 <- running_mean(autriche$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_autriche$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-autriche <- autriche %>%
+es_deces_standard_pays_semaine_autriche <- es_deces_standard_pays_semaine_autriche %>%
 		left_join(moyenne_mobile_m40)
-autriche$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_autriche$moyenne_m40 <- moyenne_m40
 
 
-essai <- autriche %>%
+essai <- es_deces_standard_pays_semaine_autriche %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2072,16 +2084,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_autri
 
 #belgique
 
-moyenne_mobile_m40 <- running_mean(belgique$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_belgique$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-belgique <- belgique %>%
+es_deces_standard_pays_semaine_belgique <- es_deces_standard_pays_semaine_belgique %>%
 		left_join(moyenne_mobile_m40)
-belgique$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_belgique$moyenne_m40 <- moyenne_m40
 
 
-essai <- belgique %>%
+essai <- es_deces_standard_pays_semaine_belgique %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2114,16 +2126,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_belgi
 
 #espagne
 
-moyenne_mobile_m40 <- running_mean(espagne$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_espagne$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-espagne <- espagne %>%
+es_deces_standard_pays_semaine_espagne <- es_deces_standard_pays_semaine_espagne %>%
 		left_join(moyenne_mobile_m40)
-espagne$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_espagne$moyenne_m40 <- moyenne_m40
 
 
-essai <- espagne %>%
+essai <- es_deces_standard_pays_semaine_espagne %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2156,16 +2168,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_espag
 
 #estonie
 
-moyenne_mobile_m40 <- running_mean(estonie$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_estonie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-estonie <- estonie %>%
+es_deces_standard_pays_semaine_estonie <- es_deces_standard_pays_semaine_estonie %>%
 		left_join(moyenne_mobile_m40)
-estonie$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_estonie$moyenne_m40 <- moyenne_m40
 
 
-essai <- estonie %>%
+essai <- es_deces_standard_pays_semaine_estonie %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2198,16 +2210,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_eston
 
 #italie
 
-moyenne_mobile_m40 <- running_mean(italie$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_italie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-italie <- italie %>%
+es_deces_standard_pays_semaine_italie <- es_deces_standard_pays_semaine_italie %>%
 		left_join(moyenne_mobile_m40)
-italie$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_italie$moyenne_m40 <- moyenne_m40
 
 
-essai <- italie %>%
+essai <- es_deces_standard_pays_semaine_italie %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2240,16 +2252,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_itali
 
 #paysbas
 
-moyenne_mobile_m40 <- running_mean(paysbas$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_paysbas$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-paysbas <- paysbas %>%
+es_deces_standard_pays_semaine_paysbas <- es_deces_standard_pays_semaine_paysbas %>%
 		left_join(moyenne_mobile_m40)
-paysbas$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_paysbas$moyenne_m40 <- moyenne_m40
 
 
-essai <- paysbas %>%
+essai <- es_deces_standard_pays_semaine_paysbas %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2310,16 +2322,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_paysb
 
 #portugal
 
-moyenne_mobile_m40 <- running_mean(portugal$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_portugal$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-portugal <- portugal %>%
+es_deces_standard_pays_semaine_portugal <- es_deces_standard_pays_semaine_portugal %>%
 		left_join(moyenne_mobile_m40)
-portugal$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_portugal$moyenne_m40 <- moyenne_m40
 
 
-essai <- portugal %>%
+essai <- es_deces_standard_pays_semaine_portugal %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2352,16 +2364,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_portu
 
 #france
 
-moyenne_mobile_m40 <- running_mean(france$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_france$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-france <- france %>%
+es_deces_standard_pays_semaine_france <- es_deces_standard_pays_semaine_france %>%
 		left_join(moyenne_mobile_m40)
-france$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_france$moyenne_m40 <- moyenne_m40
 
 
-essai <- france %>%
+essai <- es_deces_standard_pays_semaine_france %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2393,7 +2405,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_franc
 
 
 
-essai <- france %>%
+essai <- es_deces_standard_pays_semaine_france %>%
 		filter(numerosemaine>250)
 
 
@@ -2428,16 +2440,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_franc
 
 #pologne
 
-moyenne_mobile_m40 <- running_mean(pologne$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_pologne$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-pologne <- pologne %>%
+es_deces_standard_pays_semaine_pologne <- es_deces_standard_pays_semaine_pologne %>%
 		left_join(moyenne_mobile_m40)
-pologne$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_pologne$moyenne_m40 <- moyenne_m40
 
 
-essai <- pologne %>%
+essai <- es_deces_standard_pays_semaine_pologne %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2471,16 +2483,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_polog
 
 #danmark
 
-moyenne_mobile_m40 <- running_mean(danmark$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_danmark$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-danmark <- danmark %>%
+es_deces_standard_pays_semaine_danmark <- es_deces_standard_pays_semaine_danmark %>%
 		left_join(moyenne_mobile_m40)
-danmark$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_danmark$moyenne_m40 <- moyenne_m40
 
 
-essai <- danmark %>%
+essai <- es_deces_standard_pays_semaine_danmark %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2514,16 +2526,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_danma
 
 #grece
 
-moyenne_mobile_m40 <- running_mean(grece$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_grece$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+113
-grece <- grece %>%
+es_deces_standard_pays_semaine_grece <- es_deces_standard_pays_semaine_grece %>%
 		left_join(moyenne_mobile_m40)
-grece$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_grece$moyenne_m40 <- moyenne_m40
 
 
-essai <- grece %>%
+essai <- es_deces_standard_pays_semaine_grece %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2557,16 +2569,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_grece
 
 #suisse
 
-moyenne_mobile_m40 <- running_mean(suisse$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_suisse$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-suisse <- suisse %>%
+es_deces_standard_pays_semaine_suisse <- es_deces_standard_pays_semaine_suisse %>%
 		left_join(moyenne_mobile_m40)
-suisse$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_suisse$moyenne_m40 <- moyenne_m40
 
 
-essai <- suisse %>%
+essai <- es_deces_standard_pays_semaine_suisse %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2599,16 +2611,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_suiss
 
 #suede
 
-moyenne_mobile_m40 <- running_mean(suede$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_suede$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-suede <- suede %>%
+es_deces_standard_pays_semaine_suede <- es_deces_standard_pays_semaine_suede %>%
 		left_join(moyenne_mobile_m40)
-suede$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_suede$moyenne_m40 <- moyenne_m40
 
 
-essai <- suede %>%
+essai <- es_deces_standard_pays_semaine_suede %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2641,16 +2653,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_suede
 
 #serbie
 
-moyenne_mobile_m40 <- running_mean(serbie$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_serbie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+8
-serbie <- serbie %>%
+es_deces_standard_pays_semaine_serbie <- es_deces_standard_pays_semaine_serbie %>%
 		left_join(moyenne_mobile_m40)
-serbie$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_serbie$moyenne_m40 <- moyenne_m40
 
 
-essai <- serbie %>%
+essai <- es_deces_standard_pays_semaine_serbie %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2688,7 +2700,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_serbi
 #Hongrie
 
 
-essai <- hongrie %>%
+essai <- es_deces_standard_pays_semaine_hongrie %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2720,7 +2732,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_hongri
 
 #malte
 
-essai <- malte %>%
+essai <- es_deces_standard_pays_semaine_malte %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2754,7 +2766,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_malte.
 
 #islande
 
-essai <- islande %>%
+essai <- es_deces_standard_pays_semaine_islande %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2787,7 +2799,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_island
 
 #armenie
 
-essai <- armenie %>%
+essai <- es_deces_standard_pays_semaine_armenie %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2819,7 +2831,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_armeni
 
 #norvege
 
-essai <- norvege %>%
+essai <- es_deces_standard_pays_semaine_norvege %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2853,7 +2865,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_norveg
 
 #croatie
 
-essai <- croatie %>%
+essai <- es_deces_standard_pays_semaine_croatie %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2886,7 +2898,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_croati
 
 #finlande
 
-essai <- finlande %>%
+essai <- es_deces_standard_pays_semaine_finlande %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2918,7 +2930,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_finlan
 
 #chypre
 
-essai <- chypre %>%
+essai <- es_deces_standard_pays_semaine_chypre %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2950,7 +2962,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_chypre
 
 #allemagne
 
-essai <- allemagne %>%
+essai <- es_deces_standard_pays_semaine_allemagne %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -2984,7 +2996,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_allema
 
 #autriche
 
-essai <- autriche %>%
+essai <- es_deces_standard_pays_semaine_autriche %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -3017,7 +3029,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_autric
 
 #belgique
 
-essai <- belgique %>%
+essai <- es_deces_standard_pays_semaine_belgique %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -3050,7 +3062,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_belgiq
 
 #espagne
 
-essai <- espagne %>%
+essai <- es_deces_standard_pays_semaine_espagne %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -3083,7 +3095,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_espagn
 
 #italie
 
-essai <- italie %>%
+essai <- es_deces_standard_pays_semaine_italie %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -3116,7 +3128,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_italie
 
 #paysbas
 
-essai <- paysbas %>%
+essai <- es_deces_standard_pays_semaine_paysbas %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -3149,7 +3161,7 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_paysba
 
 #portugal
 
-essai <- portugal %>%
+essai <- es_deces_standard_pays_semaine_portugal %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -3182,16 +3194,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_portug
 
 #france
 
-moyenne_mobile_m40 <- running_mean(france$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_france$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-france <- france %>%
+es_deces_standard_pays_semaine_france <- es_deces_standard_pays_semaine_france %>%
 		left_join(moyenne_mobile_m40)
-france$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_france$moyenne_m40 <- moyenne_m40
 
 
-essai <- france %>%
+essai <- es_deces_standard_pays_semaine_france %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -3225,16 +3237,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_france
 
 #pologne
 
-moyenne_mobile_m40 <- running_mean(pologne$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_pologne$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-pologne <- pologne %>%
+es_deces_standard_pays_semaine_pologne <- es_deces_standard_pays_semaine_pologne %>%
 		left_join(moyenne_mobile_m40)
-pologne$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_pologne$moyenne_m40 <- moyenne_m40
 
 
-essai <- pologne %>%
+essai <- es_deces_standard_pays_semaine_pologne %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -3268,16 +3280,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_pologn
 
 #danmark
 
-moyenne_mobile_m40 <- running_mean(danmark$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_danmark$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-danmark <- danmark %>%
+es_deces_standard_pays_semaine_danmark <- es_deces_standard_pays_semaine_danmark %>%
 		left_join(moyenne_mobile_m40)
-danmark$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_danmark$moyenne_m40 <- moyenne_m40
 
 
-essai <- danmark %>%
+essai <- es_deces_standard_pays_semaine_danmark %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -3311,16 +3323,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_danmar
 
 #grece
 
-moyenne_mobile_m40 <- running_mean(grece$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_grece$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-grece <- grece %>%
+es_deces_standard_pays_semaine_grece <- es_deces_standard_pays_semaine_grece %>%
 		left_join(moyenne_mobile_m40)
-grece$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_grece$moyenne_m40 <- moyenne_m40
 
 
-essai <- grece %>%
+essai <- es_deces_standard_pays_semaine_grece %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -3353,16 +3365,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_grece.
 
 #suisse
 
-moyenne_mobile_m40 <- running_mean(suisse$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_suisse$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-suisse <- suisse %>%
+es_deces_standard_pays_semaine_suisse <- es_deces_standard_pays_semaine_suisse %>%
 		left_join(moyenne_mobile_m40)
-suisse$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_suisse$moyenne_m40 <- moyenne_m40
 
 
-essai <- suisse %>%
+essai <- es_deces_standard_pays_semaine_suisse %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -3395,16 +3407,16 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_suisse
 
 #suede
 
-moyenne_mobile_m40 <- running_mean(suede$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_suede$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-suede <- suede %>%
+es_deces_standard_pays_semaine_suede <- es_deces_standard_pays_semaine_suede %>%
 		left_join(moyenne_mobile_m40)
-suede$moyenne_m40 <- moyenne_m40
+es_deces_standard_pays_semaine_suede$moyenne_m40 <- moyenne_m40
 
 
-essai <- suede %>%
+essai <- es_deces_standard_pays_semaine_suede %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -3436,16 +3448,19 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_suede.
 
 #serbie
 
-moyenne_mobile_m40 <- running_mean(serbie$deces_tot_moins40, 8)
+moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_serbie$deces_tot_moins40, 8)
 moyenne_m40 <- mean(moyenne_mobile_m40)
 moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-serbie <- serbie %>%
+es_deces_standard_pays_semaine_serbie <- es_deces_standard_pays_semaine_serbie %>%
 		left_join(moyenne_mobile_m40)
-serbie$moyenne_m40 <- moyenne_m40
+
+rm(moyenne_mobile_m40)
+
+es_deces_standard_pays_semaine_serbie$moyenne_m40 <- moyenne_m40
 
 
-essai <- serbie %>%
+essai <- es_deces_standard_pays_semaine_serbie %>%
 		filter(numerosemaine>250)
 
 par(mar=c(4, 4, 3, 5))
@@ -3475,21 +3490,32 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_serbie.png", width = 1000)
 
+rm(moyenne_m40)
+rm(essai)
 
 
+#### 
+
+es_deces_standard_pays_semaine__analysables <- es_deces_standard_pays_semaine %>%
+		filter(time >"2015-01-01")
+
+es_deces_standard_pays_semaine__surmortalite <- es_deces_standard_pays_semaine %>%
+		filter(surmortalite == "surmortalite") %>%
+		filter(time >= "2020W01") %>%
+		filter(time <= "2020W40")
 
 ####realisation de cartes dynamiques avec 1 carte par semaine####
 
 #20 geodata is not defined !
-map_data_init <- inner_join(geodata, deces_standard_pays_semaine_plus_40)
+map_data_init <- inner_join(geodata, es_deces_standard_pays_semaine_plus_40)
 
-numerosemaine <- numerosemaine %>%
+es_deces_week_France_numero_semaine <- es_deces_week_France_numero_semaine %>%
 		mutate(saison=if_else(numerosemaineannee < 13 | numerosemaineannee > 51, "hiver", "autre"))
-numerosemaine <- numerosemaine %>%
+es_deces_week_France_numero_semaine <- es_deces_week_France_numero_semaine %>%
 		mutate(saison=if_else(numerosemaineannee > 12 & numerosemaineannee < 26, "printemps", saison))
-numerosemaine <- numerosemaine %>%
+es_deces_week_France_numero_semaine <- es_deces_week_France_numero_semaine %>%
 		mutate(saison=if_else(numerosemaineannee > 25 & numerosemaineannee < 39, "?t?", saison))
-numerosemaine <- numerosemaine %>%
+es_deces_week_France_numero_semaine <- es_deces_week_France_numero_semaine %>%
 		mutate(saison=if_else(numerosemaineannee > 38 & numerosemaineannee < 52, "automne", saison))
 
 
@@ -3518,16 +3544,16 @@ classe9 <- classe1 %>%
 
 for (i in 158:432) {
 	map_data <- map_data_init %>%
-			filter(numerosemaine == i)
+			filter(es_deces_week_France_numero_semaine == i)
 	
-	semaine <- numerosemaine %>%
-			filter(numerosemaine == i) %>%
+	semaine <- es_deces_week_France_numero_semaine %>%
+			filter(es_deces_week_France_numero_semaine == i) %>%
 			select(numerosemaineannee)
-	annee <- numerosemaine %>%
-			filter(numerosemaine == i) %>%
+	annee <- es_deces_week_France_numero_semaine %>%
+			filter(es_deces_week_France_numero_semaine == i) %>%
 			select(annee)
-	saison <- numerosemaine %>%
-			filter(numerosemaine == i) %>%
+	saison <- es_deces_week_France_numero_semaine %>%
+			filter(es_deces_week_France_numero_semaine == i) %>%
 			select(saison)
 	
 	map_data <- map_data %>%
@@ -3545,10 +3571,3 @@ for (i in 158:432) {
 	ggsave(paste0("gen/images/carte", i, ".png"), plot=p, width = 11, height = 8)
 }
 
-deces_analysables <- owid_deces_standard_pays_semaine %>%
-		filter(time >"2015-01-01")
-
-surmortalite <- owid_deces_standard_pays_semaine %>%
-		filter(surmortalite == "surmortalite") %>%
-		filter(time >= "2020W01") %>%
-		filter(time <= "2020W40")

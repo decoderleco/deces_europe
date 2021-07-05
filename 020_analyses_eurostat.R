@@ -75,6 +75,7 @@ ggplot(deces_complet_annuel_analysable2000) +
 
 dev.print(device = png, file = "gen/images/Eurostat_Deces_2000tot.png", width = 1000)
 
+rm(deces_complet_annuel_20)
 
 ggplot(deces_complet_annuel_analysable2000_est) + 
 		geom_point(aes(x = location, y = deces_france_theo_20, color = time), size = 2)+
@@ -87,6 +88,8 @@ ggplot(deces_complet_annuel_analysable2000_est) +
 
 dev.print(device = png, file = "gen/images/Eurostat_Deces_2000est.png", width = 1000)
 
+rm(deces_complet_annuel_analysable2000_est20)
+
 ggplot(deces_complet_annuel_analysable2000_ouest) + 
 		geom_point(aes(x = location, y = deces_france_theo_20, color = time), size = 2)+
 		geom_label(data=deces_complet_annuel_analysable2000_ouest20, aes(x = location, y = deces_france_theo_20, label=format(time, format = "%Y")), color = "red", size = 3)+
@@ -97,6 +100,8 @@ ggplot(deces_complet_annuel_analysable2000_ouest) +
 				plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"))
 
 dev.print(device = png, file = "gen/images/Eurostat_Deces_2000ouest.png", width = 1000)
+
+rm(deces_complet_annuel_analysable2000_ouest20)
 
 #dernière année avec mortalité supérieure à 2020
 
@@ -115,6 +120,8 @@ annee_deces_superieure_2020$location <- rownames(annee_deces_superieure_2020)
 annee_deces_inferieure_2020 <- deces_complet_annuel_analysable1990 %>%
 		filter(augmentation20 >0) %>%
 		mutate(annee = str_sub(as.character(time), 1, 4))
+
+rm(deces_complet_annuel_analysable1990)
 
 annee_deces_inferieure_2020 <- tapply(annee_deces_inferieure_2020$annee, annee_deces_inferieure_2020$location, min)
 
@@ -136,6 +143,8 @@ annee_comparaison_2020 <- annee_comparaison_2020 %>%
 						annee_deces_inferieure_2020 %in% c("2015", "2013", "2012")~"4 - mortalité normale+ pour la décennie",
 						TRUE ~"5 - mortalité haute pour la décennie"))
 
+rm(annee_deces_inferieure_2020
+				)
 #année de dèces maximum
 
 es_annne_deces_maximum <- tapply(es_deces_complet_annuel$deces, es_deces_complet_annuel$geo, max)
@@ -189,7 +198,7 @@ deces_complet_annuel_analysable2000_deuxannees <- deces_complet_annuel_analysabl
 		group_by(geo, deuxannees, location, zone) %>%
 		summarise(deces=sum(deces),
 				population=mean(population),
-				pop20=mean(es_pjan_quinq_2020),
+				pop20=mean(pop20),
 				deces_theo_2020=sum(deces_theo_2020),
 				deces_france_theo_20=sum(deces_france_theo_20))
 
@@ -229,7 +238,7 @@ deces_complet_annuel_analysable2000 <- deces_complet_annuel_analysable2000 %>%
 
 deces_complet_annuel_analysable2000_troisannees <- deces_complet_annuel_analysable2000 %>%
 		group_by(geo, troisannees, location, zone) %>% 
-		summarise(deces=mean(deces), population=mean(population), pop20=mean(es_pjan_quinq_2020), deces_theo_2020=mean(deces_theo_2020), deces_france_theo_20=mean(deces_france_theo_20))
+		summarise(deces=mean(deces), population=mean(population), pop20=mean(pop20), deces_theo_2020=mean(deces_theo_2020), deces_france_theo_20=mean(deces_france_theo_20))
 
 deces_complet_annuel_analysable2000_troisannees20 <- deces_complet_annuel_analysable2000_troisannees %>%
 		filter(troisannees == "2018-2020")
@@ -496,6 +505,9 @@ temp <- es_annne_deces_maximum %>%
 		mutate(time = as.character(time)) %>%
 		mutate(time = str_sub(time, 1, 4))
 
+rm(es_annne_deces_maximum)
+
+
 worldmap <- worldmap %>%
 		left_join(temp)
 
@@ -531,11 +543,11 @@ ggsave("gen/images/Eurostat_Deces_Annee_Maximum.png", plot=p, width = 11, height
 
 #typologie des décès de l'année 2020
 
-owid_test <- annee_comparaison_2020 %>%
+test <- annee_comparaison_2020 %>%
 		select(location, typo)
 
 worldmap <- worldmap %>%
-		left_join(owid_test)
+		left_join(test)
 
 worldmap <- worldmap %>%
 		mutate (location=case_when(geounit == "Flemish Region"~"Belgium", 
@@ -556,6 +568,7 @@ plot(p)
 
 ggsave("gen/images/Eurostat_Deces_2020_Typologie.png", plot=p, width = 11, height = 8)
 
+rm(worldmap)
 
 #----------------------------------------#
 ####  calcul de l'espérance de vie    ####
