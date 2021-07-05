@@ -1,25 +1,3 @@
-
-
-#commencer par installer tous les packages pour tous les scripts (eurostat et ses copains...)
-
-install.packages("eurostat")
-install.packages("maptools")
-install.packages("rgdal")
-install.packages("maps");
-install.packages("leaflet");
-install.packages(("questionr"));
-install.packages("ggplot2");
-install.packages("rnaturalearth")
-install.packages("rnaturalearthdata")
-install.packages("rgeos")
-install.packages("readr")
-install.packages("lsr")
-install.packages("tinytex")
-install.packages("curl")
-install.packages("gsl")
-
-
-
 library(maptools)
 library(rgdal)
 library(maps)
