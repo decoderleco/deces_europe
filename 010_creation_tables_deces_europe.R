@@ -383,7 +383,7 @@ es_deces_annuel_age_quinq <- bind_rows(es_deces_annuel_age90_quinq, es_deces_ann
 
 es_pjan_quinq <- bind_rows(es_pjan90_quinq, es_pjan85_quinq)
 
-write.table(es_pjan_quinq, "gen/csv/Eurostat_pjanquinq.csv", row.names=FALSE, sep="t", dec=", ", na=" ")
+write.table(es_pjan_quinq, "gen/csv/Eurostat_pjanquinq.csv", row.names=FALSE, sep="t", dec=",", na=" ")
 
 saveRDS(es_pjan_quinq, file="gen/rds/Eurostat_pjanquinq.RDS")
 
@@ -405,7 +405,7 @@ es_pjan_quinq_2020_ge85 <- es_pjan_quinq_2020 %>%
 
 es_pjan_quinq_2020_ge85_85 <- es_pjan_quinq_2020_ge85 %>%
 		group_by(geo, sex) %>%
-		summarise(pop20=sum(es_pjan_quinq_2020)) %>%
+		summarise(pop20=sum(pop20)) %>%
 		mutate(agequinq="Y_GE85")
 
 es_pjan_quinq_2020_popTot <- bind_rows(es_pjan_quinq_2020, es_pjan_quinq_2020_ge85_85)
@@ -423,6 +423,8 @@ es_pop_deces_pays_age_quinq <- es_pop_deces_pays_age_quinq %>%
 		filter(geo != "BA")
 
 #recuperer les deces 2020 grace au fichier par semaine
+
+es_deces_week <- es__origin_deces_week
 
 es_deces_week$time <- as.character(es__origin_deces_week$time)
 
@@ -466,7 +468,7 @@ es_deces_2020_tot_tot <- bind_rows(es_deces_2020_tot, es_deces_2020_tot_ge85_85)
 es_pop_deces_pays_age_quinq <- es_pop_deces_pays_age_quinq %>%
 		mutate(deces_theo_2020 = case_when(
 						population == 0 ~ 0,
-						TRUE ~ deces/(population)*es_pjan_quinq_2020))
+						TRUE ~ deces/(population)*pop20))
 
 #jointure des deces annuels avec 2020
 
@@ -490,7 +492,7 @@ deces_tot_20_2 <- deces_tot_20_2 %>%
 
 deces_tot_20_2 <- deces_tot_20_2 %>%
 		left_join(es_pop_2020_quinq) %>%
-		filter(!is.na(es_pjan_quinq_2020))
+		filter(!is.na(pop20))
 
 es_deces_complet <- es_deces_complet %>%
 		bind_rows(deces_tot_20_2)
@@ -562,11 +564,11 @@ deces_complet20DE <- deces_completDE %>%
 
 deces_complet19DE <- deces_completDE %>%
 		filter(time == "2019-01-01") %>%
-		select(agequinq, sex, geo, es_pjan_quinq_2020)
+		select(agequinq, sex, geo, pop20)
 
 deces_complet20DE <- deces_complet20DE %>%
 		left_join(deces_complet19DE) %>%
-		mutate(population = es_pjan_quinq_2020, time =as.Date("2020-01-01"), deces=dc20, deces_theo_2020 = dc20)
+		mutate(population = pop20, time =as.Date("2020-01-01"), deces=dc20, deces_theo_2020 = dc20)
 
 deces_completDE <- deces_completDE %>%
 		filter(time != "2020-01-01")
@@ -575,10 +577,10 @@ deces_completDE <- deces_completDE %>%
 		rbind(deces_complet20DE)
 
 deces_complet20DE <- deces_complet20DE %>%
-		select(geo, agequinq, sex, es_pjan_quinq_2020, dc20)
+		select(geo, agequinq, sex, pop20, dc20)
 
 deces_completDE <- deces_completDE %>%
-		select(-dc20, -es_pjan_quinq_2020) %>%
+		select(-dc20, -pop20) %>%
 		left_join(deces_complet20DE) 
 
 es_deces_complet <- es_deces_complet %>%
@@ -592,20 +594,20 @@ es_deces_complet <- es_deces_complet %>%
 deces_complet20 <- es_deces_complet %>%
 		filter(time == "2020-01-01") %>%
 		filter(!is.na(population)) %>% 
-		filter(!is.na(es_pjan_quinq_2020)) %>%
+		filter(!is.na(pop20)) %>%
 		filter(!is.na(dc20))%>% 
 		filter(geo == "FR")
 
 pop_france20 <- deces_complet20 %>%
 		group_by(agequinq, sex) %>%
-		summarise(pop_france20 = sum(es_pjan_quinq_2020))
+		summarise(pop_france20 = sum(pop20))
 
 #ajout du cas avec les Y_GE85
 pop_france20_85 <- deces_complet20 %>%
 		filter(agequinq %in% c("Y85-89", "Y_GE90")) %>%
 		mutate (agequinq = "Y_GE85") %>%
 		group_by(agequinq, sex) %>%
-		summarise(pop_france20 = sum(es_pjan_quinq_2020)) 
+		summarise(pop_france20 = sum(pop20)) 
 
 pop_france20 <- pop_france20 %>%
 		rbind(pop_france20_85)  
@@ -623,7 +625,7 @@ es_deces_complet <- es_deces_complet %>%
 es_deces_complet_annuel <- es_deces_complet %>%
 		filter(!is.na(population)) %>%
 		group_by(geo, time) %>%
-		summarise(population=sum(population), pop20=sum(es_pjan_quinq_2020), deces=sum(deces), deces_theo_2020=sum(deces_theo_2020), dc20=sum(dc20), deces_france_theo_20=sum(deces_france_theo_20))
+		summarise(population=sum(population), pop20=sum(pop20), deces=sum(deces), deces_theo_2020=sum(deces_theo_2020), dc20=sum(dc20), deces_france_theo_20=sum(deces_france_theo_20))
 
 es_deces_complet_annuel <- es_deces_complet_annuel %>%
 		filter(!is.na(dc20)) %>%
@@ -633,7 +635,7 @@ es_deces_complet_annuel <- es_deces_complet_annuel %>%
 		mutate (augmentation20 = (dc20-deces_theo_2020)/deces_theo_2020)
 
 # JG : Inutile de créer ce fichier, car il sera écrasé plus bas dans owid
-#write.table(deces_complet_annuel, "gen/csv/Eurostat_deces_complet_annuel.csv", row.names=FALSE, sep="t", dec=", ", na=" ")
+#write.table(deces_complet_annuel, "gen/csv/Eurostat_deces_complet_annuel.csv", row.names=FALSE, sep="t", dec=",", na=" ")
 
 
 #----------------------------------#
@@ -802,7 +804,7 @@ test3 <- mortalite_week %>%
 
 #on calcule les deces standardises par pays et age quinquennal
 test3 <- test3 %>%
-		mutate(deces_standard=tx_mortalite*es_pjan_quinq_2020, deces_standard20france=tx_mortalite*pop20france)
+		mutate(deces_standard=tx_mortalite*pop20, deces_standard20france=tx_mortalite*pop20france)
 
 #on somme pour avoir les deces par pays et par semaine
 owid_deces_standard_pays_semaine <- test3 %>%
@@ -1092,14 +1094,14 @@ owid_deces_standard_pays_semaine <- left_join(owid_deces_standard_pays_semaine,
 saveRDS(owid_deces_standard_pays_semaine, file="gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS")
 
 # Generer un csv séparé par "t"
-write.table(owid_deces_standard_pays_semaine, "gen/csv/Eurostat_owid_deces_standard_pays_semaine.csv", row.names=FALSE, sep="t", dec=", ", na=" ")
+write.table(owid_deces_standard_pays_semaine, "gen/csv/Eurostat_owid_deces_standard_pays_semaine.csv", row.names=FALSE, sep="t", dec=",", na=" ")
 
 es_deces_complet_annuel <- left_join(es_deces_complet_annuel,
 		owid_nom_pays)
 
 saveRDS(es_deces_complet_annuel, file="gen/rds/Eurostat_deces_complet_annuel.RDS")
 
-write.table(es_deces_complet_annuel, "gen/csv/Eurostat_deces_complet_annuel.csv", row.names=FALSE, sep="t", dec=", ", na=" ")
+write.table(es_deces_complet_annuel, "gen/csv/Eurostat_deces_complet_annuel.csv", row.names=FALSE, sep="t", dec=",", na=" ")
 
 #
 es_deces_complet <- left_join(es_deces_complet,
@@ -1108,4 +1110,4 @@ es_deces_complet <- left_join(es_deces_complet,
 saveRDS(es_deces_complet, file="gen/rds/Eurostat_deces_complet.RDS")
 
 # Generer un tsv
-write.table(es_deces_complet, "gen/csv/Eurostat_deces_complet.csv", row.names=FALSE, sep="t", dec=", ", na=" ")
+write.table(es_deces_complet, "gen/csv/Eurostat_deces_complet.csv", row.names=FALSE, sep="t", dec=",", na=" ")
