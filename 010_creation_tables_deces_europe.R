@@ -15,25 +15,7 @@ library("rnaturalearthdata")
 library(readr)
 library(lsr)
 
-#
-# Fonctions
-#
-
-rmIfAllowed <- function(myVar) {
-
-	if (TRUE) {
-		
-		envir=globalenv()
-		
-		indices = which(ls(envir) == myVar)
-		
-		rm(list = ls(envir)[indices])
-	
-	} else {
-		
-		message(paste0("Ne pas supprimer la variable (", myVar,")"))
-	}
-}
+shallDeleteVars = TRUE
 
 #
 # Preparer les espaces de generation de donnees
@@ -126,6 +108,8 @@ es_pjan_age_max_pop <- es_pjan_age %>%
 				time) %>%
 		summarise(age_max = max(age))
 
+if (shallDeleteVars) rm(es_pjan_age)
+
 es_pjan_pb_age_max_pop <- es_pjan_age_max_pop %>%
 		filter(str_sub(geo, 1, 2) != "EU") %>%
 		filter(str_sub(geo, 1, 2) != "EA") %>%
@@ -133,7 +117,7 @@ es_pjan_pb_age_max_pop <- es_pjan_age_max_pop %>%
 		filter(str_sub(geo, 1, 3) != "EFT") %>%
 		rename (age_max_pop = age_max)
 
-rmIfAllowed(es_pjan_age_max_pop)
+if (shallDeleteVars) rm(es_pjan_age_max_pop)
 
 # JG : Pourquoi retirer les moins de 89 ans ?			
 es_pjan_pb_age_max_pop <- es_pjan_pb_age_max_pop %>%
@@ -173,7 +157,7 @@ es_deces_annuel_age_max <- es_deces_annuel_age %>%
 				time) %>%
 		summarise(age_max_deces = max(age))
 
-rmIfAllowed(es_deces_annuel_age)
+if (shallDeleteVars) rm(es_deces_annuel_age)
 
 #es_deces_annuel_pb_age_max_deces <- es_deces_annuel_age_max %>%
 #		filter(str_sub(geo, 1, 2) != "EU") %>%
@@ -185,15 +169,15 @@ rmIfAllowed(es_deces_annuel_age)
 es_deces_annuel_pb_age_max_deces <- es_deces_annuel_age_max %>%
 		filter(age_max_deces < 89)
 
-rmIfAllowed(es_deces_annuel_age_max)
+if (shallDeleteVars) rm(es_deces_annuel_age_max)
 
 # Liste des recensements pour lesquels l'ages max de la population ou des deces est < à 89 ans
 es_pb_age_max <- full_join(es_deces_annuel_pb_age_max_deces,
 		es_pjan_pb_age_max_pop,
 		by=c("geo", "time"))
 
-rmIfAllowed(es_deces_annuel_pb_age_max_deces)
-rmIfAllowed(es_pjan_pb_age_max_pop)
+if (shallDeleteVars) rm(es_deces_annuel_pb_age_max_deces)
+if (shallDeleteVars) rm(es_pjan_pb_age_max_pop)
 
 # on enleve l'Italie qui pose probleme au 01/01/1981 et avant
 es_pjan <- es_pjan %>%
@@ -207,7 +191,7 @@ es_pb_age_max_age85 <- es_pb_age_max %>%
 		filter(age_max_deces == 84 | age_max_pop == 84 ) %>%
 		filter(geo != "TR")
 
-rmIfAllowed(es_pb_age_max)
+if (shallDeleteVars) rm(es_pb_age_max)
 
 #### traitement des tables de pop ###############
 
@@ -219,6 +203,8 @@ es_pjan85 <- es_pb_age_max_age85 %>%
 
 es_pjan90 <- es_pjan %>%
 		anti_join(es_pjan85)
+
+if (shallDeleteVars) rm(es_pjan)
 
 #### traitement de pjan85 ###############
 
@@ -233,7 +219,7 @@ es_pjan85_quinq <- es_pjan85 %>%
 
 				))
 
-rmIfAllowed(es_pjan85)
+if (shallDeleteVars) rm(es_pjan85)
 
 es_pjan85_quinq <- es_pjan85_quinq %>%
 		mutate(agequinq=as.numeric(agequinq))
@@ -277,7 +263,7 @@ es_pjan90_quinq <- es_pjan90 %>%
 				
 				))
 
-rmIfAllowed(es_pjan90)
+if (shallDeleteVars) rm(es_pjan90)
 
 es_pjan90_quinq <- es_pjan90_quinq %>%
 		mutate(agequinq=as.numeric(agequinq))
@@ -323,12 +309,12 @@ es_deces_annuel_age85 <- es_pb_age_max_age85 %>%
 		left_join(es_deces_annuel) %>%
 		filter(!is.na(age))
 
-rmIfAllowed(es_pb_age_max_age85)
+if (shallDeleteVars) rm(es_pb_age_max_age85)
 
 es_deces_annuel_age90 <- es_deces_annuel %>%
 		anti_join(es_deces_annuel_age85)
 
-rmIfAllowed(es_deces_annuel)
+if (shallDeleteVars) rm(es_deces_annuel)
 
 #### traitement de deces_annuel_age85 ###############
 
@@ -340,7 +326,7 @@ es_deces_annuel_age85_quinq <- es_deces_annuel_age85 %>%
 						TRUE ~ str_sub(age, 2, length(age))
 				))
 
-rmIfAllowed(es_deces_annuel_age85)
+if (shallDeleteVars) rm(es_deces_annuel_age85)
 
 es_deces_annuel_age85_quinq <- es_deces_annuel_age85_quinq %>%
 		mutate(agequinq=as.numeric(agequinq))
@@ -384,7 +370,7 @@ es_deces_annuel_age90_quinq <- es_deces_annuel_age90 %>%
 				
 				))
 
-rmIfAllowed(es_deces_annuel_age90)
+if (shallDeleteVars) rm(es_deces_annuel_age90)
 
 es_deces_annuel_age90_quinq <- es_deces_annuel_age90_quinq %>%
 		mutate(agequinq=as.numeric(agequinq))
@@ -419,15 +405,15 @@ es_deces_annuel_age90_quinq <- es_deces_annuel_age90_quinq %>%
 
 
 #### on concatene les tables 85 et 90 ###############
-es_deces_annuel_age_quinq <- bind_rows(es_deces_annuel_age90_quinq, es_deces_annuel_age85_quinq)
+es_deces_annuel_agequinq <- bind_rows(es_deces_annuel_age90_quinq, es_deces_annuel_age85_quinq)
 
-rmIfAllowed(es_deces_annuel_age90_quinq)
-rmIfAllowed(es_deces_annuel_age85_quinq)
+if (shallDeleteVars) rm(es_deces_annuel_age90_quinq)
+if (shallDeleteVars) rm(es_deces_annuel_age85_quinq)
 
 es_pjan_quinq <- bind_rows(es_pjan90_quinq, es_pjan85_quinq)
 
-rmIfAllowed(es_pjan85_quinq)
-rmIfAllowed(es_pjan90_quinq)
+if (shallDeleteVars) rm(es_pjan85_quinq)
+if (shallDeleteVars) rm(es_pjan90_quinq)
 
 write.table(es_pjan_quinq, "gen/csv/Eurostat_pjanquinq.csv", row.names=FALSE, sep="t", dec=",", na=" ")
 
@@ -435,10 +421,10 @@ saveRDS(es_pjan_quinq, file="gen/rds/Eurostat_pjanquinq.RDS")
 
 
 #### on joint les deces et les pop ###############
-es_pop_deces_pays_age_quinq <- es_deces_annuel_age_quinq %>%
+es_pop_deces_pays_age_quinq <- es_deces_annuel_agequinq %>%
 		inner_join(es_pjan_quinq, by=c("sex", "geo", "agequinq", "time"))
 
-rmIfAllowed(es_deces_annuel_age_quinq)
+if (shallDeleteVars) rm(es_deces_annuel_agequinq)
 
 #ajouter la population de l'annee 2020 correspondant du pays dans chaque pays*sexe*age*annee
 
@@ -455,17 +441,17 @@ es_pjan_quinq_2020_ge85_85 <- es_pjan_quinq_2020_ge85 %>%
 		summarise(pop20=sum(pop20)) %>%
 		mutate(agequinq="Y_GE85")
 
-rmIfAllowed(es_pjan_quinq_2020_ge85)
+if (shallDeleteVars) rm(es_pjan_quinq_2020_ge85)
 
 es_pjan_quinq_2020_popTot <- bind_rows(es_pjan_quinq_2020, es_pjan_quinq_2020_ge85_85)
 
-rmIfAllowed(es_pjan_quinq_2020)
-rmIfAllowed(es_pjan_quinq_2020_ge85_85)
+if (shallDeleteVars) rm(es_pjan_quinq_2020)
+if (shallDeleteVars) rm(es_pjan_quinq_2020_ge85_85)
 
 es_pop_deces_pays_age_quinq <- es_pop_deces_pays_age_quinq %>%
 		left_join(es_pjan_quinq_2020_popTot, by=c("sex", "geo", "agequinq"))
 
-rmIfAllowed(es_pjan_quinq_2020_popTot)
+if (shallDeleteVars) rm(es_pjan_quinq_2020_popTot)
 
 es_pop_deces_pays_age_quinq <- es_pop_deces_pays_age_quinq %>%
 		filter(str_sub(geo, 1, 2) != "EU") %>%
@@ -476,136 +462,174 @@ es_pop_deces_pays_age_quinq <- es_pop_deces_pays_age_quinq %>%
 		filter(geo != "AD") %>%
 		filter(geo != "BA")
 
-#recuperer les deces 2020 grace au fichier par semaine
+#
+# Recuperer les deces 2020 grace au fichier par semaine d'EuroStat
+#
 
+#Deces par tranche d'age quinquenal, par pays européen, par semaine, depuis les années 19xx
 es_deces_week <- a__original_es_deces_week
 
 es_deces_week$time <- as.character(a__original_es_deces_week$time)
 
+#isoler l'année 2020
 es_deces_2020_week <- es_deces_week %>%
 		filter(str_sub(time, 1, 4) == "2020") 
 
+# Creer une colonne dc_cor : On ne prend que 5/7 pour la semaine 01, car le 01/01/2020 est un mercredi
 es_deces_2020_week <- es_deces_2020_week %>%
 		mutate(dc_cor=if_else(str_sub(time, 6, 8) == "01",
 						values*5/7,
 						values))
 
+# Corriger la colonne dc_cor : On ne prend que 4/7 pour la semaine 53, car le 31/12/2020 est un jeudi
 es_deces_2020_week <- es_deces_2020_week %>%
 		mutate(dc_cor=if_else(str_sub(time, 6, 8) == "53",
 						dc_cor*4/7,
 						dc_cor))
 
+#supprimer les semaines 99 qui corresponde à des erreurs dans les données
 es_deces_2020_week <- es_deces_2020_week %>%
 		filter(str_sub(time, 6, 8) != "99")
 
-es_deces_2020_tot <- es_deces_2020_week %>%
+#Regrouper par age, sexe, geo et mettre ça dans dc20 (= deces 2020 par age, sexe, pays)
+es_deces_2020_tot_by_agequinq_sex_geo <- es_deces_2020_week %>%
 		group_by(age, sex, geo) %>%
 		summarise(dc20=sum(dc_cor))
 
-rmIfAllowed(es_deces_2020_week)
+if (shallDeleteVars) rm(es_deces_2020_week)
 
-es_deces_2020_tot <- es_deces_2020_tot %>%
+#renommer la colonne age en agequinq, car c'est des tranches de 5 ans
+es_deces_2020_tot_by_agequinq_sex_geo <- es_deces_2020_tot_by_agequinq_sex_geo %>%
 		rename(agequinq=age)
 
-
-es_deces_2020_tot_ge85 <- es_deces_2020_tot %>%
+#Memoriser les deces 2020 des plus de 85 ans
+es_deces_2020_tot_ge85 <- es_deces_2020_tot_by_agequinq_sex_geo %>%
 		filter(agequinq %in% c("Y_GE90", "Y85-89"))
 
-es_deces_2020_tot_ge85_85 <- es_deces_2020_tot_ge85 %>%
+# Synthetiser par pays, sexe et indiquer que tout ça, ce sont les > 85
+es_deces_2020_ge85_by_geo_sex <- es_deces_2020_tot_ge85 %>%
 		group_by(geo, sex) %>%
 		summarise(dc20=sum(dc20)) %>%
 		mutate(agequinq="Y_GE85")
 
-rmIfAllowed(es_deces_2020_tot_ge85)
+if (shallDeleteVars) rm(es_deces_2020_tot_ge85)
 
-es_deces_2020_tot_tot <- bind_rows(es_deces_2020_tot, es_deces_2020_tot_ge85_85)
+#Ajouter les plus de 85 ans (on a donc les tranches Y_GE85 et Y_GE90)
+es_deces_2020_tot_ge85_ge90 <- bind_rows(es_deces_2020_tot_by_agequinq_sex_geo, es_deces_2020_ge85_by_geo_sex)
 
-rmIfAllowed(es_deces_2020_tot_ge85_85)
+if (shallDeleteVars) rm(es_deces_2020_ge85_by_geo_sex)
 
-#calculer les deces theoriques de chaque annee avec la population 2020 du pays en 2020
+#pour chaque recensement, calculer pour chaque pays les deces theoriques qu'il y aurait eu 
+#s'il y avait eu la population 2020. Mettre cela dans la colone  deces_theo_2020
 es_pop_deces_pays_age_quinq <- es_pop_deces_pays_age_quinq %>%
 		mutate(deces_theo_2020 = case_when(
 						population == 0 ~ 0,
 						TRUE ~ deces/(population)*pop20))
 
-#jointure des deces annuels avec 2020
-
+#jointure des deces theoriques qu'on aurait dû avoir en 2020
 es_deces_complet <- es_pop_deces_pays_age_quinq %>%
-		left_join(es_deces_2020_tot_tot, by=c("sex", "geo", "agequinq"))
+		left_join(es_deces_2020_tot_ge85_ge90, by=c("sex", "geo", "agequinq"))
 
-es_pop_2020_quinq <- es_pop_deces_pays_age_quinq %>%
+#Extraire le recensement 2019 et supprimer quelques colonnes
+es_pop_pop2020_by_agequinq <- es_pop_deces_pays_age_quinq %>%
 		filter(time == "2019-01-01") %>%
 		select(-deces, -deces_theo_2020, -time)
 
-rmIfAllowed(es_pop_deces_pays_age_quinq)
+if (shallDeleteVars) rm(es_pop_deces_pays_age_quinq)
+
+
+
 
 #ajout des deces 2020
-es_deces_2020_tot_tot_2 <- es_deces_2020_tot_tot %>%
+
+#Indiquer que ces deces sont ceux du recensement 2020
+# TODO : A l'issue, on a deces_theo_2020 qui est egale à dc20
+es_deces_2020_tot_tot_2 <- es_deces_2020_tot_ge85_ge90 %>%
 		rename(deces=dc20) %>%
 		mutate(time=as.Date("2020-01-01"), deces_theo_2020=deces, dc20=deces)
 
-rmIfAllowed(es_deces_2020_tot_tot)
+if (shallDeleteVars) rm(es_deces_2020_tot_ge85_ge90)
 
+#supprimer les lignes de totaux, puis synthetiser
 es_deces_2020_tot_tot_2 <- es_deces_2020_tot_tot_2 %>%
-		filter(sex!="T"&agequinq!="TOTAL"&agequinq != "UNK") %>%
+		filter(sex != "T" & agequinq != "TOTAL" & agequinq != "UNK") %>%
 		group_by(geo, sex, time, agequinq) %>% 
 		summarise(dc20=sum(dc20), deces=sum(deces), deces_theo_2020=sum(deces_theo_2020))
 
 es_deces_2020_tot_tot_2 <- es_deces_2020_tot_tot_2 %>%
-		left_join(es_pop_2020_quinq) %>%
+		left_join(es_pop_pop2020_by_agequinq) %>%
 		filter(!is.na(pop20))
 
-rmIfAllowed(es_pop_2020_quinq)
+if (shallDeleteVars) rm(es_pop_pop2020_by_agequinq)
 
+#Ajouter les données du recensement 2020 
 es_deces_complet <- es_deces_complet %>%
 		bind_rows(es_deces_2020_tot_tot_2)
 
-rmIfAllowed(es_deces_2020_tot_tot_2)
+if (shallDeleteVars) rm(es_deces_2020_tot_tot_2)
 
+#
 #gestion de l'Allemagne pour laquelle il manque les donn?es sexu?es et des moins de 40 ans en 2020
 #es_deces_week_DE <- es_deces_week %>%
 #		filter(geo == "DE") 
 
-es_deces_2020_tot_DE <- es_deces_2020_tot %>%
+#extraire les données de l'Allemagne
+es_deces_2020_tot_DE <- es_deces_2020_tot_by_agequinq_sex_geo %>%
 		filter(geo == "DE")
 
-rmIfAllowed(es_deces_2020_tot)
+if (shallDeleteVars) rm(es_deces_2020_tot_by_agequinq_sex_geo)
 
-#recuperation de la repartition de deces des moins de 40 en 2019
+#recuperation de la repartition de deces des moins de 40 en 2019 en Allemagne
 es_deces_complet_DE <- es_deces_complet %>%
 		filter(geo == "DE") %>%
 		filter(time == "2019-01-01") %>%
 		group_by(agequinq, geo, time) %>%
 		summarise(dc20=sum(dc20), population=sum(population), deces=sum(deces), deces_theo_2020=sum(deces_theo_2020))
 
+#extraire les moins de 40 ans
+es_deces_complet_DE_lt40 <- es_deces_complet_DE %>%
+		filter(agequinq %in% c("Y_LT5", "Y5-9", "Y10-14", "Y15-19", "Y20-24", "Y25-29", "Y30-34", "Y35-39"))
+
+es_DE_lt_40_nb_deces_decestheo <- es_deces_complet_DE_lt40 %>% group_by(geo) %>% summarise(deces=sum(deces), deces_theo_2020=sum(deces_theo_2020))
+es_DE_lt_40_nb_deces <- es_DE_lt_40_nb_deces_decestheo$deces
+es_DE_lt_40_nb_decestheo <- es_DE_lt_40_nb_deces_decestheo$deces_theo_2020
+
+if (shallDeleteVars) rm(es_DE_lt_40_nb_deces_decestheo)
+
+#Ajouter une colonne avec la proportion des deces / aux deces des moins de 40 ans
+# TODO : Moi je trouve 11574 deces de moins de 40, pas 14059. A remplacer par es_DE_lt_40_nb_deces ?
 es_deces_complet_DE <- es_deces_complet_DE %>%
 		mutate (partdecesmoins40 = (deces)/14059)
 
+#Ajouter la colonne sexe à T
 es_deces_complet_DE <- es_deces_complet_DE %>%
 		mutate (sex="T")
 
-ligne_a_ajouter_DE <- es_deces_complet_DE %>%
-		filter(agequinq %in% c("Y_LT5", "Y5-9", "Y10-14", "Y15-19", "Y20-24", "Y25-29", "Y30-34", "Y35-39"))
-
 #Application de la repartion des deces 2019 des moins de 40 ans a 2020
-ligne_a_ajouter_DE <- ligne_a_ajouter_DE %>%
+# TODO : Moi je trouve 11614 deces de moins de 40, pas 14123. A remplacer par es_DE_lt_40_nb_decestheo ?
+es_deces_complet_DE_lt40 <- es_deces_complet_DE_lt40 %>%
 		mutate (dc20 = partdecesmoins40 * 14123) %>%
 		select(-time, -deces, -deces_theo_2020)
 
+#concaténer les lignes à ajouter
 es_deces_2020_tot_DE <- es_deces_2020_tot_DE %>%
-		rbind(ligne_a_ajouter_DE)
+		rbind(es_deces_complet_DE_lt40)
 
-rmIfAllowed(ligne_a_ajouter_DE)
+if (shallDeleteVars) rm(es_deces_complet_DE_lt40)
 
+#supprimer la colonne partdecesmoins40
 es_deces_2020_tot_DE <- es_deces_2020_tot_DE %>%
 		select(-partdecesmoins40) 
 
+#supprimer les UNKnown et TOTAL
 es_deces_2020_tot_DE <- es_deces_2020_tot_DE %>%
 		filter(agequinq!="UNK", agequinq != "TOTAL")
 
+#renommer les colonnes et indiquer que c'est le recensement 2020
 es_deces_2020_tot_DE <- es_deces_2020_tot_DE %>%
 		mutate(deces=dc20, deces_theo_2020 =dc20, time =as.Date("2020-01-01"))
 
+# TODO : Inutile car deja fait juste au dessus, non ?
 es_deces_2020_tot_DE <- es_deces_2020_tot_DE %>%
 		mutate (time = as.Date("2020-01-01"), deces_theo_2020 = deces, dc20 = deces)
 
@@ -616,17 +640,19 @@ es_deces_2020_tot_DE_M <- es_deces_2020_tot_DE %>%
 es_deces_2020_tot_DE_F <- es_deces_2020_tot_DE %>%
 		mutate (sex="F", deces_theo_2020 = deces_theo_2020/2, dc20 =dc20/2, deces = deces/2, population = population/2)
 
+#concatener les F dans les M et remplacer les T
 es_deces_2020_tot_DE <- es_deces_2020_tot_DE_M %>%
 		rbind(es_deces_2020_tot_DE_F)
 
-rmIfAllowed(es_deces_2020_tot_DE_M)
-rmIfAllowed(es_deces_2020_tot_DE_F)
+if (shallDeleteVars) rm(es_deces_2020_tot_DE_M)
+if (shallDeleteVars) rm(es_deces_2020_tot_DE_F)
 
-#Ajout de l'ALlemagne 2020 en ligne
+#Ajout des données 2020 estimées pour l'ALlemagne
+# TODO : Ca ne marche pas à cause de partdesmoins40
 es_deces_complet <- es_deces_complet %>%
 		rbind(es_deces_2020_tot_DE)
 
-rmIfAllowed(es_deces_2020_tot_DE)
+if (shallDeleteVars) rm(es_deces_2020_tot_DE)
 
 #Ajout de l'Allemagne 2020 en colonne
 es_deces_complet_DE <- es_deces_complet %>%
@@ -644,7 +670,7 @@ es_deces_2020_complet_DE <- es_deces_2020_complet_DE %>%
 		left_join(es_deces_2019_complet_DE) %>%
 		mutate(population = pop20, time =as.Date("2020-01-01"), deces=dc20, deces_theo_2020 = dc20)
 
-rmIfAllowed(es_deces_2019_complet_DE)
+if (shallDeleteVars) rm(es_deces_2019_complet_DE)
 
 es_deces_complet_DE <- es_deces_complet_DE %>%
 		filter(time != "2020-01-01")
@@ -659,7 +685,7 @@ es_deces_complet_DE <- es_deces_complet_DE %>%
 		select(-dc20, -pop20) %>%
 		left_join(es_deces_2020_complet_DE) 
 
-rmIfAllowed(es_deces_2020_complet_DE)
+if (shallDeleteVars) rm(es_deces_2020_complet_DE)
 
 es_deces_complet <- es_deces_complet %>%
 		filter(geo != "DE")
@@ -667,7 +693,11 @@ es_deces_complet <- es_deces_complet %>%
 es_deces_complet <- es_deces_complet %>%
 		rbind(es_deces_complet_DE)
 
-rmIfAllowed(es_deces_complet_DE)
+if (shallDeleteVars) rm(es_deces_complet_DE)
+
+
+
+
 
 #calcul des deces theoriques en population française
 
@@ -678,28 +708,30 @@ es_deces_2020_complet <- es_deces_complet %>%
 		filter(!is.na(dc20))%>% 
 		filter(geo == "FR")
 
-es_deces_2020_france <- es_deces_2020_complet %>%
+es_pop_france_2020 <- es_deces_2020_complet %>%
 		group_by(agequinq, sex) %>%
 		summarise(pop_france20 = sum(pop20))
 
-#ajout du cas avec les Y_GE85
-es_deces_2020_france_85 <- es_deces_2020_complet %>%
+# Regrouper les plus de 90 avec les 85-89
+es_pop_france_2020_85 <- es_deces_2020_complet %>%
 		filter(agequinq %in% c("Y85-89", "Y_GE90")) %>%
 		mutate (agequinq = "Y_GE85") %>%
 		group_by(agequinq, sex) %>%
 		summarise(pop_france20 = sum(pop20)) 
 
-rmIfAllowed(es_deces_2020_complet)
+if (shallDeleteVars) rm(es_deces_2020_complet)
 
-es_deces_2020_france <- es_deces_2020_france %>%
-		rbind(es_deces_2020_france_85)  
+#Ajouter 2 lignes Y_GE85 H/F (qui regroupe les 85-89 et les > de 90) en plus des Y_GE90 (qui ne compte que les + de 90)
+es_pop_france_2020 <- es_pop_france_2020 %>%
+		rbind(es_pop_france_2020_85)  
 
-rmIfAllowed(es_deces_2020_france_85)
+if (shallDeleteVars) rm(es_pop_france_2020_85)
 
+# Ajouter une colonne avec la population française de chaque tranche d'age
 es_deces_complet <- es_deces_complet %>%
-		left_join(es_deces_2020_france)
+		left_join(es_pop_france_2020)
 
-rmIfAllowed(es_deces_2020_france)
+if (shallDeleteVars) rm(es_pop_france_2020)
 
 es_deces_complet <- es_deces_complet %>%
 		mutate(deces_france_theo_20 = case_when(
@@ -738,7 +770,7 @@ es_deces_week_France <- es_deces_week %>%
 		summarise(deces=sum(values)) %>%
 		filter(geo == "FR")
 
-rmIfAllowed(es_deces_week)
+if (shallDeleteVars) rm(es_deces_week)
 
 es_deces_week_France <- es_deces_week_France %>%
 		arrange(time)
@@ -748,7 +780,7 @@ es_deces_week_France$numerosemaine <- 1:nrow(es_deces_week_France)
 es_deces_week_France_numero_semaine <- ungroup(es_deces_week_France) %>%
 		select(time, numerosemaine)
 
-rmIfAllowed(es_deces_week_France)
+if (shallDeleteVars) rm(es_deces_week_France)
 
 es_deces_week_pays <- es_deces_week_pays %>%
 		rename(agequinq=age)
@@ -787,8 +819,8 @@ es_pjan_quinq_pop_week <- es_pjan_quinq_pop_week %>%
 		rbind(es_pjan_quinq_pop_2021_week) %>%
 		rbind(es_pjan_quinq_pop_2022_week)
 
-rmIfAllowed(es_pjan_quinq_pop_2021_week)
-rmIfAllowed(es_pjan_quinq_pop_2022_week)
+if (shallDeleteVars) rm(es_pjan_quinq_pop_2021_week)
+if (shallDeleteVars) rm(es_pjan_quinq_pop_2022_week)
 
 es_pjan_quinq_pop_week2 <- es_pjan_quinq_pop_week %>%
 		rename(popanneesuivante = population)
@@ -804,7 +836,7 @@ es_pjan_quinq_pop_week <- es_pjan_quinq_pop_week %>%
 
 es_pjan_quinq_pop_week <- inner_join(es_pjan_quinq_pop_week, es_pjan_quinq_pop_week2)
 
-rmIfAllowed(es_pjan_quinq_pop_week2)
+if (shallDeleteVars) rm(es_pjan_quinq_pop_week2)
 
 
 es_pjan_quinq_pop_week <- es_pjan_quinq_pop_week %>%
@@ -817,8 +849,8 @@ es_pjan_pop_week_age <- right_join(es_pjan_quinq_pop_week, es_deces_week_France_
 
 es_pjan_pop_week_age <- right_join(nombre_semaines_annees, es_pjan_pop_week_age)
 
-rmIfAllowed(es_pjan_quinq_pop_week)
-rmIfAllowed(nombre_semaines_annees)
+if (shallDeleteVars) rm(es_pjan_quinq_pop_week)
+if (shallDeleteVars) rm(nombre_semaines_annees)
 
 #calcul de la population hebdomadaire en fonction de l'année en cours et de la suivante
 
@@ -828,7 +860,7 @@ es_pjan_pop_week_age <- es_pjan_pop_week_age %>%
 es_pjan_pop_week_age_quinq_final <- es_pjan_pop_week_age %>%
 		select(-n, -pop, -annee, -anneesuivante, -popanneesuivante, -numerosemaineannee)
 
-rmIfAllowed(es_pjan_pop_week_age)
+if (shallDeleteVars) rm(es_pjan_pop_week_age)
 
 es_pjan_pop_week_age_quinq_final <- es_pjan_pop_week_age_quinq_final %>%
 		group_by(agequinq, geo, time) %>% 
@@ -846,12 +878,12 @@ es_deces_week_mortalite_85 <- es_deces_week_mortalite_85 %>%
 
 es_deces_week_mortalite_week <- bind_rows(es_deces_week_pays, es_deces_week_mortalite_85)
 
-rmIfAllowed(es_deces_week_pays)
-rmIfAllowed(es_deces_week_mortalite_85)
+if (shallDeleteVars) rm(es_deces_week_pays)
+if (shallDeleteVars) rm(es_deces_week_mortalite_85)
 
 es_deces_week_mortalite_week <- left_join(es_pjan_pop_week_age_quinq_final, es_deces_week_mortalite_week)
 
-rmIfAllowed(es_pjan_pop_week_age_quinq_final)
+if (shallDeleteVars) rm(es_pjan_pop_week_age_quinq_final)
 
 es_deces_week_mortalite_week <- es_deces_week_mortalite_week %>%
 		filter(agequinq != "UNK", agequinq != "TOTAL")
@@ -866,7 +898,7 @@ es_deces_week_mortalite_week_a_enlever <- es_deces_week_mortalite_week %>%
 es_deces_week_mortalite_week <- es_deces_week_mortalite_week %>%
 		anti_join((es_deces_week_mortalite_week_a_enlever))
 
-rmIfAllowed(es_deces_week_mortalite_week_a_enlever)
+if (shallDeleteVars) rm(es_deces_week_mortalite_week_a_enlever)
 
 es_deces_week_mortalite_week <- es_deces_week_mortalite_week %>%
 		filter(!is.na(deces))
@@ -889,7 +921,7 @@ es_pjan_quinq_pop_2020_France <- es_pjan_quinq %>%
 		group_by(agequinq, geo, time) %>% 
 		summarise(population=sum(population)) 
 
-rmIfAllowed(es_pjan_quinq)
+if (shallDeleteVars) rm(es_pjan_quinq)
 
 es_pjan_quinq_pop_2020_France <- ungroup(es_pjan_quinq_pop_2020_France) %>%
 		select(-time, -geo) %>% 
@@ -905,26 +937,26 @@ es_pjan_quinq_pop_2020_France_85 <- es_pjan_quinq_pop_2020_France %>%
 es_pjan_quinq_pop_2020_France <- es_pjan_quinq_pop_2020_France %>%
 		rbind(es_pjan_quinq_pop_2020_France_85)  
 
-rmIfAllowed(es_pjan_quinq_pop_2020_France_85)
+if (shallDeleteVars) rm(es_pjan_quinq_pop_2020_France_85)
 
 es_pjan_quinq_pop_2020_totale <- es_pjan_quinq_pop_2020_totale %>%
 		left_join(es_pjan_quinq_pop_2020_France)
 
-rmIfAllowed(es_pjan_quinq_pop_2020_France)
+if (shallDeleteVars) rm(es_pjan_quinq_pop_2020_France)
 
 #on joint avec la table du taux de mortalite
 es_test3 <- es_deces_week_mortalite_week %>%
 		left_join(es_pjan_quinq_pop_2020_totale)
 
-rmIfAllowed(es_deces_week_mortalite_week)
-rmIfAllowed(es_pjan_quinq_pop_2020_totale)
+if (shallDeleteVars) rm(es_deces_week_mortalite_week)
+if (shallDeleteVars) rm(es_pjan_quinq_pop_2020_totale)
 
 #on calcule les deces standardises par pays et age quinquennal
 es_test3 <- es_test3 %>%
 		mutate(deces_standard=tx_mortalite*pop20, deces_standard20france=tx_mortalite*pop20france)
 
 #on somme pour avoir les deces par pays et par semaine
-es_deces_standard_pays_semaine <- es_test3 %>%
+es_deces_standard_pays_semaine_owid <- es_test3 %>%
 		group_by(geo, time) %>% 
 		summarise(deces_standard_tot=sum(deces_standard), 
 				  deces_tot=sum(deces), 
@@ -933,7 +965,7 @@ es_deces_standard_pays_semaine <- es_test3 %>%
 es_deces_week_France_num_semaine <- es_deces_week_France_numero_semaine %>%
 		select(time, numerosemaine)
 
-es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_owid <- es_deces_standard_pays_semaine_owid %>%
 		left_join(es_deces_week_France_num_semaine)
 
 #on somme pour avoir les deces par pays et par semaine, des plus de 40 ans
@@ -1008,17 +1040,17 @@ es_deces_standard_pays_semaine_65_69 <- es_test9 %>%
 es_deces_standard_pays_semaine_65_69 <- es_deces_standard_pays_semaine_65_69 %>%
 		left_join(es_deces_week_France_num_semaine)
 
-rmIfAllowed(es_test3)
-rmIfAllowed(es_test4)
-rmIfAllowed(es_test5)
-rmIfAllowed(es_test6)
-rmIfAllowed(es_test7)
-rmIfAllowed(es_test8)
-rmIfAllowed(es_test9)
+if (shallDeleteVars) rm(es_test3)
+if (shallDeleteVars) rm(es_test4)
+if (shallDeleteVars) rm(es_test5)
+if (shallDeleteVars) rm(es_test6)
+if (shallDeleteVars) rm(es_test7)
+if (shallDeleteVars) rm(es_test8)
+if (shallDeleteVars) rm(es_test9)
 
 #jointure des colonnes
 
-es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_owid <- es_deces_standard_pays_semaine_owid %>%
 		left_join(es_deces_standard_pays_semaine_plus_40) %>% 
 		left_join(es_deces_standard_pays_semaine_plus_60) %>%
 		left_join(es_deces_standard_pays_semaine_40_60) %>% 
@@ -1026,12 +1058,12 @@ es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
 		left_join(es_deces_standard_pays_semaine_60_64)%>% 
 		left_join(es_deces_standard_pays_semaine_65_69)
 
-rmIfAllowed(es_deces_standard_pays_semaine_plus_40) 
-rmIfAllowed(es_deces_standard_pays_semaine_plus_60)
-rmIfAllowed(es_deces_standard_pays_semaine_40_60) 
-rmIfAllowed(es_deces_standard_pays_semaine_moins40)
-rmIfAllowed(es_deces_standard_pays_semaine_60_64) 
-rmIfAllowed(es_deces_standard_pays_semaine_65_69)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_plus_40) 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_plus_60)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_40_60) 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_moins40)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_60_64) 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_65_69)
 
 
 #--------------------------------------------------------------#
@@ -1072,6 +1104,8 @@ eu_mesures <- eu_mesures %>%
 eu_lockdown <- eu_mesures %>%
 		filter(Response_measure == "StayHomeOrder")
 
+if (shallDeleteVars) rm(eu_mesures)
+
 test <- es_deces_week_France_num_semaine %>%
 		rename (time_end =time, semaine_fin =numerosemaine)
 
@@ -1080,7 +1114,7 @@ eu_lockdown <- left_join(eu_lockdown, test)
 test <- es_deces_week_France_num_semaine %>%
 		rename (time_start =time, semaine_debut =numerosemaine)
 
-rmIfAllowed(es_deces_week_France_num_semaine)
+if (shallDeleteVars) rm(es_deces_week_France_num_semaine)
 
 eu_lockdown <- left_join(eu_lockdown, test)
 
@@ -1094,18 +1128,18 @@ test2 <- eu_lockdown %>%
 		rename(time=time_end) %>%
 		mutate(Response_measure="StayHomeOrderEnd")
 
-#rmIfAllowed(eu_lockdown)
+if (shallDeleteVars) rm(eu_lockdown)
 
 test <- test %>%
 		rbind(test2)
 
-rmIfAllowed(test2)
+if (shallDeleteVars) rm(test2)
 
-es_deces_standard_pays_semaine <- left_join(es_deces_standard_pays_semaine, test)
+es_deces_standard_pays_semaine_owid <- left_join(es_deces_standard_pays_semaine_owid, test)
 
-rmIfAllowed(test)
+if (shallDeleteVars) rm(test)
 
-es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
+es_deces_standard_pays_semaine_owid <- es_deces_standard_pays_semaine_owid %>%
 		mutate(Response_measure = case_when(geo == "AT"&numerosemaine>377&numerosemaine<383~"StayHome",
 						geo=="AT"&numerosemaine == 376~"StayHomeGen",
 						geo == "BE"&numerosemaine>377&numerosemaine<384~"StayHome",
@@ -1190,7 +1224,7 @@ owid_covid_Europe_week <- owid_covid_data %>%
 				new_vaccinations = sum(new_vaccinations),
 				new_vaccinations_smoothed_per_million = sum(new_vaccinations_smoothed_per_million))
 
-rmIfAllowed(owid_covid_data)
+if (shallDeleteVars) rm(owid_covid_data)
 
 # Ajouter une colonne geo avec les 2 premières lettre de l'iso_code des pays, sauf pour quelques uns
 owid_covid_Europe_week <- owid_covid_Europe_week %>%
@@ -1214,7 +1248,7 @@ owid_covid_Europe_week <- owid_covid_Europe_week %>%
 owid_covid_Europe_week <- owid_covid_Europe_week %>%
 		left_join(es_deces_week_France_numero_semaine)
 
-rmIfAllowed(es_deces_week_France_numero_semaine)
+if (shallDeleteVars) rm(es_deces_week_France_numero_semaine)
 
 owid_covid_Europe_geo_week <- ungroup(owid_covid_Europe_week) %>%
 		select(geo,
@@ -1225,10 +1259,11 @@ owid_covid_Europe_geo_week <- ungroup(owid_covid_Europe_week) %>%
 				new_vaccinations_smoothed_per_million)
 
 #Ajouter les infos de vaccination de owid aux données de décès EuroStat
-es_deces_standard_pays_semaine_owid <- left_join(es_deces_standard_pays_semaine,
+es_deces_standard_pays_semaine_owid <- left_join(es_deces_standard_pays_semaine_owid,
 		owid_covid_Europe_geo_week)
 
-rmIfAllowed(owid_covid_Europe_geo_week)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_owid)
+if (shallDeleteVars) rm(owid_covid_Europe_geo_week)
 
 #-----------------------------------------------#
 #### ajout du nom des pays et zone est-ouest ####
@@ -1239,7 +1274,7 @@ pays_geo_nom_zone <- ungroup(owid_covid_Europe_week) %>%
 		select(geo, location) %>%
 		distinct(geo, location)
 
-rmIfAllowed(owid_covid_Europe_week)
+if (shallDeleteVars) rm(owid_covid_Europe_week)
 
 # Ajouter une colonne zone pour indiquer si c'est un pays de l'Est ou de l'Ouest
 pays_geo_nom_zone <- pays_geo_nom_zone %>%
@@ -1263,13 +1298,13 @@ pays_geo_nom_zone <- pays_geo_nom_zone %>%
 						geo == "SK"~ "Est",
 						TRUE~ "Ouest", ))
 
-#Ajouter les colonnes avec les id, nom et zone des pays
-es_deces_standard_pays_semaine_owid <- left_join(es_deces_standard_pays_semaine_owid,
-		pays_geo_nom_zone)
-
 #
 # Deces standardisés par pays, par semaine + confinements + vaccinations
 #
+
+#Ajouter les colonnes avec les id, nom et zone des pays
+es_deces_standard_pays_semaine_owid <- left_join(es_deces_standard_pays_semaine_owid,
+		pays_geo_nom_zone)
 
 saveRDS(es_deces_standard_pays_semaine_owid, file="gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS")
 
@@ -1277,25 +1312,26 @@ saveRDS(es_deces_standard_pays_semaine_owid, file="gen/rds/Eurostat_owid_deces_s
 write.table(es_deces_standard_pays_semaine_owid, "gen/csv/Eurostat_owid_deces_standard_pays_semaine.csv", row.names=FALSE, sep="t", dec=",", na=" ")
 
 
-#Ajouter les colonnes avec les id, nom et zone des pays
-es_deces_complet_annuel <- left_join(es_deces_complet_annuel,
-		pays_geo_nom_zone)
-
 #
 # Deces théoriques par pays et par an
 #
+
+#Ajouter les colonnes avec les id, nom et zone des pays
+es_deces_complet_annuel <- left_join(es_deces_complet_annuel,
+		pays_geo_nom_zone)
 
 saveRDS(es_deces_complet_annuel, file="gen/rds/Eurostat_deces_complet_annuel.RDS")
 
 write.table(es_deces_complet_annuel, "gen/csv/Eurostat_deces_complet_annuel.csv", row.names=FALSE, sep="t", dec=",", na=" ")
 
-#Ajouter les colonnes avec les id, nom et zone des pays
-es_deces_complet <- left_join(es_deces_complet,
-		pays_geo_nom_zone)
 
 #
 # Deces théoriques par pays, par annee de recensement et par tranche d'age
 #
+
+#Ajouter les colonnes avec les id, nom et zone des pays
+es_deces_complet <- left_join(es_deces_complet,
+		pays_geo_nom_zone)
 
 saveRDS(es_deces_complet, file="gen/rds/Eurostat_deces_complet.RDS")
 
@@ -1303,4 +1339,4 @@ saveRDS(es_deces_complet, file="gen/rds/Eurostat_deces_complet.RDS")
 write.table(es_deces_complet, "gen/csv/Eurostat_deces_complet.csv", row.names=FALSE, sep="t", dec=",", na=" ")
 
 
-rmIfAllowed(pays_geo_nom_zone)
+if (shallDeleteVars) rm(pays_geo_nom_zone)

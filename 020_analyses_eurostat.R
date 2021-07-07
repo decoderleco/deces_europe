@@ -599,6 +599,7 @@ esperance_vie_t <- esperance_vie_t %>%
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(survivant_naissance_Y_LT5=taux_survie_Y_LT5)
 
+# Créer des colonnes pour les survivants par tranches quinquennales
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y5-9`=
 						`taux_survie_Y5-9`*survivant_naissance_Y_LT5)
