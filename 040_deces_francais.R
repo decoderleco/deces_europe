@@ -510,9 +510,20 @@ deces_tranchedage_jour <- deces_tranchedage_jour %>% left_join(deces_tranchedage
 # Ajouter la colonne dece_centre_reduit
 deces_tranchedage_jour <- deces_tranchedage_jour %>% mutate(deces_tranchedage_centre_reduit = (effectif-moyenne)/max(dernier_quartile - moyenne,
                                                                                         moyenne - premier_quartile))
+dc4059ans <- deces_tranchedage_jour %>% filter(tranche_d_age=="40-59 ans")
 
-ggplot(data = deces_tranchedage_jour %>% filter(tranche_d_age=="40-59 ans")) + 
-  geom_line(aes(x=deces_date_complete, y = deces_tranchedage_centre_reduit,colour=confinement)) + 
+# Ajouter la moyenne mobile
+moyenne_mobile <- running_mean(dc4059ans$effectif, 7)
+moyenne <- mean(moyenne_mobile)
+moyenne_mobile<- data_frame(moyenne_mobile)
+moyenne_mobile$numerojour<-1:nrow(moyenne_mobile)+6
+dc4059ans$numerojour<-1:nrow(dc4059ans) 
+dc4059ans <- dc4059ans %>% left_join(moyenne_mobile)
+dc4059ans$moyenne <- moyenne
+
+
+ggplot(data = dc4059ans) + 
+  geom_line(aes(x=deces_date_complete, y = moyenne_mobile,colour=confinement)) + 
   scale_colour_manual(values=c("red","black"))+
   facet_wrap(~tranche_d_age)+
   ggtitle("Décès quotidiens par age") +
