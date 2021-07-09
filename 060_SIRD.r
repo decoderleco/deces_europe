@@ -342,7 +342,7 @@ if (TRUE) {
 			271, 572, 157, 159, 334, 431, 278, 261, 539, 185, 122, 375, 418, 322, 293, 439, 170, 130, 363, 365, 252, 277, 223, 169,
 			207, 341, 400, 87, 422, 285, 177, 138, 343, 288, 246, 225, 897, 191, 131, 360, 381, 303, 308, 332, 1, 0)
 	
-	essai <- es_deces_standard_pays_semaine_owid %>%
+	essai <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 			filter(numerosemaine>400) %>%
 			filter(geo == "FR")
 	

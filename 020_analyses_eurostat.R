@@ -25,31 +25,31 @@ library(tidyr)
 
 #répartition des décès annuels#
 
-es_deces_complet_annuel <- readRDS("gen/rds/Eurostat_deces_complet_annuel.RDS")
+es_deces_annuel <- readRDS("gen/rds/Eurostat_deces_complet_annuel.RDS")
 
 #les données de la Géorgie semblent absurdes, à l'inverse de tous les autres et l'Arménie ne bénéficie que de 5 ans
-es_deces_complet_annuel <- es_deces_complet_annuel %>%
+es_deces_annuel <- es_deces_annuel %>%
 		filter(geo != "GE") %>%
 		filter(geo != "AR")
 
 #ajout de la nuance est-ouest pour la visualisation
 
-deces_complet_annuel_est <- es_deces_complet_annuel %>%
+deces_complet_annuel_est <- es_deces_annuel %>%
 		filter(zone == "Est")
 
-deces_complet_annuel_ouest <- es_deces_complet_annuel %>%
+deces_complet_annuel_ouest <- es_deces_annuel %>%
 		filter(zone == "Ouest")
 
 
 #création des tables avec seulement les dernières années
 
-deces_complet_annuel_20 <- es_deces_complet_annuel %>%
+deces_complet_annuel_20 <- es_deces_annuel %>%
 		filter(time == "2020-01-01")
 
-deces_complet_annuel_analysable2000 <- es_deces_complet_annuel %>%
+deces_complet_annuel_analysable2000 <- es_deces_annuel %>%
 		filter(time >= "2000-01-01")
 
-deces_complet_annuel_analysable1990 <- es_deces_complet_annuel %>%
+deces_complet_annuel_analysable1990 <- es_deces_annuel %>%
 		filter(time >= "1990-01-01")
 
 deces_complet_annuel_analysable2000_est <- deces_complet_annuel_est %>%
@@ -147,7 +147,7 @@ rm(annee_deces_inferieure_2020
 				)
 #année de dèces maximum
 
-es_annne_deces_maximum <- tapply(es_deces_complet_annuel$deces, es_deces_complet_annuel$geo, max)
+es_annne_deces_maximum <- tapply(es_deces_annuel$deces, es_deces_annuel$geo, max)
 
 es_annne_deces_maximum <- data.frame(es_annne_deces_maximum)
 
@@ -157,7 +157,7 @@ es_annne_deces_maximum <- es_annne_deces_maximum %>%
 		rename(deces=es_annne_deces_maximum)
 
 es_annne_deces_maximum <- es_annne_deces_maximum %>%
-		left_join(es_deces_complet_annuel)
+		left_join(es_deces_annuel)
 
 
 es_annne_deces_maximum2020 <- es_annne_deces_maximum %>%
@@ -373,7 +373,7 @@ dev.print(device = png, file = "gen/images/Eurostat_Pyramide_europe_2000.png", w
 
 #décès de la france
 
-deces_complet_annuel_france <- ungroup(es_deces_complet_annuel) %>%
+deces_complet_annuel_france <- ungroup(es_deces_annuel) %>%
 		filter(geo == "FR") %>%
 		rename(annee=time)
 
