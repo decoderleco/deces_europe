@@ -25,41 +25,47 @@ library(tidyr)
 
 #répartition des décès annuels#
 
-es_deces_annuel_by_age <- loadRdsIfNeeded(var = es_deces_annuel_by_age,
+es_deces_annuels <- a__f_loadRdsIfNeeded(var = es_deces_annuels,
 		varName = "es_deces_annuel_by_age", 
 		rdsRelFilePath = "gen/rds/Eurostat_deces_complet_annuel.RDS") 
 
 
 #les données de la Géorgie semblent absurdes, à l'inverse de tous les autres et l'Arménie ne bénéficie que de 5 ans
-es_deces_annuel_by_age <- es_deces_annuel_by_age %>%
+es_deces_annuels <- es_deces_annuels %>%
 		filter(geo != "GE") %>%
 		filter(geo != "AR")
 
 #ajout de la nuance est-ouest pour la visualisation
 
-deces_complet_annuel_est <- es_deces_annuel_by_age %>%
+deces_complet_annuel_est <- es_deces_annuels %>%
 		filter(zone == "Est")
 
-deces_complet_annuel_ouest <- es_deces_annuel_by_age %>%
+deces_complet_annuel_ouest <- es_deces_annuels %>%
 		filter(zone == "Ouest")
 
 
 #création des tables avec seulement les dernières années
 
-deces_complet_annuel_20 <- es_deces_annuel_by_age %>%
+deces_complet_annuel_20 <- es_deces_annuels %>%
 		filter(time == "2020-01-01")
 
-deces_complet_annuel_analysable2000 <- es_deces_annuel_by_age %>%
+deces_complet_annuel_analysable2000 <- es_deces_annuels %>%
 		filter(time >= "2000-01-01")
 
-deces_complet_annuel_analysable1990 <- es_deces_annuel_by_age %>%
+deces_complet_annuel_analysable1990 <- es_deces_annuels %>%
 		filter(time >= "1990-01-01")
 
 deces_complet_annuel_analysable2000_est <- deces_complet_annuel_est %>%
 		filter(time >= "2000-01-01")
 
+if (shallDeleteVars) rm(deces_complet_annuel_est)
+
+
 deces_complet_annuel_analysable2000_ouest <- deces_complet_annuel_ouest %>%
 		filter(time >= "2000-01-01")
+
+if (shallDeleteVars) rm(deces_complet_annuel_est)
+
 
 deces_complet_annuel_analysable2000_est20 <- deces_complet_annuel_analysable2000_est %>%
 		filter(time == "2020-01-01")
@@ -78,7 +84,7 @@ ggplot(deces_complet_annuel_analysable2000) +
 
 dev.print(device = png, file = "gen/images/Eurostat_Deces_2000tot.png", width = 1000)
 
-rm(deces_complet_annuel_20)
+if (shallDeleteVars)  rm(deces_complet_annuel_20)
 
 ggplot(deces_complet_annuel_analysable2000_est) + 
 		geom_point(aes(x = location, y = deces_france_theo_20, color = time), size = 2)+
@@ -91,7 +97,7 @@ ggplot(deces_complet_annuel_analysable2000_est) +
 
 dev.print(device = png, file = "gen/images/Eurostat_Deces_2000est.png", width = 1000)
 
-rm(deces_complet_annuel_analysable2000_est20)
+if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_est20)
 
 ggplot(deces_complet_annuel_analysable2000_ouest) + 
 		geom_point(aes(x = location, y = deces_france_theo_20, color = time), size = 2)+
@@ -104,7 +110,7 @@ ggplot(deces_complet_annuel_analysable2000_ouest) +
 
 dev.print(device = png, file = "gen/images/Eurostat_Deces_2000ouest.png", width = 1000)
 
-rm(deces_complet_annuel_analysable2000_ouest20)
+if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_ouest20)
 
 #dernière année avec mortalité supérieure à 2020
 
@@ -124,7 +130,7 @@ annee_deces_inferieure_2020 <- deces_complet_annuel_analysable1990 %>%
 		filter(augmentation20 >0) %>%
 		mutate(annee = str_sub(as.character(time), 1, 4))
 
-rm(deces_complet_annuel_analysable1990)
+if (shallDeleteVars) rm(deces_complet_annuel_analysable1990)
 
 annee_deces_inferieure_2020 <- tapply(annee_deces_inferieure_2020$annee, annee_deces_inferieure_2020$location, min)
 
@@ -146,11 +152,11 @@ annee_comparaison_2020 <- annee_comparaison_2020 %>%
 						annee_deces_inferieure_2020 %in% c("2015", "2013", "2012")~"4 - mortalité normale+ pour la décennie",
 						TRUE ~"5 - mortalité haute pour la décennie"))
 
-rm(annee_deces_inferieure_2020
+if (shallDeleteVars)  rm(annee_deces_inferieure_2020
 				)
 #année de dèces maximum
 
-es_annne_deces_maximum <- tapply(es_deces_annuel_by_age$deces, es_deces_annuel_by_age$geo, max)
+es_annne_deces_maximum <- tapply(es_deces_annuels$deces, es_deces_annuels$geo, max)
 
 es_annne_deces_maximum <- data.frame(es_annne_deces_maximum)
 
@@ -160,7 +166,7 @@ es_annne_deces_maximum <- es_annne_deces_maximum %>%
 		rename(deces=es_annne_deces_maximum)
 
 es_annne_deces_maximum <- es_annne_deces_maximum %>%
-		left_join(es_deces_annuel_by_age)
+		left_join(es_deces_annuels)
 
 
 es_annne_deces_maximum2020 <- es_annne_deces_maximum %>%
@@ -262,7 +268,7 @@ dev.print(device = png, file = "gen/images/Eurostat_Deces_3annees.png", width = 
 #-----------------------------------------------------------------#
 
 
-es_pjan_quinq <- loadRdsIfNeeded(var = es_pjan_quinq,
+es_pjan_quinq <- a__f_loadRdsIfNeeded(var = es_pjan_quinq,
 		varName = "es_pjan_quinq", 
 		rdsRelFilePath = "gen/rds/Eurostat_pjanquinq.RDS") 
 
@@ -379,9 +385,11 @@ dev.print(device = png, file = "gen/images/Eurostat_Pyramide_europe_2000.png", w
 
 #décès de la france
 
-deces_complet_annuel_france <- ungroup(es_deces_annuel_by_age) %>%
+deces_complet_annuel_france <- ungroup(es_deces_annuels) %>%
 		filter(geo == "FR") %>%
 		rename(annee=time)
+
+if (shallDeleteVars) rm(es_deces_annuels)
 
 barplot_deces_france <- ggplot(data=deces_complet_annuel_france, aes(x=annee, y=deces)) +
 		geom_bar(stat="identity", fill="steelblue")+
@@ -511,7 +519,7 @@ temp <- es_annne_deces_maximum %>%
 		mutate(time = as.character(time)) %>%
 		mutate(time = str_sub(time, 1, 4))
 
-rm(es_annne_deces_maximum)
+if (shallDeleteVars)  rm(es_annne_deces_maximum)
 
 
 worldmap <- worldmap %>%
@@ -574,7 +582,7 @@ plot(p)
 
 ggsave("gen/images/Eurostat_Deces_2020_Typologie.png", plot=p, width = 11, height = 8)
 
-rm(worldmap)
+if (shallDeleteVars)  rm(worldmap)
 
 #----------------------------------------#
 ####  calcul de l'espérance de vie    ####
@@ -582,7 +590,7 @@ rm(worldmap)
 
 #problème de formule car nous sommes en âge quinquennal. 
 
-es_deces_complet <- loadRdsIfNeeded(var = es_deces_complet,
+es_deces_complet <- a__f_loadRdsIfNeeded(var = es_deces_complet,
 		varName = "es_deces_complet", 
 		rdsRelFilePath = "gen/rds/Eurostat_deces_complet.RDS") 
 

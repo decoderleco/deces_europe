@@ -35,7 +35,7 @@ message("Charger les données sur le vaccin contre la grippe")
 # 		onglet MedicAM_20xxmois_tous_presc
 # 		colonnes K, N, ...
 
-a__original_medicam <- loadCsvIfNeeded(var = a__original_medicam,
+a__original_medicam <- a__f_loadCsvIfNeeded(var = a__original_medicam,
 		varName = "a__original_medicam", 
 		csvRelFilePath = "data/csv/medicam.csv", 
 		sep = ";")
@@ -125,7 +125,7 @@ dev.print(device = png, file = "gen/images/Medicam_Vaccins_Grippe_Distribues.png
 
 message("Charger les fichiers de délivrance de médicaments par les pharmacies 2019")
 
-a__original_open_medic_2019 <- loadCsvIfNeeded(var = a__original_open_medic_2019,
+a__original_open_medic_2019 <- a__f_loadCsvIfNeeded(var = a__original_open_medic_2019,
 		varName = "a__original_open_medic_2019", 
 		csvRelFilePath = "data/csv/OPEN_MEDIC_2019.csv", 
 		sep = ";")
@@ -174,7 +174,7 @@ open_medic_2019 <- open_medic_2019 %>%
 
 message("Charger les fichiers de délivrance de médicaments par les pharmacies 2020")
 
-a__original_open_medic_2020 <- loadCsvIfNeeded(var = a__original_open_medic_2020,
+a__original_open_medic_2020 <- a__f_loadCsvIfNeeded(var = a__original_open_medic_2020,
 		varName = "a__original_open_medic_2020", 
 		csvRelFilePath = "data/csv/OPEN_MEDIC_2020.csv", 
 		sep = ";")

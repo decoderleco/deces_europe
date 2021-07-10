@@ -288,7 +288,7 @@ saveRDS(db_clean, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
 
 #### réalisation des graphiques ####
 
-db_clean <- loadRdsIfNeeded(var = db_clean,
+db_clean <- a__f_loadRdsIfNeeded(var = db_clean,
 		varName = "db_clean", 
 		rdsRelFilePath = "gen/rds/fr_gouv_registre_deces_fr.rds") 
 

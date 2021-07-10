@@ -22,7 +22,7 @@ library(igraph)
 ####analyse des donnees hebdomadaires####
 #---------------------------------------#
 
-es_deces_standard_owid_vaccination_by_pays_semaine <- loadRdsIfNeeded(var = es_deces_standard_owid_vaccination_by_pays_semaine,
+es_deces_standard_owid_vaccination_by_pays_semaine <- a__f_loadRdsIfNeeded(var = es_deces_standard_owid_vaccination_by_pays_semaine,
 		varName = "es_deces_standard_owid_vaccination_by_pays_semaine", 
 		rdsRelFilePath = "gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS") 
 
