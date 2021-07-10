@@ -231,6 +231,7 @@ par(new=T)
 plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$binf, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5,  ylab="", lty=2, type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_france_lissage.png", width = 1000)
 
+
 #autriche
 
 
@@ -1289,6 +1290,9 @@ plot(es_deces_standard_pays_semaine_albanie$numerosemaine, es_deces_standard_pay
 par(new=T)
 plot(es_deces_standard_pays_semaine_albanie$numerosemaine, es_deces_standard_pays_semaine_albanie$bsup, pch=16, axes=F, cex=0, ylim=c(0, 1000), xlab="", lwd=1.5, lty=2,  ylab="", type="o", col="purple") 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_albanie_lissage.png", width = 1000)
+
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_albanie)
+
 
 #armenie
 
@@ -2690,6 +2694,13 @@ axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_serbie.png", width = 1000)
 
 
+
+
+
+
+
+
+
 #---------------------------------------#
 ####    morts VS morts Covid         ####
 #---------------------------------------#
@@ -2726,6 +2737,7 @@ plot(essai$numerosemaine, essai$deces_tot - essai$new_deaths,
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_hongrie.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_hongrie)
 
 #malte
 
@@ -2759,6 +2771,7 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_malte.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_malte)
 
 
 #islande
@@ -2793,6 +2806,8 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_islande.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_islande)
+
 
 #armenie
 
@@ -2826,6 +2841,9 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_armenie.png", width = 1000)
 
+
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_armenie)
+
 #norvege
 
 essai <- es_deces_standard_pays_semaine_norvege %>%
@@ -2858,6 +2876,7 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_norvege.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_norvege)
 
 
 #croatie
@@ -2892,6 +2911,8 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_croatie.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_croatie)
+
 
 #finlande
 
@@ -2925,6 +2946,9 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_finlande.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_finlande)
+
+
 #chypre
 
 essai <- es_deces_standard_pays_semaine_chypre %>%
@@ -2956,6 +2980,9 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_chypre.png", width = 1000)
+
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_chypre)
+
 
 #allemagne
 
@@ -2990,6 +3017,7 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_allemagne.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_allemagne)
 
 #autriche
 
@@ -3022,6 +3050,8 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_autriche.png", width = 1000)
+
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_autriche)
 
 
 #belgique
@@ -3056,6 +3086,8 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_belgique.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_belgique)
+
 
 #espagne
 
@@ -3089,6 +3121,7 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_espagne.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_espagne)
 
 #italie
 
@@ -3122,6 +3155,7 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_italie.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_italie)
 
 #paysbas
 
@@ -3154,6 +3188,8 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_paysbas.png", width = 1000)
+
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_paysbas)
 
 
 #portugal
@@ -3188,6 +3224,7 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_portugal.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_portugal)
 
 #france
 
@@ -3231,6 +3268,7 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_france.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_france)
 
 #pologne
 
@@ -3273,6 +3311,8 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_pologne.png", width = 1000)
+
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_pologne)
 
 
 #danmark
@@ -3317,6 +3357,8 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_danmark.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_danmark)
+
 
 #grece
 
@@ -3358,6 +3400,8 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_grece.png", width = 1000)
+
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_grece)
 
 
 #suisse
@@ -3401,6 +3445,8 @@ mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", 
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_suisse.png", width = 1000)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_suisse)
+
 
 #suede
 
@@ -3441,6 +3487,8 @@ plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
 		pch=16, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="blue", cex=0, )
 mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_suede.png", width = 1000)
+
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_suede)
 
 
 #serbie
@@ -3490,16 +3538,31 @@ dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_serbie
 rm(moyenne_m40)
 rm(essai)
 
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_serbie)
+
+
+
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_bulgarie)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_estonie)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_lettonie)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_lichtenstein)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_lituanie)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_luxembourg)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_montenegro)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_roumanie)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_rtcheque)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_slovaquie)
+if (shallDeleteVars) rm(es_deces_standard_pays_semaine_slovenie)
 
 #### 
 
-es_deces_standard_pays_semaine__analysables <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
-		filter(time >"2015-01-01")
+#es_deces_standard_pays_semaine__analysables <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
+#		filter(time >"2015-01-01")
 
-es_deces_standard_pays_semaine__surmortalite <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
-		filter(surmortalite == "surmortalite") %>%
-		filter(time >= "2020W01") %>%
-		filter(time <= "2020W40")
+#es_deces_standard_pays_semaine__surmortalite <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
+#		filter(surmortalite == "surmortalite") %>%
+#		filter(time >= "2020W01") %>%
+#		filter(time <= "2020W40")
 
 ####realisation de cartes dynamiques avec 1 carte par semaine####
 
