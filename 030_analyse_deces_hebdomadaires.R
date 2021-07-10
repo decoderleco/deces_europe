@@ -22,7 +22,10 @@ library(igraph)
 ####analyse des donnees hebdomadaires####
 #---------------------------------------#
 
-es_deces_standard_owid_vaccination_by_pays_semaine <- readRDS("gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS")
+es_deces_standard_owid_vaccination_by_pays_semaine <- loadRdsIfNeeded(var = es_deces_standard_owid_vaccination_by_pays_semaine,
+		varName = "es_deces_standard_owid_vaccination_by_pays_semaine", 
+		rdsRelFilePath = "gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS") 
+
 
 
 #-----------------------------------------------------------#
@@ -1503,12 +1506,6 @@ plot(essai$numerosemaine, essai$new_vaccinations_smoothed_per_million,
 mtext("nombre de vaccinés par million d'habitants", side=4, col="blue", line=2.5)
 axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Vaccin_hongrie_jeune.png", width = 1000)
-
-## es_pjan_quinq_pop_hongrie <- readRDS(file = "gen/rds/Eurostat_pjanquinq.RDS") %>%
-##         filter(geo == "HU") %>%
-##         filter(time == "2020-01-01") %>%
-##         group_by(agequinq) %>% 
-##         summarise(population=sum(population))
 
 #malte
 
@@ -3571,3 +3568,5 @@ for (i in 158:432) {
 	ggsave(paste0("gen/images/carte", i, ".png"), plot=p, width = 11, height = 8)
 }
 
+
+message("Terminé")

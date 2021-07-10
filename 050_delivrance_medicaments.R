@@ -25,6 +25,8 @@ library(scales)
 
 # Les données se trouvent ici, mais je n'ai pas réussi à me connecter à cause de problèmes de format : https://assurance-maladie.ameli.fr/etudes-et-donnees/medicaments-type-prescripteur-medicam-2021
 
+message("Charger les données sur le vaccin contre la grippe")
+
 # medicam.csv
 # 
 # est issu d'un traitement des  
@@ -33,8 +35,20 @@ library(scales)
 # 		onglet MedicAM_20xxmois_tous_presc
 # 		colonnes K, N, ...
 
-medicam <- read.csv(file = "data/csv/medicam.csv", sep=";")
+a__original_medicam <- loadCsvIfNeeded(var = a__original_medicam,
+		varName = "a__original_medicam", 
+		csvRelFilePath = "data/csv/medicam.csv", 
+		sep = ";")
+							   
+#if (!exists("a__original_medicam")) { 
+#	
+#	a__original_medicam <- read.csv(file = "data/csv/medicam.csv", sep=";")
+#	
+#} else {
+#	message("a__original_medicam : Déjà présent. On ne la re-télécharge pas")
+#}
 
+medicam <- a__original_medicam
 
 vaccins_grippes <- medicam %>%
 		filter(Nom_vaccin %in% c("AGRIPPAL",
@@ -109,7 +123,14 @@ dev.print(device = png, file = "gen/images/Medicam_Vaccins_Grippe_Distribues.png
 
 # Ameliorer open_medic_2019
 
-open_medic_2019 <- read.csv(file = "data/csv/OPEN_MEDIC_2019.csv", sep=";")
+message("Charger les fichiers de délivrance de médicaments par les pharmacies 2019")
+
+a__original_open_medic_2019 <- loadCsvIfNeeded(var = a__original_open_medic_2019,
+		varName = "a__original_open_medic_2019", 
+		csvRelFilePath = "data/csv/OPEN_MEDIC_2019.csv", 
+		sep = ";")
+
+open_medic_2019 <- a__original_open_medic_2019
 
 open_medic_2019 <- open_medic_2019 %>%
 # Créer une colonne "region" avec le nom de la région correspondant au n° indiqué dans la colonne BEN_REG
@@ -142,7 +163,7 @@ open_medic_2019 <- open_medic_2019 %>%
 
 # remplacer , (separateur decimal) par .
 open_medic_2019 <- open_medic_2019 %>%
-		mutate(BSE=gsub(", ", ".", BSE))
+		mutate(BSE=gsub(",", ".", BSE))
 
 # Convertir les données de la colonne BSE en nombre
 open_medic_2019 <- open_medic_2019 %>%
@@ -151,7 +172,14 @@ open_medic_2019 <- open_medic_2019 %>%
 
 # Ameliorer open_medic_2020
 
-open_medic_2020 <- read.csv(file = "data/csv/OPEN_MEDIC_2020.csv", sep=";")
+message("Charger les fichiers de délivrance de médicaments par les pharmacies 2020")
+
+a__original_open_medic_2020 <- loadCsvIfNeeded(var = a__original_open_medic_2020,
+		varName = "a__original_open_medic_2020", 
+		csvRelFilePath = "data/csv/OPEN_MEDIC_2020.csv", 
+		sep = ";")
+
+open_medic_2020 <- a__original_open_medic_2020
 
 open_medic_2020 <- open_medic_2020 %>%
 		mutate(region = case_when(
@@ -182,7 +210,7 @@ open_medic_2020 <- open_medic_2020 %>%
 
 # remplacer , (separateur decimal) par .
 open_medic_2020 <- open_medic_2020 %>%
-		mutate(BSE=gsub(", ", ".", BSE))
+		mutate(BSE=gsub(",", ".", BSE))
 
 open_medic_2020 <- open_medic_2020 %>%
 		mutate(BSE=as.numeric(BSE))
@@ -256,9 +284,7 @@ tmp <- tmp %>%
 		group_by(classe_age) %>% 
 		summarise("2019" = sum(BOITES_2019), "2020" = sum(BOITES_2020))
 
-#tmp <- tmp %>%
-pivot_longer(!classe_age, names_to = "annee", values_to = "boites")
-
+#tmp <- tmp %>%pivot_longer(!classe_age, names_to = "annee", values_to = "boites")
 tmp <- tmp %>%
 		pivot_longer(cols=!classe_age, names_to = "annee", values_to = "boites")
 
@@ -274,6 +300,8 @@ tmp <- tmp %>%
 
 JG_CLONAZEPAM <- tmp 
 
+
+message("Graphique évolution RIVOTRIL entre 2019 et 2020")
 
 ggplot(data = arrange(JG_CLONAZEPAM, annee, classe_age),
 				mapping = aes(x = annee, y = boites)) +
@@ -305,3 +333,5 @@ ggplot(data = arrange(JG_CLONAZEPAM, annee, classe_age),
 		ylim(0, NA)
 
 dev.print(device = png, file = "gen/images/Medicam_Rivotril_evol.png", width = 1000)
+
+message("Terminé")

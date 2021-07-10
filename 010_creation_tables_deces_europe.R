@@ -19,6 +19,90 @@ shallDeleteVars = TRUE
 
 ################################################################################
 #
+# Definitions de fonctions
+#
+################################################################################
+
+################################################################################
+# Télécharger un fichier EuroStat si la variable associée n'existe pas
+################################################################################
+downloadEuroStatIfNeeded <- function(var, varName, euroStatFileName) {
+	
+	if (!exists(varName)) { 
+		
+		message(paste0("Télécharger depuis EuroStat (", euroStatFileName, ")"))
+		
+		downloadIfNeeded <- get_eurostat(euroStatFileName) 
+		
+	} else {
+		
+		message(paste0("(", varName, ") déjà présent. On ne le re-télécharge pas"))
+		
+		downloadIfNeeded <- var
+	}
+}
+
+################################################################################
+# Télécharger un fichier CSV si la variable associée n'existe pas
+################################################################################
+downloadCsvIfNeeded <- function(var, varName, csvUrl) {
+	
+	if (!exists(varName)) { 
+		
+		message(paste0("Télécharger (", csvUrl, ") dans (", varName,")"))
+		
+		loadCsvIfNeeded <- read_csv(file = csvUrl)
+		
+	} else {
+		
+		message(paste0("(", varName, ") déjà présent. On ne le re-télécharge pas"))
+		
+		loadCsvIfNeeded <- var
+	}
+}
+
+################################################################################
+# Charger un fichier CSV si la variable associée n'existe pas
+################################################################################
+loadCsvIfNeeded <- function(var, varName, csvRelFilePath, sep=";") {
+	
+	if (!exists(varName)) { 
+		
+		message(paste0("Charger (", csvRelFilePath, ") dans (", varName,")"))
+		
+		loadCsvIfNeeded <- read.csv(file = csvRelFilePath, 
+				sep = sep)
+		
+	} else {
+		
+		message(paste0("(", varName, ") déjà présent. On ne le recharge pas"))
+		
+		loadCsvIfNeeded <- var
+	}
+}
+
+################################################################################
+# Charger un fichier RDS si la variable associée n'existe pas
+################################################################################
+loadRdsIfNeeded <- function(var, varName, rdsRelFilePath) {
+	
+	if (!exists(varName)) { 
+		
+		message(paste0("Charger (", rdsRelFilePath, ") dans (", varName,")"))
+		
+		loadCsvIfNeeded <- readRDS(file = rdsRelFilePath)
+		
+	} else {
+		
+		message(paste0("(", varName, ") déjà présent. On ne le recharge pas"))
+		
+		loadCsvIfNeeded <- var
+	}
+}
+
+
+################################################################################
+#
 # Preparer les espaces de generation de donnees
 #
 ################################################################################
@@ -41,37 +125,23 @@ if (!dir.exists("gen/rds")) dir.create("gen/rds")
 # time = année du recensement, 
 # age = tranche d'âge, 
 # values = population dans cette tranche d'âge à la date time
-if (!exists("a__original_es_pjan")) { 
-	
-	a__original_es_pjan <- get_eurostat("demo_pjan") 
-	
-} else {
-	message("a__original_es_pjan : Déjà présent. On ne la re-télécharge pas")
-}
+a__original_es_pjan <- downloadEuroStatIfNeeded(var = a__original_es_pjan, 
+		varName= "a__original_es_pjan", 
+		euroStatFileName = "demo_pjan")
 
 # Décès recensés au 1er janvier de chaque année
 # time = année du recensement, 
 # age = tranche d'âge des décès, 
 # values = population dans cette tranche d'âge à être décédée
-if (!exists("a__original_es_deces_annuel")) {
-	
-	# 
-	a__original_es_deces_annuel <- get_eurostat("demo_magec")
-
-} else {
-	message("a__original_es_deces_annuel : Déjà présent. On ne la re-télécharge pas")
-
-}
+a__original_es_deces_annuel <- downloadEuroStatIfNeeded(var = a__original_es_deces_annuel, 
+		varName= "a__original_es_deces_annuel", 
+		euroStatFileName = "demo_magec")
 
 #
-if (!exists("a__original_es_deces_week")) { 
-	
-	a__original_es_deces_week <- get_eurostat("demo_r_mwk_05") 
-	
-} else {
-	message("a__original_es_deces_week : Déjà présent. On ne la re-télécharge pas")
+a__original_es_deces_week <- downloadEuroStatIfNeeded(var = a__original_es_deces_week, 
+		varName= "a__original_es_deces_week", 
+		euroStatFileName = "demo_r_mwk_05")
 
-}
 
 
 ################################################################################
@@ -82,8 +152,10 @@ if (!exists("a__original_es_deces_week")) {
 
 # ajouter la population de l'annee correspondante pour chaque deces de pays*sexe*age*annee
 
+es_pjan <- a__original_es_pjan
+
 # Renommer la colonne values en population et supprimer la colonne unit
-es_pjan <- a__original_es_pjan %>%
+es_pjan <- es_pjan %>%
 		rename(population=values) %>% 
 		select(-unit)
 
@@ -94,43 +166,22 @@ es_pjan <- a__original_es_pjan %>%
 es_pjan <- es_pjan %>%
 		filter(sex != "T", 
 				age != "TOTAL", 
-				age != "UNK",
-				age != "Y_LT1",
-				age != "Y_OPEN")
-
-#on filtre sur les zones geographiques
-es_pjan <- es_pjan %>%
-		filter(str_sub(geo, 1, 2) != "EU") %>%
-		filter(str_sub(geo, 1, 2) != "EA") %>%
-		filter(str_sub(geo, 1, 3) != "EEA") %>%
-		filter(str_sub(geo, 1, 3) != "EFT") %>%
-		filter(geo != "DE_TOT") %>%
-		filter(geo != "TR")
+				age != "UNK")
 
 # Retirer le Y de l'age et le transformer en numérique
 es_pjan_age <- es_pjan %>%
+		filter(age != "Y_LT1",
+				age != "Y_OPEN") %>%
 		mutate(age = as.double(str_sub(age, 2, length(age))))
 
 # Calculer l'Age max par pays et année de rencensement
-es_pjan_age_max_pop <- es_pjan_age %>%
+es_age_max_pop <- es_pjan_age %>%
 		group_by(geo,
 				time) %>%
 		summarise(age_max = max(age))
 
 if (shallDeleteVars) rm(es_pjan_age)
 
-es_pjan_pb_age_max_pop <- es_pjan_age_max_pop %>%
-		filter(str_sub(geo, 1, 2) != "EU") %>%
-		filter(str_sub(geo, 1, 2) != "EA") %>%
-		filter(str_sub(geo, 1, 3) != "EEA") %>%
-		filter(str_sub(geo, 1, 3) != "EFT") %>%
-		rename (age_max_pop = age_max)
-
-if (shallDeleteVars) rm(es_pjan_age_max_pop)
-
-# JG : Pourquoi retirer les moins de 89 ans ?			
-es_pjan_pb_age_max_pop <- es_pjan_pb_age_max_pop %>%
-		filter(age_max_pop < 89)
 
 
 
@@ -140,33 +191,28 @@ es_pjan_pb_age_max_pop <- es_pjan_pb_age_max_pop %>%
 #
 ################################################################################
 
+es_deces_annuel_by_age <- a__original_es_deces_annuel
+
 # Filtrer age
-es_deces_annuel <- a__original_es_deces_annuel %>%
+es_deces_annuel_by_age <- es_deces_annuel_by_age %>%
 		rename(deces=values) %>% 
 		select(-unit) %>%
 		filter( sex != "T",
 				age != "TOTAL", 
-				age != "UNK",
-				age != "Y_LT1",
-				age != "Y_OPEN")
-
-es_deces_annuel <- es_deces_annuel %>%
-		filter(str_sub(geo, 1, 2) != "EU") %>%
-		filter(str_sub(geo, 1, 2) != "EA") %>%
-		filter(str_sub(geo, 1, 3) != "EEA") %>%
-		filter(str_sub(geo, 1, 3) != "EFT") %>%
-		filter(geo != "DE_TOT") %>%
-		filter(geo != "TR")
+				age != "UNK")
+				
 
 # Enlever le Y de l'age et le transformer en numérique
-es_deces_annuel_age <- es_deces_annuel %>%
+es_deces_annuel_age <- es_deces_annuel_by_age %>% 
+              filter(age !="Y_LT1") %>% 
+              filter(age !="Y_OPEN") %>%
 		mutate(age = as.double(str_sub(age, 2, length(age)))) 
 
 # Age max des deces par population, année
 es_deces_annuel_age_max <- es_deces_annuel_age %>%
 		group_by(geo,
 				time) %>%
-		summarise(age_max_deces = max(age))
+		summarise(age_max = max(age))
 
 if (shallDeleteVars) rm(es_deces_annuel_age)
 
@@ -179,9 +225,22 @@ if (shallDeleteVars) rm(es_deces_annuel_age)
 # Recuperer les moins de 89 ans	
 # TODO : Pourquoi fait-on ça
 es_deces_annuel_pb_age_max_deces <- es_deces_annuel_age_max %>%
-		filter(age_max_deces < 89)
+		filter(age_max < 89) %>% 
+                    filter(str_sub(geo,1,2)!="EU") %>%
+                    filter(str_sub(geo,1,2)!="EA") %>% 
+                    filter(str_sub(geo,1,3)!="EEA") %>% 
+                    filter(str_sub(geo,1,3)!="EFT") %>% 
+        rename (age_max_deces=age_max)
 
 if (shallDeleteVars) rm(es_deces_annuel_age_max)
+
+es_pjan_pb_age_max_pop <- es_age_max_pop %>% 
+  filter(age_max < 89) %>% 
+  filter(str_sub(geo,1,2)!="EU")%>%
+  filter(str_sub(geo,1,2)!="EA") %>% 
+  filter(str_sub(geo,1,3)!="EEA") %>% 
+  filter(str_sub(geo,1,3)!="EFT")%>% 
+  rename (age_max_pop = age_max)
 
 # Liste des recensements pour lesquels l'ages max de la population ou des deces est < à 89 ans
 es_pb_age_max <- full_join(es_deces_annuel_pb_age_max_deces,
@@ -191,11 +250,29 @@ es_pb_age_max <- full_join(es_deces_annuel_pb_age_max_deces,
 if (shallDeleteVars) rm(es_deces_annuel_pb_age_max_deces)
 if (shallDeleteVars) rm(es_pjan_pb_age_max_pop)
 
+#on filtre sur les zones geographiques
+es_pjan<- es_pjan %>% 
+  filter(str_sub(geo,1,2)!="EU")%>%
+  filter(str_sub(geo,1,2)!="EA") %>% 
+  filter(str_sub(geo,1,3)!="EEA") %>% 
+  filter(str_sub(geo,1,3)!="EFT") %>%
+  filter(geo!="DE_TOT") %>%
+  filter(geo!="TR")
+
+es_deces_annuel_by_age <- es_deces_annuel_by_age %>% 
+  filter(str_sub(geo,1,2)!="EU")%>%
+  filter(str_sub(geo,1,2)!="EA") %>% 
+  filter(str_sub(geo,1,3)!="EEA") %>% 
+  filter(str_sub(geo,1,3)!="EFT") %>%
+  filter(geo!="DE_TOT")%>%
+  filter(geo!="TR")
+
+
 # on enleve l'Italie qui pose probleme au 01/01/1981 et avant
 es_pjan <- es_pjan %>%
 		filter(!(geo == "IT" & time <= "1981-01-01"))
 
-es_deces_annuel <- es_deces_annuel %>%
+es_deces_annuel_by_age <- es_deces_annuel_by_age %>%
 		filter(!(geo == "IT" & time <= "1981-01-01"))
 
 #table pb_age : on ne garde que ceux qui ont 84
@@ -331,16 +408,16 @@ if (shallDeleteVars) rm(es_pjan90)
 #celle vec les couples (geo, time) traites en age quinquennal jusqu'à 85+
 
 es_deces_annuel_age85 <- es_pb_age_max_age85 %>%
-		left_join(es_deces_annuel) %>%
+		left_join(es_deces_annuel_by_age) %>%
 		filter(!is.na(age))
 
 #prendre tous ceux qu'on n'a pas déjà pris dans les 85
-es_deces_annuel_age90 <- es_deces_annuel %>%
+es_deces_annuel_age90 <- es_deces_annuel_by_age %>%
 		anti_join(es_deces_annuel_age85)
 
 
 if (shallDeleteVars) rm(es_pb_age_max_age85)
-if (shallDeleteVars) rm(es_deces_annuel)
+if (shallDeleteVars) rm(es_deces_annuel_by_age)
 
 
 #### traitement de deces_annuel_age85 ###############
@@ -806,7 +883,7 @@ es_deces_complet <- es_deces_complet %>%
 
 #Synthtetiser par pays et recensement, les population, pop20, deces-theo_2020...
 # TODO : BUG : bizarre en 2020, population et pop20 sont differents
-es_deces_annuel <- es_deces_complet %>%
+es_deces_annuel_by_age <- es_deces_complet %>%
 		filter(!is.na(population)) %>%
 		group_by(geo, time) %>%
 		summarise(population=sum(population), 
@@ -817,13 +894,13 @@ es_deces_annuel <- es_deces_complet %>%
 				  deces_france_theo_20=sum(deces_france_theo_20))
 
 #supprimer les ligne qui ont des NA
-es_deces_annuel <- es_deces_annuel %>%
+es_deces_annuel_by_age <- es_deces_annuel_by_age %>%
 		filter(!is.na(dc20)) %>%
 		filter(!is.na(deces_theo_2020))
 
 # Ajouter une colonne augmentation20 (= sur-mortalité en 2020)
 # TODO : Renommer augmentation20 en surmortalite2020
-es_deces_annuel <- es_deces_annuel %>%
+es_deces_annuel_by_age <- es_deces_annuel_by_age %>%
 		mutate (augmentation20 = (dc20-deces_theo_2020)/deces_theo_2020)
 
 # JG : Inutile de créer ce fichier, car il sera écrasé plus bas dans owid
@@ -1151,13 +1228,9 @@ if (shallDeleteVars) rm(es_deces_standard_pays_semaine_65_69)
 #
 ################################################################################
 
-if (!exists("a__original_eu_mesures")) { 
-	
-	a__original_eu_mesures <- read_csv(file = "https://www.ecdc.europa.eu/sites/default/files/documents/response_graphs_data_2021-04-15.csv")
-	
-} else {
-	message("a__original_eu_mesures : Déjà présent. On ne le re-télécharge pas")
-}
+a__original_eu_mesures <- downloadCsvIfNeeded(var = a__original_eu_mesures,
+		varName = "a__original_eu_mesures",
+		csvUrl = "https://www.ecdc.europa.eu/sites/default/files/documents/response_graphs_data_2021-04-15.csv")
 
 eu_mesures <- a__original_eu_mesures
 
@@ -1276,7 +1349,7 @@ if (!exists("a__original_owid_covid_data")) {
 	saveRDS(a__original_owid_covid_data , file="gen/rds/a__original_owid_covid_data.RDS")
 	
 } else {
-	message('a__original_owid_covid_data : Déjà présent. On ne le re-télécharge pas')
+	message('(a__original_owid_covid_data) déjà présent. On ne le re-télécharge pas')
 }
 
 owid_covid_data <- a__original_owid_covid_data
@@ -1418,12 +1491,12 @@ write.table(es_deces_standard_owid_vaccination_by_pays_semaine, "gen/csv/Eurosta
 #
 
 #Ajouter les colonnes avec les id, nom et zone des pays
-es_deces_annuel <- left_join(es_deces_annuel,
+es_deces_annuel_by_age <- left_join(es_deces_annuel_by_age,
 		pays_geo_nom_zone)
 
-saveRDS(es_deces_annuel, file="gen/rds/Eurostat_deces_complet_annuel.RDS")
+saveRDS(es_deces_annuel_by_age, file="gen/rds/Eurostat_deces_complet_annuel.RDS")
 
-write.table(es_deces_annuel, "gen/csv/Eurostat_deces_complet_annuel.csv", row.names=FALSE, sep="t", dec=",", na=" ")
+write.table(es_deces_annuel_by_age, "gen/csv/Eurostat_deces_complet_annuel.csv", row.names=FALSE, sep="t", dec=",", na=" ")
 
 
 #
@@ -1441,3 +1514,5 @@ write.table(es_deces_complet, "gen/csv/Eurostat_deces_complet.csv", row.names=FA
 
 
 if (shallDeleteVars) rm(pays_geo_nom_zone)
+
+message("Terminé")

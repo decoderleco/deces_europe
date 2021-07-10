@@ -78,7 +78,7 @@ dl_fichier <- function(
 	} else {
 		# Le fichier existe deja
 		
-		message('Fichier déjà présent')
+		message(paste('Fichier déjà présent :',chemin_fichier))
 
 	}
 	
@@ -288,7 +288,10 @@ saveRDS(db_clean, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
 
 #### réalisation des graphiques ####
 
-db_clean <- readRDS('gen/rds/fr_gouv_registre_deces_fr.rds')
+db_clean <- loadRdsIfNeeded(var = db_clean,
+		varName = "db_clean", 
+		rdsRelFilePath = "gen/rds/fr_gouv_registre_deces_fr.rds") 
+
 
 # Deces par jour et par departement depuis 01/01/2018
 deces_dep_jour <- db_clean %>%
@@ -316,7 +319,7 @@ deces_dep_jour <- deces_dep_jour %>%
 						moyenne - premier_quartile))
 
 # Lire le fichier des departements-regions
-nom_departement <- read.csv("data/csv/departements-region.csv", sep=", ", header = TRUE, encoding="UTF-8")
+nom_departement <- read.csv("data/csv/departements-region.csv", sep=",", header = TRUE, encoding="UTF-8")
 
 deces_dep_jour <- deces_dep_jour %>%
 		left_join(nom_departement,
@@ -489,3 +492,6 @@ ggplot(data = CentreValdeLoire) +
 
 
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_CentreValdeLoire.png", width = 1000)
+
+
+message("Terminé")
