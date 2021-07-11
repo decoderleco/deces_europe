@@ -19,55 +19,6 @@ library(igraph)
 library(readr)
 library(dplyr)
 
-################################################################################
-#
-# Fonctions
-#
-################################################################################
-
-################################################################################
-# Generer le graphique et le png associé
-################################################################################
-a__f_ggplot_region <- function(region) {
-	
-	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
-	# qui a étépassé dans le parametre region
-	nomRegion <- deparse(substitute(region))
-
-	#Nom du fichier png à générer
-	pngFileRelPath <- paste0("gen/images/fr_gouv_Registre_Deces_quotidiens_", nomRegion, ".png")
-	
-	message(paste0("Creation image (", pngFileRelPath,")"))
-	
-	# ATTENTION : Du fait que l'on est dans une fonction (ou un for), il faut impérativement
-	#             mettre un print() !!!
-	print(ggplot(data = region) + 
-					
-					geom_line(aes(x = deces_date_complete, 
-									y = dece_centre_reduit,
-									colour = confinement)) + 
-					
-					scale_colour_manual(values=c("red", "black"))+
-					
-					# un graphique par département
-					facet_wrap(~dep_name)+
-					
-					ggtitle("Décès quotidiens par département") +
-					
-					xlab("date de décès") + 
-					ylab("nombre de décès (centrés et réduits au quartile)"))
-	
-	
-	# Generer le fichier png
-	#png(filename=paste0("gen/images/fr_gouv_Registre_Deces_quotidiens_", nomRegion, ".png"))
-	dev.print(device = png, 
-			file = pngFileRelPath, 
-			width = 1000)
-	
-	# Supprimer la variable de GlovaEnv correspondant à region car on n'en a plus besoin
-	if (shallDeleteVars) rm(list = c(nomRegion), envir = globalenv())
-}
-
 
 ################################################################################
 #
@@ -398,78 +349,78 @@ deces_dep_jour <- deces_dep_jour %>%
 BourgogneFrancheComte <- deces_dep_jour %>%
 		filter(region_name == "Bourgogne-Franche-Comté")
 
-a__f_ggplot_region(BourgogneFrancheComte)
+a__f_plot_region(BourgogneFrancheComte)
 
 
 AuvergneRhoneAlpes <- deces_dep_jour %>%
 		filter(region_name == "Auvergne-Rhône-Alpes")
 
-a__f_ggplot_region(AuvergneRhoneAlpes)
+a__f_plot_region(AuvergneRhoneAlpes)
 
 IledeFrance <- deces_dep_jour %>%
 		filter(region_name == "Île-de-France")
 
-a__f_ggplot_region(IledeFrance)
+a__f_plot_region(IledeFrance)
 
 
 PaysdelaLoire <- deces_dep_jour %>%
 		filter(region_name == "Pays de la Loire")
 
-a__f_ggplot_region(PaysdelaLoire)
+a__f_plot_region(PaysdelaLoire)
 
 
 Normandie <- deces_dep_jour %>%
 		filter(region_name == "Normandie")
 
-a__f_ggplot_region(Normandie)
+a__f_plot_region(Normandie)
 
 
 NouvelleAquitaine <- deces_dep_jour %>%
 		filter(region_name == "Nouvelle-Aquitaine")
 
-a__f_ggplot_region(NouvelleAquitaine)
+a__f_plot_region(NouvelleAquitaine)
 
 
 HautsdeFrance <- deces_dep_jour %>%
 		filter(region_name == "Hauts-de-France")
 
-a__f_ggplot_region(HautsdeFrance)
+a__f_plot_region(HautsdeFrance)
 
 
 Occitanie <- deces_dep_jour %>%
 		filter(region_name == "Occitanie")
 
-a__f_ggplot_region(Occitanie)
+a__f_plot_region(Occitanie)
 
 
 PACA <- deces_dep_jour %>%
 		filter(region_name == "Provence-Alpes-Côte d'Azur")
 
-a__f_ggplot_region(PACA)
+a__f_plot_region(PACA)
 
 
 GrandEst <- deces_dep_jour %>%
 		filter(region_name == "Grand Est")
 
-a__f_ggplot_region(GrandEst)
+a__f_plot_region(GrandEst)
 
 
 Bretagne <- deces_dep_jour %>%
 		filter(region_name == "Bretagne")
 
-a__f_ggplot_region(Bretagne)
+a__f_plot_region(Bretagne)
 
 
 Corse <- deces_dep_jour %>%
 		filter(region_name == "Corse")
 
-a__f_ggplot_region(Corse)
+a__f_plot_region(Corse)
 
 
 CentreValdeLoire <- deces_dep_jour %>%
 		filter(region_name == "Centre-Val de Loire")
 
-a__f_ggplot_region(CentreValdeLoire)
+a__f_plot_region(CentreValdeLoire)
 
 
 message("Terminé")
