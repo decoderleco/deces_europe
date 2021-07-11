@@ -603,5 +603,5 @@ a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_sem
 	
 	
 	# Supprimer la variable de GlovaEnv correspondant à region car on n'en a plus besoin
-	#	if (shallDeleteVars) rm(list = c(nomRegion), envir = globalenv())
+	if (shallDeleteVars) rm(list = c(nomVar), envir = globalenv())
 }
