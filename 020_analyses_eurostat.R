@@ -64,7 +64,7 @@ if (shallDeleteVars) rm(deces_complet_annuel_est)
 deces_complet_annuel_analysable2000_ouest <- deces_complet_annuel_ouest %>%
 		filter(time >= "2000-01-01")
 
-if (shallDeleteVars) rm(deces_complet_annuel_est)
+if (shallDeleteVars) rm(deces_complet_annuel_ouest)
 
 
 deces_complet_annuel_analysable2000_est20 <- deces_complet_annuel_analysable2000_est %>%
@@ -110,7 +110,9 @@ ggplot(deces_complet_annuel_analysable2000_ouest) +
 
 dev.print(device = png, file = "gen/images/Eurostat_Deces_2000ouest.png", width = 1000)
 
+if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_ouest)
 if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_ouest20)
+if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_est)
 
 #dernière année avec mortalité supérieure à 2020
 
@@ -142,6 +144,7 @@ annee_deces_inferieure_2020$location <- rownames(annee_deces_inferieure_2020)
 annee_comparaison_2020 <- annee_deces_inferieure_2020 %>%
 		full_join(annee_deces_superieure_2020)
 
+
 annee_comparaison_2020 <- annee_comparaison_2020 %>%
 		mutate(annee_deces_inferieure_2020=if_else(is.na(annee_deces_inferieure_2020), "2020", annee_deces_inferieure_2020))
 
@@ -152,8 +155,9 @@ annee_comparaison_2020 <- annee_comparaison_2020 %>%
 						annee_deces_inferieure_2020 %in% c("2015", "2013", "2012")~"4 - mortalité normale+ pour la décennie",
 						TRUE ~"5 - mortalité haute pour la décennie"))
 
-if (shallDeleteVars)  rm(annee_deces_inferieure_2020
-				)
+if (shallDeleteVars) rm(annee_deces_inferieure_2020)
+if (shallDeleteVars) rm(annee_deces_superieure_2020)
+
 #année de dèces maximum
 
 es_annne_deces_maximum <- tapply(es_deces_annuels$deces, es_deces_annuels$geo, max)
@@ -263,6 +267,12 @@ ggplot(deces_complet_annuel_analysable2000_troisannees) +
 
 dev.print(device = png, file = "gen/images/Eurostat_Deces_3annees.png", width = 1000)
 
+if (shallDeleteVars) rm(deces_complet_annuel_analysable2000)
+if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_deuxannees)
+if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_deuxannees20)
+if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_troisannees)
+if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_troisannees20)
+
 #-----------------------------------------------------------------#
 ####           pyramide des âges des pays européens            ####
 #-----------------------------------------------------------------#
@@ -273,23 +283,27 @@ es_pjan_quinq <- a__f_loadRdsIfNeeded(var = es_pjan_quinq,
 		rdsRelFilePath = "gen/rds/Eurostat_pjanquinq.RDS") 
 
 
-pjanquinq20 <- es_pjan_quinq %>%
+pjanquinq2020 <- es_pjan_quinq %>%
 		filter(time == "2020-01-01")
 
-pjanquinq00 <- es_pjan_quinq %>%
+pjanquinq2000 <- es_pjan_quinq %>%
 		filter(time == "2000-01-01")
 
 es_annne_deces_maximum2020 <- es_annne_deces_maximum2020 %>%
-		left_join(pjanquinq20) %>% 
+		left_join(pjanquinq2020) %>% 
 		filter (geo != "AM") %>%
 		filter (geo != "AL")
 
+if (shallDeleteVars) rm(es_annne_deces_maximum2020)
+
 es_annne_deces_maximum_autre <- es_annne_deces_maximum_autre %>%
-		left_join(pjanquinq20)
+		left_join(pjanquinq2020)
+
+if (shallDeleteVars) rm(es_annne_deces_maximum_autre)
 
 #pyramide des pays européens 2020
 
-femmes2020 <- pjanquinq20 %>%
+femmes2020 <- pjanquinq2020 %>%
 		filter (geo != "GE") %>%
 		filter (sex == "F") %>%
 		mutate(femmes = population) %>%
@@ -297,7 +311,7 @@ femmes2020 <- pjanquinq20 %>%
 		select(-population) %>%
 		select(-sex)
 
-hommes2020 <- pjanquinq20 %>%
+hommes2020 <- pjanquinq2020 %>%
 		filter (geo != "GE") %>%
 		filter (sex == "M") %>%
 		mutate(hommes = population) %>%
@@ -329,13 +343,16 @@ pyramids(Left=hommes_femmes2020$part_hommes, Llab="Hommes",
 		Center = hommes_femmes2020$agequinq, Laxis=c(0, 2, 4, 6, 8, 10),
 		main="Pyramide des âges \n des pays européens 2020", Ldens=5, Rdens=10, Lcol="blue", Rcol = "red")
 
-
 dev.print(device = png, file = "gen/images/Eurostat_Pyramide_europe_2020.png", width = 600)
+
+if (shallDeleteVars) rm(femmes2020)
+if (shallDeleteVars) rm(hommes2020)
+if (shallDeleteVars) rm(hommes_femmes2020)
 
 
 #pyramide des pays européens 2000
 
-femmes2000 <- pjanquinq00 %>%
+femmes2000 <- pjanquinq2000 %>%
 		filter (geo != "GE") %>%
 		filter (sex == "F") %>%
 		mutate(femmes = population) %>%
@@ -343,7 +360,7 @@ femmes2000 <- pjanquinq00 %>%
 		select(-population) %>%
 		select(-sex)
 
-hommes2000 <- pjanquinq00 %>%
+hommes2000 <- pjanquinq2000 %>%
 		filter (geo != "GE") %>%
 		filter (sex == "M") %>%
 		mutate(hommes = population) %>%
@@ -378,6 +395,10 @@ pyramids(Left=hommes_femmes2000$part_hommes, Llab="Hommes",
 
 dev.print(device = png, file = "gen/images/Eurostat_Pyramide_europe_2000.png", width = 600)
 
+if (shallDeleteVars) rm(femmes2000)
+if (shallDeleteVars) rm(hommes2000)
+if (shallDeleteVars) rm(hommes_femmes2000)
+if (shallDeleteVars) rm(pjanquinq2000)
 
 #--------------------------#
 ####Analyse de la France####
@@ -400,6 +421,7 @@ barplot_deces_france <- ggplot(data=deces_complet_annuel_france, aes(x=annee, y=
 saveRDS(barplot_deces_france, "gen/rds/Eurostat_barplot_deces_france.RDS")
 
 
+
 barplot_decestheo_france <- ggplot(data=deces_complet_annuel_france, 
 				aes(x=annee, y=deces_theo_2020)) +
 		geom_bar(stat="identity", fill="steelblue") +
@@ -410,16 +432,18 @@ barplot_decestheo_france <- ggplot(data=deces_complet_annuel_france,
 
 saveRDS(barplot_decestheo_france, "gen/rds/Eurostat_barplot_deces_theo_france.RDS")
 
+if (shallDeleteVars) rm(deces_complet_annuel_france)
+
 #pyramide des âges de la France 2020
 
-annne_deces_maximumFranceF <- pjanquinq20 %>%
+annne_deces_maximumFranceF <- pjanquinq2020 %>%
 		filter (sex == "F"& geo == "FR") %>%
 		group_by(agequinq) %>%
 		summarise(population=sum(population)) %>%
 		mutate(femmes = population) %>%
 		select(-population)
 
-annne_deces_maximumFranceM <- pjanquinq20 %>%
+annne_deces_maximumFranceM <- pjanquinq2020 %>%
 		filter (sex == "M"& geo == "FR") %>%
 		group_by(agequinq) %>%
 		summarise(population=sum(population)) %>%
@@ -446,6 +470,11 @@ pyramids(Left=annne_deces_maximumFranceMF$part_hommes, Llab="Hommes",
 		main="Pyramide des âges 2020 de la France", Ldens=5, Rdens=10, Lcol="blue", Rcol = "red")
 
 dev.print(device = png, file = "gen/images/Eurostat_Pyramide_france_2020.png", width = 600)
+
+if (shallDeleteVars) rm(pjanquinq2020)
+if (shallDeleteVars) rm(annne_deces_maximumFranceF)
+if (shallDeleteVars) rm(annne_deces_maximumFranceM)
+if (shallDeleteVars) rm(annne_deces_maximumFranceMF)
 
 
 #pyramide des âges de la France 2000
@@ -488,6 +517,12 @@ pyramids(Left=annne_deces_maximumFranceMF0$part_hommes, Llab="Hommes",
 
 dev.print(device = png, file = "gen/images/Eurostat_Pyramide_france_2000.png", width = 600)
 
+if (shallDeleteVars) rm(es_pjan_quinq)
+if (shallDeleteVars) rm(pjanquinq2000)
+if (shallDeleteVars) rm(annne_deces_maximumFranceF0)
+if (shallDeleteVars) rm(annne_deces_maximumFranceM0)
+if (shallDeleteVars) rm(annne_deces_maximumFranceMF0)
+
 
 #----------------------------------------#
 ####cartographie des donnees annuelles####
@@ -525,6 +560,8 @@ if (shallDeleteVars)  rm(es_annne_deces_maximum)
 worldmap <- worldmap %>%
 		left_join(temp)
 
+if (shallDeleteVars) rm(temp)
+
 worldmap <- worldmap %>%
 		mutate (location=case_when(geounit == "Flemish Region"~"Belgium", 
 						geounit == "Walloon Region"~"Belgium",
@@ -560,8 +597,13 @@ ggsave("gen/images/Eurostat_Deces_Annee_Maximum.png", plot=p, width = 11, height
 test <- annee_comparaison_2020 %>%
 		select(location, typo)
 
+if (shallDeleteVars) rm(annee_comparaison_2020)
+
+
 worldmap <- worldmap %>%
 		left_join(test)
+
+if (shallDeleteVars) rm(test)
 
 worldmap <- worldmap %>%
 		mutate (location=case_when(geounit == "Flemish Region"~"Belgium", 
@@ -583,6 +625,7 @@ plot(p)
 ggsave("gen/images/Eurostat_Deces_2020_Typologie.png", plot=p, width = 11, height = 8)
 
 if (shallDeleteVars)  rm(worldmap)
+if (shallDeleteVars)  rm(p)
 
 #----------------------------------------#
 ####  calcul de l'espérance de vie    ####
@@ -839,5 +882,9 @@ esperance_vie_t$esperance_vie_naissance
 
 esperance_vie_france <- esperance_vie_t %>%
 		filter(geo == "FR")
+
+if (shallDeleteVars) rm(esperance_vie)
+if (shallDeleteVars) rm(esperance_vie_france)
+if (shallDeleteVars) rm(esperance_vie_t)
 
 message("Terminé")
