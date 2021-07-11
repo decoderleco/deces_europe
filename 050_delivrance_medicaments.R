@@ -84,7 +84,7 @@ medicam_vaccins_grippes <- medicam_vaccins_grippes %>%
 #                           group_by(mois_annee) %>%
 #                           summarise(nombre_de_boites=sum(nombre_de_boites))
 
-ggplot(medicam_vaccins_grippes, 
+print(ggplot(medicam_vaccins_grippes, 
 				aes(x = mois_annee, 
 						y = nombre_de_boites))+
 		
@@ -107,6 +107,7 @@ ggplot(medicam_vaccins_grippes,
 		xlab("") + 
 		scale_x_date(labels = date_format("%m/%y"), breaks = date_breaks("year")) +
 		theme(axis.text.x = element_text(angle=45))
+)
 
 dev.print(device = png, file = "gen/images/Medicam_Vaccins_Grippe_Distribues.png", width = 1000)
 
@@ -310,7 +311,7 @@ if (shallDeleteVars) rm(tmp)
 
 message("Graphique évolution RIVOTRIL entre 2019 et 2020")
 
-ggplot(data = arrange(om_JG_CLONAZEPAM, annee, classe_age),
+print(ggplot(data = arrange(om_JG_CLONAZEPAM, annee, classe_age),
 				mapping = aes(x = annee, y = boites)) +
 		
 		geom_col(mapping = aes(fill = classe_age),
@@ -338,6 +339,7 @@ ggplot(data = arrange(om_JG_CLONAZEPAM, annee, classe_age),
 		# Axe y  
 		ylab("nombre de boites") +
 		ylim(0, NA)
+)
 
 dev.print(device = png, file = "gen/images/Medicam_Rivotril_evol.png", width = 1000)
 

@@ -73,7 +73,7 @@ deces_complet_annuel_analysable2000_est20 <- deces_complet_annuel_analysable2000
 deces_complet_annuel_analysable2000_ouest20 <- deces_complet_annuel_analysable2000_ouest %>%
 		filter(time == "2020-01-01")
 
-ggplot(deces_complet_annuel_analysable2000) + 
+print(ggplot(deces_complet_annuel_analysable2000) + 
 		geom_point(aes(x = geo, y = deces_france_theo_20, color = time), size = 2)+
 		geom_label(data=deces_complet_annuel_20, aes(x = geo, y = deces_france_theo_20, label=format(time, format = "%Y")), color = "red", size = 3)+
 		labs(title = "Décès standardisés par pays et année",
@@ -81,12 +81,13 @@ ggplot(deces_complet_annuel_analysable2000) +
 				caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
 		theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),
 				plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"))
+)
 
 dev.print(device = png, file = "gen/images/Eurostat_Deces_2000tot.png", width = 1000)
 
 if (shallDeleteVars)  rm(deces_complet_annuel_20)
 
-ggplot(deces_complet_annuel_analysable2000_est) + 
+print(ggplot(deces_complet_annuel_analysable2000_est) + 
 		geom_point(aes(x = location, y = deces_france_theo_20, color = time), size = 2)+
 		geom_label(data=deces_complet_annuel_analysable2000_est20, aes(x = location, y = deces_france_theo_20, label=format(time, format = "%Y")), color = "red", size = 3)+
 		labs(title = "Décès standardisés par pays et année",
@@ -94,12 +95,13 @@ ggplot(deces_complet_annuel_analysable2000_est) +
 				caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
 		theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),
 				plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"))
+)
 
 dev.print(device = png, file = "gen/images/Eurostat_Deces_2000est.png", width = 1000)
 
 if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_est20)
 
-ggplot(deces_complet_annuel_analysable2000_ouest) + 
+print(ggplot(deces_complet_annuel_analysable2000_ouest) + 
 		geom_point(aes(x = location, y = deces_france_theo_20, color = time), size = 2)+
 		geom_label(data=deces_complet_annuel_analysable2000_ouest20, aes(x = location, y = deces_france_theo_20, label=format(time, format = "%Y")), color = "red", size = 3)+
 		labs(title = "Décès standardisés par pays et année",
@@ -107,6 +109,7 @@ ggplot(deces_complet_annuel_analysable2000_ouest) +
 				caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
 		theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),
 				plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"))
+)
 
 dev.print(device = png, file = "gen/images/Eurostat_Deces_2000ouest.png", width = 1000)
 
@@ -218,9 +221,10 @@ deces_complet_annuel_analysable2000_deuxannees <- deces_complet_annuel_analysabl
 deces_complet_annuel_analysable2000_deuxannees20 <- deces_complet_annuel_analysable2000_deuxannees %>%
 		filter(deuxannees == "2019-2020")
 
-ggplot(deces_complet_annuel_analysable2000_deuxannees) + 
+print(ggplot(deces_complet_annuel_analysable2000_deuxannees) + 
 		geom_point(aes(x = geo, y = deces_france_theo_20, color = deuxannees), size = 2)+
 		geom_point(data=deces_complet_annuel_analysable2000_deuxannees20, aes(x = geo, y = deces_france_theo_20), color = "red", size = 3)
+)
 
 
 
@@ -256,7 +260,7 @@ deces_complet_annuel_analysable2000_troisannees <- deces_complet_annuel_analysab
 deces_complet_annuel_analysable2000_troisannees20 <- deces_complet_annuel_analysable2000_troisannees %>%
 		filter(troisannees == "2018-2020")
 
-ggplot(deces_complet_annuel_analysable2000_troisannees) + 
+print(ggplot(deces_complet_annuel_analysable2000_troisannees) + 
 		geom_point(aes(x = geo, y = deces_france_theo_20, color = troisannees), size = 2)+
 		geom_point(data=deces_complet_annuel_analysable2000_troisannees20, aes(x = geo, y = deces_france_theo_20), color = "red", size = 3)+
 		labs(title = "Décès standardisés par pays et par période de 3 ans",
@@ -264,6 +268,7 @@ ggplot(deces_complet_annuel_analysable2000_troisannees) +
 				caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
 		theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),
 				plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"))
+)
 
 dev.print(device = png, file = "gen/images/Eurostat_Deces_3annees.png", width = 1000)
 

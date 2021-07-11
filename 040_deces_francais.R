@@ -465,11 +465,12 @@ deces_age_jour <- deces_age_jour %>%
 #deces des 0 an
 deces_0_an <- deces_age_jour %>% filter(age_deces_millesime==0)
 
-ggplot(data = deces_0_an) + 
+print(ggplot(data = deces_0_an) + 
 		geom_line(aes(x=deces_date_complete, y = effectif,colour=confinement)) + 
 		scale_colour_manual(values=c("red","black"))+
 		ggtitle("Décès quotidiens par age") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
+)
 
 if (shallDeleteVars) rm(deces_0_an)
 
@@ -527,12 +528,13 @@ dc4059ans <- dc4059ans %>% left_join(moyenne_mobile)
 dc4059ans$moyenne <- moyenne
 
 
-ggplot(data = dc4059ans) + 
+print(ggplot(data = dc4059ans) + 
   geom_line(aes(x=deces_date_complete, y = moyenne_mobile,colour=confinement)) + 
 		scale_colour_manual(values=c("red","black"))+
 		facet_wrap(~tranche_d_age)+
 		ggtitle("Décès quotidiens par age") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
+)
 
 if (shallDeleteVars) rm(dc4059ans)
 if (shallDeleteVars) rm(moyenne)
