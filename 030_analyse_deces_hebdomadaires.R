@@ -380,69 +380,69 @@ a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_sloveni
 #---------------------------------------#
 
 # TODO : geodata is not defined !
-map_data_init <- inner_join(geodata, es_deces_standard_pays_semaine_plus_40)
-
-es_deces_week_France_numero_semaine <- es_deces_week_France_numero_semaine %>%
-		mutate(saison=if_else(numerosemaineannee < 13 | numerosemaineannee > 51, "hiver", "autre"))
-es_deces_week_France_numero_semaine <- es_deces_week_France_numero_semaine %>%
-		mutate(saison=if_else(numerosemaineannee > 12 & numerosemaineannee < 26, "printemps", saison))
-es_deces_week_France_numero_semaine <- es_deces_week_France_numero_semaine %>%
-		mutate(saison=if_else(numerosemaineannee > 25 & numerosemaineannee < 39, "?t?", saison))
-es_deces_week_France_numero_semaine <- es_deces_week_France_numero_semaine %>%
-		mutate(saison=if_else(numerosemaineannee > 38 & numerosemaineannee < 52, "automne", saison))
-
-
-
-classe1 <- map_data %>%
-		filter(geo == "FR")
-
-classe1 <- classe1 %>%
-		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[0, 1.203e+05)")
-classe2 <- classe1 %>%
-		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[1.203e+05, 1.503e+05)")
-classe3 <- classe1 %>%
-		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[1.503e+05, 1.763e+05)")
-classe4 <- classe1 %>%
-		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[1.763e+05, 2.028e+05)")
-classe5 <- classe1 %>%
-		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[2.028e+05, 2.328e+05)")
-classe6 <- classe1 %>%
-		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[2.328e+05, 2.652e+05)")
-classe7 <- classe1 %>%
-		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[2.652e+05, 3.023e+05)")
-classe8 <- classe1 %>%
-		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[3.023e+05, 3.563e+05)")
-classe9 <- classe1 %>%
-		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[3.563e+05, 4.677e+05)")
-
-for (i in 158:432) {
-	map_data <- map_data_init %>%
-			filter(es_deces_week_France_numero_semaine == i)
-	
-	semaine <- es_deces_week_France_numero_semaine %>%
-			filter(es_deces_week_France_numero_semaine == i) %>%
-			select(numerosemaineannee)
-	annee <- es_deces_week_France_numero_semaine %>%
-			filter(es_deces_week_France_numero_semaine == i) %>%
-			select(annee)
-	saison <- es_deces_week_France_numero_semaine %>%
-			filter(es_deces_week_France_numero_semaine == i) %>%
-			select(saison)
-	
-	map_data <- map_data %>%
-			rbind(classe1, classe2, classe3, classe4, classe5, classe6, classe7, classe8, classe9)
-	
-	p <- ggplot(data=map_data) + geom_sf(aes(fill=deces_standard_tot_rec), color="dim grey", size=.1) +
-			scale_fill_brewer(palette = "Oranges") +
-			guides(fill = guide_legend(reverse=T, title = "Nombre de d?c?s")) +
-			labs(title= paste0("Nombre de d?c?s de la semaine ", semaine[1, 1], " de l'ann?e ", annee[1, 1], " (saison ", saison[1, 1], ")"),
-					caption="(C) EuroGeographics for the administrative boundaries
-							Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
-			theme_light() + theme(legend.position=c(.1, .5)) +
-			coord_sf(xlim=c(-22, 34), ylim=c(35, 70)) 
-	
-	ggsave(paste0("gen/images/carte", i, ".png"), plot=p, width = 11, height = 8)
-}
+#map_data_init <- inner_join(geodata, es_deces_standard_pays_semaine_plus_40)
+#
+#es_deces_week_France_numero_semaine <- es_deces_week_France_numero_semaine %>%
+#		mutate(saison=if_else(numerosemaineannee < 13 | numerosemaineannee > 51, "hiver", "autre"))
+#es_deces_week_France_numero_semaine <- es_deces_week_France_numero_semaine %>%
+#		mutate(saison=if_else(numerosemaineannee > 12 & numerosemaineannee < 26, "printemps", saison))
+#es_deces_week_France_numero_semaine <- es_deces_week_France_numero_semaine %>%
+#		mutate(saison=if_else(numerosemaineannee > 25 & numerosemaineannee < 39, "?t?", saison))
+#es_deces_week_France_numero_semaine <- es_deces_week_France_numero_semaine %>%
+#		mutate(saison=if_else(numerosemaineannee > 38 & numerosemaineannee < 52, "automne", saison))
+#
+#
+#
+#classe1 <- map_data %>%
+#		filter(geo == "FR")
+#
+#classe1 <- classe1 %>%
+#		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[0, 1.203e+05)")
+#classe2 <- classe1 %>%
+#		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[1.203e+05, 1.503e+05)")
+#classe3 <- classe1 %>%
+#		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[1.503e+05, 1.763e+05)")
+#classe4 <- classe1 %>%
+#		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[1.763e+05, 2.028e+05)")
+#classe5 <- classe1 %>%
+#		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[2.028e+05, 2.328e+05)")
+#classe6 <- classe1 %>%
+#		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[2.328e+05, 2.652e+05)")
+#classe7 <- classe1 %>%
+#		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[2.652e+05, 3.023e+05)")
+#classe8 <- classe1 %>%
+#		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[3.023e+05, 3.563e+05)")
+#classe9 <- classe1 %>%
+#		mutate (id="classe1", geo = "classe1", geometry=geocanada, deces_standard_tot_rec="[3.563e+05, 4.677e+05)")
+#
+#for (i in 158:432) {
+#	map_data <- map_data_init %>%
+#			filter(es_deces_week_France_numero_semaine == i)
+#	
+#	semaine <- es_deces_week_France_numero_semaine %>%
+#			filter(es_deces_week_France_numero_semaine == i) %>%
+#			select(numerosemaineannee)
+#	annee <- es_deces_week_France_numero_semaine %>%
+#			filter(es_deces_week_France_numero_semaine == i) %>%
+#			select(annee)
+#	saison <- es_deces_week_France_numero_semaine %>%
+#			filter(es_deces_week_France_numero_semaine == i) %>%
+#			select(saison)
+#	
+#	map_data <- map_data %>%
+#			rbind(classe1, classe2, classe3, classe4, classe5, classe6, classe7, classe8, classe9)
+#	
+#	p <- ggplot(data=map_data) + geom_sf(aes(fill=deces_standard_tot_rec), color="dim grey", size=.1) +
+#			scale_fill_brewer(palette = "Oranges") +
+#			guides(fill = guide_legend(reverse=T, title = "Nombre de d?c?s")) +
+#			labs(title= paste0("Nombre de d?c?s de la semaine ", semaine[1, 1], " de l'ann?e ", annee[1, 1], " (saison ", saison[1, 1], ")"),
+#					caption="(C) EuroGeographics for the administrative boundaries
+#							Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
+#			theme_light() + theme(legend.position=c(.1, .5)) +
+#			coord_sf(xlim=c(-22, 34), ylim=c(35, 70)) 
+#	
+#	ggsave(paste0("gen/images/carte", i, ".png"), plot=p, width = 11, height = 8)
+#}
 
 
 message("Terminé")
