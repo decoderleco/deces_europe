@@ -23,7 +23,10 @@ Utiliser au choix :
 La toute première fois, exécuter ceci pour installer les librairies :
   - 000_install_libraries.R
 
-Par la suite, exécuter ou ré-exécuter dans cet ordre :
+Ensuite, pour tout exécuter :
+  - 002_run_all.R
+
+Par la suite, pour exécuter ou ré-exécuter certains fichiers :
   - 010_creation_tables_deces_europe.R
   - 020_analyses_eurostat.R
   - 030_analyse_deces_hebdomadaires.R
@@ -31,7 +34,7 @@ Par la suite, exécuter ou ré-exécuter dans cet ordre :
   - 050_delivrance_medicaments.R
   - 060_SIRD.r
   
-Executer ensuite :
+Pour générer l'article en HTML, executer ensuite :
   - 110_la_mortalite_en_europe.Rmd
 
 Puis générer le HTML avec le bouton "Knit to HTML" :  

@@ -82,10 +82,12 @@ if(!dir.exists(dossier_donnees_deces)) dir.create(dossier_donnees_deces)
 # Liste des URLs des fichiers de patients décédés
 
 urls_listes_deces <- c(
-		'2021t1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210409-131502/deces-2021-t1.txt',
-		'2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
-		'2019' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20200113-173945/deces-2019.txt',
-		'2018' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191205-191652/deces-2018.txt'
+  '2021m5'='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210614-174027/deces-2021-m05.txt',
+  '2021m4'='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210507-163942/deces-2021-m04.txt',
+  '2021t1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210409-131502/deces-2021-t1.txt',
+  '2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
+  '2019' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20200113-173945/deces-2019.txt',
+  '2018' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191205-191652/deces-2018.txt'
 )
 
 
@@ -428,5 +430,101 @@ CentreValdeLoire <- deces_dep_jour %>%
 
 a__f_plot_region(CentreValdeLoire)
 
+
+####deces par age et par jour####
+
+deces_age_jour <- db_clean %>% 
+		group_by(deces_date_complete,
+				age_deces_millesime) %>% 
+		summarise(effectif=n()) %>% 
+		filter(deces_date_complete >= "2018-01-01")
+
+deces_age_centre_reduit <- deces_age_jour %>% 
+		group_by(age_deces_millesime) %>% 
+		summarise(minimum = min(effectif),
+				maximum = max(effectif),
+				moyenne = mean(effectif),
+				premier_quartile = quantile(effectif,
+						probs=0.25),
+				dernier_quartile = quantile(effectif,
+						probs=(0.75)))
+
+deces_age_jour <- deces_age_jour %>% left_join(deces_age_centre_reduit)
+
+# Ajouter la colonne dece_centre_reduit
+deces_age_jour <- deces_age_jour %>% mutate(dece_centre_reduit = (effectif-moyenne)/max(dernier_quartile - moyenne,
+				moyenne - premier_quartile))
+# Ajouter la colonne confinement
+deces_age_jour <- deces_age_jour %>% 
+		mutate(confinement = if_else(
+						(deces_date_complete >= "2020-03-17" & deces_date_complete <= "2020-05-11") |
+								(deces_date_complete >= "2020-10-30" & deces_date_complete <= "2020-12-15"),
+						"confinement",
+						"pas de confinement"))
+
+#deces des 0 an
+deces_0_an <- deces_age_jour %>% filter(age_deces_millesime==0)
+
+ggplot(data = deces_0_an) + 
+		geom_line(aes(x=deces_date_complete, y = effectif,colour=confinement)) + 
+		scale_colour_manual(values=c("red","black"))+
+		ggtitle("Décès quotidiens par age") +
+		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
+
+# Ajouter la colonne tranche d'age
+deces_age_jour <- deces_age_jour %>% 
+		mutate(tranche_d_age = case_when(age_deces_millesime < 20 ~ "0-19 ans",
+						age_deces_millesime > 19 & age_deces_millesime < 40 ~"20-39 ans",
+						age_deces_millesime > 39 & age_deces_millesime < 60 ~"40-59 ans",
+						age_deces_millesime > 59 & age_deces_millesime < 80 ~"60-79 ans",
+						age_deces_millesime > 79  ~"plus de 89 ans"))
+
+deces_tranchedage_jour <- deces_age_jour %>% 
+		group_by(deces_date_complete,
+				tranche_d_age) %>% 
+		summarise(effectif=sum(effectif))
+
+# Ajouter la colonne confinement
+deces_tranchedage_jour <- deces_tranchedage_jour %>% 
+		mutate(confinement = if_else(
+						(deces_date_complete >= "2020-03-17" & deces_date_complete <= "2020-05-11") |
+								(deces_date_complete >= "2020-10-30" & deces_date_complete <= "2020-12-15"),
+						"confinement",
+						"pas de confinement"))
+
+#ajout centre 
+deces_tranchedage_centre_reduit <- deces_tranchedage_jour %>% 
+		group_by(tranche_d_age) %>% 
+		summarise(minimum = min(effectif),
+				maximum = max(effectif),
+				moyenne = mean(effectif),
+				premier_quartile = quantile(effectif,
+						probs=0.25),
+				dernier_quartile = quantile(effectif,
+						probs=(0.75)))
+
+deces_tranchedage_jour <- deces_tranchedage_jour %>% left_join(deces_tranchedage_centre_reduit)
+
+# Ajouter la colonne dece_centre_reduit
+deces_tranchedage_jour <- deces_tranchedage_jour %>% mutate(deces_tranchedage_centre_reduit = (effectif-moyenne)/max(dernier_quartile - moyenne,
+				moyenne - premier_quartile))
+dc4059ans <- deces_tranchedage_jour %>% filter(tranche_d_age=="40-59 ans")
+
+# Ajouter la moyenne mobile
+moyenne_mobile <- running_mean(dc4059ans$effectif, 7)
+moyenne <- mean(moyenne_mobile)
+moyenne_mobile<- data_frame(moyenne_mobile)
+moyenne_mobile$numerojour<-1:nrow(moyenne_mobile)+6
+dc4059ans$numerojour<-1:nrow(dc4059ans) 
+dc4059ans <- dc4059ans %>% left_join(moyenne_mobile)
+dc4059ans$moyenne <- moyenne
+
+
+ggplot(data = dc4059ans) + 
+  geom_line(aes(x=deces_date_complete, y = moyenne_mobile,colour=confinement)) + 
+		scale_colour_manual(values=c("red","black"))+
+		facet_wrap(~tranche_d_age)+
+		ggtitle("Décès quotidiens par age") +
+		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
 
 message("Terminé")
