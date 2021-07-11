@@ -19,9 +19,11 @@ library(igraph)
 library(readr)
 library(dplyr)
 
+################################################################################
 #
 # Preparer les espaces de telechargement de donnees
 #
+################################################################################
 
 dossier_donnees_externes <- 'inst/extdata'
 dossier_donnees_deces <- file.path(dossier_donnees_externes, 'deces')
@@ -89,9 +91,11 @@ dl_fichier <- function(
 chemins_fichiers_deces <- lapply(urls_listes_deces, dl_fichier)
 
 
+################################################################################
 #
 # Importer les fichiers de décès qui ont une structure définie par des champs de largeurs fixe
 #
+################################################################################
 
 # Largeur des champs dans le fichier
 fields_widths <- c(
@@ -187,9 +191,11 @@ any(is.na(db_clean$deces_date_complete))
 
 
 
+################################################################################
 #
 # Identifier le département FR en fonction du code lieu
 #
+################################################################################
 
 url_nomenclatures <- 'https://www.insee.fr/fr/statistiques/fichier/4316069/cog_ensemble_2020_csv.zip'
 
@@ -286,7 +292,11 @@ db_clean <- db_clean %>%
 saveRDS(db_clean, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
 
 
+################################################################################
+#
 #### réalisation des graphiques ####
+#
+################################################################################
 
 db_clean <- a__f_loadRdsIfNeeded(var = db_clean,
 		varName = "db_clean", 
@@ -335,13 +345,13 @@ deces_dep_jour <- deces_dep_jour %>%
 						"pas de confinement"))
 
 # Filtrer les deces par region
-BourgogneFrancheComté <- deces_dep_jour %>%
+BourgogneFrancheComte <- deces_dep_jour %>%
 		filter(region_name == "Bourgogne-Franche-Comté")
 
-AuvergneRhôneAlpes <- deces_dep_jour %>%
+AuvergneRhoneAlpes <- deces_dep_jour %>%
 		filter(region_name == "Auvergne-Rhône-Alpes")
 
-ÎledeFrance <- deces_dep_jour %>%
+IledeFrance <- deces_dep_jour %>%
 		filter(region_name == "Île-de-France")
 
 PaysdelaLoire <- deces_dep_jour %>%
@@ -374,7 +384,52 @@ Corse <- deces_dep_jour %>%
 CentreValdeLoire <- deces_dep_jour %>%
 		filter(region_name == "Centre-Val de Loire")
 
-ggplot(data = BourgogneFrancheComté) + 
+
+jg_regions <- c("Bourgogne-Franche-Comté",
+		"Auvergne-Rhône-Alpes",
+		"Île-de-France",
+		"Pays de la Loire",
+		"Normandie",
+		"Nouvelle-Aquitaine",
+		"Hauts-de-France",
+		"Occitanie",
+		"Provence-Alpes-Côte d'Azur",
+		"Grand Est",
+		"Bretagne",
+		"Corse",
+		"Centre-Val de Loire")
+
+a__f_ggplot_region <- function(region, nomRegion) {
+
+	ggplot(data = region) + 
+			
+			geom_line(aes(x=deces_date_complete, 
+							y = dece_centre_reduit,
+							colour=confinement)) + 
+			
+			scale_colour_manual(values=c("red", "black"))+
+			
+			facet_wrap(~dep_name)+
+			
+			ggtitle("Décès quotidiens par département") +
+			
+			xlab("date de décès") + 
+			ylab("nombre de décès (centrés et réduits au quartile)")
+	
+	dev.print(device = png, file = paste0("gen/images/fr_gouv_Registre_Deces_quotidiens_", nomRegion, ".png"), width = 1000)
+	
+	# Supprimer la variable de GlovaEnv correspondant à region
+	#   deparse(substitute(region)) permet d'obtenir le nom (sous forme de string) de la variable 
+	#   qui a été passée dans le parametre region
+	if (shallDeleteVars) rm(list = c(deparse(substitute(region))), envir = globalenv())
+}
+
+a__f_ggplot_region(BourgogneFrancheComte, "BourgogneFrancheComté")
+a__f_ggplot_region(AuvergneRhoneAlpes, "Auvergne-Rhône-Alpes")
+a__f_ggplot_region(CentreValdeLoire, "Centre-Val de Loire")
+
+ggplot(data = BourgogneFrancheComte) + 
+
 		
 		geom_line(aes(x=deces_date_complete, 
 						y = dece_centre_reduit,
@@ -391,7 +446,11 @@ ggplot(data = BourgogneFrancheComté) +
 
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_BourgogneFrancheComté.png", width = 1000)
 
-ggplot(data = AuvergneRhôneAlpes) + 
+if (shallDeleteVars) rm(BourgogneFrancheComte)
+
+
+
+ggplot(data = AuvergneRhoneAlpes) + 
 		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
 		scale_colour_manual(values=c("red", "black"))+
 		facet_wrap(~dep_name)+
@@ -399,6 +458,8 @@ ggplot(data = AuvergneRhôneAlpes) +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
 
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_AuvergneRhôneAlpes.png", width = 1000)
+
+if (shallDeleteVars) rm(AuvergneRhoneAlpes)
 
 ggplot(data = PaysdelaLoire) + 
 		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
@@ -409,6 +470,8 @@ ggplot(data = PaysdelaLoire) +
 
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_PaysdelaLoire.png", width = 1000)
 
+if (shallDeleteVars) rm(PaysdelaLoire)
+
 ggplot(data = PACA) + 
 		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
 		scale_colour_manual(values=c("red", "black"))+
@@ -418,7 +481,8 @@ ggplot(data = PACA) +
 
 dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_PACA.png", width = 1000)
 
-ggplot(data = ÎledeFrance) + 
+
+ggplot(data = IledeFrance) + 
 		geom_line(aes(x=deces_date_complete, y = dece_centre_reduit, colour=confinement)) + 
 		scale_colour_manual(values=c("red", "black"))+
 		facet_wrap(~dep_name)+
