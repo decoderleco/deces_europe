@@ -294,7 +294,7 @@ db_clean <- db_clean %>%
 db_clean <- db_clean %>%
 		mutate(age_deces_millesime = deces_annee_complete - naissance_annee_complete)
 
-saveRDS(db_clean, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
+#saveRDS(db_clean, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
 
 
 ################################################################################
@@ -303,9 +303,9 @@ saveRDS(db_clean, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
 #
 ################################################################################
 
-db_clean <- a__f_loadRdsIfNeeded(var = db_clean,
-		varName = "db_clean", 
-		rdsRelFilePath = "gen/rds/fr_gouv_registre_deces_fr.rds") 
+#db_clean <- a__f_loadRdsIfNeeded(var = db_clean,
+#		varName = "db_clean", 
+#		rdsRelFilePath = "gen/rds/fr_gouv_registre_deces_fr.rds") 
 
 
 # Deces par jour et par departement depuis 01/01/2018
@@ -471,6 +471,8 @@ ggplot(data = deces_0_an) +
 		ggtitle("Décès quotidiens par age") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
 
+if (shallDeleteVars) rm(deces_0_an)
+
 # Ajouter la colonne tranche d'age
 deces_age_jour <- deces_age_jour %>% 
 		mutate(tranche_d_age = case_when(age_deces_millesime < 20 ~ "0-19 ans",
@@ -483,6 +485,8 @@ deces_tranchedage_jour <- deces_age_jour %>%
 		group_by(deces_date_complete,
 				tranche_d_age) %>% 
 		summarise(effectif=sum(effectif))
+
+if (shallDeleteVars) rm(deces_age_jour)
 
 # Ajouter la colonne confinement
 deces_tranchedage_jour <- deces_tranchedage_jour %>% 
@@ -510,6 +514,9 @@ deces_tranchedage_jour <- deces_tranchedage_jour %>% mutate(deces_tranchedage_ce
 				moyenne - premier_quartile))
 dc4059ans <- deces_tranchedage_jour %>% filter(tranche_d_age=="40-59 ans")
 
+if (shallDeleteVars) rm(deces_tranchedage_jour)
+if (shallDeleteVars) rm(deces_tranchedage_centre_reduit)
+
 # Ajouter la moyenne mobile
 moyenne_mobile <- running_mean(dc4059ans$effectif, 7)
 moyenne <- mean(moyenne_mobile)
@@ -526,5 +533,9 @@ ggplot(data = dc4059ans) +
 		facet_wrap(~tranche_d_age)+
 		ggtitle("Décès quotidiens par age") +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
+
+if (shallDeleteVars) rm(dc4059ans)
+if (shallDeleteVars) rm(moyenne)
+if (shallDeleteVars) rm(moyenne_mobile)
 
 message("Terminé")

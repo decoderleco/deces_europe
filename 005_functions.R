@@ -167,7 +167,7 @@ a__f_plot_region <- function(region) {
 					scale_colour_manual(values=c("red", "black")) +
 					
 					# Faire un graphique par département, répartis sur 3 colonnes
-					facet_wrap(~dep_name, ncol = 3) +
+					facet_wrap(~dep_name) +
 					
 					ggtitle("Décès quotidiens par département") +
 					
