@@ -231,7 +231,7 @@ Au niveau des départements français, le pic de mortalité de mars-avril 2020 n
 
 En Île-de-France par exemple, tous les départements connaissent une hausse de mortalité synchronisée débutant arpès le début du confinement identifié ici en bleu.
 
-![](gen/images/fr_gouv_Registre_Deces_quotidiens_ÎledeFrance.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_IledeFrance.png){width=1000px}
 A l'inverse, en Nouvelle-Aquitaine, auncune hausse de mortalité n'est visible sur la période.
 
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_NouvelleAquitaine.png){width=1000px}
@@ -575,16 +575,15 @@ Dans tous les cas, il est urgent de retrouver ce qui manque cruellement depuis p
 
 ## Les décès quotidiens par département français
 
-![](gen/images/fr_gouv_Registre_Deces_quotidiens_BourgogneFrancheComté.png){width=1000px}
-![](gen/images/fr_gouv_Registre_Deces_quotidiens_AuvergneRhôneAlpes.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_BourgogneFrancheComte.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_AuvergneRhoneAlpes.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_PaysdelaLoire.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_PACA.png){width=1000px}
-![](gen/images/fr_gouv_Registre_Deces_quotidiens_ÎledeFrance.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_IledeFrance.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_NouvelleAquitaine.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_HautsdeFrance.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_GrandEst.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_Occitanie.png){width=1000px}
-![](gen/images/fr_gouv_Registre_Deces_quotidiens_ÎledeFrance.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_Corse.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_Bretagne.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_CentreValdeLoire.png){width=1000px}
