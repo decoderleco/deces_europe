@@ -94,76 +94,112 @@ es_deces_standard_owid_vaccination_by_pays_semaine <- es_deces_standard_owid_vac
 
 es_deces_standard_pays_semaine_autriche <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "AT")
+
 es_deces_standard_pays_semaine_belgique <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "BE")
+
 es_deces_standard_pays_semaine_bulgarie <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "BG")
+
 es_deces_standard_pays_semaine_suisse <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "CH")
+
 es_deces_standard_pays_semaine_rtcheque <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "CZ")
+
 es_deces_standard_pays_semaine_danmark <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "DK")
+
 es_deces_standard_pays_semaine_estonie <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "EE")
+
 es_deces_standard_pays_semaine_espagne <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "ES")
+
 es_deces_standard_pays_semaine_france <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "FR")
+
+# TODO : Pourquoi filtre-t-on sur numerosemaine > 52 ?
 es_deces_standard_pays_semaine_croatie <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "HR") %>%
-		filter(numerosemaine>52)
+		filter(numerosemaine > 52)
+
 es_deces_standard_pays_semaine_hongrie <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "HU")
+
 es_deces_standard_pays_semaine_islande <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "IS")
+
 es_deces_standard_pays_semaine_italie <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "IT")
+
 es_deces_standard_pays_semaine_lichtenstein <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "LI")
+
 es_deces_standard_pays_semaine_lituanie <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "LT")
+
 es_deces_standard_pays_semaine_luxembourg <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "LU")
+
 es_deces_standard_pays_semaine_lettonie <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "LV")
+
 es_deces_standard_pays_semaine_montenegro <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "ME")
+
 es_deces_standard_pays_semaine_malte <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "MT")
+
 es_deces_standard_pays_semaine_norvege <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "NO")
+
 es_deces_standard_pays_semaine_paysbas <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "NL")
+
 es_deces_standard_pays_semaine_portugal <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "PT")
+
 es_deces_standard_pays_semaine_pologne <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "PL")
+
 es_deces_standard_pays_semaine_serbie <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "RS")
+
 es_deces_standard_pays_semaine_suede <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "SE")
+
 es_deces_standard_pays_semaine_slovenie <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "SI")
+
 es_deces_standard_pays_semaine_slovaquie <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "SK")
+
 es_deces_standard_pays_semaine_allemagne <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "DE")
+
 es_deces_standard_pays_semaine_chypre <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "CY")
+
 es_deces_standard_pays_semaine_albanie <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "AL")
+
 es_deces_standard_pays_semaine_armenie <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "AM")
+
 es_deces_standard_pays_semaine_grece <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "EL")
+
 es_deces_standard_pays_semaine_finlande <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "FI")
+
 es_deces_standard_pays_semaine_roumanie <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 		filter(geo == "RO")
 
 
-#France
+#---------------------------------------#
+# Graphe superposé France / Suede / Portugal
+#---------------------------------------#
 
 # Moyenne mobile sur 52 semaines
 es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_france$deces_standard_tot, 
@@ -179,8 +215,6 @@ es_deces_standard_pays_semaine_france <- es_deces_standard_pays_semaine_france %
 
 
 es_deces_standard_pays_semaine_france$moyenne <- moyenne
-
-# Graphe superposé France / Suede / Portugal
 
 plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$deces_standard20france_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 25000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés")
 axis(2, ylim=c(0, 60000), col="black")
@@ -216,46 +250,9 @@ text(26, 25000, "PORTUGAL", cex=1.2, col="green")
 
 dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_france_suede_portugal.png", width = 1000)
 
-
-
-
-# Graphe France seule
-
-plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$deces_standard20france_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 25000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés")
-axis(2, ylim=c(0, 60000), col="black")
-mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
-mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1000, "2013", cex=1.2)
-text(78, 1000, "2014", cex=1.2)
-text(130, 1000, "2015", cex=1.2)
-text(183, 1000, "2016", cex=1.2)
-text(235, 1000, "2017", cex=1.2)
-text(287, 1000, "2018", cex=1.2)
-text(339, 1000, "2019", cex=1.2)
-text(391, 1000, "2020", cex=1.2)
-text(440, 1000, "2021", cex=1.2)
-text(26, 22000, "FRANCE", cex=1.2)
-
-# Superposer la moyenne mobile
-par(new=T)
-plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$moyenne_mobile, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=3,  ylab="", type="o", col="red") 
-
-# Superposer la moyenne 
-par(new=T)
-plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$moyenne, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5,  ylab="", type="o", col="purple") 
-
-# Superposer la bsup
-par(new=T)
-plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$bsup, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5,  ylab="", lty=2, type="o", col="purple") 
-
-# Superposer la binf
-par(new=T)
-plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$binf, pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1.5,  ylab="", lty=2, type="o", col="purple") 
-
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_france_lissage.png", width = 1000)
-
+#---------------------------------------#
+# Graphe deces_hebdo_std_moyenne_mobile de chaque pays
+#---------------------------------------#
 
 a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_albanie, 1000, 157)
 a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_allemagne, 30000, 209)
@@ -269,6 +266,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_danmark,
 a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_espagne, 25000)
 a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_estonie, 500)
 a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_finlande, 2000)
+a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_france, 25000)
 a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_grece, 5000, 157)
 a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_hongrie, 5000)
 a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_islande, 100)
@@ -291,898 +289,65 @@ a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_slovenie
 a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_suede, 3000)
 a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_suisse, 3000)
 
-rm(moyenne)
-rm(es_moyenne_mobile)
 
 #---------------------------------------#
 ####    vaccinations et deces        ####
 #---------------------------------------#
 
-#Hongrie
-
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_hongrie, 4000, 150000, 100, 150000, 80)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_malte, 120, 150000, 20, 150000, 10)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_islande, 60, 150000, 10, 150000, 7)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_armenie, 1200, 150000, 400, 8500, 113)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_norvege, 1000, 150000, 35, 150000, 113)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_croatie, 2000, 150000, 40, 150000, 61)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_finlande, 2000, 150000, 40, 150000)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_chypre, 200, 150000, 10, 150000, 113)
-
 # Aucune donnée pour les moins de 40 ans en Allemagne
 a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_allemagne, 30000, 150000, 30000, 150000, 166)
 
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_armenie, 1200, 150000, 400, 8500, 113)
 a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_autriche, 100, 150000, 100, 150000)
 a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_belgique, 5000, 150000, 100, 150000)
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_chypre, 200, 150000, 10, 150000, 113)
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_croatie, 2000, 150000, 40, 150000, 61)
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_danmark, 1500, 150000, 40, 150000)
 a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_espagne, 20000, 150000, 200, 150000)
 a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_estonie, 400, 150000, 50, 150000)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_italie, 25000, 150000, 300, 150000)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_paysbas, 6000, 150000, 100, 150000)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_portugal, 5000, 150000, 100, 150000)
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_finlande, 2000, 150000, 40, 150000)
 a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_france, 20000, 150000, 500, 150000)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_pologne, 15000, 150000, 500, 150000)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_danmark, 1500, 150000, 40, 150000)
 a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_grece, 4000, 150000, 100, 150000, 113)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_suisse, 2500, 150000, 100, 150000)
-a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_suede, 3000, 150000, 100, 150000)
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_hongrie, 4000, 150000, 100, 150000, 80)
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_islande, 60, 150000, 10, 150000, 7)
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_italie, 25000, 150000, 300, 150000)
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_malte, 120, 150000, 20, 150000, 10)
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_norvege, 1000, 150000, 35, 150000, 113)
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_paysbas, 6000, 150000, 100, 150000)
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_pologne, 15000, 150000, 500, 150000)
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_portugal, 5000, 150000, 100, 150000)
 a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_serbie, 4000, 150000, 100, 150000)
-
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_suede, 3000, 150000, 100, 150000)
+a__f_plot_deces_hebdo_std_m40_p65_vaccination(es_deces_standard_pays_semaine_suisse, 2500, 150000, 100, 150000)
 
 
 #---------------------------------------#
 ####    morts VS morts Covid         ####
 #---------------------------------------#
 
-#Hongrie
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_allemagne, 30000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_armenie, 1500)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_autriche, 3000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_belgique, 5000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_chypre, 200)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_croatie, 2000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_danmark, 1500)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_espagne, 20000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_finlande, 2000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_france, 20000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_grece, 4000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_hongrie, 4500)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_islande, 60)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_italie, 25000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_malte, 120)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_norvege, 1000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_paysbas, 6000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_pologne, 15000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_portugal, 5000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_serbie, 4000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_suede, 3000)
+a__f_plot_deces_hebdo_deces_vs_decesCovid(es_deces_standard_pays_semaine_suisse, 2500)
 
-
-essai <- es_deces_standard_pays_semaine_hongrie %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 4500), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de la Hongrie")
-axis(2, ylim=c(0, 40000), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 4500), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot - essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 4500), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_hongrie.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_hongrie)
-
-#malte
-
-essai <- es_deces_standard_pays_semaine_malte %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 120), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de Malte")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 120), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 120), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_malte.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_malte)
-
-
-#islande
-
-essai <- es_deces_standard_pays_semaine_islande %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 60), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de l'Islande")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 60), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 60), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_islande.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_islande)
-
-
-#armenie
-
-essai <- es_deces_standard_pays_semaine_armenie %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 1500), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de l'armenie")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes des moins de 40 ans", side=2, line=3)
-mtext("nombre de décès toutes causes lissés sur 8 semaines des moins de 40 ans", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 1500), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 1500), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_armenie.png", width = 1000)
-
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_armenie)
-
-#norvege
-
-essai <- es_deces_standard_pays_semaine_norvege %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 1000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de la Norvège")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 1000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 1000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_norvege.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_norvege)
-
-
-#croatie
-
-essai <- es_deces_standard_pays_semaine_croatie %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de la Croatie")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_croatie.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_croatie)
-
-
-#finlande
-
-essai <- es_deces_standard_pays_semaine_finlande %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de la finlande")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 2000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_finlande.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_finlande)
-
-
-#chypre
-
-essai <- es_deces_standard_pays_semaine_chypre %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 200), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de Chypre")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 200), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 200), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_chypre.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_chypre)
-
-
-#allemagne
-
-essai <- es_deces_standard_pays_semaine_allemagne %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 30000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de l'Allemagne")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-mtext("Attention, aucune donnée pour les moins de 40 ans", side=1, line=2, col="black")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 30000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 30000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_allemagne.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_allemagne)
-
-#autriche
-
-essai <- es_deces_standard_pays_semaine_autriche %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de l'Autriche")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_autriche.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_autriche)
-
-
-#belgique
-
-essai <- es_deces_standard_pays_semaine_belgique %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de la Belgique")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_belgique.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_belgique)
-
-
-#espagne
-
-essai <- es_deces_standard_pays_semaine_espagne %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 20000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de l'espagne")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 20000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 20000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_espagne.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_espagne)
-
-#italie
-
-essai <- es_deces_standard_pays_semaine_italie %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 25000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de l'Italie")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 25000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 25000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_italie.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_italie)
-
-#paysbas
-
-essai <- es_deces_standard_pays_semaine_paysbas %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 6000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation des Pays-Bas")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 6000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 6000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_paysbas.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_paysbas)
-
-
-#portugal
-
-essai <- es_deces_standard_pays_semaine_portugal %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation du Portugal")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 5000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_portugal.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_portugal)
-
-#france
-
-moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_france$deces_tot_moins40, 8)
-moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-es_deces_standard_pays_semaine_france <- es_deces_standard_pays_semaine_france %>%
-		left_join(moyenne_mobile_m40)
-es_deces_standard_pays_semaine_france$moyenne_m40 <- moyenne_m40
-
-
-essai <- es_deces_standard_pays_semaine_france %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 20000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de la France")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-mtext("Attention, aucune donnée pour les moins de 40 ans", side=1, line=2, col="black")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 20000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 20000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_france.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_france)
-
-#pologne
-
-moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_pologne$deces_tot_moins40, 8)
-moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-es_deces_standard_pays_semaine_pologne <- es_deces_standard_pays_semaine_pologne %>%
-		left_join(moyenne_mobile_m40)
-es_deces_standard_pays_semaine_pologne$moyenne_m40 <- moyenne_m40
-
-
-essai <- es_deces_standard_pays_semaine_pologne %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 15000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de la Pologne")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-mtext("Attention, aucune donnée pour les moins de 40 ans", side=1, line=2, col="black")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 15000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 15000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_pologne.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_pologne)
-
-
-#danmark
-
-moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_danmark$deces_tot_moins40, 8)
-moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-es_deces_standard_pays_semaine_danmark <- es_deces_standard_pays_semaine_danmark %>%
-		left_join(moyenne_mobile_m40)
-es_deces_standard_pays_semaine_danmark$moyenne_m40 <- moyenne_m40
-
-
-essai <- es_deces_standard_pays_semaine_danmark %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 1500), xlab="", ylab="", type="o", col="black", cex=0, main="Situation du Danemark")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-mtext("Attention, aucune donnée pour les moins de 40 ans", side=1, line=2, col="black")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 1500), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 1500), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_danmark.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_danmark)
-
-
-#grece
-
-moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_grece$deces_tot_moins40, 8)
-moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-es_deces_standard_pays_semaine_grece <- es_deces_standard_pays_semaine_grece %>%
-		left_join(moyenne_mobile_m40)
-es_deces_standard_pays_semaine_grece$moyenne_m40 <- moyenne_m40
-
-
-essai <- es_deces_standard_pays_semaine_grece %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 4000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de la Grèce")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 4000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 4000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_grece.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_grece)
-
-
-#suisse
-
-moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_suisse$deces_tot_moins40, 8)
-moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-es_deces_standard_pays_semaine_suisse <- es_deces_standard_pays_semaine_suisse %>%
-		left_join(moyenne_mobile_m40)
-es_deces_standard_pays_semaine_suisse$moyenne_m40 <- moyenne_m40
-
-
-essai <- es_deces_standard_pays_semaine_suisse %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 2500), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de la Suisse")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 2500), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 2500), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_suisse.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_suisse)
-
-
-#suede
-
-moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_suede$deces_tot_moins40, 8)
-moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-es_deces_standard_pays_semaine_suede <- es_deces_standard_pays_semaine_suede %>%
-		left_join(moyenne_mobile_m40)
-es_deces_standard_pays_semaine_suede$moyenne_m40 <- moyenne_m40
-
-
-essai <- es_deces_standard_pays_semaine_suede %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de la Suède")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 3000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_suede.png", width = 1000)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_suede)
-
-
-#serbie
-
-moyenne_mobile_m40 <- running_mean(es_deces_standard_pays_semaine_serbie$deces_tot_moins40, 8)
-moyenne_m40 <- mean(moyenne_mobile_m40)
-moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
-moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40)+61
-es_deces_standard_pays_semaine_serbie <- es_deces_standard_pays_semaine_serbie %>%
-		left_join(moyenne_mobile_m40)
-
-rm(moyenne_mobile_m40)
-
-es_deces_standard_pays_semaine_serbie$moyenne_m40 <- moyenne_m40
-
-
-essai <- es_deces_standard_pays_semaine_serbie %>%
-		filter(numerosemaine>250)
-
-par(mar=c(4, 4, 3, 5))
-plot(essai$numerosemaine, essai$deces_tot,
-		pch=16, axes=F, ylim=c(0, 4000), xlab="", ylab="", type="o", col="black", cex=0, main="Situation de la Serbie")
-axis(2, ylim=c(0, 400), col="red")
-mtext("nombre de décès toutes causes", side=2, line=3)
-mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-text(26, 1, "2013", cex=1.2)
-text(78, 1, "2014", cex=1.2)
-text(130, 1, "2015", cex=1.2)
-text(183, 1, "2016", cex=1.2)
-text(235, 1, "2017", cex=1.2)
-text(287, 1, "2018", cex=1.2)
-text(339, 1, "2019", cex=1.2)
-text(391, 1, "2020", cex=1.2)
-text(435, 1, "2021", cex=1.2)
-box() # pour encadrer le graphique
-par(new=T)
-plot(essai$numerosemaine, essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 4000), xlab="", ylab="", type="o", col="red", cex=0, )
-par(new=T)
-plot(essai$numerosemaine, essai$deces_tot-essai$new_deaths,
-		pch=16, axes=F, ylim=c(0, 4000), xlab="", ylab="", type="o", col="blue", cex=0, )
-mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side=4, col="blue", line=2.5)
-axis(4, ylim=c(0, 3), col="blue", col.axis="blue")
-dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Covid_serbie.png", width = 1000)
-
-rm(moyenne_m40)
-rm(essai)
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_serbie)
-
-
-
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_bulgarie)
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_estonie)
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_lettonie)
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_lichtenstein)
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_lituanie)
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_luxembourg)
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_montenegro)
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_roumanie)
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_rtcheque)
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_slovaquie)
-if (shallDeleteVars) rm(es_deces_standard_pays_semaine_slovenie)
-
-#### 
 
 #es_deces_standard_pays_semaine__analysables <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 #		filter(time >"2015-01-01")
@@ -1192,9 +357,12 @@ if (shallDeleteVars) rm(es_deces_standard_pays_semaine_slovenie)
 #		filter(time >= "2020W01") %>%
 #		filter(time <= "2020W40")
 
-####realisation de cartes dynamiques avec 1 carte par semaine####
 
-#20 geodata is not defined !
+#---------------------------------------#
+#### realisation de cartes dynamiques avec 1 carte par semaine####
+#---------------------------------------#
+
+# TODO : geodata is not defined !
 map_data_init <- inner_join(geodata, es_deces_standard_pays_semaine_plus_40)
 
 es_deces_week_France_numero_semaine <- es_deces_week_France_numero_semaine %>%

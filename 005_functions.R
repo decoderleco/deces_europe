@@ -503,3 +503,105 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	#	if (shallDeleteVars) rm(list = c(nomRegion), envir = globalenv())
 }
 
+################################################################################
+# Generer le graphique et le png associé : Deces vs Deces COVID
+################################################################################
+a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_semaine, 
+		ylim_max) {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	nomVar <- deparse(substitute(es_deces_standard_pays_semaine))
+	
+	# Recuperer le nom du pays qui est après "es_deces_standard_pays_semaine_"
+	startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
+	nomPays <- str_sub(nomVar, startIndex)
+	
+	
+	#Nom du fichier png à générer
+	pngFileRelPath <- paste0("gen/images/Eurostat_owid_Deces_Pays_Covid_", nomPays, ".png")
+	
+	# Message
+	message(paste0("Creation image (", pngFileRelPath,")"))
+	
+	
+	essai <- es_deces_standard_pays_semaine %>%
+			filter(numerosemaine>250)
+	
+	#
+	par(mar=c(4, 4, 3, 5))
+	
+	# Courbe des décès toutes causes
+	plot(essai$numerosemaine, 
+			essai$deces_tot, 
+			pch=16, 
+			cex=0, 
+			axes=F, 
+			xlab="week", 
+			ylab="", 
+			ylim=c(0, ylim_max), 
+			type="o", 
+			col="black", 
+			main=paste0("Situation de la ",nomPays))
+	
+	# pour encadrer le graphique
+	box() 
+	
+	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, ylim_max), col="red")
+	
+	mtext("nombre de décès toutes causes", side=2, line=3)
+	mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population + OurWorldInData", side=1, col="black", line=2.5)
+	
+	# Lignes verticales
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	
+	text(26, 1000, "2013", cex=1.2)
+	text(78, 1000, "2014", cex=1.2)
+	text(130, 1000, "2015", cex=1.2)
+	text(183, 1000, "2016", cex=1.2)
+	text(235, 1000, "2017", cex=1.2)
+	text(287, 1000, "2018", cex=1.2)
+	text(339, 1000, "2019", cex=1.2)
+	text(391, 1000, "2020", cex=1.2)
+	text(440, 1000, "2021", cex=1.2)
+	
+	#text(26, 22000, nomPays, cex=1.2)
+	
+	# Superposer décès COVID
+	par(new=T)
+	plot(essai$numerosemaine, 
+			essai$new_deaths, 
+			pch=16, 
+			axes=F, 
+			cex=0, 
+			ylim=c(0, ylim_max), 
+			xlab="", 
+			#lwd=3,  
+			ylab="", 
+			type="o", 
+			col="red") 
+	
+	# Superposer la différence
+	par(new=T)
+	plot(essai$numerosemaine, 
+			essai$deces_tot - essai$new_deaths, 
+			pch=16, 
+			axes=F, 
+			cex=0, 
+			ylim=c(0, ylim_max), 
+			xlab="", 
+			lwd=2,  
+			ylab="", 
+			type="o", 
+			col="blue") 
+	
+	# TODO : C'est plutôt : Décès non Covid-19
+	mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side = PLOT_AXIS_SIDE_RIGHT, col="blue", line=2.5)
+	
+	dev.print(device = png, file = pngFileRelPath, width = 1000)
+	
+	
+	# Supprimer la variable de GlovaEnv correspondant à region car on n'en a plus besoin
+	#	if (shallDeleteVars) rm(list = c(nomRegion), envir = globalenv())
+}
