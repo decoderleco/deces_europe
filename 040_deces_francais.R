@@ -22,6 +22,41 @@ library(dplyr)
 
 ################################################################################
 #
+# Definitions de fonctions locales
+#
+################################################################################
+
+################################################################################
+# 
+################################################################################
+a__f_complete_manquant <- function(x) {
+	x[is.na(x)] <- as.integer(mean(x, na.rm = TRUE))
+	
+	x
+}
+
+################################################################################
+# Attention pour les dates : certaines sont approximatives. Lorsque c'est le cas
+# la partie incertaine (mois ou jour) est à 00. -> remplacer les 00 par 01.
+# Pour les années inconnues -> ne rien mettre ?
+################################################################################
+a__f_nettoyer_partie_date <- function(
+		x,
+		debut,
+		fin
+) {
+	rez <- x %>%
+			substr(debut, fin) %>%
+			as.integer()
+	
+	
+	rez[rez == 0] <- NA
+	rez
+}
+
+
+################################################################################
+#
 # Preparer les espaces de telechargement de donnees
 #
 ################################################################################
@@ -33,6 +68,7 @@ dossier_donnees_deces <- file.path(dossier_donnees_externes, 'deces')
 if(!dir.exists(dossier_donnees_externes)) dir.create(dossier_donnees_externes)
 
 if(!dir.exists(dossier_donnees_deces)) dir.create(dossier_donnees_deces)
+
 
 #getwd()
 
@@ -52,44 +88,10 @@ urls_listes_deces <- c(
 		'2018' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191205-191652/deces-2018.txt'
 )
 
-dl_fichier <- function(
-		url_dl,
-		dossier_cible = dossier_donnees_deces 
-) {
-	
-	nom_fichier <- basename(url_dl)
 
-	chemin_fichier <- file.path(dossier_cible, nom_fichier)
+chemins_fichiers_deces <- lapply(urls_listes_deces, a__f_downloadUrl)
 
-	
-	if (!file.exists(chemin_fichier)) {
-		# Le fichier n'existe pas
-		
-		# Telecharger
-		
-		message("Téléchargement via l'url ", url_dl)
-
-		
-		curl::curl_download(url = url_dl, 
-				destfile = chemin_fichier, 
-				quiet = FALSE)
-
-		
-		message("Téléchargement terminé. Taille : ", file.size(chemin_fichier), " octets")
-
-		
-	} else {
-		# Le fichier existe deja
-		
-		message(paste('Fichier déjà présent :',chemin_fichier))
-
-	}
-	
-	chemin_fichier
-}
-
-
-chemins_fichiers_deces <- lapply(urls_listes_deces, dl_fichier)
+if (shallDeleteVars) rm(urls_listes_deces)
 
 
 ################################################################################
@@ -118,66 +120,50 @@ dbs_raw_deces <- lapply(chemins_fichiers_deces,
 				col_names = names(fields_widths)),
 		col_types = cols(.default = col_character()))
 
+if (shallDeleteVars) rm(chemins_fichiers_deces)
+if (shallDeleteVars) rm(fields_widths)
+
 # Table des deces
 db <- bind_rows(dbs_raw_deces) %>%
 		unique()
 
+if (shallDeleteVars) rm(dbs_raw_deces)
 
-# Attention pour les dates : certaines sont approximatives. Lorsque c'est le cas
-# la partie incertaine (mois ou jour) est à 00. -> remplacer les 00 par 01.
-# Pour les années inconnues -> ne rien mettre ?
-nettoyer_partie_date <- function(
-		x,
-		debut,
-		fin
-) {
-	rez <- x %>%
-			substr(debut, fin) %>%
-			as.integer()
-
-	
-	rez[rez == 0] <- NA
-	rez
-}
-
-complete_manquant <- function(x) {
-	x[is.na(x)] <- as.integer(mean(x, na.rm = TRUE))
-
-	x
-}
 
 # Deces nettoyes
 db_clean <- db %>%
 		mutate(
-				naissance_annee = nettoyer_partie_date(naissance_date, 1, 4),
+				naissance_annee = a__f_nettoyer_partie_date(naissance_date, 1, 4),
 				# si absent, prendre l'age moyen
-				naissance_annee_complete = complete_manquant(naissance_annee), 
+				naissance_annee_complete = a__f_complete_manquant(naissance_annee), 
 				
-				naissance_mois = nettoyer_partie_date(naissance_date, 5, 6),
-				naissance_mois_complete = complete_manquant(naissance_mois), 
+				naissance_mois = a__f_nettoyer_partie_date(naissance_date, 5, 6),
+				naissance_mois_complete = a__f_complete_manquant(naissance_mois), 
 				
-				naissance_jour = nettoyer_partie_date(naissance_date, 7, 8),
-				naissance_jour_complete = complete_manquant(naissance_jour), 
+				naissance_jour = a__f_nettoyer_partie_date(naissance_date, 7, 8),
+				naissance_jour_complete = a__f_complete_manquant(naissance_jour), 
 				
 				naissance_date_brute = naissance_date,
 				naissance_date = as.Date(naissance_date, '%Y%m%d'),
 				naissance_date_complete = as.Date(paste0(naissance_annee_complete, '-', naissance_mois_complete, '-', naissance_jour_complete)),
 				
-				deces_annee = nettoyer_partie_date(deces_date, 1, 4),
+				deces_annee = a__f_nettoyer_partie_date(deces_date, 1, 4),
 				
 				# si absent, prendre l'age moyen
-				deces_annee_complete = complete_manquant(deces_annee), 
+				deces_annee_complete = a__f_complete_manquant(deces_annee), 
 				
-				deces_mois = nettoyer_partie_date(deces_date, 5, 6),
-				deces_mois_complete = complete_manquant(deces_mois), 
+				deces_mois = a__f_nettoyer_partie_date(deces_date, 5, 6),
+				deces_mois_complete = a__f_complete_manquant(deces_mois), 
 				
-				deces_jour = nettoyer_partie_date(deces_date, 7, 8),
-				deces_jour_complete = complete_manquant(deces_jour), 
+				deces_jour = a__f_nettoyer_partie_date(deces_date, 7, 8),
+				deces_jour_complete = a__f_complete_manquant(deces_jour), 
 				
 				deces_date = as.Date(deces_date, '%Y%m%d'),
 				deces_date_complete = as.Date(paste0(deces_annee_complete, '-', deces_mois_complete, '-', deces_jour_complete))
 
 		) 
+
+if (shallDeleteVars) rm(db)
 
 # Afficher quelques verifications sur la base nettoyees
 sum(is.na(db_clean$naissance_annee))
@@ -204,12 +190,19 @@ if (!file.exists(file.path(dossier_donnees_externes, basename(url_nomenclatures)
 	# Le fichier n'existe pas
 	
 	# Télécharger le fichier
-	zip_nomenclatures_insee <- dl_fichier('https://www.insee.fr/fr/statistiques/fichier/4316069/cog_ensemble_2020_csv.zip')
+	zip_nomenclatures_insee <- a__f_downloadUrl('https://www.insee.fr/fr/statistiques/fichier/4316069/cog_ensemble_2020_csv.zip')
 
 	
 	list_fichiers <- unzip(zip_nomenclatures_insee, exdir = 'inst/extdata')
 
 }
+
+if (shallDeleteVars) rm(dossier_donnees_externes)
+if (shallDeleteVars) rm(list_fichiers)
+if (shallDeleteVars) rm(url_nomenclatures)
+if (shallDeleteVars) rm(zip_nomenclatures_insee)
+if (shallDeleteVars) rm(dossier_donnees_deces)
+
 
 # Lire les fichiers
 
@@ -231,6 +224,8 @@ communes_deduplique <- communes %>%
 
 #verifier qu'il n'y a plus de doublons
 any(duplicated(communes$com[communes$typecom == 'COM']))
+
+if (shallDeleteVars) rm(communes)
 
 # 
 dbp <- db_clean %>%
@@ -260,6 +255,11 @@ dbp <- db_clean %>%
 						select(
 								deces_code_lieu = cog, deces_pays = libcog))
 
+if (shallDeleteVars) rm(communes_deduplique)
+if (shallDeleteVars) rm(departements)
+if (shallDeleteVars) rm(regions)
+if (shallDeleteVars) rm(pays)
+
 # verifier le nombre de NA
 sum(is.na(dbp$deces_code_lieu))
 
@@ -279,6 +279,8 @@ dbp %>%
 # Afficher les deces à Tahiti
 dbp %>%
 		filter(deces_code_lieu == '98736')
+
+if (shallDeleteVars) rm(dbp)
 
 # Il manque encore les COM
 
@@ -324,6 +326,8 @@ deces_dep_centre_reduit <- deces_dep_jour %>%
 deces_dep_jour <- deces_dep_jour %>%
 		left_join(deces_dep_centre_reduit)
 
+if (shallDeleteVars) rm(deces_dep_centre_reduit)
+
 # Ajouter la colonne dece_centre_reduit
 deces_dep_jour <- deces_dep_jour %>%
 		mutate(dece_centre_reduit = (effectif-moyenne)/max(dernier_quartile - moyenne,
@@ -336,6 +340,8 @@ deces_dep_jour <- deces_dep_jour %>%
 		left_join(nom_departement,
 				# BUG = ?
 				by=c("deces_departement"="num_dep"))
+
+if (shallDeleteVars) rm(nom_departement)
 
 # Ajouter la colonne confinement
 deces_dep_jour <- deces_dep_jour %>%

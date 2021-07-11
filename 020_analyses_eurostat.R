@@ -410,8 +410,6 @@ deces_complet_annuel_france <- ungroup(es_deces_annuels) %>%
 		filter(geo == "FR") %>%
 		rename(annee=time)
 
-if (shallDeleteVars) rm(es_deces_annuels)
-
 barplot_deces_france <- ggplot(data=deces_complet_annuel_france, aes(x=annee, y=deces)) +
 		geom_bar(stat="identity", fill="steelblue")+
 		labs(title = "Décès annuels de la France",

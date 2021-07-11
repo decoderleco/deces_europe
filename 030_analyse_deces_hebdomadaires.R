@@ -205,7 +205,7 @@ es_deces_standard_pays_semaine_roumanie <- es_deces_standard_owid_vaccination_by
 es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_france$deces_standard_tot, 
 		                          52)
 						  
-moyenne <- mean(es_moyenne_mobile)
+es_moyenne <- mean(es_moyenne_mobile)
 
 es_moyenne_mobile <- data_frame(es_moyenne_mobile)
 es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile) + 51
@@ -214,7 +214,11 @@ es_deces_standard_pays_semaine_france <- es_deces_standard_pays_semaine_france %
 		left_join(es_moyenne_mobile)
 
 
-es_deces_standard_pays_semaine_france$moyenne <- moyenne
+es_deces_standard_pays_semaine_france$moyenne <- es_moyenne
+
+if (shallDeleteVars) rm(es_moyenne)
+if (shallDeleteVars) rm(es_moyenne_mobile)
+
 
 plot(es_deces_standard_pays_semaine_france$numerosemaine, es_deces_standard_pays_semaine_france$deces_standard20france_plus_40, pch=16, cex=0, axes=F, ylim=c(0, 25000), xlab="", ylab="", type="o", col="black", main="Décès hebdomadaires standardisés")
 axis(2, ylim=c(0, 60000), col="black")

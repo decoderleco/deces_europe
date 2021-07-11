@@ -95,6 +95,45 @@ a__f_loadRdsIfNeeded <- function(var, varName, rdsRelFilePath) {
 }
 
 
+################################################################################
+# Télécharger une URL
+################################################################################
+a__f_downloadUrl <- function(
+		url_dl,
+		dossier_cible = dossier_donnees_deces 
+) {
+	
+	nom_fichier <- basename(url_dl)
+	
+	chemin_fichier <- file.path(dossier_cible, nom_fichier)
+	
+	
+	if (!file.exists(chemin_fichier)) {
+		# Le fichier n'existe pas
+		
+		# Telecharger
+		
+		message("Téléchargement via l'url ", url_dl)
+		
+		
+		curl::curl_download(url = url_dl, 
+				destfile = chemin_fichier, 
+				quiet = FALSE)
+		
+		
+		message("Téléchargement terminé. Taille : ", file.size(chemin_fichier), " octets")
+		
+		
+	} else {
+		# Le fichier existe deja
+		
+		message(paste('Fichier déjà présent :',chemin_fichier))
+		
+	}
+	
+	chemin_fichier
+}
+
 
 
 
@@ -128,7 +167,7 @@ a__f_plot_region <- function(region) {
 					scale_colour_manual(values=c("red", "black")) +
 					
 					# Faire un graphique par département, répartis sur 3 colonnes
-					facet_wrap(~dep_name, ncol = 3, nrow = 4) +
+					facet_wrap(~dep_name, ncol = 3) +
 					
 					ggtitle("Décès quotidiens par département") +
 					
