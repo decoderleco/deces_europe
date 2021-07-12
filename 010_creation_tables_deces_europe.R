@@ -707,6 +707,36 @@ test <- ungroup(ourworldindata_week) %>%
 deces_standard_pays_semaine <- left_join(deces_standard_pays_semaine,
                                         test)
                                     
+ourworldindata_age_week = read_delim(file="gen/csv/ourworldindata-covid-vaccine-by-age.csv",delim=";")
+ourworldindata_age_week <-  ourworldindata_age_week  %>% 
+  mutate(geo=case_when(Code=="DNK"~"DK",
+                       Code=="SRB"~"RS",
+                       Code=="EST"~"EE",
+                       Code=="GRC"~"EL",
+                       Code=="MNE"~"ME",
+                       Code=="MLT"~"MT",
+                       Code=="SWE"~"SE",
+                       Code=="SVN"~"SI",
+                       Code=="SVK"~"SK",
+                       Code=="POL"~"PL",
+                       Code=="PRT"~"PT",
+                       Code=="ARM"~"AM",
+                       Code=="AUT"~"AT",
+                       Code=="FRO"~"FO",
+                       TRUE~substr(Code,1,2))) 
+
+ourworldindata_age_week <- ourworldindata_age_week %>% 
+  mutate(time = paste0(isoyear(Day),
+                       "W",
+                       as.integer(isoweek(Day)/10),
+                       isoweek(Day) - as.integer(isoweek(Day)/10)*10))
+
+
+ourworldindata_age_week <-  ourworldindata_age_week  %>% 
+  left_join(numerosemaine)
+
+deces_standard_pays_semaine <- left_join(deces_standard_pays_semaine,
+                                         ourworldindata_age_week)
                                     #-----------------------------------------------#
                                     #### ajout du nom des pays et zone est-ouest ####
                                     #-----------------------------------------------#

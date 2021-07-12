@@ -42,8 +42,7 @@ if(!dir.exists(dossier_donnees_deces)) dir.create(dossier_donnees_deces)
 # Liste des URLs des fichiers de patients décédés
 
 urls_listes_deces <- c(
-  '2021m5'='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210614-174027/deces-2021-m05.txt',
-  '2021m4'='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210507-163942/deces-2021-m04.txt',
+  '2021t2' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210709-174839/deces-2021-t2.txt',
   '2021t1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210409-131502/deces-2021-t1.txt',
   '2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
   '2019' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20200113-173945/deces-2019.txt',
@@ -475,11 +474,13 @@ ggplot(data = deces_0_an) +
 
 # Ajouter la colonne tranche d'age
 deces_age_jour <- deces_age_jour %>% 
-  mutate(tranche_d_age = case_when(age_deces_millesime < 20 ~ "0-19 ans",
-                                   age_deces_millesime > 19 & age_deces_millesime < 40 ~"20-39 ans",
-                                   age_deces_millesime > 39 & age_deces_millesime < 60 ~"40-59 ans",
-                                   age_deces_millesime > 59 & age_deces_millesime < 80 ~"60-79 ans",
-                                   age_deces_millesime > 79  ~"plus de 89 ans"))
+  mutate(tranche_d_age = case_when(age_deces_millesime < 18 ~ "0-17 ans",
+                                   age_deces_millesime > 17 & age_deces_millesime < 25 ~"18-24 ans",
+                                   age_deces_millesime > 24 & age_deces_millesime < 50 ~"25-49 ans",
+                                   age_deces_millesime > 49 & age_deces_millesime < 60 ~"50-59 ans",
+                                   age_deces_millesime > 59 & age_deces_millesime < 70 ~"60-69 ans",
+                                   age_deces_millesime > 69 & age_deces_millesime < 80 ~"70-79 ans",
+                                   age_deces_millesime > 79  ~"plus de 80 ans"))
 
 deces_tranchedage_jour <- deces_age_jour %>% 
   group_by(deces_date_complete,
@@ -509,20 +510,28 @@ deces_tranchedage_jour <- deces_tranchedage_jour %>% left_join(deces_tranchedage
 
 # Ajouter la colonne dece_centre_reduit
 deces_tranchedage_jour <- deces_tranchedage_jour %>% mutate(deces_tranchedage_centre_reduit = (effectif-moyenne)/max(dernier_quartile - moyenne,
-                                                                                        moyenne - premier_quartile))
-dc4059ans <- deces_tranchedage_jour %>% filter(tranche_d_age=="40-59 ans")
+                                                                                                 moyenne - premier_quartile))
+write.table(deces_tranchedage_jour, "gen/csv/deces_tranchedage_jour.csv", row.names=FALSE, sep="t",dec=",", na=" ")
+
+dc017ans <- deces_tranchedage_jour %>% filter(tranche_d_age=="0-17 ans")
+dc1824ans <- deces_tranchedage_jour %>% filter(tranche_d_age=="18-24 ans")
+dc2549ans <- deces_tranchedage_jour %>% filter(tranche_d_age=="25-49 ans")
+dc5059ans <- deces_tranchedage_jour %>% filter(tranche_d_age=="50-59 ans")
+dc6069ans <- deces_tranchedage_jour %>% filter(tranche_d_age=="60-69 ans")
+dc7079ans <- deces_tranchedage_jour %>% filter(tranche_d_age=="70-79 ans")
+dcplus80ans <- deces_tranchedage_jour %>% filter(tranche_d_age=="plus de 80 ans")
 
 # Ajouter la moyenne mobile
-moyenne_mobile <- running_mean(dc4059ans$effectif, 7)
+moyenne_mobile <- running_mean(dc2549ans$effectif, 7)
 moyenne <- mean(moyenne_mobile)
 moyenne_mobile<- data_frame(moyenne_mobile)
 moyenne_mobile$numerojour<-1:nrow(moyenne_mobile)+6
-dc4059ans$numerojour<-1:nrow(dc4059ans) 
-dc4059ans <- dc4059ans %>% left_join(moyenne_mobile)
-dc4059ans$moyenne <- moyenne
+dc2549ans$numerojour<-1:nrow(dc2549ans) 
+dc2549ans <- dc2549ans %>% left_join(moyenne_mobile)
+dc2549ans$moyenne <- moyenne
 
 
-ggplot(data = dc4059ans) + 
+ggplot(data = dc2549ans) + 
   geom_line(aes(x=deces_date_complete, y = moyenne_mobile,colour=confinement)) + 
   scale_colour_manual(values=c("red","black"))+
   facet_wrap(~tranche_d_age)+
