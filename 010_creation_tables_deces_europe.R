@@ -1398,7 +1398,6 @@ es_deces_standard_owid_vaccination_by_pays_semaine <- left_join(es_deces_standar
 		pays_geo_nom_zone)
 
 saveRDS(es_deces_standard_owid_vaccination_by_pays_semaine, file="gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS")
->>>>>>> 36625cbcec8d53c855409b12da9794640b2f7088
 
 # Generer un csv séparé par "t"
 write.table(es_deces_standard_owid_vaccination_by_pays_semaine, "gen/csv/Eurostat_owid_deces_standard_pays_semaine.csv", row.names=FALSE, sep="t", dec=",", na=" ")
