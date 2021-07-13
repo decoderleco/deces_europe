@@ -434,7 +434,7 @@ dev.print(device = png, file = "gen/images/fr_gouv_Registre_Deces_quotidiens_Cen
 
 ####deces par age et par jour####
 
-deces_age_jour <- db_clean %>% 
+deces_age_jour <- db_clean %>% filter(str_sub(deces_code_lieu,1,2)!="99"&str_sub(deces_code_lieu,1,2)!="98"&str_sub(deces_code_lieu,1,2)!="97"&str_sub(deces_code_lieu,1,2)!="96") %>% 
   group_by(deces_date_complete,
            age_deces_millesime) %>% 
   summarise(effectif=n()) %>% 
