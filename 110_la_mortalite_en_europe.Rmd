@@ -94,7 +94,7 @@ Cette situation est la même quel que soit le pays en Européen considéré.
 Tous les pays européens vivent au rythme des nouvelles annonces et mesures concernant la Covid-19 depuis plus d’un an. Mais qu’en est-il réellement du point de vue de la mortalité ? L’année 2020 est-elle vraiment une année d’hécatombe quelque part ?
 Cette carte d’Europe représente l’année pour laquelle chaque pays européen, dont nous disposons des données, a connu le plus de décès.
 
- ![](gen/images/annee_deces_maximum.png)
+ ![](gen/images/Eurostat_Deces_Annee_Maximum.png)
 
 En marron, nous retrouvons tous les pays pour lesquels l’année 2020 est l’année pour laquelle il y a eu le plus de décès. C’est bien le cas de la majorité des pays d’Europe. On note toutefois quelques exceptions, en particulier les pays nordiques. Cette carte est réalisée avec des données brutes. Comme nous l'avons vu pour la France, les données brutes reflètent avant tout l'augmentation et le vieillissement de la population. 
 
@@ -106,9 +106,9 @@ Ainsi, plutôt que de regarder les décès bruts, il est nécessaire de les corr
 
 En calculant pour chaque pays, les décès standardisés par âge, pour toutes les années, il est désormais possible de les comparer aux décès 2020. Cela permet de savoir si à population égale, l’année 2020 a été réellement plus mortelle que les autres. Ce calcul, permet de déger 5 profils type de pays représentés sur cette carte.
 
- ![](gen/images/typo_annee_deces.png)
+ ![](gen/images/Eurostat_Deces_2020_Typologie.png)
 
-Pour l’Islande, la Norvège et le Danemark , l’année 2020 est en fait l’année la moins mortelle de toute leur histoire. Dans ces pays, les habitants ne sont jamais moins morts qu’en 2020. Ce n’est pas pour autant qu’ils n’ont pas de morts attribués à la Covid-19, mais dans ces pays, malgré la pandémie annoncée, l’année 2020 est le record absolu de plus faible mortalité.
+Pour l’Islande, la Norvège et le Danemark , l’année 2020 est en fait l’année la moins mortelle de toute leur histoire. Dans ces pays, les habitants ne sont jamais moins morts qu’en 2020. Ce n’est pas pour autant qu’ils n’ont pas de morts attribués à la Covid-19,  mais dans ces pays, malgré la pandémie annoncée, l’année 2020 est le record absolu de plus faible mortalité.
 
 L'Allemagne, la Suède, la Finlande, l'Estonie et la Lituanie ont vécu la 2e année la moins mortelle de toute leur histoire. Seule l'année 2019 a enregistré moins de décès. En effet, pour l'écrasante majorité des pays d'Europe, l'année 2019 a été un record de sous-mortalité qui sera très difficile à battre, même en enfermant toute la population.
 
@@ -188,7 +188,7 @@ Sans surprise, pour la quasi-totalité des pays européens, il n'est jamais déc
 
 Le 19 janvier 2021, l’Insee a sorti son bilan démographique de l’année 2020 [^n2] en décidant de mettre comme titre « Avec la pandémie de Covid-19, nette baisse de l’espérance de vie et chute du nombre de mariages ». Bien évidemment, la presse s’est emparée de ce titre pour expliquer à quel point la situation était grave. Les journalistes ont bien évidemment déduit du titre de l’Insee, que les français ont vécu moins longtemps que d’habitude, et qu’en plus cette diminution était causée par la Covid-19.
 
-D’ailleurs, un des sous-titres de l’article de l’Insee est directement "En 2020, la pandémie a fait perdre 0,4 an d’espérance de vie aux femmes et 0,5 an aux hommes". Ainsi le lien est direct : c’est la pandémie qui tue.
+D’ailleurs, un des sous-titres de l’article de l’Insee est directement "En 2020, la pandémie a fait perdre 0, 4 an d’espérance de vie aux femmes et 0, 5 an aux hommes". Ainsi le lien est direct : c’est la pandémie qui tue.
 
 La vidéo dédiée sur la chaîne Décoder l'éco [^n3] détaille le calcul de l’espérance de vie. Cet indicateur fait partie de la famille des agrégats. C’est-à-dire qu’il est construit en additionnant des choses qui vont dans tous les sens et finalement ne renseigne pas du tout sur ce qu’il se passe vraiment. Il a juste un joli nom induisant les gens en erreur, pensant avoir compris ce qu’il signifie.
 
@@ -231,7 +231,7 @@ Au niveau des départements français, le pic de mortalité de mars-avril 2020 n
 
 En Île-de-France par exemple, tous les départements connaissent une hausse de mortalité synchronisée débutant arpès le début du confinement identifié ici en bleu.
 
-![](gen/images/fr_gouv_Registre_Deces_quotidiens_ÎledeFrance.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_IledeFrance.png){width=1000px}
 A l'inverse, en Nouvelle-Aquitaine, auncune hausse de mortalité n'est visible sur la période.
 
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_NouvelleAquitaine.png){width=1000px}
@@ -412,7 +412,7 @@ Le focus sur le moins de 40 ans qui ne décèdent que très peu lors des épisod
 Si on prend en compte l'évolution de la pyramide des âges en Hongrie et la forte baisse du nombre de moins de 40 ans, il s'agit également de la période connaissant le plus de décès de jeunes enregistrés. Etant communément admis que les jeunes ne décèdent quasiment jamais d'infections respiratoires aiguës contractées pendant l'hiver, et pas plus de la Covid-19, le nombre de causes possibles de cette surmortalité est limitée. Même si certains affirmeront que la cause viendrait d'un nouveau virus, cela signifierait qu'il serait apparu uniquement depuis la campagne vaccinale.
 
 Les semaines 10 à 17 en Hongrie ont enregistré 485 décès de personnes de moins de 40 ans. A la même époque, en 2020, 355 décès seulement ont été enregistrés, soit une hausse historique de 36%.
-Ces décès sont parfaitement indétectables par les méthodes de suivis habituels concernant les médicaments. La Hongrie possède 4,35 millions d'habitants de moins de 40 ans. Une surmortalité de 130 personnes représente dans la population 0,0002964%. Si l'on avait suivi un échantillon de 10 000 hongrois de moins de 40 ans, nous n'aurions trouvé aucun mort supplémentaire.
+Ces décès sont parfaitement indétectables par les méthodes de suivis habituels concernant les médicaments. La Hongrie possède 4, 35 millions d'habitants de moins de 40 ans. Une surmortalité de 130 personnes représente dans la population 0, 0002964%. Si l'on avait suivi un échantillon de 10 000 hongrois de moins de 40 ans, nous n'aurions trouvé aucun mort supplémentaire.
 Seuls les poisons violents peuvent être détectés par ce type de pratique.
 
 La pharmacovigilance ne permet pas non-plus de suivre efficacement les liens entre l'administration d'un produit et la mortalité qui suivrait.
@@ -476,8 +476,8 @@ Dans tous les cas, il est urgent de retrouver ce qui manque cruellement depuis p
 [^n3]:<https://youtu.be/UKpOOtnCnCQ>
 [^n4]:<http://www.fiches-auto.fr/articles-auto/chiffres-infractions-securite-routiere/s-2319-nombre-d-accidents-mortels-selon-l-age-des-conducteurs.php> 
 [^n5]:<https://www.santepubliquefrance.fr/content/download/250807/2596023>
-[^n6]:<https://www.frm.org/recherches-maladies-cardiovasculaires/infarctus-du-myocarde/l-infarctus-du-myocarde-en-chiffres#:~:text=Environ%20120%20000%20infarctus%20du,d%C3%A9c%C3%A8s%20survient%20dans%20l'ann%C3%A9e>
-[^n7]:<https://www.iledefrance.ars.sante.fr/accidents-vasculaires-cerebraux-avc#:~:text=Chaque%20ann%C3%A9e%2C%20plus%20de%2018,qui%20gardent%20des%20s%C3%A9quelles%20lourdes>
+[^n6]:<https://www.frm.org/recherches-maladies-cardiovasculaires/infarctus-du-myocarde/l-infarctus-du-myocarde-en-chiffres#:~:text=Environ%20120%20000%20infarctus%20du, d%C3%A9c%C3%A8s%20survient%20dans%20l'ann%C3%A9e>
+[^n7]:<https://www.iledefrance.ars.sante.fr/accidents-vasculaires-cerebraux-avc#:~:text=Chaque%20ann%C3%A9e%2C%20plus%20de%2018, qui%20gardent%20des%20s%C3%A9quelles%20lourdes>
 [^n8]:<https://www.insee.fr/fr/statistiques/4487988?sommaire=4487854>
 [^n9]:<https://science.sciencemag.org/content/369/6500/208>
 [^n10]:<https://www.legifrance.gouv.fr/loda/id/LEGIARTI000041767762/2020-03-29/>
@@ -490,7 +490,7 @@ Dans tous les cas, il est urgent de retrouver ce qui manque cruellement depuis p
 [^n17]:<https://pharmacomedicale.org/66-pharmacologie/medicaments-alternatifs/placebo/161-toxicite-effet-nocebo>
 [^n18]:<https://www.vidal.fr/medicaments/gammes/vaxigriptetra-79276.html>
 [^n19]:<https://ourworldindata.org/covid-vaccinations>
-[^n20]:<https://digital.ahrq.gov/ahrq-funded-projects/electronic-support-public-health-vaccine-adverse-event-reporting-system>,<https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4368609/>
+[^n20]:<https://digital.ahrq.gov/ahrq-funded-projects/electronic-support-public-health-vaccine-adverse-event-reporting-system>, <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4368609/>
 [^n21]:<https://pharmacomedicale.org/images/desc2016/Methodes_dimputabilite_-_DES_Pharmaco_Med_-_24112016.pdf>
 [^n22]:<https://www.lexbase.fr/revues-juridiques/61548960-jurisprudence-monsanto-et-les-sept-peches-capitaux-epilogue-de-la-saga-du-lasso-par-la-condamnation>
 [^n23]:https://www.insee.fr/fr/statistiques/4627049
@@ -575,16 +575,15 @@ Dans tous les cas, il est urgent de retrouver ce qui manque cruellement depuis p
 
 ## Les décès quotidiens par département français
 
-![](gen/images/fr_gouv_Registre_Deces_quotidiens_BourgogneFrancheComté.png){width=1000px}
-![](gen/images/fr_gouv_Registre_Deces_quotidiens_AuvergneRhôneAlpes.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_BourgogneFrancheComte.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_AuvergneRhoneAlpes.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_PaysdelaLoire.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_PACA.png){width=1000px}
-![](gen/images/fr_gouv_Registre_Deces_quotidiens_ÎledeFrance.png){width=1000px}
+![](gen/images/fr_gouv_Registre_Deces_quotidiens_IledeFrance.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_NouvelleAquitaine.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_HautsdeFrance.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_GrandEst.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_Occitanie.png){width=1000px}
-![](gen/images/fr_gouv_Registre_Deces_quotidiens_ÎledeFrance.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_Corse.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_Bretagne.png){width=1000px}
 ![](gen/images/fr_gouv_Registre_Deces_quotidiens_CentreValdeLoire.png){width=1000px}
