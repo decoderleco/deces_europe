@@ -214,8 +214,8 @@ deces_complet_annuel_analysable2000_deuxannees <- deces_complet_annuel_analysabl
 		group_by(geo, deuxannees, location, zone) %>%
 		summarise(deces=sum(deces),
 				population=mean(population),
-				pop20=mean(pop20),
-				deces_theo_2020=sum(deces_theo_2020),
+				pop2020=mean(pop2020),
+				deces_theo_si_pop_2020=sum(deces_theo_si_pop_2020),
 				deces_france_theo_20=sum(deces_france_theo_20))
 
 deces_complet_annuel_analysable2000_deuxannees20 <- deces_complet_annuel_analysable2000_deuxannees %>%
@@ -255,7 +255,7 @@ deces_complet_annuel_analysable2000 <- deces_complet_annuel_analysable2000 %>%
 
 deces_complet_annuel_analysable2000_troisannees <- deces_complet_annuel_analysable2000 %>%
 		group_by(geo, troisannees, location, zone) %>% 
-		summarise(deces=mean(deces), population=mean(population), pop20=mean(pop20), deces_theo_2020=mean(deces_theo_2020), deces_france_theo_20=mean(deces_france_theo_20))
+		summarise(deces=mean(deces), population=mean(population), pop2020=mean(pop2020), deces_theo_si_pop_2020=mean(deces_theo_si_pop_2020), deces_france_theo_20=mean(deces_france_theo_20))
 
 deces_complet_annuel_analysable2000_troisannees20 <- deces_complet_annuel_analysable2000_troisannees %>%
 		filter(troisannees == "2018-2020")
@@ -426,7 +426,7 @@ saveRDS(barplot_deces_france, "gen/rds/Eurostat_barplot_deces_france.RDS")
 
 
 barplot_decestheo_france <- ggplot(data=deces_complet_annuel_france, 
-				aes(x=annee, y=deces_theo_2020)) +
+				aes(x=annee, y=deces_theo_si_pop_2020)) +
 		geom_bar(stat="identity", fill="steelblue") +
 		labs(title = "Décès standardisés de la France", subtitle = "selon la population de la France en 2020",
 				caption = "Source des données : Eurostat", x="", y="nombre de décès standaridsés")+
