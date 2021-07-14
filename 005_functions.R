@@ -136,6 +136,55 @@ a__f_downloadUrl <- function(
 
 
 
+################################################################################
+# Mettre l'âge dans une tranche d'âge quinquennale (0 à 4, 5 à 9, ...)
+################################################################################
+a__f_quinquenisation <- function(tabWithAge, shallGroup_ge85) {
+	
+	# Numeriser l'age
+	#   remplacer Y_LT1 par 0 et Y_OPEN par 100, l'age par l'age sans le prefixe Y
+	tabWithAge_quinq <- tabWithAge %>%
+			mutate(agequinq = case_when(
+							# Remplacer Y_LT1 (les moins de 1 an) par 0
+							age == "Y_LT1" ~ "0",
+							# Remplacer Y_OPEN (les plus de 100 ans) par 100
+							age == "Y_OPEN" ~ "100",
+							# Pour tous les autres, prendre le nombre qui est après le "Y" (ex "Y14" => "14")
+							TRUE ~ str_sub(age, 2, length(age))
+					))
+	
+	# Rendre l'age numérique
+	tabWithAge_quinq <- tabWithAge_quinq %>%
+			mutate(agequinq = as.numeric(agequinq))
+	
+	# regrouper par tranches d'age de 5 ans
+	tabWithAge_quinq <- tabWithAge_quinq %>%
+			mutate(agequinq = case_when(
+							agequinq <= 4 ~ "Y_LT5",
+							agequinq >= 5 & agequinq < 10 ~ "Y5-9",
+							agequinq >= 10 & agequinq < 15 ~ "Y10-14",
+							agequinq >= 15 & agequinq < 20 ~ "Y15-19",
+							agequinq >= 20 & agequinq < 25 ~ "Y20-24",
+							agequinq >= 25 & agequinq < 30 ~ "Y25-29",  
+							agequinq >= 30 & agequinq < 35 ~ "Y30-34",
+							agequinq >= 35 & agequinq < 40 ~ "Y35-39",  
+							agequinq >= 40 & agequinq < 45 ~ "Y40-44",
+							agequinq >= 45 & agequinq < 50 ~ "Y45-49",
+							agequinq >= 50 & agequinq < 55 ~ "Y50-54",
+							agequinq >= 55 & agequinq < 60 ~ "Y55-59",  
+							agequinq >= 60 & agequinq < 65 ~ "Y60-64",
+							agequinq >= 65 & agequinq < 70 ~ "Y65-69",  
+							agequinq >= 70 & agequinq < 75 ~ "Y70-74",
+							agequinq >= 75 & agequinq < 80 ~ "Y75-79",  
+							agequinq >= 80 & agequinq < 85 ~ "Y80-84",
+						    shallGroup_ge85 & agequinq >= 85  ~ "Y_GE85",
+							(!shallGroup_ge85 & (agequinq >= 85 & agequinq < 90)) ~ "Y85-89",
+							(!shallGroup_ge85 & agequinq >= 90) ~ "Y_GE90"
+					))
+	
+	# Renvoyer le nouveau tableau quinquenisé
+	tabWithAge_quinq
+}
 
 
 ################################################################################
@@ -209,7 +258,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	
 	
 	# Moyenne mobile sur 52 semaines
-	es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine$deces_standard_tot, 
+	es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020, 
 			                          52)
 	
 	# Moyenne de la Moyenne mobile
@@ -229,7 +278,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	
 	
 	plot(es_deces_standard_pays_semaine$numerosemaine, 
-	     es_deces_standard_pays_semaine$deces_standard_tot_plus_40, 
+	     es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge40, 
 		 pch=16, 
 		 cex=0, 
 		 axes=F, 
