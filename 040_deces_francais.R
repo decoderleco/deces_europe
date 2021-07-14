@@ -439,6 +439,9 @@ deces_age_jour <- db_clean %>%
 		summarise(effectif=n()) %>% 
 		filter(deces_date_complete >= "2018-01-01")
 
+if (shallDeleteVars) rm(db_clean)
+
+
 deces_age_centre_reduit <- deces_age_jour %>% 
 		group_by(age_deces_millesime) %>% 
 		summarise(minimum = min(effectif),
