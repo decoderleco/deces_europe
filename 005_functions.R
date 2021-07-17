@@ -267,7 +267,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	# TODO Renommer la variable
 	es_moyenne_mobile <- data_frame(moyenne_mobile = es_moyenne_mobile)
 	
-	es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile) + decalageSemaines
+	es_moyenne_mobile$numSemaineDepuis2013 <- 1:nrow(es_moyenne_mobile) + decalageSemaines
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
@@ -277,7 +277,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	es_deces_standard_pays_semaine$moyenne <- moyenne
 	
 	
-	plot(es_deces_standard_pays_semaine$numerosemaine, 
+	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
 	     es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge40, 
 		 pch=16, 
 		 cex=0, 
@@ -315,7 +315,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	
 	# Superposer la moyenne mobile
 	par(new=T)
-	plot(es_deces_standard_pays_semaine$numerosemaine, 
+	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
 		 es_deces_standard_pays_semaine$moyenne_mobile, 
 		 pch=16, 
 		 axes=F, 
@@ -329,7 +329,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	
  # Superposer la moyenne 
 	par(new=T)
-	plot(es_deces_standard_pays_semaine$numerosemaine, 
+	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
 		 es_deces_standard_pays_semaine$moyenne, 
 		 pch=16, 
 		 axes=F, 
@@ -343,7 +343,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	
  # Superposer la bsup
 	par(new=T)
-	plot(es_deces_standard_pays_semaine$numerosemaine, 
+	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
 		 es_deces_standard_pays_semaine$bsup, 
 		 pch=16, 
 		 axes=F, 
@@ -358,7 +358,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	
  # Superposer la binf
 	par(new=T)
-	plot(es_deces_standard_pays_semaine$numerosemaine, 
+	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
 		 es_deces_standard_pays_semaine$binf, 
 		 pch=16, 
 		 axes=F, 
@@ -416,7 +416,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	
 	moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 	
-	moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40) + decalageSemaines
+	moyenne_mobile_m40$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_m40) + decalageSemaines
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
@@ -426,12 +426,12 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	es_deces_standard_pays_semaine$moyenne_m40 <- moyenne_m40
 	
 	essai <- es_deces_standard_pays_semaine %>%
-			filter(numerosemaine>250)
+			filter(numSemaineDepuis2013>250)
 	
 	#
 	par(mar=c(4, 4, 3, 5))
 	
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$deces_tot_plus_60 - essai$deces_tot_60_64, 
 			pch=16, 
 			cex=0, 
@@ -469,7 +469,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	
 	# Superposer décès
 	par(new=T)
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$deces_tot_40_60 + essai$deces_tot_60_64 + essai$deces_tot_moins40, 
 			pch=16, 
 			axes=F, 
@@ -483,7 +483,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	
 	# Superposer la vaccination 
 	par(new=T)
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$new_vaccinations_smoothed_per_million, 
 			pch=16, 
 			axes=F, 
@@ -515,7 +515,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	#
 	par(mar=c(4, 4, 3, 5))
 	
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$deces_tot_moins40, 
 			pch=16, 
 			cex=0, 
@@ -554,7 +554,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	
 	# Superposer moyenne mobile moins de 40 ans
 	par(new=T)
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$moyenne_mobile_m40, 
 			pch=16, 
 			axes=F, 
@@ -568,7 +568,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	
 	# Superposer la vaccination 
 	par(new=T)
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$new_vaccinations_smoothed_per_million, 
 			pch=16, 
 			axes=F, 
@@ -614,13 +614,13 @@ a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_sem
 	
 	
 	essai <- es_deces_standard_pays_semaine %>%
-			filter(numerosemaine>250)
+			filter(numSemaineDepuis2013>250)
 	
 	#
 	par(mar=c(4, 4, 3, 5))
 	
 	# Courbe des décès toutes causes
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$deces_tot, 
 			pch=16, 
 			cex=0, 
@@ -658,7 +658,7 @@ a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_sem
 	
 	# Superposer décès COVID
 	par(new=T)
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$new_deaths, 
 			pch=16, 
 			axes=F, 
@@ -672,7 +672,7 @@ a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_sem
 	
 	# Superposer la différence
 	par(new=T)
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$deces_tot - essai$new_deaths, 
 			pch=16, 
 			axes=F, 
