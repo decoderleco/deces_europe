@@ -422,7 +422,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	nomPays <- str_sub(nomVar, startIndex)
 
 	#
-	# Graphique : Situation
+	# Graphique 1 : Situation des + 65ans et - 65 ans
 	#
 	
 	#Nom du fichier png à générer
@@ -456,6 +456,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	par(mar=c(4, 4, 3, 5))
 	
 	plot(essai$numSemaineDepuis2013, 
+			# >= 65 ans
 			essai$deces_tot_plus_60 - essai$deces_tot_60_64, 
 			pch=16, 
 			cex=0, 
@@ -465,7 +466,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 			ylim=c(0, ylim_max_left), 
 			type="o", 
 			col="black", 
-			main=paste0("Situation de la ",nomPays))
+			main=paste0("Situation pour : ",nomPays))
 	
 	# pour encadrer le graphique
 	box() 
@@ -491,16 +492,17 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
-	# Superposer décès
+	# Superposer décès des < 65 ans
 	par(new=T)
 	plot(essai$numSemaineDepuis2013, 
-			essai$deces_tot_40_60 + essai$deces_tot_60_64 + essai$deces_tot_moins40, 
+			# < 65 ans
+			essai$deces_tot_moins40 + essai$deces_tot_40_60 + essai$deces_tot_60_64, 
 			pch=16, 
 			axes=F, 
 			cex=0, 
 			ylim=c(0, ylim_max_left), 
 			xlab="", 
-			lwd=3,  
+			# lwd=3,  
 			ylab="", 
 			type="o", 
 			col="red") 
