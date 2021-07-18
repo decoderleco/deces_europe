@@ -25,33 +25,33 @@ library(tidyr)
 
 #répartition des décès annuels#
 
-b__es_deces_annuels <- a__f_loadRdsIfNeeded(var = b__es_deces_annuels,
-		rdsRelFilePath = "gen/rds/Eurostat_deces_complet_annuel.RDS") 
+b__es_deces_et_pop_par_annee <- a__f_loadRdsIfNeeded(var = b__es_deces_et_pop_par_annee,
+		rdsRelFilePath = "gen/rds/Eurostat_deces_par_annee.RDS") 
 
 
 #les données de la Géorgie semblent absurdes, à l'inverse de tous les autres et l'Arménie ne bénéficie que de 5 ans
-b__es_deces_annuels <- b__es_deces_annuels %>%
+b__es_deces_et_pop_par_annee <- b__es_deces_et_pop_par_annee %>%
 		filter(geo != "GE") %>%
 		filter(geo != "AR")
 
 #ajout de la nuance est-ouest pour la visualisation
 
-deces_complet_annuel_est <- b__es_deces_annuels %>%
+deces_complet_annuel_est <- b__es_deces_et_pop_par_annee %>%
 		filter(zone == "Est")
 
-deces_complet_annuel_ouest <- b__es_deces_annuels %>%
+deces_complet_annuel_ouest <- b__es_deces_et_pop_par_annee %>%
 		filter(zone == "Ouest")
 
 
 #création des tables avec seulement les dernières années
 
-deces_complet_annuel_20 <- b__es_deces_annuels %>%
+deces_complet_annuel_20 <- b__es_deces_et_pop_par_annee %>%
 		filter(time == "2020-01-01")
 
-deces_complet_annuel_analysable2000 <- b__es_deces_annuels %>%
+deces_complet_annuel_analysable2000 <- b__es_deces_et_pop_par_annee %>%
 		filter(time >= "2000-01-01")
 
-deces_complet_annuel_analysable1990 <- b__es_deces_annuels %>%
+deces_complet_annuel_analysable1990 <- b__es_deces_et_pop_par_annee %>%
 		filter(time >= "1990-01-01")
 
 deces_complet_annuel_analysable2000_est <- deces_complet_annuel_est %>%
@@ -162,7 +162,7 @@ if (shallDeleteVars) rm(annee_deces_superieure_2020)
 
 #année de dèces maximum
 
-es_annne_deces_maximum <- tapply(b__es_deces_annuels$deces, b__es_deces_annuels$geo, max)
+es_annne_deces_maximum <- tapply(b__es_deces_et_pop_par_annee$deces, b__es_deces_et_pop_par_annee$geo, max)
 
 es_annne_deces_maximum <- data.frame(es_annne_deces_maximum)
 
@@ -172,7 +172,7 @@ es_annne_deces_maximum <- es_annne_deces_maximum %>%
 		rename(deces=es_annne_deces_maximum)
 
 es_annne_deces_maximum <- es_annne_deces_maximum %>%
-		left_join(b__es_deces_annuels)
+		left_join(b__es_deces_et_pop_par_annee)
 
 
 es_annne_deces_maximum2020 <- es_annne_deces_maximum %>%
@@ -409,7 +409,7 @@ if (shallDeleteVars) rm(pjanquinq2000)
 
 #décès de la france
 
-deces_complet_annuel_france <- ungroup(b__es_deces_annuels) %>%
+deces_complet_annuel_france <- ungroup(b__es_deces_et_pop_par_annee) %>%
 		filter(geo == "FR") %>%
 		rename(annee=time)
 
@@ -434,6 +434,8 @@ barplot_decestheo_france <- ggplot(data=deces_complet_annuel_france,
 saveRDS(barplot_decestheo_france, "gen/rds/Eurostat_barplot_deces_theo_france.RDS")
 
 if (shallDeleteVars) rm(deces_complet_annuel_france)
+if (shallDeleteVars) rm(barplot_deces_france)
+if (shallDeleteVars) rm(barplot_decestheo_france)
 
 #pyramide des âges de la France 2020
 
@@ -634,11 +636,11 @@ if (shallDeleteVars)  rm(p)
 
 #problème de formule car nous sommes en âge quinquennal. 
 
-b__es_deces_par_agequinq <- a__f_loadRdsIfNeeded(var = b__es_deces_par_agequinq,
-		rdsRelFilePath = "gen/rds/Eurostat_deces_par_agequinq.RDS") 
+b__es_deces_et_pop_par_annee_agequinq <- a__f_loadRdsIfNeeded(var = b__es_deces_et_pop_par_annee_agequinq,
+		rdsRelFilePath = "gen/rds/Eurostat_deces_par_annee_agequinq.RDS") 
 
 
-esperance_vie <- b__es_deces_par_agequinq %>%
+esperance_vie <- b__es_deces_et_pop_par_annee_agequinq %>%
 		group_by(time, geo, agequinq) %>%
 		summarise(deces=sum(deces), population=sum(population))
 

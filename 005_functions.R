@@ -231,7 +231,7 @@ a__f_plot_region <- function(region) {
 	print(ggplot(data = region) + 
 					
 					geom_line(aes(x = deces_date_complete, 
-									y = dece_centre_reduit,
+									y = deces_centre_reduit,
 									colour = confinement)) + 
 					
 					# Echelle verticale
@@ -716,4 +716,68 @@ a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_sem
 	
 	# Supprimer la variable de GlovaEnv correspondant à region car on n'en a plus besoin
 	if (shallDeleteVars) rm(list = c(nomVar), envir = globalenv())
+}
+
+################################################################################
+# Generer le graphique et le png associé : Deces quotidiens
+################################################################################
+a__f_plot_deces_quotidiens <- function(deces_par_jour,
+		tailleFenetreGlissante = 7,
+		decalageSemaines = 6) {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	nomVar <- deparse(substitute(deces_par_jour))
+	
+	
+	#Nom du fichier png à générer
+	pngFileRelPath <- paste0("gen/images/fr_gouv_Registre_Deces_quotidiens_tranche_age_", nomVar, ".png")
+	
+	# Message
+	message(paste0("Creation image (", pngFileRelPath,")"))
+	
+	
+	# Calculer la moyenne mobile sur 7 jours
+	moyenne_mobile <- running_mean(deces_par_jour$nbDeces, tailleFenetreGlissante)
+	
+	moyenne_mobile <- data_frame(moyenne_mobile)
+	moyenne_mobile$numerojour <- 1:nrow(moyenne_mobile) + decalageSemaines
+	
+	# Compléter le df des 40-59 ans
+	deces_par_jour$numerojour <- 1:nrow(deces_par_jour)
+	
+	deces_par_jour <- deces_par_jour %>% 
+			left_join(moyenne_mobile) 
+	
+	# Ajouter la moyenne de la moyenne mobile
+	deces_par_jour$moyenne <- mean(moyenne_mobile)
+	
+	
+	print(ggplot(data = deces_par_jour,
+							mapping = aes(x = deces_date_complete,
+									color = confinement)) +
+					
+					#scale_colour_brewer(palette = "Set1") +
+					scale_colour_manual(values = c("red", "black"))+
+					
+					scale_linetype_manual(values=c("dotted", "solid")) +
+					
+					scale_size_manual(values=c(0.1, 1.5)) +
+					
+					geom_line(mapping = aes(y = nbDeces),
+							linetype = "dotted") + 
+					
+					geom_line(mapping = aes(y = moyenne_mobile),
+							linetype = "solid",
+							size = 1) + 
+					
+					facet_wrap(~tranche_d_age) +
+					
+					#theme(legend.position = "top")+
+					
+					ggtitle("Décès quotidiens par age") +
+					xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
+	)
+
+	dev.print(device = png, file = pngFileRelPath, width = 1000)
 }
