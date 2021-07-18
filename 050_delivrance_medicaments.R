@@ -19,9 +19,11 @@ library(tidyr)
 library(ggplot2)
 library(scales)
 
+################################################################################
 #
 # Vaccins contre la Grippe
 #
+################################################################################
 
 # Les données se trouvent ici, mais je n'ai pas réussi à me connecter à cause de problèmes de format : https://assurance-maladie.ameli.fr/etudes-et-donnees/medicaments-type-prescripteur-medicam-2021
 
@@ -47,9 +49,7 @@ a__original_medicam <- a__f_loadCsvIfNeeded(var = a__original_medicam,
 #	message("a__original_medicam : Déjà présent. On ne la re-télécharge pas")
 #}
 
-medicam <- a__original_medicam
-
-medicam_vaccins_grippes <- medicam %>%
+medicam_vaccins_grippes <- a__original_medicam %>%
 		filter(Nom_vaccin %in% c("AGRIPPAL",
 						"FLUARIX",
 						"FLUARIXTETRA",
@@ -111,9 +111,12 @@ print(ggplot(medicam_vaccins_grippes,
 dev.print(device = png, file = "gen/images/Medicam_Vaccins_Grippe_Distribues.png", width = 1000)
 
 
+################################################################################
 #
-# médicaments
+# Médicaments (Open Medic)
 #
+################################################################################
+
 
 # les deux fichiers ci-dessous sont a telecharger depuis :
 #    https://www.data.gouv.fr/fr/datasets/open-medic-base-complete-sur-les-depenses-de-medicaments-interregimes/
@@ -214,7 +217,11 @@ om_open_medic_2020 <- om_open_medic_2020 %>%
 		mutate(BSE=as.numeric(BSE))
 
 
+################################################################################
+#
 # 2019 : Antibiotiques et Rivotril
+#
+################################################################################
 
 om_ANTIEPILEPTIQUES_2019 <- om_open_medic_2019 %>%
 		filter(L_ATC2 == "ANTIEPILEPTIQUES")
@@ -227,7 +234,11 @@ om_CLONAZEPAM_2019 <- om_ANTIEPILEPTIQUES_2019 %>%
 om_ANTIBACTERIENS_2019 <- om_open_medic_2019 %>%
 		filter(L_ATC2 == "ANTIBACTERIENS A USAGE SYSTEMIQUE")
 
-# 2020: Antibiotiques et Rivotril
+################################################################################
+#
+# 2020 : Antibiotiques et Rivotril
+#
+################################################################################
 
 om_ANTIEPILEPTIQUES_2020 <- om_open_medic_2020 %>%
 		filter(L_ATC2 == "ANTIEPILEPTIQUES")
@@ -238,6 +249,12 @@ om_CLONAZEPAM_2020 <- om_ANTIEPILEPTIQUES_2020 %>%
 
 om_ANTIBACTERIENS_2020 <- om_open_medic_2020 %>%
 		filter(L_ATC2 == "ANTIBACTERIENS A USAGE SYSTEMIQUE")
+
+################################################################################
+#
+# Evolution 2019/2020 : Antibiotiques et Rivotril
+#
+################################################################################
 
 # Synthese de l'evolution (par age) du Rivotril entre 2019 et 2020
 test20 <- om_CLONAZEPAM_2020 %>%
@@ -268,74 +285,92 @@ if (shallDeleteVars) rm(test20)
 
 # Calculer les variations 2019 => 2020
 om_CLONAZEPAM <- om_CLONAZEPAM %>%
-		mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2019, var_bse=(BSE_2020-BSE_2019)/BSE_2019)
+		mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2019, var_bse=(BSE_2020-BSE_2019)/BSE_2019) %>%
+		#Trier les lignes
+		arrange(classe_age, region)
 
 om_ANTIBACTERIENS <- om_ANTIBACTERIENS %>%
-		mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2019, var_bse=(BSE_2020-BSE_2019)/BSE_2019)
+		mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2019, var_bse=(BSE_2020-BSE_2019)/BSE_2019) %>%
+		#Trier les lignes
+		arrange(classe_age, region)
 
 
-# 
+
+################################################################################
+#
+# Graphique Evol Rivotril 2019/2020
+#
+################################################################################
 
 tmp <- om_CLONAZEPAM 
 
 tmp <- tmp %>%
-		filter(!is.na(BOITES_2019)) %>% 
-		filter(!is.na(BOITES_2020))
+		filter(!is.na(BOITES_2019),
+				!is.na(BOITES_2020),
+				!is.na(region)
+				)
 
 tmp <- tmp %>%
-		group_by(classe_age) %>% 
-		summarise("2019" = sum(BOITES_2019), "2020" = sum(BOITES_2020))
-
-#tmp <- tmp %>%pivot_longer(!classe_age, names_to = "annee", values_to = "boites")
-tmp <- tmp %>%
-		pivot_longer(cols=!classe_age, names_to = "annee", values_to = "boites")
-
-# tmp <- tmp %>%
-#         group_by(annee) %>%
-#         summarise(boites=sum(boites))
-
-# tmp <- tmp %>%
-#         mutate(annee = as.numeric(annee))
+		group_by(classe_age, 
+				region) %>% 
+		summarise("2019" = sum(BOITES_2019), 
+				"2020" = sum(BOITES_2020))
 
 tmp <- tmp %>%
+		pivot_longer(cols = !classe_age:region, 
+				     names_to = "annee", 
+					 values_to = "boites")
+
+tmp <- tmp %>%
+		# Trier les lignes par annee et classe_age
 		arrange(annee, classe_age)
 
 # TODO : A renommer
-om_JG_CLONAZEPAM <- tmp 
+om_JG_CLONAZEPAM <- tmp %>%
+		#Trier les lignes
+		arrange(annee, classe_age, region) %>%
+		#Ordonner les colonnes
+		select(annee, classe_age, region, everything())
 
 if (shallDeleteVars) rm(tmp)
 
-
 message("Graphique évolution RIVOTRIL entre 2019 et 2020")
 
-print(ggplot(data = arrange(om_JG_CLONAZEPAM, annee, classe_age),
-				mapping = aes(x = annee, y = boites)) +
-		
-		geom_col(mapping = aes(fill = classe_age),
-				# Mettre les colonnes les unes à côté des autres
-				position="dodge") + 
-		
-		# Mettre les colonnes à l'horizontal
-		#coord_flip() +
-		
-		#geom_point(mapping = aes(color = "red")) +
-		
-		ggtitle("Rivotril : Evolution du Nombre de boîtes distribuées en pharmacie") +
-		
-		labs(caption="Source : Medicam
-						https://assurance-maladie.ameli.fr/etudes-et-donnees/medicaments-type-prescripteur-medicam-2021") +
-		
-		theme(legend.position="bottom") +
-		
-		# Axe x  
-		xlab("mois") + 
+print(ggplot(data = om_JG_CLONAZEPAM,
+						mapping = aes(x = annee, 
+								    y = boites)) +
+				
+					# Faire un graphique par département, répartis sur 3 colonnes
+					facet_wrap(~region) +
+					
+					
+				geom_col(mapping = aes(fill = classe_age),
+						# Mettre les colonnes les unes à côté des autres
+						position="dodge") + 
+				
+				# Mettre les colonnes à l'horizontal
+				#coord_flip() +
+				
+				#geom_point(mapping = aes(color = "red")) +
+				
+#		ggtitle("Rivotril : Evolution du Nombre de boîtes distribuées en pharmacie") +
+				
+				labs(title = "Rivotril : Evolution du Nombre de boîtes distribuées en pharmacie",
+						subtitle = "=> Essentiellement donné aux personnes âgées",
+						caption="Source : Medicam
+								https://assurance-maladie.ameli.fr/etudes-et-donnees/medicaments-type-prescripteur-medicam-2021") +
+				
+				theme(legend.position="top") +
+				
+				# Axe x  
+				xlab("année") + 
 #       scale_x_date(labels = date_format("%m/%y"),
 #                    breaks = date_breaks("year")) +
-		theme(axis.text.x = element_text(angle=45)) +
-		
-		# Axe y  
-		ylab("nombre de boites") +
-		ylim(0, NA)
+				theme(axis.text.x = element_text(angle=45)) +
+				
+				# Axe y  
+				ylab("nombre de boites") +
+				ylim(0, NA)
 )
 
 dev.print(device = png, file = "gen/images/Medicam_Rivotril_evol.png", width = 1000)
