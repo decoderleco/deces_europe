@@ -553,11 +553,6 @@ es_deces_complet_2020_for_bind_rows <- es_deces_complet_2020_for_bind_rows %>%
 		# trier les lignes selon les colonnes suivantes
 		arrange(geo, sex, agequinq, time)
 
-tmp <- b__es_deces_complet %>%
-		bind_rows(es_deces_complet_2020_for_bind_rows) %>%
-		# trier les lignes selon les colonnes suivantes
-		arrange(geo, sex, agequinq, time)
-
 
 #Ajouter les données du recensement 2020 
 b__es_deces_complet <- b__es_deces_complet %>%
