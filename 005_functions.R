@@ -20,26 +20,42 @@ PLOT_AXIS_SIDE_RIGHT <- 4
 ################################################################################
 # Télécharger un fichier EuroStat si la variable associée n'existe pas
 ################################################################################
-a__f_downloadEuroStatIfNeeded <- function(var, varName, euroStatFileName) {
+a__f_downloadEuroStatIfNeeded <- function(var, euroStatFileName) {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	varName <- deparse(substitute(var))
 	
 	if (!exists(varName)) { 
 		
 		message(paste0("Télécharger depuis EuroStat (", euroStatFileName, ")"))
 		
-		downloadIfNeeded <- get_eurostat(euroStatFileName) 
+		downloadedDatas <- get_eurostat(euroStatFileName) 
+		
+		downloadedDatas <- downloadedDatas %>%
+				# Reordonner les colonnes
+				select(geo, sex, age, time, everything()) %>%
+				# Trier les lignes selon les colonnes
+				arrange(geo, sex, age, time)
 		
 	} else {
 		
 		message(paste0("(", varName, ") déjà présent. On ne le re-télécharge pas"))
 		
-		downloadIfNeeded <- var
+		downloadedDatas <- var
 	}
+	
+	downloadedDatas
 }
 
 ################################################################################
 # Télécharger un fichier CSV si la variable associée n'existe pas
 ################################################################################
-a__f_downloadCsvIfNeeded <- function(var, varName, csvUrl) {
+a__f_downloadCsvIfNeeded <- function(var, csvUrl) {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	varName <- deparse(substitute(var))
 	
 	if (!exists(varName)) { 
 		
@@ -58,7 +74,11 @@ a__f_downloadCsvIfNeeded <- function(var, varName, csvUrl) {
 ################################################################################
 # Charger un fichier CSV si la variable associée n'existe pas
 ################################################################################
-a__f_loadCsvIfNeeded <- function(var, varName, csvRelFilePath, sep=";") {
+a__f_loadCsvIfNeeded <- function(var, csvRelFilePath, sep=";") {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	varName <- deparse(substitute(var))
 	
 	if (!exists(varName)) { 
 		
@@ -78,7 +98,11 @@ a__f_loadCsvIfNeeded <- function(var, varName, csvRelFilePath, sep=";") {
 ################################################################################
 # Charger un fichier RDS si la variable associée n'existe pas
 ################################################################################
-a__f_loadRdsIfNeeded <- function(var, varName, rdsRelFilePath) {
+a__f_loadRdsIfNeeded <- function(var, rdsRelFilePath) {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	varName <- deparse(substitute(var))
 	
 	if (!exists(varName)) { 
 		

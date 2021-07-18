@@ -23,7 +23,6 @@ library(igraph)
 #---------------------------------------#
 
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- a__f_loadRdsIfNeeded(var = b__es_deces_week_standardises_si_pop_2020_owid_vaccination,
-		varName = "es_deces_standard_owid_vaccination_by_pays_semaine", 
 		rdsRelFilePath = "gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS") 
 
 

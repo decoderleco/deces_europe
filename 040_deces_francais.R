@@ -303,11 +303,6 @@ db_clean <- db_clean %>%
 #
 ################################################################################
 
-#db_clean <- a__f_loadRdsIfNeeded(var = db_clean,
-#		varName = "db_clean", 
-#		rdsRelFilePath = "gen/rds/fr_gouv_registre_deces_fr.rds") 
-
-
 # Deces par jour et par departement depuis 01/01/2018
 deces_dep_jour <- db_clean %>%
 		group_by(deces_date_complete,

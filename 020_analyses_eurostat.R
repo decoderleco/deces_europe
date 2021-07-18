@@ -26,7 +26,6 @@ library(tidyr)
 #répartition des décès annuels#
 
 b__es_deces_annuels <- a__f_loadRdsIfNeeded(var = b__es_deces_annuels,
-		varName = "es_deces_annuel_by_age", 
 		rdsRelFilePath = "gen/rds/Eurostat_deces_complet_annuel.RDS") 
 
 
@@ -120,7 +119,7 @@ if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_est)
 #dernière année avec mortalité supérieure à 2020
 
 annee_deces_superieure_2020 <- deces_complet_annuel_analysable1990 %>%
-		filter(augmentation20 <0) %>%
+		filter(surmortalite2020 <0) %>%
 		mutate(annee = str_sub(as.character(time), 1, 4))
 
 annee_deces_superieure_2020 <- tapply(annee_deces_superieure_2020$annee, annee_deces_superieure_2020$location, max)
@@ -132,7 +131,7 @@ annee_deces_superieure_2020$location <- rownames(annee_deces_superieure_2020)
 #première année avec mortalité inférieure à 2020
 
 annee_deces_inferieure_2020 <- deces_complet_annuel_analysable1990 %>%
-		filter(augmentation20 >0) %>%
+		filter(surmortalite2020 >0) %>%
 		mutate(annee = str_sub(as.character(time), 1, 4))
 
 if (shallDeleteVars) rm(deces_complet_annuel_analysable1990)
@@ -284,7 +283,6 @@ if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_troisannees20)
 
 
 es_pjan_quinq <- a__f_loadRdsIfNeeded(var = es_pjan_quinq,
-		varName = "es_pjan_quinq", 
 		rdsRelFilePath = "gen/rds/Eurostat_pjanquinq.RDS") 
 
 
@@ -636,12 +634,11 @@ if (shallDeleteVars)  rm(p)
 
 #problème de formule car nous sommes en âge quinquennal. 
 
-b__es_deces_complet <- a__f_loadRdsIfNeeded(var = b__es_deces_complet,
-		varName = "es_deces_complet", 
-		rdsRelFilePath = "gen/rds/Eurostat_deces_complet.RDS") 
+b__es_deces_par_agequinq <- a__f_loadRdsIfNeeded(var = b__es_deces_par_agequinq,
+		rdsRelFilePath = "gen/rds/Eurostat_deces_par_agequinq.RDS") 
 
 
-esperance_vie <- b__es_deces_complet %>%
+esperance_vie <- b__es_deces_par_agequinq %>%
 		group_by(time, geo, agequinq) %>%
 		summarise(deces=sum(deces), population=sum(population))
 
