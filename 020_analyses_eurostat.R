@@ -434,6 +434,8 @@ barplot_decestheo_france <- ggplot(data=deces_complet_annuel_france,
 saveRDS(barplot_decestheo_france, "gen/rds/Eurostat_barplot_deces_theo_france.RDS")
 
 if (shallDeleteVars) rm(deces_complet_annuel_france)
+if (shallDeleteVars) rm(barplot_deces_france)
+if (shallDeleteVars) rm(barplot_decestheo_france)
 
 #pyramide des âges de la France 2020
 

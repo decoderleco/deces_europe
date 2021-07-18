@@ -119,7 +119,7 @@ dbs_raw_deces <- lapply(chemins_fichiers_deces,
 		read_fwf,
 		# Calculer les positions de coupure des champs à partir de la largeur de chaque champ
 		col_positions = fwf_widths(fields_widths, 
-				col_names = names(fields_widths)),
+				                   col_names = names(fields_widths)),
 		col_types = cols(.default = col_character()))
 
 if (shallDeleteVars) rm(chemins_fichiers_deces)
@@ -299,7 +299,7 @@ db_clean <- db_clean %>%
 
 ################################################################################
 #
-#### réalisation des graphiques ####
+# Réalisation des graphiques des Deces par jour et par departement depuis 01/01/2018
 #
 ################################################################################
 
@@ -425,8 +425,15 @@ CentreValdeLoire <- deces_dep_jour %>%
 
 a__f_plot_region(CentreValdeLoire)
 
+if (shallDeleteVars) rm(deces_dep_jour)
 
-####deces par age et par jour####
+
+
+################################################################################
+#
+# Deces par age et par jour depuis 2018
+#
+################################################################################
 
 deces_age_jour <- db_clean %>% 
 		group_by(deces_date_complete,
@@ -470,6 +477,7 @@ print(ggplot(data = deces_0_an) +
 		xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
 )
 
+if (shallDeleteVars) rm(deces_age_centre_reduit)
 if (shallDeleteVars) rm(deces_0_an)
 
 # Ajouter la colonne tranche d'age
