@@ -231,7 +231,7 @@ a__f_plot_region <- function(region) {
 	print(ggplot(data = region) + 
 					
 					geom_line(aes(x = deces_date_complete, 
-									y = dece_centre_reduit,
+									y = deces_centre_reduit,
 									colour = confinement)) + 
 					
 					# Echelle verticale
