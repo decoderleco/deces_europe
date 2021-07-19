@@ -20,26 +20,42 @@ PLOT_AXIS_SIDE_RIGHT <- 4
 ################################################################################
 # Télécharger un fichier EuroStat si la variable associée n'existe pas
 ################################################################################
-a__f_downloadEuroStatIfNeeded <- function(var, varName, euroStatFileName) {
+a__f_downloadEuroStatIfNeeded <- function(var, euroStatFileName) {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	varName <- deparse(substitute(var))
 	
 	if (!exists(varName)) { 
 		
 		message(paste0("Télécharger depuis EuroStat (", euroStatFileName, ")"))
 		
-		downloadIfNeeded <- get_eurostat(euroStatFileName) 
+		downloadedDatas <- get_eurostat(euroStatFileName) 
+		
+		downloadedDatas <- downloadedDatas %>%
+				# Reordonner les colonnes
+				select(geo, sex, age, time, everything()) %>%
+				# Trier les lignes selon les colonnes
+				arrange(geo, sex, age, time)
 		
 	} else {
 		
 		message(paste0("(", varName, ") déjà présent. On ne le re-télécharge pas"))
 		
-		downloadIfNeeded <- var
+		downloadedDatas <- var
 	}
+	
+	downloadedDatas
 }
 
 ################################################################################
 # Télécharger un fichier CSV si la variable associée n'existe pas
 ################################################################################
-a__f_downloadCsvIfNeeded <- function(var, varName, csvUrl) {
+a__f_downloadCsvIfNeeded <- function(var, csvUrl) {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	varName <- deparse(substitute(var))
 	
 	if (!exists(varName)) { 
 		
@@ -58,7 +74,11 @@ a__f_downloadCsvIfNeeded <- function(var, varName, csvUrl) {
 ################################################################################
 # Charger un fichier CSV si la variable associée n'existe pas
 ################################################################################
-a__f_loadCsvIfNeeded <- function(var, varName, csvRelFilePath, sep=";") {
+a__f_loadCsvIfNeeded <- function(var, csvRelFilePath, sep=";") {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	varName <- deparse(substitute(var))
 	
 	if (!exists(varName)) { 
 		
@@ -78,7 +98,11 @@ a__f_loadCsvIfNeeded <- function(var, varName, csvRelFilePath, sep=";") {
 ################################################################################
 # Charger un fichier RDS si la variable associée n'existe pas
 ################################################################################
-a__f_loadRdsIfNeeded <- function(var, varName, rdsRelFilePath) {
+a__f_loadRdsIfNeeded <- function(var, rdsRelFilePath) {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	varName <- deparse(substitute(var))
 	
 	if (!exists(varName)) { 
 		
@@ -136,6 +160,55 @@ a__f_downloadUrl <- function(
 
 
 
+################################################################################
+# Mettre l'âge dans une tranche d'âge quinquennale (0 à 4, 5 à 9, ...)
+################################################################################
+a__f_quinquenisation <- function(tabWithAge, shallGroup_ge85) {
+	
+	# Numeriser l'age
+	#   remplacer Y_LT1 par 0 et Y_OPEN par 100, l'age par l'age sans le prefixe Y
+	tabWithAge_quinq <- tabWithAge %>%
+			mutate(agequinq = case_when(
+							# Remplacer Y_LT1 (les moins de 1 an) par 0
+							age == "Y_LT1" ~ "0",
+							# Remplacer Y_OPEN (les plus de 100 ans) par 100
+							age == "Y_OPEN" ~ "100",
+							# Pour tous les autres, prendre le nombre qui est après le "Y" (ex "Y14" => "14")
+							TRUE ~ str_sub(age, 2, length(age))
+					))
+	
+	# Rendre l'age numérique
+	tabWithAge_quinq <- tabWithAge_quinq %>%
+			mutate(agequinq = as.numeric(agequinq))
+	
+	# regrouper par tranches d'age de 5 ans
+	tabWithAge_quinq <- tabWithAge_quinq %>%
+			mutate(agequinq = case_when(
+							agequinq <= 4 ~ "Y_LT5",
+							agequinq >= 5 & agequinq < 10 ~ "Y5-9",
+							agequinq >= 10 & agequinq < 15 ~ "Y10-14",
+							agequinq >= 15 & agequinq < 20 ~ "Y15-19",
+							agequinq >= 20 & agequinq < 25 ~ "Y20-24",
+							agequinq >= 25 & agequinq < 30 ~ "Y25-29",  
+							agequinq >= 30 & agequinq < 35 ~ "Y30-34",
+							agequinq >= 35 & agequinq < 40 ~ "Y35-39",  
+							agequinq >= 40 & agequinq < 45 ~ "Y40-44",
+							agequinq >= 45 & agequinq < 50 ~ "Y45-49",
+							agequinq >= 50 & agequinq < 55 ~ "Y50-54",
+							agequinq >= 55 & agequinq < 60 ~ "Y55-59",  
+							agequinq >= 60 & agequinq < 65 ~ "Y60-64",
+							agequinq >= 65 & agequinq < 70 ~ "Y65-69",  
+							agequinq >= 70 & agequinq < 75 ~ "Y70-74",
+							agequinq >= 75 & agequinq < 80 ~ "Y75-79",  
+							agequinq >= 80 & agequinq < 85 ~ "Y80-84",
+						    shallGroup_ge85 & agequinq >= 85  ~ "Y_GE85",
+							(!shallGroup_ge85 & (agequinq >= 85 & agequinq < 90)) ~ "Y85-89",
+							(!shallGroup_ge85 & agequinq >= 90) ~ "Y_GE90"
+					))
+	
+	# Renvoyer le nouveau tableau quinquenisé
+	tabWithAge_quinq
+}
 
 
 ################################################################################
@@ -158,7 +231,7 @@ a__f_plot_region <- function(region) {
 	print(ggplot(data = region) + 
 					
 					geom_line(aes(x = deces_date_complete, 
-									y = dece_centre_reduit,
+									y = deces_centre_reduit,
 									colour = confinement)) + 
 					
 					# Echelle verticale
@@ -209,7 +282,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	
 	
 	# Moyenne mobile sur 52 semaines
-	es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine$deces_standard_tot, 
+	es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020, 
 			                          52)
 	
 	# Moyenne de la Moyenne mobile
@@ -218,7 +291,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	# TODO Renommer la variable
 	es_moyenne_mobile <- data_frame(moyenne_mobile = es_moyenne_mobile)
 	
-	es_moyenne_mobile$numerosemaine <- 1:nrow(es_moyenne_mobile) + decalageSemaines
+	es_moyenne_mobile$numSemaineDepuis2013 <- 1:nrow(es_moyenne_mobile) + decalageSemaines
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
@@ -228,8 +301,8 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	es_deces_standard_pays_semaine$moyenne <- moyenne
 	
 	
-	plot(es_deces_standard_pays_semaine$numerosemaine, 
-	     es_deces_standard_pays_semaine$deces_standard_tot_plus_40, 
+	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
+	     es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge40, 
 		 pch=16, 
 		 cex=0, 
 		 axes=F, 
@@ -266,7 +339,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	
 	# Superposer la moyenne mobile
 	par(new=T)
-	plot(es_deces_standard_pays_semaine$numerosemaine, 
+	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
 		 es_deces_standard_pays_semaine$moyenne_mobile, 
 		 pch=16, 
 		 axes=F, 
@@ -280,7 +353,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	
  # Superposer la moyenne 
 	par(new=T)
-	plot(es_deces_standard_pays_semaine$numerosemaine, 
+	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
 		 es_deces_standard_pays_semaine$moyenne, 
 		 pch=16, 
 		 axes=F, 
@@ -294,7 +367,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	
  # Superposer la bsup
 	par(new=T)
-	plot(es_deces_standard_pays_semaine$numerosemaine, 
+	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
 		 es_deces_standard_pays_semaine$bsup, 
 		 pch=16, 
 		 axes=F, 
@@ -309,7 +382,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	
  # Superposer la binf
 	par(new=T)
-	plot(es_deces_standard_pays_semaine$numerosemaine, 
+	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
 		 es_deces_standard_pays_semaine$binf, 
 		 pch=16, 
 		 axes=F, 
@@ -349,7 +422,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	nomPays <- str_sub(nomVar, startIndex)
 
 	#
-	# Graphique : Situation
+	# Graphique 1 : Situation des + 65ans et - 65 ans
 	#
 	
 	#Nom du fichier png à générer
@@ -367,7 +440,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	
 	moyenne_mobile_m40 <- data_frame(moyenne_mobile_m40)
 	
-	moyenne_mobile_m40$numerosemaine <- 1:nrow(moyenne_mobile_m40) + decalageSemaines
+	moyenne_mobile_m40$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_m40) + decalageSemaines
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
@@ -377,12 +450,13 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	es_deces_standard_pays_semaine$moyenne_m40 <- moyenne_m40
 	
 	essai <- es_deces_standard_pays_semaine %>%
-			filter(numerosemaine>250)
+			filter(numSemaineDepuis2013>250)
 	
 	#
 	par(mar=c(4, 4, 3, 5))
 	
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
+			# >= 65 ans
 			essai$deces_tot_plus_60 - essai$deces_tot_60_64, 
 			pch=16, 
 			cex=0, 
@@ -392,7 +466,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 			ylim=c(0, ylim_max_left), 
 			type="o", 
 			col="black", 
-			main=paste0("Situation de la ",nomPays))
+			main=paste0("Situation pour : ",nomPays))
 	
 	# pour encadrer le graphique
 	box() 
@@ -418,23 +492,24 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
-	# Superposer décès
+	# Superposer décès des < 65 ans
 	par(new=T)
-	plot(essai$numerosemaine, 
-			essai$deces_tot_40_60 + essai$deces_tot_60_64 + essai$deces_tot_moins40, 
+	plot(essai$numSemaineDepuis2013, 
+			# < 65 ans
+			essai$deces_tot_moins40 + essai$deces_tot_40_60 + essai$deces_tot_60_64, 
 			pch=16, 
 			axes=F, 
 			cex=0, 
 			ylim=c(0, ylim_max_left), 
 			xlab="", 
-			lwd=3,  
+			# lwd=3,  
 			ylab="", 
 			type="o", 
 			col="red") 
 	
 	# Superposer la vaccination 
 	par(new=T)
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$new_vaccinations_smoothed_per_million, 
 			pch=16, 
 			axes=F, 
@@ -466,7 +541,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	#
 	par(mar=c(4, 4, 3, 5))
 	
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$deces_tot_moins40, 
 			pch=16, 
 			cex=0, 
@@ -505,7 +580,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	
 	# Superposer moyenne mobile moins de 40 ans
 	par(new=T)
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$moyenne_mobile_m40, 
 			pch=16, 
 			axes=F, 
@@ -519,7 +594,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	
 	# Superposer la vaccination 
 	par(new=T)
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$new_vaccinations_smoothed_per_million, 
 			pch=16, 
 			axes=F, 
@@ -565,13 +640,13 @@ a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_sem
 	
 	
 	essai <- es_deces_standard_pays_semaine %>%
-			filter(numerosemaine>250)
+			filter(numSemaineDepuis2013>250)
 	
 	#
 	par(mar=c(4, 4, 3, 5))
 	
 	# Courbe des décès toutes causes
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$deces_tot, 
 			pch=16, 
 			cex=0, 
@@ -609,7 +684,7 @@ a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_sem
 	
 	# Superposer décès COVID
 	par(new=T)
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$new_deaths, 
 			pch=16, 
 			axes=F, 
@@ -623,7 +698,7 @@ a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_sem
 	
 	# Superposer la différence
 	par(new=T)
-	plot(essai$numerosemaine, 
+	plot(essai$numSemaineDepuis2013, 
 			essai$deces_tot - essai$new_deaths, 
 			pch=16, 
 			axes=F, 
@@ -643,4 +718,68 @@ a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_sem
 	
 	# Supprimer la variable de GlovaEnv correspondant à region car on n'en a plus besoin
 	if (shallDeleteVars) rm(list = c(nomVar), envir = globalenv())
+}
+
+################################################################################
+# Generer le graphique et le png associé : Deces quotidiens
+################################################################################
+a__f_plot_deces_quotidiens <- function(deces_par_jour,
+		tailleFenetreGlissante = 7,
+		decalageSemaines = 6) {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	nomVar <- deparse(substitute(deces_par_jour))
+	
+	
+	#Nom du fichier png à générer
+	pngFileRelPath <- paste0("gen/images/fr_gouv_Registre_Deces_quotidiens_tranche_age_", nomVar, ".png")
+	
+	# Message
+	message(paste0("Creation image (", pngFileRelPath,")"))
+	
+	
+	# Calculer la moyenne mobile sur 7 jours
+	moyenne_mobile <- running_mean(deces_par_jour$nbDeces, tailleFenetreGlissante)
+	
+	moyenne_mobile <- data_frame(moyenne_mobile)
+	moyenne_mobile$numerojour <- 1:nrow(moyenne_mobile) + decalageSemaines
+	
+	# Compléter le df des 40-59 ans
+	deces_par_jour$numerojour <- 1:nrow(deces_par_jour)
+	
+	deces_par_jour <- deces_par_jour %>% 
+			left_join(moyenne_mobile) 
+	
+	# Ajouter la moyenne de la moyenne mobile
+	deces_par_jour$moyenne <- mean(moyenne_mobile)
+	
+	
+	print(ggplot(data = deces_par_jour,
+							mapping = aes(x = deces_date_complete,
+									color = confinement)) +
+					
+					#scale_colour_brewer(palette = "Set1") +
+					scale_colour_manual(values = c("red", "black"))+
+					
+					scale_linetype_manual(values=c("dotted", "solid")) +
+					
+					scale_size_manual(values=c(0.1, 1.5)) +
+					
+					geom_line(mapping = aes(y = nbDeces),
+							linetype = "dotted") + 
+					
+					geom_line(mapping = aes(y = moyenne_mobile),
+							linetype = "solid",
+							size = 1) + 
+					
+					facet_wrap(~tranche_d_age) +
+					
+					#theme(legend.position = "top")+
+					
+					ggtitle("Décès quotidiens par age") +
+					xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
+	)
+
+	dev.print(device = png, file = pngFileRelPath, width = 1000)
 }
