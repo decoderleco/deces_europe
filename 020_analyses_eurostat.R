@@ -73,8 +73,8 @@ deces_complet_annuel_analysable2000_ouest20 <- deces_complet_annuel_analysable20
 		filter(time == "2020-01-01")
 
 print(ggplot(deces_complet_annuel_analysable2000) + 
-		geom_point(aes(x = geo, y = deces_theo_si_pop_FR_2020, color = time), size = 2)+
-		geom_label(data=deces_complet_annuel_20, aes(x = geo, y = deces_theo_si_pop_FR_2020, label=format(time, format = "%Y")), color = "red", size = 3)+
+		geom_point(aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020, color = time), size = 2)+
+		geom_label(data=deces_complet_annuel_20, aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020, label=format(time, format = "%Y")), color = "red", size = 3)+
 		labs(title = "Décès standardisés par pays et année",
 				subtitle = "selon la population de la France en 2020",
 				caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
@@ -91,8 +91,8 @@ dev.print(device = png, file = paste0(repertoire, "/Eurostat_Deces_2000_2020_zon
 if (shallDeleteVars)  rm(deces_complet_annuel_20)
 
 print(ggplot(deces_complet_annuel_analysable2000_est) + 
-		geom_point(aes(x = location, y = deces_theo_si_pop_FR_2020, color = time), size = 2)+
-		geom_label(data=deces_complet_annuel_analysable2000_est20, aes(x = location, y = deces_theo_si_pop_FR_2020, label=format(time, format = "%Y")), color = "red", size = 3)+
+		geom_point(aes(x = location, y = deces_theo_du_pays_si_pop_FR_2020, color = time), size = 2)+
+		geom_label(data=deces_complet_annuel_analysable2000_est20, aes(x = location, y = deces_theo_du_pays_si_pop_FR_2020, label=format(time, format = "%Y")), color = "red", size = 3)+
 		labs(title = "Décès standardisés par pays et année",
 				subtitle = "selon la population de la France en 2020",
 				caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
@@ -105,8 +105,8 @@ dev.print(device = png, file = paste0(repertoire, "/Eurostat_Deces_2000_2020_zon
 if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_est20)
 
 print(ggplot(deces_complet_annuel_analysable2000_ouest) + 
-		geom_point(aes(x = location, y = deces_theo_si_pop_FR_2020, color = time), size = 2)+
-		geom_label(data=deces_complet_annuel_analysable2000_ouest20, aes(x = location, y = deces_theo_si_pop_FR_2020, label=format(time, format = "%Y")), color = "red", size = 3)+
+		geom_point(aes(x = location, y = deces_theo_du_pays_si_pop_FR_2020, color = time), size = 2)+
+		geom_label(data=deces_complet_annuel_analysable2000_ouest20, aes(x = location, y = deces_theo_du_pays_si_pop_FR_2020, label=format(time, format = "%Y")), color = "red", size = 3)+
 		labs(title = "Décès standardisés par pays et année",
 				subtitle = "selon la population de la France en 2020",
 				caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
@@ -219,14 +219,14 @@ deces_complet_annuel_analysable2000_deuxannees <- deces_complet_annuel_analysabl
 				population=mean(population),
 				pop2020=mean(pop2020),
 				deces_theo_si_pop_2020=sum(deces_theo_si_pop_2020),
-				deces_theo_si_pop_FR_2020=sum(deces_theo_si_pop_FR_2020))
+				deces_theo_du_pays_si_pop_FR_2020=sum(deces_theo_du_pays_si_pop_FR_2020))
 
 deces_complet_annuel_analysable2000_deuxannees20 <- deces_complet_annuel_analysable2000_deuxannees %>%
 		filter(deuxannees == "2019-2020")
 
 print(ggplot(deces_complet_annuel_analysable2000_deuxannees) + 
-		geom_point(aes(x = geo, y = deces_theo_si_pop_FR_2020, color = deuxannees), size = 2)+
-		geom_point(data=deces_complet_annuel_analysable2000_deuxannees20, aes(x = geo, y = deces_theo_si_pop_FR_2020), color = "red", size = 3)
+		geom_point(aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020, color = deuxannees), size = 2)+
+		geom_point(data=deces_complet_annuel_analysable2000_deuxannees20, aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020), color = "red", size = 3)
 )
 
 
@@ -258,14 +258,14 @@ deces_complet_annuel_analysable2000 <- deces_complet_annuel_analysable2000 %>%
 
 deces_complet_annuel_analysable2000_troisannees <- deces_complet_annuel_analysable2000 %>%
 		group_by(geo, troisannees, location, zone) %>% 
-		summarise(deces=mean(deces), population=mean(population), pop2020=mean(pop2020), deces_theo_si_pop_2020=mean(deces_theo_si_pop_2020), deces_theo_si_pop_FR_2020=mean(deces_theo_si_pop_FR_2020))
+		summarise(deces=mean(deces), population=mean(population), pop2020=mean(pop2020), deces_theo_si_pop_2020=mean(deces_theo_si_pop_2020), deces_theo_du_pays_si_pop_FR_2020=mean(deces_theo_du_pays_si_pop_FR_2020))
 
 deces_complet_annuel_analysable2000_troisannees20 <- deces_complet_annuel_analysable2000_troisannees %>%
 		filter(troisannees == "2018-2020")
 
 print(ggplot(deces_complet_annuel_analysable2000_troisannees) + 
-		geom_point(aes(x = geo, y = deces_theo_si_pop_FR_2020, color = troisannees), size = 2)+
-		geom_point(data=deces_complet_annuel_analysable2000_troisannees20, aes(x = geo, y = deces_theo_si_pop_FR_2020), color = "red", size = 3)+
+		geom_point(aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020, color = troisannees), size = 2)+
+		geom_point(data=deces_complet_annuel_analysable2000_troisannees20, aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020), color = "red", size = 3)+
 		labs(title = "Décès standardisés par pays et par période de 3 ans",
 				subtitle = "selon la population de la France en 2020",
 				caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+

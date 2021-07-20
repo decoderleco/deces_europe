@@ -60,7 +60,7 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
 		mutate(ecart_moyenne = (deces_standardises_si_pop_2020-moyenne)/moyenne*100)
 
 numSemaineDepuis2013_for_eu_lockdown_start <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		# TODO : Pourquoi décale-t-on d'une semaine ? REP : ici j'ai fait des statistiques pour savoir l'état de la semaine précédente. Je n'ai rien gardé dans la présentation finale.
+		# Pourquoi décale-t-on d'une semaine ? REP : ici j'ai fait des statistiques pour savoir l'état de la semaine précédente. Je n'ai rien gardé dans la présentation finale.
 		mutate (numSemaineDepuis2013 = numSemaineDepuis2013 + 1, 
 				deces_standard_tot_prec = deces_standardises_si_pop_2020, 
 				new_deaths_prec=new_deaths,
@@ -127,7 +127,8 @@ es_deces_standard_pays_semaine_espagne <- b__es_deces_week_standardises_si_pop_2
 es_deces_standard_pays_semaine_france <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
 		filter(geo == "FR")
 
-# TODO : Pourquoi filtre-t-on sur numSemaineDepuis2013 > 52 ? REP : Parce que les données ne ressemblent à rien pour ce pays les 51 premières semaines
+# Pourquoi filtre-t-on sur numSemaineDepuis2013 > 52 ? 
+# REP : Parce que les données ne ressemblent à rien pour ce pays les 51 premières semaines
 es_deces_standard_pays_semaine_croatie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
 		filter(geo == "HR") %>%
 		filter(numSemaineDepuis2013 > 52)
