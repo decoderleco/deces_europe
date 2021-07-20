@@ -82,8 +82,7 @@ if(!dir.exists(dossier_donnees_deces)) dir.create(dossier_donnees_deces)
 # Liste des URLs des fichiers de patients décédés
 
 urls_listes_deces <- c(
-  '2021m5'='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210614-174027/deces-2021-m05.txt',
-  '2021m4'='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210507-163942/deces-2021-m04.txt',
+  '2021t2'='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210709-174839/deces-2021-t2.txt',
   '2021t1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210409-131502/deces-2021-t1.txt',
   '2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
   '2019' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20200113-173945/deces-2019.txt',
