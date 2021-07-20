@@ -778,7 +778,7 @@ a__f_plot_deces_quotidiens <- function(deces_par_jour,
 					#theme(legend.position = "top")+
 					
 					ggtitle("Décès quotidiens par age") +
-					xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
+					xlab("date de décès") + ylab("nombre de décès quotidiens")
 	)
 
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
