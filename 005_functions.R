@@ -229,11 +229,13 @@ a__f_plot_region <- function(region) {
 	# qui a étépassé dans le parametre region
 	nomRegion <- deparse(substitute(region))
 	
-	if (!dir.exists("gen/images/fr_gouv/Registre/Deces_Quotidiens")) dir.create("gen/images/fr_gouv/Registre/Deces_Quotidiens", recursive = TRUE)
+	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+	repertoire <- paste0("gen/images/fr/gouv/Registre/Deces_Quotidiens/Region/")
+	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
-	pngFileRelPath <- paste0("gen/images/fr_gouv/Registre/Deces_Quotidiens/Deces_quotidiens_", nomRegion, ".png")
-
+	pngFileRelPath <- paste0(repertoire, nomRegion, ".png")
+	
 	# Message
 	message(paste0("Creation image (", pngFileRelPath,")"))
 	
@@ -260,7 +262,6 @@ a__f_plot_region <- function(region) {
 	
 	
 	# Generer le fichier png
-	#png(filename=paste0("gen/images/fr_gouv_Registre_Deces_quotidiens_", nomRegion, ".png"))
 	dev.print(device = png, 
 			file = pngFileRelPath, 
 			width = 1000)
@@ -280,10 +281,11 @@ a__f_plot_deces_quotidiens <- function(deces_par_jour,
 	# qui a étépassé dans le parametre region
 	nomVar <- deparse(substitute(deces_par_jour))
 	
-	if (!dir.exists("gen/images/fr_gouv/Registre/Deces_Quotidiens/Tranche_age")) dir.create("gen/images/fr_gouv/Registre/Deces_Quotidiens/Tranche_age", recursive = TRUE)
+	repertoire <- paste0("gen/images/fr/gouv/Registre/Deces_Quotidiens/Tranche_age")
+	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
-	pngFileRelPath <- paste0("gen/images/fr_gouv/Registre/Deces_Quotidiens/Tranche_age/Deces_quotidiens_tranche_age_", nomVar, ".png")
+	pngFileRelPath <- paste0(repertoire, "/Deces_quotidiens_tranche_age_", nomVar, ".png")
 	
 	# Message
 	message(paste0("Creation image (", pngFileRelPath,")"))

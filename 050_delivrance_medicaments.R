@@ -108,7 +108,10 @@ print(ggplot(medicam_vaccins_grippes,
 		theme(axis.text.x = element_text(angle=45))
 )
 
-dev.print(device = png, file = "gen/images/Medicam_Vaccins_Grippe_Distribues.png", width = 1000)
+repertoire <- paste0("gen/images/fr/Medicam")
+a__f_createDir(repertoire)
+
+dev.print(device = png, file = paste0(repertoire, "/Medicam_Vaccins_Grippe_Distribues.png"), width = 1000)
 
 
 ################################################################################
@@ -373,7 +376,10 @@ print(ggplot(data = om_JG_CLONAZEPAM,
 				ylim(0, NA)
 )
 
-dev.print(device = png, file = "gen/images/Medicam_Rivotril_evol.png", width = 1000)
+repertoire <- paste0("gen/images/fr/Medicam")
+a__f_createDir(repertoire)
+
+dev.print(device = png, file = paste0(repertoire, "/Medicam_Rivotril_evol.png"), width = 1000)
 
 if (shallDeleteVars) rm(om_JG_CLONAZEPAM)
 

@@ -248,8 +248,6 @@ text(391, 1000, "2020", cex=1.2)
 text(440, 1000, "2021", cex=1.2)
 text(26, 22000, "FRANCE", cex=1.2)
 
-#dev.print(device = png, file = "gen/images/Eurostat_owid_Deces_Pays_Hebdo_france.png", width = 1000)
-
 # Ne pas effacer le graphique avant de continuer (T = TRUE)
 par(new=T)
 
@@ -270,9 +268,11 @@ plot(es_deces_standard_pays_semaine_portugal$numSemaineDepuis2013,
 
 text(26, 25000, "PORTUGAL", cex=1.2, col="green")
 
-a__f_createDir("gen/images/Eurostat/Deces/Hebdo/Std/Deces_FR_SU_PO")
+repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/Deces_FR_SU_PO")
+a__f_createDir(repertoire)
 
-dev.print(device = png, file = "gen/images/Eurostat/Deces/Hebdo/Std/Deces_FR_SU_PO/Deces_Hebdo_france_suede_portugal.png", width = 1000)
+dev.print(device = png, file = paste0(repertoire, "/Deces_Hebdo_france_suede_portugal.png"), width = 1000)
+
 
 #---------------------------------------#
 # Graphe deces_hebdo_std_moyenne_mobile de chaque pays
