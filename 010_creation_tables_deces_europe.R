@@ -118,7 +118,7 @@ if (shallDeleteVars) rm(es_pjan_age)
 #  deces					: Nombre de deces enregistrés durant l'année du recensement (2013)
 #  deces_theo_si_pop_2020			: Décès théoriques qu'il y aurait dû avoir en 2020
 #  deces2020						: Décès réels observés en 2020
-#  deces_theo_si_pop_FR_2020		: Décès que le pays aurait eu s'il avait la population de la France en 2020
+#  deces_theo_du_pays_si_pop_FR_2020		: Décès que le pays aurait eu s'il avait la population de la France en 2020
 #							  Devrait s'appeler : deces_theo_du_pays_si_pop_FR_2020
 #  surmortalite2020			: Augmentation des décès entre 2019 et 2020 (AC)
 #							  Devrait s'appeler : surmortalite2020
@@ -160,7 +160,8 @@ if (shallDeleteVars) rm(es_deces_annuel_age)
 
 
 # Recuperer lignes pays, recensement pour lesquels l'âge max des décès est inférieur à 89 ans	
-# TODO : Pourquoi fait-on ça ? REP : il s'agit de divers regroupements non utilisés dont il faudrait gérer les cas
+# Pourquoi fait-on ça ? 
+# REP : il s'agit de divers regroupements non utilisés dont il faudrait gérer les cas
 es_deces_annuel_pb_age_max_deces <- es_deces_annuel_age_max %>%
 		filter(age_max < 89) %>% 
 		filter(str_sub(geo,1,2)!="EU") %>%
@@ -230,7 +231,8 @@ b__es_deces_et_pop_par_annee <- b__es_deces_et_pop_par_annee %>%
 
 
 # On enleve les données de l'Italie, car les deces annuels n'étaient pas comptabilisés avant 1985 (AC) ?
-# TODO : Confirmer que c'est la bonne raison, car pourquoi filtrer avant 1981 alors que les données de deces commencent en 1985 REP : age-max de l'Italie à 79 ans avant 1981
+# Confirmer que c'est la bonne raison, car pourquoi filtrer avant 1981 alors que les données de deces commencent en 1985 
+# REP : age-max de l'Italie à 79 ans avant 1981
 es_pjan <- es_pjan %>%
 		filter(!(geo == "IT" & time <= "1981-01-01"))
 
@@ -238,9 +240,9 @@ b__es_deces_et_pop_par_annee <- b__es_deces_et_pop_par_annee %>%
 		filter(!(geo == "IT" & time <= "1981-01-01"))
 
 # On ne garde que ceux qui ont 84 et on enlève les ligne "TR"
-# TODO : Pourquoi fait-on ça ? REP : on enlève la Turquie car on n'a pas les décès. Il s'agit ici de tout caler avec un age regroupé pour les plus de 85 ans.
-# TODO : Devrait s'appeler es_pb_age_max_84 plutôt que 85, non ? REP : Oui, c'est vrai. On aura une classe d'age 85+ au lieu de 90+
-es_pb_age_max_age85 <- es_pb_age_max %>%
+# REP : on enlève la Turquie car on n'a pas les décès. Il s'agit ici de tout caler avec un age regroupé pour les plus de 85 ans.
+# Devrait s'appeler es_pb_age_max_84 plutôt que 85, non ? REP : Oui, c'est vrai. On aura une classe d'age 85+ au lieu de 90+
+es_pb_age_max_deces_84 <- es_pb_age_max %>%
 		filter(age_max_deces == 84 | age_max_pop == 84 ) %>%
 		filter(geo != "TR")
 
@@ -254,7 +256,7 @@ if (shallDeleteVars) rm(es_pb_age_max)
 #celle avec les couples (geo, time) traites en age quinquennal jusqu'à 85+
 
 # Ajouter les colonnes population par tranche d'age et sexe de es_pjan
-es_pb_age_max_85_pjan <- es_pb_age_max_age85 %>%
+es_pb_age_max_85_pjan <- es_pb_age_max_deces_84 %>%
 		left_join(es_pjan)
 
 # Mettre dans es_pjan90, les lignes de es_pjan qui ne sont pas dans es_pjan85
@@ -299,7 +301,7 @@ if (shallDeleteVars) rm(es_pjan90)
 #table de deces : on partitionne en deux tables : celle avec les couples (geo, time) traites en age quinquennal jusqu'à 90+
 #celle vec les couples (geo, time) traites en age quinquennal jusqu'à 85+
 
-es_deces_annuel_age85 <- es_pb_age_max_age85 %>%
+es_deces_annuel_age85 <- es_pb_age_max_deces_84 %>%
 		left_join(b__es_deces_et_pop_par_annee) %>%
 		filter(!is.na(age))
 
@@ -308,7 +310,7 @@ es_deces_annuel_age90 <- b__es_deces_et_pop_par_annee %>%
 		anti_join(es_deces_annuel_age85)
 
 
-if (shallDeleteVars) rm(es_pb_age_max_age85)
+if (shallDeleteVars) rm(es_pb_age_max_deces_84)
 if (shallDeleteVars) rm(b__es_deces_et_pop_par_annee)
 
 
@@ -503,7 +505,7 @@ es_deces_et_pop_annuel_by_agequinq <- es_deces_et_pop_annuel_by_agequinq %>%
 #  deces_theo_si_pop_2020	: Décès théoriques qu'il y aurait dû avoir avec la population du pays en 2020
 #  deces2020						: Décès réels observés en 2020 (obtenu par agrégation des deces par semaine 2020)
 #  pop_france2020			: Population française en 2020 (sum(pop2020) après filtrage des lignes de la France)
-#  deces_theo_si_pop_FR_2020		: Décès que le pays aurait eu s'il avait la population de la France en 2020
+#  deces_theo_du_pays_si_pop_FR_2020		: Décès que le pays aurait eu s'il avait la population de la France en 2020
 #							  Devrait s'appeler : deces_theo_du_pays_si_pop_FR_2020
 #  location					: Nom du pays
 #  zone						: Est, Ouest
@@ -587,20 +589,9 @@ es_deces_complet_DE <- b__es_deces_et_pop_par_annee_agequinq %>%
 				deces=sum(deces), 
 				deces_theo_si_pop_2020=sum(deces_theo_si_pop_2020))
 
-# TODO : BUG : Erreur de recopie d'un autre fichier ?
-#es_DE_lt_40_nb_deces_decestheo <- es_deces_complet_DE_lt40 %>% 
-#		group_by(geo) %>% 
-#		summarise(deces=sum(deces), 
-#				  deces_theo_si_pop_2020=sum(deces_theo_si_pop_2020))
-#  
-#es_DE_lt_40_nb_deces <- es_DE_lt_40_nb_deces_decestheo$deces
-#
-#es_DE_lt_40_nb_decestheo <- es_DE_lt_40_nb_deces_decestheo$deces_theo_si_pop_2020
-#
-#if (shallDeleteVars) rm(es_DE_lt_40_nb_deces_decestheo)
-
 #Ajouter une colonne avec la proportion des deces / aux deces des moins de 40 ans
-# TODO : Moi je trouve 11574 deces de moins de 40, pas 14059. A remplacer par es_DE_lt_40_nb_deces ? REP : en refaisant les calculs j'ai plutôt 13 500. Tu n'aurais pas oublié les Y_LT5 ?
+# TODO TW m 2021_07_20 : Moi je trouve 11574 deces de moins de 40, pas 14059. A remplacer par es_DE_lt_40_nb_deces ? 
+# REP : en refaisant les calculs j'ai plutôt 13 500. Tu n'aurais pas oublié les Y_LT5 ?
 es_deces_complet_DE <- es_deces_complet_DE %>%
 		mutate (partdecesmoins40 = (deces)/14059)
 
@@ -761,10 +752,9 @@ b__es_deces_et_pop_par_annee_agequinq <- b__es_deces_et_pop_par_annee_agequinq %
 
 if (shallDeleteVars) rm(es_FR_pop2020_by_agequinq_sex)
 
-# NORMALISATION : Ajouter une colonne deces_theo_si_pop_FR_2020 : nb de deces que le pays aurait eu s'il avait la population 2020 de la France
-# TODO : Renommer la colone deces_theo_si_pop_FR_2020 en deces_theo_du_pays_si_pop_FR_2020
+# NORMALISATION : Ajouter une colonne deces_theo_du_pays_si_pop_FR_2020 : nb de deces que le pays aurait eu s'il avait la population 2020 de la France
 b__es_deces_et_pop_par_annee_agequinq <- b__es_deces_et_pop_par_annee_agequinq %>%
-		mutate(deces_theo_si_pop_FR_2020 = case_when(
+		mutate(deces_theo_du_pays_si_pop_FR_2020 = case_when(
 						population == 0 ~ 0,
 						TRUE ~ deces/(population)*pop_france2020))
 
@@ -775,7 +765,6 @@ b__es_deces_et_pop_par_annee_agequinq <- b__es_deces_et_pop_par_annee_agequinq %
 
 
 #Synthtetiser par pays et recensement, les population, pop2020, deces-theo_2020...
-# TODO : BUG : bizarre en 2020, population et pop2020 sont differents
 b__es_deces_et_pop_par_annee <- b__es_deces_et_pop_par_annee_agequinq %>%
 		filter(!is.na(population)) %>%
 		group_by(geo, time) %>%
@@ -784,7 +773,7 @@ b__es_deces_et_pop_par_annee <- b__es_deces_et_pop_par_annee_agequinq %>%
 				  deces=sum(deces), 
 				  deces2020=sum(deces2020), 
 				  deces_theo_si_pop_2020=sum(deces_theo_si_pop_2020), 
-				  deces_theo_si_pop_FR_2020=sum(deces_theo_si_pop_FR_2020))
+				  deces_theo_du_pays_si_pop_FR_2020=sum(deces_theo_du_pays_si_pop_FR_2020))
 
   
 #supprimer les ligne qui ont des NA
