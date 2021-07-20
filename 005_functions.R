@@ -20,6 +20,15 @@ PLOT_AXIS_SIDE_RIGHT <- 4
 ################################################################################
 # Télécharger un fichier EuroStat si la variable associée n'existe pas
 ################################################################################
+a__f_createDir <- function(dirPath) {
+	
+	if (!dir.exists(dirPath)) dir.create(dirPath, recursive = TRUE)
+}
+
+
+################################################################################
+# Télécharger un fichier EuroStat si la variable associée n'existe pas
+################################################################################
 a__f_downloadEuroStatIfNeeded <- function(var, euroStatFileName) {
 	
 	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
@@ -220,9 +229,13 @@ a__f_plot_region <- function(region) {
 	# qui a étépassé dans le parametre region
 	nomRegion <- deparse(substitute(region))
 	
+	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+	repertoire <- paste0("gen/images/fr/gouv/Registre/Deces_Quotidiens/Region/")
+	a__f_createDir(repertoire)
+	
 	#Nom du fichier png à générer
-	pngFileRelPath <- paste0("gen/images/fr_gouv_Registre_Deces_quotidiens_", nomRegion, ".png")
-
+	pngFileRelPath <- paste0(repertoire, nomRegion, ".png")
+	
 	# Message
 	message(paste0("Creation image (", pngFileRelPath,")"))
 	
@@ -249,7 +262,6 @@ a__f_plot_region <- function(region) {
 	
 	
 	# Generer le fichier png
-	#png(filename=paste0("gen/images/fr_gouv_Registre_Deces_quotidiens_", nomRegion, ".png"))
 	dev.print(device = png, 
 			file = pngFileRelPath, 
 			width = 1000)
@@ -258,6 +270,72 @@ a__f_plot_region <- function(region) {
 	if (shallDeleteVars) rm(list = c(nomRegion), envir = globalenv())
 }
 
+################################################################################
+# Generer le graphique et le png associé : Deces quotidiens
+################################################################################
+a__f_plot_deces_quotidiens <- function(deces_par_jour,
+		tailleFenetreGlissante = 7,
+		decalageSemaines = 6) {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	nomVar <- deparse(substitute(deces_par_jour))
+	
+	repertoire <- paste0("gen/images/fr/gouv/Registre/Deces_Quotidiens/Tranche_age")
+	a__f_createDir(repertoire)
+	
+	#Nom du fichier png à générer
+	pngFileRelPath <- paste0(repertoire, "/Deces_quotidiens_tranche_age_", nomVar, ".png")
+	
+	# Message
+	message(paste0("Creation image (", pngFileRelPath,")"))
+	
+	
+	# Calculer la moyenne mobile sur 7 jours
+	moyenne_mobile <- running_mean(deces_par_jour$nbDeces, tailleFenetreGlissante)
+	
+	moyenne_mobile <- data_frame(moyenne_mobile)
+	moyenne_mobile$numerojour <- 1:nrow(moyenne_mobile) + decalageSemaines
+	
+	# Compléter le df des 40-59 ans
+	deces_par_jour$numerojour <- 1:nrow(deces_par_jour)
+	
+	deces_par_jour <- deces_par_jour %>% 
+			left_join(moyenne_mobile) 
+	
+	# Ajouter la moyenne de la moyenne mobile
+	deces_par_jour$moyenne <- mean(moyenne_mobile)
+	
+	
+	print(ggplot(data = deces_par_jour,
+							mapping = aes(x = deces_date_complete,
+									color = confinement)) +
+					
+					#scale_colour_brewer(palette = "Set1") +
+					scale_colour_manual(values = c("red", "black"))+
+					
+					scale_linetype_manual(values=c("dotted", "solid")) +
+					
+					scale_size_manual(values=c(0.1, 1.5)) +
+					
+					geom_line(mapping = aes(y = nbDeces),
+							linetype = "dotted") + 
+					
+					geom_line(mapping = aes(y = moyenne_mobile),
+							linetype = "solid",
+							size = 1) + 
+					
+					facet_wrap(~tranche_d_age) +
+					
+					#theme(legend.position = "top")+
+					
+					ggtitle("Décès quotidiens par age") +
+					xlab("date de décès") + 
+					ylab("nombre de décès quotidiens")
+	)
+	
+	dev.print(device = png, file = pngFileRelPath, width = 1000)
+}
 
 ################################################################################
 # Generer le graphique et le png associé : deces_hebdo_std_moyenne_mobile
@@ -273,9 +351,13 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	# Recuperer le nom du pays qui est après "es_deces_standard_pays_semaine_"
 	startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
 	nomPays <- str_sub(nomVar, startIndex)
-			
+
+	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/Lissage/", es_deces_standard_pays_semaine$zone[1], "/")
+	a__f_createDir(repertoire)
+	
 	#Nom du fichier png à générer
-	pngFileRelPath <- paste0("gen/images/Eurostat_owid_Deces_Pays_Hebdo_", nomPays, "_lissage.png")
+	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 	
 	# Message
 	message(paste0("Creation image (", pngFileRelPath,")"))
@@ -406,7 +488,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 ################################################################################
 # Generer le graphique et le png associé : deces_hebdo_std_m40_p65_vaccination
 ################################################################################
-a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays_semaine, 
+a__f_plot_deces_hebdo_std_lt40_ge65_vaccination <- function(es_deces_standard_pays_semaine, 
 		                                                  ylim_max_left,
 														  ylim_max_right,
 														  ylim_max_left2,
@@ -420,13 +502,17 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	# Recuperer le nom du pays qui est après "es_deces_standard_pays_semaine_"
 	startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
 	nomPays <- str_sub(nomVar, startIndex)
-
+	
 	#
 	# Graphique 1 : Situation des + 65ans et - 65 ans
 	#
+
+	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/ge65/", es_deces_standard_pays_semaine$zone[1], "/")
+	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
-	pngFileRelPath <- paste0("gen/images/Eurostat_owid_Deces_Pays_Vaccin_", nomPays, ".png")
+	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 	
 	# Message
 	message(paste0("Creation image (", pngFileRelPath,")"))
@@ -473,8 +559,8 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	
 	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, ylim_max_left), col="red")
 	
-	mtext("nombre de décès toutes causes des plus de 65 ans", side=2, line=3)
-	mtext("nombre de décès toutes causes des moins de 65 ans", side=2, line=2, col="red")
+	mtext("Nombre de décès toutes causes standardisés des plus de 65 ans", side=2, line=3)
+	mtext("Nombre de décès toutes causes standardisés des moins de 65 ans", side=2, line=2, col="red")
 	mtext("                                                                   Source : Eurostat décès hebdomadaires et population + OurWorldInData", side=1, col="black", line=2.5)
 	
 	# Lignes verticales
@@ -531,9 +617,12 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	#
 	# Graphique 2 : Situation des moins de 40 ans
 	#
-	
+
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/lt40/", es_deces_standard_pays_semaine$zone[1], "/")
+	a__f_createDir(repertoire)
+
 	#Nom du fichier png à générer
-	pngFileRelPath <- paste0("gen/images/Eurostat_owid_Deces_Pays_Vaccin_", nomPays, "_jeune.png")
+	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 	
 	# Message
 	message(paste0("Creation image (", pngFileRelPath,")"))
@@ -558,8 +647,8 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 	
 	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, ylim_max_left2), col="red")
 	
-	mtext("nombre de décès toutes causes des moins de 40 ans", side=2, line=3)
-	mtext("nombre de décès toutes causes lissés sur 8 semaines des moins de 40 ans", side=2, line=2, col="red")
+	mtext("nombre de décès toutes causes standardisés des moins de 40 ans", side=2, line=3)
+	mtext("nombre de décès toutes causes standardisés lissés sur 8 semaines des moins de 40 ans", side=2, line=2, col="red")
 	
 	mtext("                                                                   Source : Eurostat décès hebdomadaires et population + OurWorldInData", side=1, col="black", line=2.5)
 	
@@ -620,7 +709,7 @@ a__f_plot_deces_hebdo_std_m40_p65_vaccination <- function(es_deces_standard_pays
 ################################################################################
 # Generer le graphique et le png associé : Deces vs Deces COVID
 ################################################################################
-a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_semaine, 
+a__f_plot_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_semaine, 
 		ylim_max) {
 	
 	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
@@ -631,9 +720,12 @@ a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_sem
 	startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
 	nomPays <- str_sub(nomVar, startIndex)
 	
+	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_vs_Deces_Covid/", es_deces_standard_pays_semaine$zone[1], "/")
+	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
-	pngFileRelPath <- paste0("gen/images/Eurostat_owid_Deces_Pays_Covid_", nomPays, ".png")
+	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 	
 	# Message
 	message(paste0("Creation image (", pngFileRelPath,")"))
@@ -663,8 +755,8 @@ a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_sem
 	
 	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, ylim_max), col="red")
 	
-	mtext("nombre de décès toutes causes", side=2, line=3)
-	mtext("nombre de décès déclarés Covid-19", side=2, line=2, col="red")
+	mtext("nombre de décès toutes causes standardisés ", side=2, line=3)
+	mtext("nombre de décès déclarés Covid-19 standardisés", side=2, line=2, col="red")
 	mtext("                                                                   Source : Eurostat décès hebdomadaires et population + OurWorldInData", side=1, col="black", line=2.5)
 	
 	# Lignes verticales
@@ -720,66 +812,3 @@ a__f_plot_deces_hebdo_deces_vs_decesCovid <- function(es_deces_standard_pays_sem
 	if (shallDeleteVars) rm(list = c(nomVar), envir = globalenv())
 }
 
-################################################################################
-# Generer le graphique et le png associé : Deces quotidiens
-################################################################################
-a__f_plot_deces_quotidiens <- function(deces_par_jour,
-		tailleFenetreGlissante = 7,
-		decalageSemaines = 6) {
-	
-	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
-	# qui a étépassé dans le parametre region
-	nomVar <- deparse(substitute(deces_par_jour))
-	
-	
-	#Nom du fichier png à générer
-	pngFileRelPath <- paste0("gen/images/fr_gouv_Registre_Deces_quotidiens_tranche_age_", nomVar, ".png")
-	
-	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
-	
-	
-	# Calculer la moyenne mobile sur 7 jours
-	moyenne_mobile <- running_mean(deces_par_jour$nbDeces, tailleFenetreGlissante)
-	
-	moyenne_mobile <- data_frame(moyenne_mobile)
-	moyenne_mobile$numerojour <- 1:nrow(moyenne_mobile) + decalageSemaines
-	
-	# Compléter le df des 40-59 ans
-	deces_par_jour$numerojour <- 1:nrow(deces_par_jour)
-	
-	deces_par_jour <- deces_par_jour %>% 
-			left_join(moyenne_mobile) 
-	
-	# Ajouter la moyenne de la moyenne mobile
-	deces_par_jour$moyenne <- mean(moyenne_mobile)
-	
-	
-	print(ggplot(data = deces_par_jour,
-							mapping = aes(x = deces_date_complete,
-									color = confinement)) +
-					
-					#scale_colour_brewer(palette = "Set1") +
-					scale_colour_manual(values = c("red", "black"))+
-					
-					scale_linetype_manual(values=c("dotted", "solid")) +
-					
-					scale_size_manual(values=c(0.1, 1.5)) +
-					
-					geom_line(mapping = aes(y = nbDeces),
-							linetype = "dotted") + 
-					
-					geom_line(mapping = aes(y = moyenne_mobile),
-							linetype = "solid",
-							size = 1) + 
-					
-					facet_wrap(~tranche_d_age) +
-					
-					#theme(legend.position = "top")+
-					
-					ggtitle("Décès quotidiens par age") +
-					xlab("date de décès") + ylab("nombre de décès (centrés et réduits au quartile)")
-	)
-
-	dev.print(device = png, file = pngFileRelPath, width = 1000)
-}

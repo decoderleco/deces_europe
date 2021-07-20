@@ -73,8 +73,8 @@ deces_complet_annuel_analysable2000_ouest20 <- deces_complet_annuel_analysable20
 		filter(time == "2020-01-01")
 
 print(ggplot(deces_complet_annuel_analysable2000) + 
-		geom_point(aes(x = geo, y = deces_theo_si_pop_FR_2020, color = time), size = 2)+
-		geom_label(data=deces_complet_annuel_20, aes(x = geo, y = deces_theo_si_pop_FR_2020, label=format(time, format = "%Y")), color = "red", size = 3)+
+		geom_point(aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020, color = time), size = 2)+
+		geom_label(data=deces_complet_annuel_20, aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020, label=format(time, format = "%Y")), color = "red", size = 3)+
 		labs(title = "Décès standardisés par pays et année",
 				subtitle = "selon la population de la France en 2020",
 				caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
@@ -82,13 +82,17 @@ print(ggplot(deces_complet_annuel_analysable2000) +
 				plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"))
 )
 
-dev.print(device = png, file = "gen/images/Eurostat_Deces_2000tot.png", width = 1000)
+
+repertoire <- paste0("gen/images/Eurostat/Deces/Annuel/Evol")
+a__f_createDir(repertoire)
+
+dev.print(device = png, file = paste0(repertoire, "/Eurostat_Deces_2000_2020_zone_tot.png"), width = 1000)
 
 if (shallDeleteVars)  rm(deces_complet_annuel_20)
 
 print(ggplot(deces_complet_annuel_analysable2000_est) + 
-		geom_point(aes(x = location, y = deces_theo_si_pop_FR_2020, color = time), size = 2)+
-		geom_label(data=deces_complet_annuel_analysable2000_est20, aes(x = location, y = deces_theo_si_pop_FR_2020, label=format(time, format = "%Y")), color = "red", size = 3)+
+		geom_point(aes(x = location, y = deces_theo_du_pays_si_pop_FR_2020, color = time), size = 2)+
+		geom_label(data=deces_complet_annuel_analysable2000_est20, aes(x = location, y = deces_theo_du_pays_si_pop_FR_2020, label=format(time, format = "%Y")), color = "red", size = 3)+
 		labs(title = "Décès standardisés par pays et année",
 				subtitle = "selon la population de la France en 2020",
 				caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
@@ -96,13 +100,13 @@ print(ggplot(deces_complet_annuel_analysable2000_est) +
 				plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"))
 )
 
-dev.print(device = png, file = "gen/images/Eurostat_Deces_2000est.png", width = 1000)
+dev.print(device = png, file = paste0(repertoire, "/Eurostat_Deces_2000_2020_zone_est.png"), width = 1000)
 
 if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_est20)
 
 print(ggplot(deces_complet_annuel_analysable2000_ouest) + 
-		geom_point(aes(x = location, y = deces_theo_si_pop_FR_2020, color = time), size = 2)+
-		geom_label(data=deces_complet_annuel_analysable2000_ouest20, aes(x = location, y = deces_theo_si_pop_FR_2020, label=format(time, format = "%Y")), color = "red", size = 3)+
+		geom_point(aes(x = location, y = deces_theo_du_pays_si_pop_FR_2020, color = time), size = 2)+
+		geom_label(data=deces_complet_annuel_analysable2000_ouest20, aes(x = location, y = deces_theo_du_pays_si_pop_FR_2020, label=format(time, format = "%Y")), color = "red", size = 3)+
 		labs(title = "Décès standardisés par pays et année",
 				subtitle = "selon la population de la France en 2020",
 				caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
@@ -110,7 +114,7 @@ print(ggplot(deces_complet_annuel_analysable2000_ouest) +
 				plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"))
 )
 
-dev.print(device = png, file = "gen/images/Eurostat_Deces_2000ouest.png", width = 1000)
+dev.print(device = png, file = paste0(repertoire, "/Eurostat_Deces_2000_2020_zone_ouest.png"), width = 1000)
 
 if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_ouest)
 if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_ouest20)
@@ -215,14 +219,14 @@ deces_complet_annuel_analysable2000_deuxannees <- deces_complet_annuel_analysabl
 				population=mean(population),
 				pop2020=mean(pop2020),
 				deces_theo_si_pop_2020=sum(deces_theo_si_pop_2020),
-				deces_theo_si_pop_FR_2020=sum(deces_theo_si_pop_FR_2020))
+				deces_theo_du_pays_si_pop_FR_2020=sum(deces_theo_du_pays_si_pop_FR_2020))
 
 deces_complet_annuel_analysable2000_deuxannees20 <- deces_complet_annuel_analysable2000_deuxannees %>%
 		filter(deuxannees == "2019-2020")
 
 print(ggplot(deces_complet_annuel_analysable2000_deuxannees) + 
-		geom_point(aes(x = geo, y = deces_theo_si_pop_FR_2020, color = deuxannees), size = 2)+
-		geom_point(data=deces_complet_annuel_analysable2000_deuxannees20, aes(x = geo, y = deces_theo_si_pop_FR_2020), color = "red", size = 3)
+		geom_point(aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020, color = deuxannees), size = 2)+
+		geom_point(data=deces_complet_annuel_analysable2000_deuxannees20, aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020), color = "red", size = 3)
 )
 
 
@@ -254,14 +258,14 @@ deces_complet_annuel_analysable2000 <- deces_complet_annuel_analysable2000 %>%
 
 deces_complet_annuel_analysable2000_troisannees <- deces_complet_annuel_analysable2000 %>%
 		group_by(geo, troisannees, location, zone) %>% 
-		summarise(deces=mean(deces), population=mean(population), pop2020=mean(pop2020), deces_theo_si_pop_2020=mean(deces_theo_si_pop_2020), deces_theo_si_pop_FR_2020=mean(deces_theo_si_pop_FR_2020))
+		summarise(deces=mean(deces), population=mean(population), pop2020=mean(pop2020), deces_theo_si_pop_2020=mean(deces_theo_si_pop_2020), deces_theo_du_pays_si_pop_FR_2020=mean(deces_theo_du_pays_si_pop_FR_2020))
 
 deces_complet_annuel_analysable2000_troisannees20 <- deces_complet_annuel_analysable2000_troisannees %>%
 		filter(troisannees == "2018-2020")
 
 print(ggplot(deces_complet_annuel_analysable2000_troisannees) + 
-		geom_point(aes(x = geo, y = deces_theo_si_pop_FR_2020, color = troisannees), size = 2)+
-		geom_point(data=deces_complet_annuel_analysable2000_troisannees20, aes(x = geo, y = deces_theo_si_pop_FR_2020), color = "red", size = 3)+
+		geom_point(aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020, color = troisannees), size = 2)+
+		geom_point(data=deces_complet_annuel_analysable2000_troisannees20, aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020), color = "red", size = 3)+
 		labs(title = "Décès standardisés par pays et par période de 3 ans",
 				subtitle = "selon la population de la France en 2020",
 				caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
@@ -269,7 +273,7 @@ print(ggplot(deces_complet_annuel_analysable2000_troisannees) +
 				plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"))
 )
 
-dev.print(device = png, file = "gen/images/Eurostat_Deces_3annees.png", width = 1000)
+dev.print(device = png, file = paste0(repertoire, "/Eurostat_Deces_2000_2020_par_3annees.png"), width = 1000)
 
 if (shallDeleteVars) rm(deces_complet_annuel_analysable2000)
 if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_deuxannees)
@@ -346,7 +350,10 @@ pyramids(Left=hommes_femmes2020$part_hommes, Llab="Hommes",
 		Center = hommes_femmes2020$agequinq, Laxis=c(0, 2, 4, 6, 8, 10),
 		main="Pyramide des âges \n des pays européens 2020", Ldens=5, Rdens=10, Lcol="blue", Rcol = "red")
 
-dev.print(device = png, file = "gen/images/Eurostat_Pyramide_europe_2020.png", width = 600)
+repertoire <- paste0("gen/images/Eurostat/Pyramides")
+a__f_createDir(repertoire)
+
+dev.print(device = png, file = paste0(repertoire, "/Eurostat_Pyramide_europe_2020.png"), width = 600)
 
 if (shallDeleteVars) rm(femmes2020)
 if (shallDeleteVars) rm(hommes2020)
@@ -396,7 +403,7 @@ pyramids(Left=hommes_femmes2000$part_hommes, Llab="Hommes",
 		main="Pyramide des âges \n des pays européens 2000", Ldens=5, Rdens=10, Lcol="blue", Rcol = "red")
 
 
-dev.print(device = png, file = "gen/images/Eurostat_Pyramide_europe_2000.png", width = 600)
+dev.print(device = png, file = paste0(repertoire, "/Eurostat_Pyramide_europe_2000.png"), width = 600)
 
 if (shallDeleteVars) rm(femmes2000)
 if (shallDeleteVars) rm(hommes2000)
@@ -472,7 +479,7 @@ pyramids(Left=annne_deces_maximumFranceMF$part_hommes, Llab="Hommes",
 		Center = annne_deces_maximumFranceMF$agequinq, Laxis=c(0, 2, 4, 6, 8, 10),
 		main="Pyramide des âges 2020 de la France", Ldens=5, Rdens=10, Lcol="blue", Rcol = "red")
 
-dev.print(device = png, file = "gen/images/Eurostat_Pyramide_france_2020.png", width = 600)
+dev.print(device = png, file = paste0(repertoire, "/Eurostat_Pyramide_france_2020.png"), width = 600)
 
 if (shallDeleteVars) rm(pjanquinq2020)
 if (shallDeleteVars) rm(annne_deces_maximumFranceF)
@@ -518,7 +525,7 @@ pyramids(Left=annne_deces_maximumFranceMF0$part_hommes, Llab="Hommes",
 		Center = annne_deces_maximumFranceMF0$agequinq, Laxis=c(0, 2, 4, 6, 8, 10),
 		main="Pyramide des âges 2000 de la France", Ldens=5, Rdens=10, Lcol="blue", Rcol = "red")
 
-dev.print(device = png, file = "gen/images/Eurostat_Pyramide_france_2000.png", width = 600)
+dev.print(device = png, file = paste0(repertoire, "/Eurostat_Pyramide_france_2000.png"), width = 600)
 
 if (shallDeleteVars) rm(es_pjan_quinq)
 if (shallDeleteVars) rm(pjanquinq2000)
@@ -592,7 +599,10 @@ p <- ggplot(data=worldmap) +
 
 plot(p)
 
-ggsave("gen/images/Eurostat_Deces_Annee_Maximum.png", plot=p, width = 11, height = 8)
+repertoire <- paste0("gen/images/Eurostat/Deces/Annuel/Cartes")
+a__f_createDir(repertoire)
+
+ggsave(paste0(repertoire, "/Eurostat_Deces_Annee_Maximum.png"), plot=p, width = 11, height = 8)
 
 
 #typologie des décès de l'année 2020
@@ -625,7 +635,7 @@ p <- ggplot(data=worldmap) + geom_sf(aes(fill=typo), color="dim grey", size=.1) 
 
 plot(p)
 
-ggsave("gen/images/Eurostat_Deces_2020_Typologie.png", plot=p, width = 11, height = 8)
+ggsave(paste0(repertoire, "/Eurostat_Deces_2020_Typologie.png"), plot=p, width = 11, height = 8)
 
 if (shallDeleteVars)  rm(worldmap)
 if (shallDeleteVars)  rm(p)
