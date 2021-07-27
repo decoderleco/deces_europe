@@ -1406,7 +1406,11 @@ if (!exists("a__original_owid_covid_data")) {
 	
 	a__original_owid_covid_data <- read_csv(file = "https://covid.ourworldindata.org/data/owid-covid-data.csv")
 	
-	saveRDS(a__original_owid_covid_data , file="gen/rds/a__original_owid_covid_data.RDS")
+	# Créer le répertoire
+	repertoire <- paste0("inst/extdata/owid/")
+	a__f_createDir(repertoire)
+	
+	saveRDS(a__original_owid_covid_data , file=paste0(repertoire, "a__original_owid_covid_data.RDS"))
 	
 } else {
 	message('(a__original_owid_covid_data) déjà présent. On ne le re-télécharge pas')
