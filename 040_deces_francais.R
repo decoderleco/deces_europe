@@ -327,8 +327,10 @@ if (shallDeleteVars) rm(deces_dep_centre_reduit)
 
 # Ajouter la colonne deces_centre_reduit
 deces_dep_jour <- deces_dep_jour %>%
-		mutate(deces_centre_reduit = (nbDeces-moyenne)/max(dernier_quartile - moyenne,
-						moyenne - premier_quartile))
+		mutate(deces_centre_reduit = (nbDeces - moyenne) / max(dernier_quartile - moyenne,
+						                                       moyenne - premier_quartile))
+
+# Ajouter le nom des départements
 
 # Lire le fichier des departements-regions
 nom_departement <- read.csv("data/csv/departements-region.csv", sep=",", header = TRUE, encoding="UTF-8")
@@ -551,7 +553,7 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 
 ################################################################################
 #
-# Deces par jour et par age depuis 2018 des 40-59 ans
+# Deces Quotidiens et par age depuis 2018 des 40-59 ans
 #
 ################################################################################
 												   
