@@ -34,9 +34,30 @@ a__f_downloadEuroStatIfNeeded <- function(var, euroStatFileName) {
 	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
 	# qui a étépassé dans le parametre region
 	varName <- deparse(substitute(var))
+
+	# Créer le répertoire
+	repertoire <- paste0("inst/extdata/EuroStat/")
+	a__f_createDir(repertoire)
+
+	# Path du fichier
+	rdsRelFilePath = paste0(repertoire, varName, ".RDS")
 	
-	if (!exists(varName)) { 
+	if (exists(varName)) {
+		# La variable existe déjà dans le Contexte
+
+		message(paste0("(", varName, ") déjà présent. On ne le re-télécharge pas"))
 		
+		downloadedDatas <- var
+
+	} else if (file.exists(rdsRelFilePath)) {
+		# La variable n'existe pas, mais le fichier rds existe sur disque
+		
+		message(paste0("Fichier (", rdsRelFilePath, ") présent. On re-charge le fichier dans (", varName, "), sans le re-télécharger depuis EuroStat."))
+		
+		# Charger le fichier RDS
+		downloadedDatas <- readRDS(file = rdsRelFilePath)
+		
+	} else {
 		message(paste0("Télécharger depuis EuroStat (", euroStatFileName, ")"))
 		
 		downloadedDatas <- get_eurostat(euroStatFileName) 
@@ -47,11 +68,12 @@ a__f_downloadEuroStatIfNeeded <- function(var, euroStatFileName) {
 				# Trier les lignes selon les colonnes
 				arrange(geo, sex, age, time)
 		
-	} else {
 		
-		message(paste0("(", varName, ") déjà présent. On ne le re-télécharge pas"))
+		# Sauvegarder les données
 		
-		downloadedDatas <- var
+		message(paste0("Sauvegarde de (", euroStatFileName,") dans (", rdsRelFilePath, ")"))
+		
+		saveRDS(downloadedDatas, file = rdsRelFilePath)
 	}
 	
 	downloadedDatas
