@@ -61,16 +61,8 @@ a__f_nettoyer_partie_date <- function(
 #
 ################################################################################
 
-dossier_donnees_externes <- 'inst/extdata'
-dossier_donnees_deces <- file.path(dossier_donnees_externes, 'deces')
 
-# Créer les dossiers s'ils n'existent pas
-if(!dir.exists(dossier_donnees_externes)) dir.create(dossier_donnees_externes)
-
-if(!dir.exists(dossier_donnees_deces)) dir.create(dossier_donnees_deces)
-
-
-#getwd()
+dossier_donnees_deces <- a__f_createDir(file.path(K_DIR_EXT_DATA_FR_GOUV, 'deces'))
 
 #
 # Telechargement des donnees
@@ -185,17 +177,23 @@ any(is.na(db_clean$deces_date_complete))
 #
 ################################################################################
 
+K_DIR_INSEE_GEO <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, "insee/geo"))
+
 url_nomenclatures <- 'https://www.insee.fr/fr/statistiques/fichier/4316069/cog_ensemble_2020_csv.zip'
 
-if (!file.exists(file.path(dossier_donnees_externes, basename(url_nomenclatures)))) {
-	# Le fichier n'existe pas
+if (!file.exists(file.path(K_DIR_INSEE_GEO, basename(url_nomenclatures)))) {
+	# Le fichier zip n'existe pas
 	
 	# Télécharger le fichier
-	zip_nomenclatures_insee <- a__f_downloadUrl('https://www.insee.fr/fr/statistiques/fichier/4316069/cog_ensemble_2020_csv.zip')
+	zip_nomenclatures_insee <- a__f_downloadUrl(
+			url_nomenclatures, 
+			dossier_cible = K_DIR_INSEE_GEO)
 
-	
-	list_fichiers <- unzip(zip_nomenclatures_insee, exdir = 'inst/extdata')
+	# Dezziper les fichiers
+	list_fichiers <- unzip(zip_nomenclatures_insee, exdir = K_DIR_INSEE_GEO)
 
+	# Supprimer le fichier zip
+	file.remove(zip_nomenclatures_insee)
 }
 
 if (shallDeleteVars) rm(dossier_donnees_externes)
@@ -207,13 +205,13 @@ if (shallDeleteVars) rm(dossier_donnees_deces)
 
 # Lire les fichiers
 
-communes <- read_csv('inst/extdata/communes2020.csv')
+communes <- read_csv(file.path(K_DIR_INSEE_GEO, 'communes2020.csv'))
 
-departements <- read_csv('inst/extdata/departement2020.csv')
+departements <- read_csv(file.path(K_DIR_INSEE_GEO, 'departement2020.csv'))
 
-regions <- read_csv('inst/extdata/region2020.csv')
+regions <- read_csv(file.path(K_DIR_INSEE_GEO, 'region2020.csv'))
 
-pays <- read_csv('inst/extdata/pays2020.csv')
+pays <- read_csv(file.path(K_DIR_INSEE_GEO, 'pays2020.csv'))
 
 # Verifier s'il y a des doublons
 #any(duplicated(communes$com))
