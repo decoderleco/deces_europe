@@ -1405,19 +1405,11 @@ if (shallDeleteVars) rm(numSemaineDepuis2013_for_eu_lockdown_end)
 #
 ################################################################################
 
-if (!exists("a__original_owid_covid_data")) { 
-	
-	a__original_owid_covid_data <- read_csv(file = "https://covid.ourworldindata.org/data/owid-covid-data.csv")
-	
-	# Créer le répertoire
-	repertoire <- paste0("inst/extdata/owid/")
-	a__f_createDir(repertoire)
-	
-	saveRDS(a__original_owid_covid_data , file=paste0(repertoire, "a__original_owid_covid_data.RDS"))
-	
-} else {
-	message('(a__original_owid_covid_data) déjà présent. On ne le re-télécharge pas')
-}
+a__original_owid_covid_data <- a__f_downloadIfNeeded(
+		sourceType = K_SOURCE_TYPE_CSV, 
+		UrlOrEuroStatNameToDownload = "https://covid.ourworldindata.org/data/owid-covid-data.csv",
+		repertoire = file.path(K_DIR_EXT_DATA_WORLD,"owid/"),
+		var = a__original_owid_covid_data) 
 
 owid_covid_data <- a__original_owid_covid_data
 
