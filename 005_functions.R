@@ -14,6 +14,7 @@ PLOT_AXIS_SIDE_RIGHT <- 4
 
 K_SOURCE_TYPE_CSV <- 1
 K_SOURCE_TYPE_EUROSTAT <- 2
+K_SOURCE_TYPE_CURL <- 3
 
 ################################################################################
 #
@@ -27,7 +28,15 @@ K_SOURCE_TYPE_EUROSTAT <- 2
 a__f_createDir <- function(dirPath) {
 	
 	if (!dir.exists(dirPath)) dir.create(dirPath, recursive = TRUE)
+	
+	dirPath
 }
+
+K_DIR_EXT_DATA <- a__f_createDir('inst/extdata')
+K_DIR_EXT_DATA_WORLD <- a__f_createDir(file.path(K_DIR_EXT_DATA, 'world'))
+K_DIR_EXT_DATA_EUROPE <- a__f_createDir(file.path(K_DIR_EXT_DATA_WORLD, 'eu'))
+K_DIR_EXT_DATA_FRANCE <- a__f_createDir(file.path(K_DIR_EXT_DATA_EUROPE, 'fr'))
+K_DIR_EXT_DATA_FR_GOUV <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, 'gouv'))
 
 
 ################################################################################
@@ -66,7 +75,7 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 		a__f_createDir(repertoire)
 		
 		# Créer le path du fichier RDS de sauvegarde
-		fileRelPath = paste0(repertoire, varName, ".RDS")
+		fileRelPath = paste0(file.path(repertoire, varName), ".RDS")
 		
 	} else {
 		
@@ -105,8 +114,13 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 			downloadedDatas <- read.csv(file = fileRelPath, 
 					                    sep = sep)
 			
-		} else {
+		} else if ((ext == "zip") || (ext == "ZIP")) {
+			# Fichier de type CSV
 			
+			# RAF pour un zip
+		
+		} else {
+		
 			message(paste0("ATTENTION : Fichier (", fileRelPath, ") de type inconnu. On ne peut pas le re-charger dans (", varName, ")."))
 		}
 		
@@ -117,7 +131,7 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 		# Re-télécharger
 		#
 		
-		if (strlen(UrlOrEuroStatNameToDownload) > 0) {
+		if (nchar(UrlOrEuroStatNameToDownload) > 0) {
 			# Il y a une URL
 		
 			if (sourceType == K_SOURCE_TYPE_EUROSTAT)  {
@@ -149,13 +163,20 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 				# Charger le fichier CSV depuis son URL (crée un Tibble)
 				downloadedDatas <- read_csv(file = UrlOrEuroStatNameToDownload)
 				
+			} else if (sourceType == K_SOURCE_TYPE_CURL) {
+				
+				# Télécharger avec CURL (sans le mettre dans une variable)
+				curl::curl_download(url = UrlOrEuroStatNameToDownload, 
+						destfile = fileRelPath, 
+						quiet = FALSE)
+				
 			} else {
 				
 				message(paste0("ATTENTION : Fichier (", fileRelPath, ") de type inconnu. On ne peut pas le re-charger dans (", varName, ")."))
 			}
 			
-			if (!is.null(downloadedDatas)) {
-				# On a réussi à télécharger une donnée
+			if (sourceType != K_SOURCE_TYPE_CURL) {
+				# la variable contenant les données existe
 				
 				#
 				# Sauvegarder les données téléchargées au format RDS
@@ -165,16 +186,18 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 				
 				saveRDS(downloadedDatas, file = fileRelPath)
 				
+				downloadedDatas
+				
 			} else {
 				
 			}
+			
 		} else {
 			# l'URL est vide
 			
 		}
 	}
 	
-	downloadedDatas
 }
 
 ################################################################################
@@ -189,7 +212,7 @@ a__f_downloadEuroStatIfNeeded <- function(var, euroStatFileName) {
 	downloadedDatas <- a__f_downloadIfNeeded(
 			sourceType = K_SOURCE_TYPE_EUROSTAT, 
 			UrlOrEuroStatNameToDownload = euroStatFileName, 
-			repertoire = "inst/extdata/EuroStat/", 
+			repertoire = file.path(K_DIR_EXT_DATA_EUROPE, "EuroStat/"), 
 			varName = varName,
 			var = var)
 }
@@ -229,39 +252,23 @@ a__f_loadRdsIfNeeded <- function(var, rdsRelFilePath) {
 
 ################################################################################
 # Télécharger une URL
+#
+#' @return path du fichier téléchargé
 ################################################################################
 a__f_downloadUrl <- function(
 		url_dl,
 		dossier_cible = dossier_donnees_deces 
 ) {
-	
+	# Le nom du fichier à sauvegarder est la dernière partie de l'URL
 	nom_fichier <- basename(url_dl)
 	
 	chemin_fichier <- file.path(dossier_cible, nom_fichier)
 	
-	
-	if (!file.exists(chemin_fichier)) {
-		# Le fichier n'existe pas
-		
-		# Telecharger
-		
-		message("Téléchargement via l'url ", url_dl)
-		
-		
-		curl::curl_download(url = url_dl, 
-				destfile = chemin_fichier, 
-				quiet = FALSE)
-		
-		
-		message("Téléchargement terminé. Taille : ", file.size(chemin_fichier), " octets")
-		
-		
-	} else {
-		# Le fichier existe deja
-		
-		message(paste('Fichier déjà présent :',chemin_fichier))
-		
-	}
+	downloadedDatas <- a__f_downloadIfNeeded(
+			sourceType = K_SOURCE_TYPE_CURL, 
+			UrlOrEuroStatNameToDownload = url_dl, 
+			fileRelPath = chemin_fichier,
+			var = downloadedDatas)
 	
 	chemin_fichier
 }
