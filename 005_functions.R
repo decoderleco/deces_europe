@@ -3,6 +3,8 @@
 # Author: JeanGarf
 ###############################################################################
 
+library(stringr)
+
 shallDeleteVars = TRUE
 
 PLOT_AXIS_SIDE_BELOW <- 1
@@ -10,6 +12,8 @@ PLOT_AXIS_SIDE_LEFT <- 2
 PLOT_AXIS_SIDE_TOP <- 3
 PLOT_AXIS_SIDE_RIGHT <- 4
 
+K_SOURCE_TYPE_CSV <- 1
+K_SOURCE_TYPE_EUROSTAT <- 2
 
 ################################################################################
 #
@@ -27,6 +31,153 @@ a__f_createDir <- function(dirPath) {
 
 
 ################################################################################
+# Télécharger un fichier EuroStat ou CSV si la variable et/ou le fichier associé n'existe pas
+#
+#' 
+#' @param sourceType 
+#' @param UrlOrEuroStatNameToDownload 	: Nom EuroStat ou URL
+#' @param fileRelPath			: Nom du fichier de sauvegarde associé
+#' @param var 					: Variable qui doit recevoir les données
+#' @returnType 					
+#' @return 						: : Données récupérées
+#' 
+#' @author JeanGarf
+#' @export
+################################################################################
+a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV, 
+		UrlOrEuroStatNameToDownload = "",
+		fileRelPath = "", 
+		repertoire = "",
+		varName = "",
+		var, 
+		sep = ";") {
+	
+	if (varName == "") {
+		
+		# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+		# qui a étépassé dans le parametre region
+		varName <- deparse(substitute(var))
+	}
+	
+	if (fileRelPath == "") {
+		# le path du fichier local n'est pas indiqué
+		
+		# Créer le répertoire
+		a__f_createDir(repertoire)
+		
+		# Créer le path du fichier RDS de sauvegarde
+		fileRelPath = paste0(repertoire, varName, ".RDS")
+		
+	} else {
+		
+	}
+	
+	if (exists(varName)) {
+		# La variable existe déjà dans le Contexte
+		
+		message(paste0("(", varName, ") existe déjà. On ne re-télécharge pas"))
+		
+		downloadedDatas <- var
+		
+		#saveRDS(downloadedDatas, file = fileRelPath)
+		
+	} else if (file.exists(fileRelPath)) {
+		# La variable n'existe pas, mais le fichier rds existe sur disque
+		
+		message(paste0("Fichier (", fileRelPath, ") présent. On re-charge le fichier dans (", varName, "), sans le re-télécharger."))
+		
+		ext = str_sub(fileRelPath, -3)
+		
+		#
+		# Déterminer l'extension du fichier
+		#
+		
+		if ((ext == "RDS") || (ext == "rds"))  {
+			# Fichier de type RDS
+			
+			# Charger le fichier RDS
+			downloadedDatas <- readRDS(file = fileRelPath)
+			
+		} else if ((ext == "CSV") || (ext == "csv")) {
+			# Fichier de type CSV
+			
+			# Charger le fichier CSV local (crée un data frame)
+			downloadedDatas <- read.csv(file = fileRelPath, 
+					                    sep = sep)
+			
+		} else {
+			
+			message(paste0("ATTENTION : Fichier (", fileRelPath, ") de type inconnu. On ne peut pas le re-charger dans (", varName, ")."))
+		}
+		
+	} else {
+		# Ni la variable, ni le fichier n'existent
+		
+		#
+		# Re-télécharger
+		#
+		
+		if (strlen(UrlOrEuroStatNameToDownload) > 0) {
+			# Il y a une URL
+		
+			if (sourceType == K_SOURCE_TYPE_EUROSTAT)  {
+				# Source de type EuroStat
+				
+				message(paste0("Télécharger depuis EuroStat (", UrlOrEuroStatNameToDownload, ")"))
+				
+				# Télécharger depuis EuroStat
+				downloadedDatas <- get_eurostat(UrlOrEuroStatNameToDownload) 
+				
+				
+				if (!is.null(downloadedDatas)) {
+					# On a réussi à télécharger une donnée
+				
+					downloadedDatas <- downloadedDatas %>%
+						# Reordonner les colonnes
+						select(geo, sex, age, time, everything()) %>%
+						# Trier les lignes selon les colonnes
+						arrange(geo, sex, age, time)
+				
+				} else {
+					
+					# RAF
+				}
+				
+			} else if (sourceType == K_SOURCE_TYPE_CSV) {
+				# Source de type CSV
+				
+				# Charger le fichier CSV depuis son URL (crée un Tibble)
+				downloadedDatas <- read_csv(file = UrlOrEuroStatNameToDownload)
+				
+			} else {
+				
+				message(paste0("ATTENTION : Fichier (", fileRelPath, ") de type inconnu. On ne peut pas le re-charger dans (", varName, ")."))
+			}
+			
+			if (!is.null(downloadedDatas)) {
+				# On a réussi à télécharger une donnée
+				
+				#
+				# Sauvegarder les données téléchargées au format RDS
+				#
+				
+				message(paste0("Sauvegarde de (", UrlOrEuroStatNameToDownload,") dans (", fileRelPath, ")"))
+				
+				saveRDS(downloadedDatas, file = fileRelPath)
+				
+			} else {
+				
+			}
+		} else {
+			# l'URL est vide
+			
+		}
+	}
+	
+	downloadedDatas
+}
+
+################################################################################
 # Télécharger un fichier EuroStat si la variable associée n'existe pas
 ################################################################################
 a__f_downloadEuroStatIfNeeded <- function(var, euroStatFileName) {
@@ -35,71 +186,12 @@ a__f_downloadEuroStatIfNeeded <- function(var, euroStatFileName) {
 	# qui a étépassé dans le parametre region
 	varName <- deparse(substitute(var))
 
-	# Créer le répertoire
-	repertoire <- paste0("inst/extdata/EuroStat/")
-	a__f_createDir(repertoire)
-
-	# Path du fichier
-	rdsRelFilePath = paste0(repertoire, varName, ".RDS")
-	
-	if (exists(varName)) {
-		# La variable existe déjà dans le Contexte
-
-		message(paste0("(", varName, ") déjà présent. On ne le re-télécharge pas"))
-		
-		downloadedDatas <- var
-
-	} else if (file.exists(rdsRelFilePath)) {
-		# La variable n'existe pas, mais le fichier rds existe sur disque
-		
-		message(paste0("Fichier (", rdsRelFilePath, ") présent. On re-charge le fichier dans (", varName, "), sans le re-télécharger depuis EuroStat."))
-		
-		# Charger le fichier RDS
-		downloadedDatas <- readRDS(file = rdsRelFilePath)
-		
-	} else {
-		message(paste0("Télécharger depuis EuroStat (", euroStatFileName, ")"))
-		
-		downloadedDatas <- get_eurostat(euroStatFileName) 
-		
-		downloadedDatas <- downloadedDatas %>%
-				# Reordonner les colonnes
-				select(geo, sex, age, time, everything()) %>%
-				# Trier les lignes selon les colonnes
-				arrange(geo, sex, age, time)
-		
-		
-		# Sauvegarder les données
-		
-		message(paste0("Sauvegarde de (", euroStatFileName,") dans (", rdsRelFilePath, ")"))
-		
-		saveRDS(downloadedDatas, file = rdsRelFilePath)
-	}
-	
-	downloadedDatas
-}
-
-################################################################################
-# Télécharger un fichier CSV si la variable associée n'existe pas
-################################################################################
-a__f_downloadCsvIfNeeded <- function(var, csvUrl) {
-	
-	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
-	# qui a étépassé dans le parametre region
-	varName <- deparse(substitute(var))
-	
-	if (!exists(varName)) { 
-		
-		message(paste0("Télécharger (", csvUrl, ") dans (", varName,")"))
-		
-		loadCsvIfNeeded <- read_csv(file = csvUrl)
-		
-	} else {
-		
-		message(paste0("(", varName, ") déjà présent. On ne le re-télécharge pas"))
-		
-		loadCsvIfNeeded <- var
-	}
+	downloadedDatas <- a__f_downloadIfNeeded(
+			sourceType = K_SOURCE_TYPE_EUROSTAT, 
+			UrlOrEuroStatNameToDownload = euroStatFileName, 
+			repertoire = "inst/extdata/EuroStat/", 
+			varName = varName,
+			var = var)
 }
 
 ################################################################################
@@ -111,19 +203,12 @@ a__f_loadCsvIfNeeded <- function(var, csvRelFilePath, sep=";") {
 	# qui a étépassé dans le parametre region
 	varName <- deparse(substitute(var))
 	
-	if (!exists(varName)) { 
-		
-		message(paste0("Charger (", csvRelFilePath, ") dans (", varName,")"))
-		
-		loadCsvIfNeeded <- read.csv(file = csvRelFilePath, 
-				sep = sep)
-		
-	} else {
-		
-		message(paste0("(", varName, ") déjà présent. On ne le recharge pas"))
-		
-		loadCsvIfNeeded <- var
-	}
+	downloadedDatas <- a__f_downloadIfNeeded(
+			fileRelPath = csvRelFilePath, 
+			varName = varName,
+			var = var)
+	
+	
 }
 
 ################################################################################
@@ -135,18 +220,10 @@ a__f_loadRdsIfNeeded <- function(var, rdsRelFilePath) {
 	# qui a étépassé dans le parametre region
 	varName <- deparse(substitute(var))
 	
-	if (!exists(varName)) { 
-		
-		message(paste0("Charger (", rdsRelFilePath, ") dans (", varName,")"))
-		
-		loadCsvIfNeeded <- readRDS(file = rdsRelFilePath)
-		
-	} else {
-		
-		message(paste0("(", varName, ") déjà présent. On ne le recharge pas"))
-		
-		loadCsvIfNeeded <- var
-	}
+	downloadedDatas <- a__f_downloadIfNeeded(
+			fileRelPath = rdsRelFilePath, 
+			varName = varName,
+			var = var)
 }
 
 
