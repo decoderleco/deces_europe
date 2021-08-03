@@ -40,7 +40,8 @@ K_DIR_EXT_DATA_FR_GOUV <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, 'gouv'
 
 
 ################################################################################
-# Télécharger un fichier EuroStat ou CSV si la variable et/ou le fichier associé n'existe pas
+# Télécharger ou charge un fichier EuroStat, CSV ou zip 
+# si la variable et/ou le fichier associé n'existe pas déjà
 #
 #' 
 #' @param sourceType 
@@ -48,7 +49,7 @@ K_DIR_EXT_DATA_FR_GOUV <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, 'gouv'
 #' @param fileRelPath			: Nom du fichier de sauvegarde associé
 #' @param var 					: Variable qui doit recevoir les données
 #' @returnType 					
-#' @return 						: : Données récupérées
+#' @return 						: Données récupérées
 #' 
 #' @author JeanGarf
 #' @export
@@ -201,6 +202,41 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 }
 
 ################################################################################
+# Télécharger (avec CURL) une URL dont le dernier élément est un nom de fichier
+# et la mettre dans le dossier_cible
+#
+#' 
+#' @param fileUrl 			: URL se terminant par un nom de fichier
+#' @param dossier_cible 	: Dossier dans lequel sera téléchargé le fichier
+#'                            ATTENTION : Il est initialisé par défaut avec une
+#'                                        variable globale
+#' @returnType 
+#' @return 					: Path du fichier téléchargé
+#' 
+#' @export
+################################################################################
+a__f_downloadFileUrlAndGetFilePath <- function(
+		fileUrl,
+		dossier_cible = dossier_donnees_deces 
+) {
+	# Le nom du fichier à sauvegarder est la dernière partie de l'URL
+	nom_fichier <- basename(fileUrl)
+	
+	# Ajouter le path du dossier au nom du fichier
+	chemin_fichier <- file.path(dossier_cible, nom_fichier)
+	
+	# Télécharger avec CURL
+	downloadedDatas <- a__f_downloadIfNeeded(
+			sourceType = K_SOURCE_TYPE_CURL, 
+			UrlOrEuroStatNameToDownload = fileUrl, 
+			fileRelPath = chemin_fichier,
+			var = downloadedDatas)
+	
+	# Renvoyer le nom du fichier
+	chemin_fichier
+}
+
+################################################################################
 # Télécharger un fichier EuroStat si la variable associée n'existe pas
 ################################################################################
 a__f_downloadEuroStatIfNeeded <- function(var, euroStatFileName) {
@@ -248,31 +284,6 @@ a__f_loadRdsIfNeeded <- function(var, rdsRelFilePath) {
 			varName = varName,
 			var = var)
 }
-
-
-################################################################################
-# Télécharger une URL
-#
-#' @return path du fichier téléchargé
-################################################################################
-a__f_downloadUrl <- function(
-		url_dl,
-		dossier_cible = dossier_donnees_deces 
-) {
-	# Le nom du fichier à sauvegarder est la dernière partie de l'URL
-	nom_fichier <- basename(url_dl)
-	
-	chemin_fichier <- file.path(dossier_cible, nom_fichier)
-	
-	downloadedDatas <- a__f_downloadIfNeeded(
-			sourceType = K_SOURCE_TYPE_CURL, 
-			UrlOrEuroStatNameToDownload = url_dl, 
-			fileRelPath = chemin_fichier,
-			var = downloadedDatas)
-	
-	chemin_fichier
-}
-
 
 
 ################################################################################

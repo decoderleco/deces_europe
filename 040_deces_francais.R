@@ -82,7 +82,7 @@ urls_listes_deces <- c(
 )
 
 
-chemins_fichiers_deces <- lapply(urls_listes_deces, a__f_downloadUrl)
+chemins_fichiers_deces <- lapply(urls_listes_deces, a__f_downloadFileUrlAndGetFilePath)
 
 if (shallDeleteVars) rm(urls_listes_deces)
 
@@ -179,27 +179,33 @@ any(is.na(db_clean$deces_date_complete))
 
 K_DIR_INSEE_GEO <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, "insee/geo"))
 
-url_nomenclatures <- 'https://www.insee.fr/fr/statistiques/fichier/4316069/cog_ensemble_2020_csv.zip'
+# URL du zip à télécharger
+url_insee_nomenclatures <- 'https://www.insee.fr/fr/statistiques/fichier/4316069/cog_ensemble_2020_csv.zip'
 
-if (!file.exists(file.path(K_DIR_INSEE_GEO, basename(url_nomenclatures)))) {
+# Path du zip téléchargé
+insee_nomenclature_zip_path <- file.path(K_DIR_INSEE_GEO, basename(url_insee_nomenclatures))
+
+if (!file.exists(insee_nomenclature_zip_path)) {
 	# Le fichier zip n'existe pas
 	
-	# Télécharger le fichier
-	zip_nomenclatures_insee <- a__f_downloadUrl(
-			url_nomenclatures, 
-			dossier_cible = K_DIR_INSEE_GEO)
-
+	# Télécharger avec CURL
+	downloadedDatas <- a__f_downloadIfNeeded(
+			sourceType = K_SOURCE_TYPE_CURL, 
+			UrlOrEuroStatNameToDownload = url_insee_nomenclatures, 
+			fileRelPath = insee_nomenclature_zip_path,
+			var = downloadedDatas)
+	
 	# Dezziper les fichiers
-	list_fichiers <- unzip(zip_nomenclatures_insee, exdir = K_DIR_INSEE_GEO)
+	list_fichiers <- unzip(insee_nomenclature_zip_path, exdir = K_DIR_INSEE_GEO)
 
 	# Supprimer le fichier zip
-	file.remove(zip_nomenclatures_insee)
+	file.remove(insee_nomenclature_zip_path)
 }
 
 if (shallDeleteVars) rm(dossier_donnees_externes)
 if (shallDeleteVars) rm(list_fichiers)
-if (shallDeleteVars) rm(url_nomenclatures)
-if (shallDeleteVars) rm(zip_nomenclatures_insee)
+if (shallDeleteVars) rm(url_insee_nomenclatures)
+if (shallDeleteVars) rm(nomenclatures_insee_zip_path)
 if (shallDeleteVars) rm(dossier_donnees_deces)
 
 
