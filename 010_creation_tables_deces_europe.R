@@ -1239,8 +1239,11 @@ if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_65_69)
 #
 ################################################################################
 
-a__original_eu_mesures <- a__f_downloadCsvIfNeeded(var = a__original_eu_mesures,
-		csvUrl = "https://www.ecdc.europa.eu/sites/default/files/documents/response_graphs_data_2021-04-15.csv")
+a__original_eu_mesures  <- a__f_downloadIfNeeded(
+		sourceType = K_SOURCE_TYPE_CSV, 
+		UrlOrEuroStatNameToDownload = "https://www.ecdc.europa.eu/sites/default/files/documents/response_graphs_data_2021-04-15.csv",
+		repertoire = "inst/extdata/eu/",
+		var = a__original_eu_mesures)
 
 eu_mesures_gouv <- a__original_eu_mesures
 
@@ -1402,15 +1405,11 @@ if (shallDeleteVars) rm(numSemaineDepuis2013_for_eu_lockdown_end)
 #
 ################################################################################
 
-if (!exists("a__original_owid_covid_data")) { 
-	
-	a__original_owid_covid_data <- read_csv(file = "https://covid.ourworldindata.org/data/owid-covid-data.csv")
-	
-	saveRDS(a__original_owid_covid_data , file="gen/rds/a__original_owid_covid_data.RDS")
-	
-} else {
-	message('(a__original_owid_covid_data) déjà présent. On ne le re-télécharge pas')
-}
+a__original_owid_covid_data <- a__f_downloadIfNeeded(
+		sourceType = K_SOURCE_TYPE_CSV, 
+		UrlOrEuroStatNameToDownload = "https://covid.ourworldindata.org/data/owid-covid-data.csv",
+		repertoire = file.path(K_DIR_EXT_DATA_WORLD,"owid/"),
+		var = a__original_owid_covid_data) 
 
 owid_covid_data <- a__original_owid_covid_data
 
