@@ -37,7 +37,7 @@ K_DIR_EXT_DATA_WORLD <- a__f_createDir(file.path(K_DIR_EXT_DATA, 'world'))
 K_DIR_EXT_DATA_EUROPE <- a__f_createDir(file.path(K_DIR_EXT_DATA_WORLD, 'eu'))
 K_DIR_EXT_DATA_FRANCE <- a__f_createDir(file.path(K_DIR_EXT_DATA_EUROPE, 'fr'))
 K_DIR_EXT_DATA_FR_GOUV <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, 'gouv'))
-
+K_DIR_EXT_DATA_USA <- a__f_createDir(file.path(K_DIR_EXT_DATA_WORLD, 'usa'))
 
 ################################################################################
 # Télécharger ou charge un fichier EuroStat, CSV ou zip 
