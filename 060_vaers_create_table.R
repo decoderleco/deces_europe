@@ -33,78 +33,190 @@ if (shallDeleteVars) rm(vaers_zip_path)
 
 ################################################################################
 #
-# Chargement des VAERS DATA
+# Chargement des VAERS
 #
 ################################################################################
 
-original_vaers_2020_data <- a__f_downloadIfNeeded(
-		fileRelPath = file.path(K_DIR_EXT_DATA_USA_VAERS, "2020VAERSDATA.csv"), 
-		var = original_vaers_2020_data,
-		sep = ",")
+# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+# qui a étépassé dans le parametre region
+varName <- deparse(substitute(a__original_vaers_data))
 
-original_vaers_2021_data <- a__f_downloadIfNeeded(
-		fileRelPath = file.path(K_DIR_EXT_DATA_USA_VAERS, "2021VAERSDATA.csv"), 
-		var = original_vaers_2021_data,
-		sep = ",")
+if (exists(varName)) {
+	# La variable existe déjà
+	
+	message(paste0("(", varName, ") existe déjà. On ne la recrée pas."))
+	
+} else {
+	
+	for (year in 1990:2021) {
+		
+		message("Ajout des VAERS de (", year, ")")
+		
+		#
+		# VAERS DATA
+		#
+		
+		fileName = paste0(year, "VAERSDATA.csv")
+		
+		tmp_vaers <- a__f_downloadIfNeeded(
+				fileRelPath = file.path(K_DIR_EXT_DATA_USA_VAERS, fileName), 
+				var = tmp_vaers,
+				sep = ",")
+		
+		# Concaténer les lignes
+		a__original_vaers_data <- bind_rows(tmp_vaers)
+		
+		rm(tmp_vaers)
+		
+		#
+		# VAERS VAX
+		#
+		
+		fileName = paste0(year, "VAERSVAX.csv")
+		
+		tmp_vaers <- a__f_downloadIfNeeded(
+				fileRelPath = file.path(K_DIR_EXT_DATA_USA_VAERS, fileName), 
+				var = tmp_vaers,
+				sep = ",")
+		
+		# Concaténer les lignes
+		a__original_vaers_vax <- bind_rows(tmp_vaers)
+		
+		rm(tmp_vaers)
+		
+		#
+		# VAERS SYMPTOMS
+		#
+		
+		fileName = paste0(year, "VAERSSYMPTOMS.csv")
+		
+		tmp_vaers <- a__f_downloadIfNeeded(
+				fileRelPath = file.path(K_DIR_EXT_DATA_USA_VAERS, fileName), 
+				var = tmp_vaers,
+				sep = ",")
+		
+		# Concaténer les lignes
+		a__original_vaers_symptoms <- bind_rows(tmp_vaers)
+		
+		rm(tmp_vaers)
+	} # for
+	
+	rm(year)
+	rm(fileName)
+}
 
-# Concaténer les lignes
-a__original_vaers_data <- bind_rows(original_vaers_2020_data) %>%
-		bind_rows(original_vaers_2021_data) 
+################################################################################
+#
+# Analyse des VAERS
+#
+################################################################################
 
-if (shallDeleteVars) rm(original_vaers_2020_data)
-if (shallDeleteVars) rm(original_vaers_2021_data)
-
-# Modification/Ajout de colonnes
+# Modification/Ajout et reorganisation des colonnes
 vaers_data <- a__original_vaers_data %>%
 		mutate(RECVDATE = as.Date(RECVDATE, "%m/%d/%Y"),
 				TODAYS_DATE = as.Date(TODAYS_DATE, "%m/%d/%Y"),
 				VAX_DATE = as.Date(VAX_DATE, "%m/%d/%Y"),
 				ONSET_DATE = as.Date(ONSET_DATE, "%m/%d/%Y"),
 				VAERS_ID = as.numeric(VAERS_ID),
-				AGE_YRS = as.numeric(AGE_YRS),
+				age = as.numeric(AGE_YRS),
 				CAGE_YR = as.numeric(CAGE_YR),
 				CAGE_MO = as.numeric(CAGE_MO),
 				HOSPDAYS = as.numeric(HOSPDAYS),
 				NUMDAYS = as.numeric(NUMDAYS),
-				vax_year = format(as.Date(VAX_DATE, "%m/%d/%Y"),"%Y")
-)
+				vax_year = format(as.Date(VAX_DATE, "%m/%d/%Y"),"%Y"))
+
+# Ajouter une colonne avec la tranche d'age
+vaers_data <- a__f_add_tranche_age_de_10_ans(vaers_data)
+
+vaers_data <- vaers_data %>%
+		select(vax_year, 
+				VAERS_ID, 
+				RECVDATE, 
+				VAX_DATE, 
+				ONSET_DATE, 
+				NUMDAYS, 
+				SEX,
+				tranche_age,
+				AGE_YRS, 
+				HOSPITAL, 
+				HOSPDAYS, 
+				RECOVD, 
+				DIED, 
+				DATEDIED, 
+				# Tout le reste
+				everything())
+
+
+# Filtrage de lignes (ne conserver que les lignes supérieures à 1990, car avant, ça n'a pas l'air consistant
+vaers_data <- vaers_data %>%
+		filter(vax_year >= 1990)
 
 # Tri des lignes
 vaers_data <- vaers_data %>%
-		arrange(SEX, AGE_YRS, VAX_DATE)
+		arrange(vax_year, SEX, tranche_age_quinq)
 
-# Filtrage de lignes
+#
+# Graphique de l'évolution du nombre de décès
+#
 
 # Regroupement et synthèse
-tmp <- vaers_data %>%
-		group_by(DIED, vax_year, SEX) %>% 
+dataToPlot <- vaers_data %>%
+		filter(DIED == "Y") %>%
+		group_by(vax_year, tranche_age) %>% 
 		summarise(nb = n())
 
 
+print(ggplot(data = dataToPlot,
+						mapping = aes(x = dataToPlot$vax_year)) +
+				
+				geom_col(mapping = aes(y = dataToPlot$nb)) + 
+				
+				#theme(legend.position = "top")+
+				
+				ggtitle("Nombre de décés liés à une vaccination aux USA") +
+				xlab("Date du vaccin") + 
+				ylab("Nombre")
+)
 
+K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
+
+dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_evol.png"), width = 1000)
+
+
+#
+# Graphique de l'évolution du nombre de décès par tranche d'age
+#
+
+# Regroupement et synthèse
+dataToPlot <- vaers_data %>%
+		filter(DIED == "Y",
+				vax_year >= 2019) %>%
+		group_by(vax_year, SEX, tranche_age) %>% 
+		summarise(nb = n())
+
+
+print(ggplot(data = dataToPlot,
+						mapping = aes(x = dataToPlot$vax_year)) +
+				
+				geom_col(mapping = aes(y = dataToPlot$nb,
+								fill = tranche_age),
+						# Mettre les colonnes les unes à côté des autres
+						position="dodge"
+				) + 
+				
+				#theme(legend.position = "top")+
+				
+				ggtitle("Nombre de décés liés à une vaccination aux USA") +
+				xlab("Date du vaccin") + 
+				ylab("Nombre")
+)
+
+dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_evol_tranche_age_ge2018.png"), width = 1000)
 
 ################################################################################
 #
-# Chargement des VAERS VAX
 #
 ################################################################################
-
-original_vaers_2020_vax <- a__f_downloadIfNeeded(
-		fileRelPath = file.path(K_DIR_EXT_DATA_USA_VAERS, "2020VAERSVAX.csv"), 
-		var = original_vaers_2020_vax,
-		sep = ",")
-
-original_vaers_2021_vax <- a__f_downloadIfNeeded(
-		fileRelPath = file.path(K_DIR_EXT_DATA_USA_VAERS, "2021VAERSVAX.csv"), 
-		var = original_vaers_2021_vax,
-		sep = ",")
-
-# Concaténer les lignes
-a__original_vaers_vax <- bind_rows(original_vaers_2020_vax) %>%
-		bind_rows(original_vaers_2021_vax) 
-
-if (shallDeleteVars) rm(original_vaers_2020_vax)
-if (shallDeleteVars) rm(original_vaers_2021_vax)
 
 # Modification/Ajout de colonnes
 vaers_vax <- a__original_vaers_vax
@@ -121,28 +233,11 @@ tmp_vax <- vaers_vax %>%
 		summarise(nb = n())
 
 
+
 ################################################################################
 #
-# Chargement des VAERS SYMPTOMS
 #
 ################################################################################
-
-original_vaers_2020_symptoms <- a__f_downloadIfNeeded(
-		fileRelPath = file.path(K_DIR_EXT_DATA_USA_VAERS, "2020VAERSSYMPTOMS.csv"), 
-		var = original_vaers_2020_symptoms,
-		sep = ",")
-
-original_vaers_2021_symptoms <- a__f_downloadIfNeeded(
-		fileRelPath = file.path(K_DIR_EXT_DATA_USA_VAERS, "2021VAERSSYMPTOMS.csv"), 
-		var = original_vaers_2021_symptoms,
-		sep = ",")
-
-# Concaténer les lignes
-a__original_vaers_symptoms <- bind_rows(original_vaers_2020_symptoms) %>%
-		bind_rows(original_vaers_2021_symptoms) 
-
-if (shallDeleteVars) rm(original_vaers_2020_symptoms)
-if (shallDeleteVars) rm(original_vaers_2021_symptoms)
 
 # Modification/Ajout de colonnes
 vaers_symptoms <- a__original_vaers_symptoms
