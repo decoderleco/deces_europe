@@ -288,7 +288,7 @@ if (shallDeleteVars) rm(dbp)
 # Ceci devrait suffire pour notre pyramide des ages en france (hors COM)
 
 db_clean <- db_clean %>%
-		mutate(deces_departement = str_sub(deces_code_lieu, 1, 2))
+		mutate(num_departement = str_sub(deces_code_lieu, 1, 2))
 
 # age_deces_millesime = age de la personne au moment de son décès
 db_clean <- db_clean %>%
@@ -305,13 +305,14 @@ db_clean <- db_clean %>%
 
 # Deces par jour et par departement depuis 01/01/2018
 deces_dep_jour <- db_clean %>%
-		group_by(deces_date_complete,
-				deces_departement) %>%
+		group_by(num_departement,
+				deces_date_complete) %>%
 		summarise(nbDeces=n()) %>% 
 		filter(deces_date_complete >= "2018-01-01")
 
-deces_dep_centre_reduit <- deces_dep_jour %>%
-		group_by(deces_departement) %>% 
+# calculer la moyenne, le nb min/max et les quartiles des décès par département (depuis 2018)
+deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
+		group_by(num_departement) %>% 
 		summarise(minimum = min(nbDeces),
 				maximum = max(nbDeces),
 				moyenne = mean(nbDeces),
@@ -320,10 +321,13 @@ deces_dep_centre_reduit <- deces_dep_jour %>%
 				dernier_quartile = quantile(nbDeces,
 						probs=(0.75)))
 
+# Ajouter la moyenne, le nb min/max et les quartiles des décès par département et trier par département
 deces_dep_jour <- deces_dep_jour %>%
-		left_join(deces_dep_centre_reduit)
+		left_join(deces_dep_jour_moyenne_min_max_quartiles) %>%
+		arrange(num_departement, deces_date_complete, nbDeces) %>%
+		select(num_departement, minimum:dernier_quartile, deces_date_complete, everything())
 
-if (shallDeleteVars) rm(deces_dep_centre_reduit)
+if (shallDeleteVars) rm(deces_dep_jour_moyenne_min_max_quartiles)
 
 # Ajouter la colonne deces_centre_reduit
 deces_dep_jour <- deces_dep_jour %>%
@@ -335,8 +339,7 @@ nom_departement <- read.csv("data/csv/departements-region.csv", sep=",", header 
 
 deces_dep_jour <- deces_dep_jour %>%
 		left_join(nom_departement,
-				# BUG = ?
-				by=c("deces_departement"="num_dep"))
+				by=c("num_departement"="num_dep"))
 
 if (shallDeleteVars) rm(nom_departement)
 
