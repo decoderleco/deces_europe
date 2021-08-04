@@ -153,7 +153,7 @@ vaers_data <- vaers_data %>%
 
 # Tri des lignes
 vaers_data <- vaers_data %>%
-		arrange(vax_year, SEX, tranche_age_quinq)
+		arrange(vax_year, SEX, tranche_age)
 
 #
 # Graphique de l'évolution du nombre de décès
@@ -213,8 +213,12 @@ print(ggplot(data = dataToPlot,
 
 dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_evol_tranche_age_ge2018.png"), width = 1000)
 
+
+if (shallDeleteVars) rm(vaers_data)
+
 ################################################################################
 #
+# Analyse des VAERS VAX (Types de vaccins associés aux incidents, via le VAERS_ID)
 #
 ################################################################################
 
@@ -228,14 +232,16 @@ vaers_vax <- vaers_vax %>%
 # Filtrage de lignes
 
 # Regroupement et synthèse
-tmp_vax <- vaers_vax %>%
+dataToPlot <- vaers_vax %>%
 		group_by(VAX_TYPE) %>% 
 		summarise(nb = n())
 
 
+if (shallDeleteVars) rm(vaers_vax)
 
 ################################################################################
 #
+# Analyse des VAERS SYMPTOMS (symptômes associés aux incidents, via le VAERS_ID)
 #
 ################################################################################
 
@@ -243,12 +249,14 @@ tmp_vax <- vaers_vax %>%
 vaers_symptoms <- a__original_vaers_symptoms
 
 # Tri des lignes
-vaers_symptoms <- vaers_symptoms %>%
-		arrange(VAX_TYPE, VAX_MANU, VAERS_ID)
+#vaers_symptoms <- vaers_symptoms %>%
+#		arrange(SYMPTOM1, SYMPTOM2, SYMPTOM3, SYMPTOM4, SYMPTOM5)
 
 # Filtrage de lignes
 
 # Regroupement et synthèse
-tmp_symptoms <- vaers_symptoms %>%
-		group_by(VAX_TYPE) %>% 
-		summarise(nb = n())
+#dataToPlot <- vaers_symptoms %>%
+#		group_by(SYMPTOM1, SYMPTOM2, SYMPTOM3, SYMPTOM4, SYMPTOM5) %>% 
+#		summarise(nb = n())
+
+if (shallDeleteVars) rm(vaers_symptoms)
