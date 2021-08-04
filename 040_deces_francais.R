@@ -62,7 +62,7 @@ a__f_nettoyer_partie_date <- function(
 ################################################################################
 
 
-dossier_donnees_deces <- a__f_createDir(file.path(K_DIR_EXT_DATA_FR_GOUV, 'deces'))
+K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS <- a__f_createDir(file.path(K_DIR_EXT_DATA_FR_GOUV, 'deces'))
 
 #
 # Telechargement des donnees
@@ -202,35 +202,34 @@ if (!file.exists(insee_nomenclature_zip_path)) {
 	file.remove(insee_nomenclature_zip_path)
 }
 
-if (shallDeleteVars) rm(dossier_donnees_externes)
 if (shallDeleteVars) rm(list_fichiers)
 if (shallDeleteVars) rm(url_insee_nomenclatures)
 if (shallDeleteVars) rm(nomenclatures_insee_zip_path)
-if (shallDeleteVars) rm(dossier_donnees_deces)
+if (shallDeleteVars) rm(K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS)
 
 
 # Lire les fichiers
 
-communes <- read_csv(file.path(K_DIR_INSEE_GEO, 'communes2020.csv'))
+fr_insee_communes <- read_csv(file.path(K_DIR_INSEE_GEO, 'communes2020.csv'))
 
-departements <- read_csv(file.path(K_DIR_INSEE_GEO, 'departement2020.csv'))
+fr_insee_departements <- read_csv(file.path(K_DIR_INSEE_GEO, 'departement2020.csv'))
 
-regions <- read_csv(file.path(K_DIR_INSEE_GEO, 'region2020.csv'))
+fr_insee_regions <- read_csv(file.path(K_DIR_INSEE_GEO, 'region2020.csv'))
 
-pays <- read_csv(file.path(K_DIR_INSEE_GEO, 'pays2020.csv'))
+fr_insee_pays <- read_csv(file.path(K_DIR_INSEE_GEO, 'pays2020.csv'))
 
 # Verifier s'il y a des doublons
 #any(duplicated(communes$com))
 
 # Préparer une base de commune sans doublon sur com (en prenant la première occurence)
 
-communes_deduplique <- communes %>%
+communes_deduplique <- fr_insee_communes %>%
 		filter(!duplicated(com))
 
 #verifier qu'il n'y a plus de doublons
-any(duplicated(communes$com[communes$typecom == 'COM']))
+any(duplicated(fr_insee_communes$com[fr_insee_communes$typecom == 'COM']))
 
-if (shallDeleteVars) rm(communes)
+if (shallDeleteVars) rm(fr_insee_communes)
 
 # 
 dbp <- db_clean %>%
@@ -245,25 +244,25 @@ dbp <- db_clean %>%
 
 		) %>%
 		left_join(
-				departements %>%
+				fr_insee_departements %>%
 						select(
 								deces_dep = dep, 
 								deces_dep_libelle = libelle
 						)
 
 		) %>%
-		left_join(regions %>%
+		left_join(fr_insee_regions %>%
 						select(deces_region = reg, deces_region_libelle = libelle)) %>%
 		left_join(
-				pays %>%
+				fr_insee_pays %>%
 						filter(actual == 1) %>%
 						select(
 								deces_code_lieu = cog, deces_pays = libcog))
 
 if (shallDeleteVars) rm(communes_deduplique)
-if (shallDeleteVars) rm(departements)
-if (shallDeleteVars) rm(regions)
-if (shallDeleteVars) rm(pays)
+if (shallDeleteVars) rm(fr_insee_departements)
+if (shallDeleteVars) rm(fr_insee_regions)
+if (shallDeleteVars) rm(fr_insee_pays)
 
 # verifier le nombre de NA
 sum(is.na(dbp$deces_code_lieu))
