@@ -37,7 +37,11 @@ K_DIR_EXT_DATA_WORLD <- a__f_createDir(file.path(K_DIR_EXT_DATA, 'world'))
 K_DIR_EXT_DATA_EUROPE <- a__f_createDir(file.path(K_DIR_EXT_DATA_WORLD, 'eu'))
 K_DIR_EXT_DATA_FRANCE <- a__f_createDir(file.path(K_DIR_EXT_DATA_EUROPE, 'fr'))
 K_DIR_EXT_DATA_FR_GOUV <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, 'gouv'))
+K_DIR_EXT_DATA_USA <- a__f_createDir(file.path(K_DIR_EXT_DATA_WORLD, 'usa'))
 
+
+K_DIR_GEN_IMG_WORLD <- a__f_createDir("gen/images/world")
+K_DIR_GEN_IMG_USA <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'usa'))
 
 ################################################################################
 # Télécharger ou charge un fichier EuroStat, CSV ou zip 
@@ -217,7 +221,7 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 ################################################################################
 a__f_downloadFileUrlAndGetFilePath <- function(
 		fileUrl,
-		dossier_cible = dossier_donnees_deces 
+		dossier_cible = K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS 
 ) {
 	# Le nom du fichier à sauvegarder est la dernière partie de l'URL
 	nom_fichier <- basename(fileUrl)
@@ -336,6 +340,65 @@ a__f_quinquenisation <- function(tabWithAge, shallGroup_ge85) {
 	tabWithAge_quinq
 }
 
+
+################################################################################
+# Ajouter une colonne tranche_age quinquennale (0 à 4, 5 à 9, ...) à partir de la colone age
+################################################################################
+a__f_add_tranche_age_de_5_ans <- function(tabWithAge) {
+	
+	# Ajouter une colonne age_quinq avec la tranche d'age
+	tabWith_tranche_age <- tabWithAge %>%
+			mutate(tranche_age = case_when(
+							age <=  4 ~ "Y00-04",
+							age >=  5 & age < 10 ~ "Y05-09",
+							age >= 10 & age < 15 ~ "Y10-14",
+							age >= 15 & age < 20 ~ "Y15-19",
+							age >= 20 & age < 25 ~ "Y20-24",
+							age >= 25 & age < 30 ~ "Y25-29",  
+							age >= 30 & age < 35 ~ "Y30-34",
+							age >= 35 & age < 40 ~ "Y35-39",  
+							age >= 40 & age < 45 ~ "Y40-44",
+							age >= 45 & age < 50 ~ "Y45-49",
+							age >= 50 & age < 55 ~ "Y50-54",
+							age >= 55 & age < 60 ~ "Y55-59",  
+							age >= 60 & age < 65 ~ "Y60-64",
+							age >= 65 & age < 70 ~ "Y65-69",  
+							age >= 70 & age < 75 ~ "Y70-74",
+							age >= 75 & age < 80 ~ "Y75-79",  
+							age >= 80 & age < 85 ~ "Y80-84",
+							age >= 85 & age < 90 ~ "Y85-89",
+							age >= 90 & age < 95 ~ "Y90-94",
+							age >= 95 ~ "Y95ge"
+					))
+	
+	# Renvoyer le nouveau tableau quinquenisé
+	tabWith_tranche_age
+}
+
+################################################################################
+# Ajouter une colonne tranche_age (0 à 9, 10 à 19, ...) à partir de la colone age
+################################################################################
+a__f_add_tranche_age_de_10_ans <- function(tabWithAge) {
+	
+	# Ajouter une colonne age_quinq avec la tranche d'age
+	tabWith_tranche_age <- tabWithAge %>%
+			mutate(tranche_age = case_when(
+							age <=  9 ~ "Y00-09",
+							age >= 10 & age < 20 ~ "Y10-19",
+							age >= 20 & age < 30 ~ "Y20-29",
+							age >= 30 & age < 40 ~ "Y30-39",
+							age >= 40 & age < 50 ~ "Y40-49",
+							age >= 50 & age < 60 ~ "Y50-59",
+							age >= 60 & age < 70 ~ "Y60-69",
+							age >= 70 & age < 80 ~ "Y70-79",
+							age >= 80 & age < 90 ~ "Y80-89",
+							age >= 90 & age < 100 ~ "Y90-99",
+							age >= 100 ~ "Y99gt"
+					))
+	
+	# Renvoyer le nouveau tableau quinquenisé
+	tabWith_tranche_age
+}
 
 ################################################################################
 # Generer le graphique et le png associé
