@@ -67,15 +67,15 @@ medicam_vaccins_grippes <- a__original_medicam %>%
 						"VAXIGRIPTETRA"))
 
 medicam_vaccins_grippes <- medicam_vaccins_grippes %>%
-# Creer une colonne "mois_annee" pour les en-tête de colonne, 
+		# Creer une colonne "mois_annee" pour les en-tête de colonne, 
 		#       une colonne "nombre_de_boites" pour la valeur
 		#       -Nom_vaccin indique que l'on prend toutes les colonnes sauf Nom_vaccin
 		gather(mois_annee, nombre_de_boites, -Nom_vaccin) %>%
-# Retirer le "X" qui est devant la date dans la colonne mois_annee
+		# Retirer le "X" qui est devant la date dans la colonne mois_annee
 		mutate(mois_annee = str_sub(mois_annee, 2, 9)) %>%
-# Remplacer les NA dans la colonne nombre_de_boites par 0
+		# Remplacer les NA dans la colonne nombre_de_boites par 0
 		mutate(nombre_de_boites = ifelse(is.na(nombre_de_boites), 0, nombre_de_boites)) %>%
-# Convertir les dates string en Date
+		# Convertir les dates string en Date
 		mutate(mois_annee=as.Date(mois_annee, format="%d.%m.%y"))
 
 # Nombre de boites de vaccin pour la grippe (toutes marques confondues) par mois
@@ -103,12 +103,15 @@ print(ggplot(medicam_vaccins_grippes,
 		
 		ylab("nombre de vaccins")+
 		
-		xlab("") + 
+		xlab("mois") + 
 		scale_x_date(labels = date_format("%m/%y"), breaks = date_breaks("year")) +
 		theme(axis.text.x = element_text(angle=45))
 )
 
-dev.print(device = png, file = "gen/images/Medicam_Vaccins_Grippe_Distribues.png", width = 1000)
+repertoire <- paste0("gen/images/fr/Medicam")
+a__f_createDir(repertoire)
+
+dev.print(device = png, file = paste0(repertoire, "/Medicam_Vaccins_Grippe_Distribues.png"), width = 1000)
 
 
 ################################################################################
@@ -373,7 +376,10 @@ print(ggplot(data = om_JG_CLONAZEPAM,
 				ylim(0, NA)
 )
 
-dev.print(device = png, file = "gen/images/Medicam_Rivotril_evol.png", width = 1000)
+repertoire <- paste0("gen/images/fr/Medicam")
+a__f_createDir(repertoire)
+
+dev.print(device = png, file = paste0(repertoire, "/Medicam_Rivotril_evol.png"), width = 1000)
 
 if (shallDeleteVars) rm(om_JG_CLONAZEPAM)
 
