@@ -935,8 +935,8 @@ a__f_plot_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_semai
 	
 	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, ylim_max), col="red")
 	
-	mtext("nombre de décès toutes causes standardisés ", side=2, line=3)
-	mtext("nombre de décès déclarés Covid-19 standardisés", side=2, line=2, col="red")
+	mtext("Nombre de décès toutes causes standardisés à la population 2020", side=2, line=3)
+	mtext("Nombre de décès déclarés Covid-19 standardisés à la population 2020", side=2, line=2, col="red")
 	mtext("                                                                   Source : Eurostat décès hebdomadaires et population + OurWorldInData", side=1, col="black", line=2.5)
 	
 	# Lignes verticales
@@ -983,7 +983,7 @@ a__f_plot_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_semai
 			col="blue") 
 	
 	# TODO : C'est plutôt : Décès non Covid-19
-	mtext("Différence entre décès déclarés Covid-19 et décès toutes causes", side = PLOT_AXIS_SIDE_RIGHT, col="blue", line=2.5)
+	mtext("Décès non Covid-19 standardisés à la population 2020 (= Diff entre décès déclarés Covid-19 et décès toutes causes)", side = PLOT_AXIS_SIDE_RIGHT, col="blue", line=2.5)
 	
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
