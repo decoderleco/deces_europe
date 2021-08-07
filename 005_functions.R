@@ -403,7 +403,7 @@ a__f_add_tranche_age_de_10_ans <- function(tabWithAge) {
 ################################################################################
 # Generer le graphique et le png associé
 ################################################################################
-a__f_plot_region <- function(region) {
+a__f_plot_fr_deces_quotidiens_par_region <- function(region) {
 	
 	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
 	# qui a étépassé dans le parametre region
@@ -435,7 +435,7 @@ a__f_plot_region <- function(region) {
 					# Faire un graphique par département, répartis sur 3 colonnes
 					facet_wrap(~dep_name) +
 					
-					ggtitle("Décès quotidiens par département") +
+					ggtitle("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens) par département") +
 					
 					xlab("date de décès") + 
 					ylab("nombre de décès (centrés et réduits au quartile)"))
@@ -453,7 +453,7 @@ a__f_plot_region <- function(region) {
 ################################################################################
 # Generer le graphique et le png associé : Deces quotidiens
 ################################################################################
-a__f_plot_deces_quotidiens <- function(deces_par_jour,
+a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(deces_par_jour,
 		tailleFenetreGlissante = 7,
 		decalageSemaines = 6) {
 	
@@ -509,7 +509,7 @@ a__f_plot_deces_quotidiens <- function(deces_par_jour,
 					
 					#theme(legend.position = "top")+
 					
-					ggtitle("Décès quotidiens par age") +
+					ggtitle("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens) par Tranche d'age") +
 					xlab("date de décès") + 
 					ylab("nombre de décès quotidiens")
 	)
@@ -520,7 +520,7 @@ a__f_plot_deces_quotidiens <- function(deces_par_jour,
 ################################################################################
 # Generer le graphique et le png associé : deces_hebdo_std_moyenne_mobile
 ################################################################################
-a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_semaine, 
+a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_semaine, 
 		                                             ylim_max, 
 													 decalageSemaines = 51) {
 
@@ -675,7 +675,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 ################################################################################
 # Generer le graphique et le png associé : deces_hebdo_std_m40_p65_vaccination
 ################################################################################
-a__f_plot_deces_hebdo_std_lt40_ge65_vaccination <- function(es_deces_standard_pays_semaine, 
+a__f_plot_es_deces_hebdo_std_lt40_ge65_vaccination <- function(es_deces_standard_pays_semaine, 
 		                                                  ylim_max_left,
 														  ylim_max_right,
 														  ylim_max_left2,
@@ -753,15 +753,15 @@ a__f_plot_deces_hebdo_std_lt40_ge65_vaccination <- function(es_deces_standard_pa
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26, 1000, "2013", cex=1.2)
-	text(78, 1000, "2014", cex=1.2)
-	text(130, 1000, "2015", cex=1.2)
-	text(183, 1000, "2016", cex=1.2)
-	text(235, 1000, "2017", cex=1.2)
-	text(287, 1000, "2018", cex=1.2)
-	text(339, 1000, "2019", cex=1.2)
-	text(391, 1000, "2020", cex=1.2)
-	text(440, 1000, "2021", cex=1.2)
+	text(26,  0, "2013", cex=1.2)
+	text(78,  0, "2014", cex=1.2)
+	text(130, 0, "2015", cex=1.2)
+	text(183, 0, "2016", cex=1.2)
+	text(235, 0, "2017", cex=1.2)
+	text(287, 0, "2018", cex=1.2)
+	text(339, 0, "2019", cex=1.2)
+	text(391, 0, "2020", cex=1.2)
+	text(440, 0, "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -842,15 +842,15 @@ a__f_plot_deces_hebdo_std_lt40_ge65_vaccination <- function(es_deces_standard_pa
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26, 1000, "2013", cex=1.2)
-	text(78, 1000, "2014", cex=1.2)
-	text(130, 1000, "2015", cex=1.2)
-	text(183, 1000, "2016", cex=1.2)
-	text(235, 1000, "2017", cex=1.2)
-	text(287, 1000, "2018", cex=1.2)
-	text(339, 1000, "2019", cex=1.2)
-	text(391, 1000, "2020", cex=1.2)
-	text(440, 1000, "2021", cex=1.2)
+	text(26,  0, "2013", cex=1.2)
+	text(78,  0, "2014", cex=1.2)
+	text(130, 0, "2015", cex=1.2)
+	text(183, 0, "2016", cex=1.2)
+	text(235, 0, "2017", cex=1.2)
+	text(287, 0, "2018", cex=1.2)
+	text(339, 0, "2019", cex=1.2)
+	text(391, 0, "2020", cex=1.2)
+	text(440, 0, "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -896,7 +896,7 @@ a__f_plot_deces_hebdo_std_lt40_ge65_vaccination <- function(es_deces_standard_pa
 ################################################################################
 # Generer le graphique et le png associé : Deces vs Deces COVID
 ################################################################################
-a__f_plot_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_semaine, 
+a__f_plot_es_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_semaine, 
 		ylim_max) {
 	
 	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
@@ -949,15 +949,15 @@ a__f_plot_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_semai
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26, 1000, "2013", cex=1.2)
-	text(78, 1000, "2014", cex=1.2)
-	text(130, 1000, "2015", cex=1.2)
-	text(183, 1000, "2016", cex=1.2)
-	text(235, 1000, "2017", cex=1.2)
-	text(287, 1000, "2018", cex=1.2)
-	text(339, 1000, "2019", cex=1.2)
-	text(391, 1000, "2020", cex=1.2)
-	text(440, 1000, "2021", cex=1.2)
+	text(26,  0, "2013", cex=1.2)
+	text(78,  0, "2014", cex=1.2)
+	text(130, 0, "2015", cex=1.2)
+	text(183, 0, "2016", cex=1.2)
+	text(235, 0, "2017", cex=1.2)
+	text(287, 0, "2018", cex=1.2)
+	text(339, 0, "2019", cex=1.2)
+	text(391, 0, "2020", cex=1.2)
+	text(440, 0, "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	

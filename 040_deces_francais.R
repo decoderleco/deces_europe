@@ -360,78 +360,78 @@ deces_dep_jour <- deces_dep_jour %>%
 BourgogneFrancheComte <- deces_dep_jour %>%
 		filter(region_name == "Bourgogne-Franche-Comté")
 
-a__f_plot_region(BourgogneFrancheComte)
+a__f_plot_fr_deces_quotidiens_par_region(BourgogneFrancheComte)
 
 
 AuvergneRhoneAlpes <- deces_dep_jour %>%
 		filter(region_name == "Auvergne-Rhône-Alpes")
 
-a__f_plot_region(AuvergneRhoneAlpes)
+a__f_plot_fr_deces_quotidiens_par_region(AuvergneRhoneAlpes)
 
 IledeFrance <- deces_dep_jour %>%
 		filter(region_name == "Île-de-France")
 
-a__f_plot_region(IledeFrance)
+a__f_plot_fr_deces_quotidiens_par_region(IledeFrance)
 
 
 PaysdelaLoire <- deces_dep_jour %>%
 		filter(region_name == "Pays de la Loire")
 
-a__f_plot_region(PaysdelaLoire)
+a__f_plot_fr_deces_quotidiens_par_region(PaysdelaLoire)
 
 
 Normandie <- deces_dep_jour %>%
 		filter(region_name == "Normandie")
 
-a__f_plot_region(Normandie)
+a__f_plot_fr_deces_quotidiens_par_region(Normandie)
 
 
 NouvelleAquitaine <- deces_dep_jour %>%
 		filter(region_name == "Nouvelle-Aquitaine")
 
-a__f_plot_region(NouvelleAquitaine)
+a__f_plot_fr_deces_quotidiens_par_region(NouvelleAquitaine)
 
 
 HautsdeFrance <- deces_dep_jour %>%
 		filter(region_name == "Hauts-de-France")
 
-a__f_plot_region(HautsdeFrance)
+a__f_plot_fr_deces_quotidiens_par_region(HautsdeFrance)
 
 
 Occitanie <- deces_dep_jour %>%
 		filter(region_name == "Occitanie")
 
-a__f_plot_region(Occitanie)
+a__f_plot_fr_deces_quotidiens_par_region(Occitanie)
 
 
 PACA <- deces_dep_jour %>%
 		filter(region_name == "Provence-Alpes-Côte d'Azur")
 
-a__f_plot_region(PACA)
+a__f_plot_fr_deces_quotidiens_par_region(PACA)
 
 
 GrandEst <- deces_dep_jour %>%
 		filter(region_name == "Grand Est")
 
-a__f_plot_region(GrandEst)
+a__f_plot_fr_deces_quotidiens_par_region(GrandEst)
 
 
 Bretagne <- deces_dep_jour %>%
 		filter(region_name == "Bretagne")
 
-a__f_plot_region(Bretagne)
+a__f_plot_fr_deces_quotidiens_par_region(Bretagne)
 
 
 Corse <- deces_dep_jour %>%
 		filter(region_name == "Corse")
 
-a__f_plot_region(Corse)
+a__f_plot_fr_deces_quotidiens_par_region(Corse)
 
 
 CentreValdeLoire <- deces_dep_jour %>%
 		filter(region_name == "Centre-Val de Loire")
 
-a__f_plot_region(CentreValdeLoire)
+a__f_plot_fr_deces_quotidiens_par_region(CentreValdeLoire)
 
 if (shallDeleteVars) rm(deces_dep_jour)
 
@@ -510,7 +510,7 @@ if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
 
 ################################################################################
 #
-# Deces par jour et par age depuis 2018 par Tranches d'ages
+# Deces Quotidiens depuis 2018 par Tranche d'age
 #
 ################################################################################
 
@@ -559,7 +559,7 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 
 ################################################################################
 #
-# Deces Quotidiens et par age depuis 2018 des 40-59 ans
+# Graphique des Deces Quotidiens depuis 2018 par Tranche d'age
 #
 ################################################################################
 												   
@@ -571,27 +571,27 @@ deces_par_jour_a_tracer <- deces_par_jour_tranchedage %>%
 
 deces_par_jour_0_19 <- deces_par_jour_a_tracer %>% 
 		filter(tranche_d_age == "0-19 ans") 
-a__f_plot_deces_quotidiens(deces_par_jour_0_19)
+a__f_plot_fr_deces_quotidiens_par_tranche_age(deces_par_jour_0_19)
 if (shallDeleteVars) rm(deces_par_jour_0_19)
 
 deces_par_jour_20_39 <- deces_par_jour_a_tracer %>% 
 		filter(tranche_d_age == "20-39 ans") 
-a__f_plot_deces_quotidiens(deces_par_jour_20_39)
+a__f_plot_fr_deces_quotidiens_par_tranche_age(deces_par_jour_20_39)
 if (shallDeleteVars) rm(deces_par_jour_20_39)
 
 deces_par_jour_40_59 <- deces_par_jour_a_tracer %>% 
 		filter(tranche_d_age == "40-59 ans") 
-a__f_plot_deces_quotidiens(deces_par_jour_40_59)
+a__f_plot_fr_deces_quotidiens_par_tranche_age(deces_par_jour_40_59)
 if (shallDeleteVars) rm(deces_par_jour_40_59)
 
 deces_par_jour_60_79 <- deces_par_jour_a_tracer %>% 
 		filter(tranche_d_age == "60-79 ans") 
-a__f_plot_deces_quotidiens(deces_par_jour_60_79)
+a__f_plot_fr_deces_quotidiens_par_tranche_age(deces_par_jour_60_79)
 if (shallDeleteVars) rm(deces_par_jour_60_79)
 
 deces_par_jour_ge80 <- deces_par_jour_a_tracer %>% 
 		filter(tranche_d_age == "plus de 89 ans") 
-a__f_plot_deces_quotidiens(deces_par_jour_ge80)
+a__f_plot_fr_deces_quotidiens_par_tranche_age(deces_par_jour_ge80)
 if (shallDeleteVars) rm(deces_par_jour_ge80)
 
 
