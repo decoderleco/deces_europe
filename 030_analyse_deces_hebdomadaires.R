@@ -31,42 +31,58 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- a__f_loadRdsIfNeed
 #### complement de donnees pour etude de la surmortalite ####
 #-----------------------------------------------------------#
 
+# Ajout colonne deces_hors_covid
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		mutate(deces_hors_covid=deces_tot-new_deaths)
+		mutate(deces_hors_covid = deces_tot - new_deaths)
 
+# Ajout colonne part_deces_covid
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		mutate(part_deces_covid=new_deaths/deces_tot)
+		mutate(part_deces_covid = new_deaths / deces_tot)
 
-
+# Calcul des colonnes moyenne, variance, bsup, binf
 IC_deces <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
 		group_by(geo) %>% 
-		summarise(moyenne=mean(deces_standardises_si_pop_2020), variance=sd(deces_standardises_si_pop_2020)) %>%
-		mutate(bsup = moyenne + 2*variance, binf = moyenne - 2*variance )
+		summarise(
+				moyenne = mean(deces_standardises_si_pop_2020), 
+				variance = sd(deces_standardises_si_pop_2020)) %>%
+		mutate(
+				bsup = moyenne + 2 * variance,
+				binf = moyenne - 2 * variance )
 
-b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(b__es_deces_week_standardises_si_pop_2020_owid_vaccination, IC_deces)
+# Ajout des colonnes moyenne, variance, bsup, binf
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(
+		b__es_deces_week_standardises_si_pop_2020_owid_vaccination, 
+		IC_deces)
 
 rm(IC_deces)
 
+# Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		mutate(surmortalite = case_when(deces_standardises_si_pop_2020 <= binf~"sous-mortalite",
-						deces_standardises_si_pop_2020 >= bsup~"surmortalite",
-						TRUE~"mortalite normale"))
+		mutate(surmortalite = case_when(
+						deces_standardises_si_pop_2020 <= binf ~ "sous-mortalite",
+						deces_standardises_si_pop_2020 >= bsup ~ "surmortalite",
+						TRUE ~ "mortalite normale"))
 
+# Valeurs de Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		mutate(valeur_surmortalite = case_when(surmortalite == "sous-mortalite"~deces_standardises_si_pop_2020-binf,
-						surmortalite == "surmortalite"~deces_standardises_si_pop_2020-bsup,
-						TRUE~0)) %>%
-		mutate(part_surmortalite = valeur_surmortalite/deces_standardises_si_pop_2020*100) %>%
-		mutate(ecart_moyenne = (deces_standardises_si_pop_2020-moyenne)/moyenne*100)
+		mutate(valeur_surmortalite = case_when(
+						surmortalite == "sous-mortalite" ~ deces_standardises_si_pop_2020 - binf,
+						surmortalite == "surmortalite" ~ deces_standardises_si_pop_2020 - bsup,
+						TRUE ~ 0)) %>%
+		mutate(part_surmortalite = valeur_surmortalite / deces_standardises_si_pop_2020 * 100) %>%
+		mutate(ecart_moyenne = (deces_standardises_si_pop_2020 - moyenne) / moyenne * 100)
 
-numSemaineDepuis2013_for_eu_lockdown_start <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		# Pourquoi décale-t-on d'une semaine ? REP : ici j'ai fait des statistiques pour savoir l'état de la semaine précédente. Je n'ai rien gardé dans la présentation finale.
+
+# Créer un tableau avec les colonnes "_prec" qui correspondront après le left-join aux valeurs de la semaine précédente
+# grâce au décalage de 1 semaine
+
+valeurs_de_la_semaine_precedente <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
 		mutate (numSemaineDepuis2013 = numSemaineDepuis2013 + 1, 
 				deces_standard_tot_prec = deces_standardises_si_pop_2020, 
-				new_deaths_prec=new_deaths,
-				deces_tot_prec =deces_tot,
+				new_deaths_prec= new_deaths,
+				deces_tot_prec = deces_tot,
 				new_cases_prec = new_cases,
-				new_vaccinations_prec=new_vaccinations,
+				new_vaccinations_prec = new_vaccinations,
 				Response_measure_prec = Response_measure,
 				#21
 				surmortalite_prec = surmortalite) %>%
@@ -80,12 +96,16 @@ numSemaineDepuis2013_for_eu_lockdown_start <- b__es_deces_week_standardises_si_p
 				Response_measure_prec, 
 				surmortalite_prec)
 
-b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(b__es_deces_week_standardises_si_pop_2020_owid_vaccination , numSemaineDepuis2013_for_eu_lockdown_start)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(
+		b__es_deces_week_standardises_si_pop_2020_owid_vaccination , 
+		valeurs_de_la_semaine_precedente)
 
-rm(numSemaineDepuis2013_for_eu_lockdown_start)
+rm(valeurs_de_la_semaine_precedente)
 
+# Ajouter les colonnes de variation des données entre la semaine précédente et la semaine courante
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		mutate(deces_tot_var = deces_tot - deces_tot_prec,
+		mutate(
+				deces_tot_var = deces_tot - deces_tot_prec,
 				deces_standard_tot_var = deces_standardises_si_pop_2020 - deces_standard_tot_prec,
 				new_deaths_var = new_deaths - new_deaths_prec,
 				new_cases_var = new_cases - new_cases_prec,
@@ -278,6 +298,7 @@ dev.print(device = png, file = paste0(repertoire, "/Deces_Hebdo_france_suede_por
 #---------------------------------------#
 # Graphe deces_hebdo_std_moyenne_mobile de chaque pays
 #---------------------------------------#
+
 
 a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_albanie, 1000, 157)
 a__f_plot_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_allemagne, 30000, 209)
