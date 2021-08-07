@@ -562,6 +562,13 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	
 	es_deces_standard_pays_semaine$moyenne <- moyenne
 	
+	# Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
+	maxWeekTime <- es_deces_standard_pays_semaine %>%
+			ungroup %>%
+			filter(numSemaineDepuis2013 == max(numSemaineDepuis2013)) %>%
+			distinct() %>%
+			select(time)
+	maxWeekTime <- maxWeekTime[1, 1]
 	
 	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
 	     es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge40, 
@@ -573,7 +580,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 		 ylim=c(0, ylim_max), 
 		 type="o", 
 		 col="black", 
-		 main=paste0("Décès hebdomadaires standardisés : ",nomPays))
+		 main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
 	
 	# pour encadrer le graphique
  	box() 
@@ -587,15 +594,15 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26, 1000, "2013", cex=1.2)
-	text(78, 1000, "2014", cex=1.2)
-	text(130, 1000, "2015", cex=1.2)
-	text(183, 1000, "2016", cex=1.2)
-	text(235, 1000, "2017", cex=1.2)
-	text(287, 1000, "2018", cex=1.2)
-	text(339, 1000, "2019", cex=1.2)
-	text(391, 1000, "2020", cex=1.2)
-	text(440, 1000, "2021", cex=1.2)
+	text(26,  0, "2013", cex=1.2)
+	text(78,  0, "2014", cex=1.2)
+	text(130, 0, "2015", cex=1.2)
+	text(183, 0, "2016", cex=1.2)
+	text(235, 0, "2017", cex=1.2)
+	text(287, 0, "2018", cex=1.2)
+	text(339, 0, "2019", cex=1.2)
+	text(391, 0, "2020", cex=1.2)
+	text(440, 0, "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
