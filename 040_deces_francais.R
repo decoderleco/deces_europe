@@ -61,16 +61,8 @@ a__f_nettoyer_partie_date <- function(
 #
 ################################################################################
 
-dossier_donnees_externes <- 'inst/extdata'
-dossier_donnees_deces <- file.path(dossier_donnees_externes, 'deces')
 
-# Créer les dossiers s'ils n'existent pas
-if(!dir.exists(dossier_donnees_externes)) dir.create(dossier_donnees_externes)
-
-if(!dir.exists(dossier_donnees_deces)) dir.create(dossier_donnees_deces)
-
-
-#getwd()
+K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS <- a__f_createDir(file.path(K_DIR_EXT_DATA_FR_GOUV, 'deces'))
 
 #
 # Telechargement des donnees
@@ -90,7 +82,7 @@ urls_listes_deces <- c(
 )
 
 
-chemins_fichiers_deces <- lapply(urls_listes_deces, a__f_downloadUrl)
+chemins_fichiers_deces <- lapply(urls_listes_deces, a__f_downloadFileUrlAndGetFilePath)
 
 if (shallDeleteVars) rm(urls_listes_deces)
 
@@ -185,48 +177,59 @@ any(is.na(db_clean$deces_date_complete))
 #
 ################################################################################
 
-url_nomenclatures <- 'https://www.insee.fr/fr/statistiques/fichier/4316069/cog_ensemble_2020_csv.zip'
+K_DIR_INSEE_GEO <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, "insee/geo"))
 
-if (!file.exists(file.path(dossier_donnees_externes, basename(url_nomenclatures)))) {
-	# Le fichier n'existe pas
+# URL du zip à télécharger
+url_insee_nomenclatures <- 'https://www.insee.fr/fr/statistiques/fichier/4316069/cog_ensemble_2020_csv.zip'
+
+# Path du zip téléchargé
+insee_nomenclature_zip_path <- file.path(K_DIR_INSEE_GEO, basename(url_insee_nomenclatures))
+
+if (!file.exists(insee_nomenclature_zip_path)) {
+	# Le fichier zip n'existe pas
 	
-	# Télécharger le fichier
-	zip_nomenclatures_insee <- a__f_downloadUrl('https://www.insee.fr/fr/statistiques/fichier/4316069/cog_ensemble_2020_csv.zip')
-
+	# Télécharger avec CURL
+	downloadedDatas <- a__f_downloadIfNeeded(
+			sourceType = K_SOURCE_TYPE_CURL, 
+			UrlOrEuroStatNameToDownload = url_insee_nomenclatures, 
+			fileRelPath = insee_nomenclature_zip_path,
+			var = downloadedDatas)
 	
-	list_fichiers <- unzip(zip_nomenclatures_insee, exdir = 'inst/extdata')
+	# Dezziper les fichiers
+	list_fichiers <- unzip(insee_nomenclature_zip_path, exdir = K_DIR_INSEE_GEO)
 
+	# Supprimer le fichier zip
+	file.remove(insee_nomenclature_zip_path)
 }
 
-if (shallDeleteVars) rm(dossier_donnees_externes)
 if (shallDeleteVars) rm(list_fichiers)
-if (shallDeleteVars) rm(url_nomenclatures)
-if (shallDeleteVars) rm(zip_nomenclatures_insee)
-if (shallDeleteVars) rm(dossier_donnees_deces)
+if (shallDeleteVars) rm(url_insee_nomenclatures)
+if (shallDeleteVars) rm(nomenclatures_insee_zip_path)
+if (shallDeleteVars) rm(K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS)
 
 
 # Lire les fichiers
 
-communes <- read_csv('inst/extdata/communes2020.csv')
+fr_insee_communes <- read_csv(file.path(K_DIR_INSEE_GEO, 'communes2020.csv'))
 
-departements <- read_csv('inst/extdata/departement2020.csv')
+fr_insee_departements <- read_csv(file.path(K_DIR_INSEE_GEO, 'departement2020.csv'))
 
-regions <- read_csv('inst/extdata/region2020.csv')
+fr_insee_regions <- read_csv(file.path(K_DIR_INSEE_GEO, 'region2020.csv'))
 
-pays <- read_csv('inst/extdata/pays2020.csv')
+fr_insee_pays <- read_csv(file.path(K_DIR_INSEE_GEO, 'pays2020.csv'))
 
 # Verifier s'il y a des doublons
 #any(duplicated(communes$com))
 
 # Préparer une base de commune sans doublon sur com (en prenant la première occurence)
 
-communes_deduplique <- communes %>%
+communes_deduplique <- fr_insee_communes %>%
 		filter(!duplicated(com))
 
 #verifier qu'il n'y a plus de doublons
-any(duplicated(communes$com[communes$typecom == 'COM']))
+any(duplicated(fr_insee_communes$com[fr_insee_communes$typecom == 'COM']))
 
-if (shallDeleteVars) rm(communes)
+if (shallDeleteVars) rm(fr_insee_communes)
 
 # 
 dbp <- db_clean %>%
@@ -241,25 +244,25 @@ dbp <- db_clean %>%
 
 		) %>%
 		left_join(
-				departements %>%
+				fr_insee_departements %>%
 						select(
 								deces_dep = dep, 
 								deces_dep_libelle = libelle
 						)
 
 		) %>%
-		left_join(regions %>%
+		left_join(fr_insee_regions %>%
 						select(deces_region = reg, deces_region_libelle = libelle)) %>%
 		left_join(
-				pays %>%
+				fr_insee_pays %>%
 						filter(actual == 1) %>%
 						select(
 								deces_code_lieu = cog, deces_pays = libcog))
 
 if (shallDeleteVars) rm(communes_deduplique)
-if (shallDeleteVars) rm(departements)
-if (shallDeleteVars) rm(regions)
-if (shallDeleteVars) rm(pays)
+if (shallDeleteVars) rm(fr_insee_departements)
+if (shallDeleteVars) rm(fr_insee_regions)
+if (shallDeleteVars) rm(fr_insee_pays)
 
 # verifier le nombre de NA
 sum(is.na(dbp$deces_code_lieu))
@@ -331,8 +334,10 @@ if (shallDeleteVars) rm(deces_dep_jour_moyenne_min_max_quartiles)
 
 # Ajouter la colonne deces_centre_reduit
 deces_dep_jour <- deces_dep_jour %>%
-		mutate(deces_centre_reduit = (nbDeces-moyenne)/max(dernier_quartile - moyenne,
-						moyenne - premier_quartile))
+		mutate(deces_centre_reduit = (nbDeces - moyenne) / max(dernier_quartile - moyenne,
+						                                       moyenne - premier_quartile))
+
+# Ajouter le nom des départements
 
 # Lire le fichier des departements-regions
 nom_departement <- read.csv("data/csv/departements-region.csv", sep=",", header = TRUE, encoding="UTF-8")
@@ -554,7 +559,7 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 
 ################################################################################
 #
-# Deces par jour et par age depuis 2018 des 40-59 ans
+# Deces Quotidiens et par age depuis 2018 des 40-59 ans
 #
 ################################################################################
 												   
