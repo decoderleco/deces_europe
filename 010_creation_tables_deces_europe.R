@@ -1419,20 +1419,20 @@ a__original_owid_covid_data <- a__f_downloadIfNeeded(
 		repertoire = file.path(K_DIR_EXT_DATA_WORLD,"owid/"),
 		var = a__original_owid_covid_data) 
 
-owid_covid_data <- a__original_owid_covid_data
+b__owid_covid_data <- a__original_owid_covid_data
 
-owid_covid_data <- owid_covid_data %>%
-		mutate(date=as.Date(date))
+b__owid_covid_data <- b__owid_covid_data %>%
+		mutate(date = as.Date(date))
 
 # Ajouter colonne time de la forme 2020W09
-owid_covid_data <- owid_covid_data %>%
+b__owid_covid_data <- b__owid_covid_data %>%
 		mutate(time = paste0(isoyear(date),
 						"W",
 						as.integer(isoweek(date)/10),
 						isoweek(date) - as.integer(isoweek(date)/10)*10))
 
 # Remplacer les na par 0
-owid_covid_data <- owid_covid_data %>%
+b__owid_covid_data <- b__owid_covid_data %>%
 		mutate(new_vaccinations = if_else(is.na(new_vaccinations),
 						0,
 						new_vaccinations)) %>%
@@ -1447,8 +1447,8 @@ owid_covid_data <- owid_covid_data %>%
 						new_vaccinations_smoothed_per_million))
 
 # Synthetiser par pays (uniquement Europe + Arménie et Georgie), code pays, n° semaine
-owid_covid_Europe_week <- owid_covid_data %>%
-		filter(continent=="Europe"|iso_code=="ARM"|iso_code == "GEO") %>%
+owid_covid_Europe_week <- b__owid_covid_data %>%
+		filter(continent == "Europe" | iso_code == "ARM" | iso_code == "GEO") %>%
 		group_by(location,
 				iso_code,
 				time) %>%
@@ -1456,8 +1456,6 @@ owid_covid_Europe_week <- owid_covid_data %>%
 				new_deaths = sum(new_deaths),
 				new_vaccinations = sum(new_vaccinations),
 				new_vaccinations_smoothed_per_million = sum(new_vaccinations_smoothed_per_million))
-
-if (shallDeleteVars) rm(owid_covid_data)
 
 # Ajouter une colonne geo avec les 2 premières lettre de l'iso_code des pays, sauf pour quelques uns
 owid_covid_Europe_week <- owid_covid_Europe_week %>%
@@ -1477,7 +1475,7 @@ owid_covid_Europe_week <- owid_covid_Europe_week %>%
 						iso_code == "FRO"~"FO",
 						TRUE~substr(iso_code, 1, 2)))
 
-# Ajouter les colonnes avec les numeros de semaine
+# Ajouter les colonnes avec les numeros de semaine depuis 2013
 owid_covid_Europe_week <- owid_covid_Europe_week %>%
 		left_join(numSemainesDepuis2013Complet)
 
