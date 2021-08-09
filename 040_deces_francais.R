@@ -582,6 +582,9 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 						(substring(deces_date_complete,1,4) == "2020" |
 							substring(deces_date_complete,1,4) == "2021")) 
 
+# Graphe de chaque tranche d'âge
+
+
 # Lister les tranches d'age disponibles
 tranchesAge <- deces_par_jour_tranchedage %>%
 		ungroup %>%
@@ -600,6 +603,51 @@ for (trancheAge in tranchesAge$tranche_age) {
 			deces_par_jour_a_tracer, 
 			trancheAge)
 }
+
+# Graphe de la vue d'ensemble des tranches d'âge
+print(ggplot(data = deces_par_jour_tranchedage,
+						mapping = aes(x = deces_date_complete,
+								color = confinement)) +
+				
+				#scale_colour_brewer(palette = "Set1") +
+				scale_colour_manual(values = c("red", "black"))+
+				
+				scale_linetype_manual(values=c("dotted", "solid")) +
+				
+				scale_size_manual(values=c(0.1, 1.5)) +
+				
+				geom_line(mapping = aes(y = nbDeces),
+						linetype = "dotted") + 
+				
+#				geom_line(mapping = aes(y = moyenne_mobile),
+#						linetype = "solid",
+#						size = 1) + 
+				
+				geom_line(mapping = aes(y = moyenne),
+						linetype = "solid") + 
+				
+#				geom_line(mapping = aes(y = binf),
+#						linetype = "solid") + 
+#				
+#				geom_line(mapping = aes(y = bsup),
+#						linetype = "solid") + 
+				
+				facet_wrap(~tranche_age) +
+				
+				theme(legend.position = "top")+
+				
+				ggtitle("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens) par Tranche d'age") +
+				xlab("date de décès") + 
+				ylab("nombre de décès quotidiens")
+)
+
+#Nom du fichier png à générer
+repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quotidiens/Tranche_age"))
+pngFileRelPath <- paste0(repertoire, "/Deces_quotidiens_par_tranche_age.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+
 
 if (shallDeleteVars) rm(db_clean)
 

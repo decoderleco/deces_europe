@@ -40,7 +40,11 @@ K_DIR_EXT_DATA_FR_GOUV <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, 'gouv'
 K_DIR_EXT_DATA_USA <- a__f_createDir(file.path(K_DIR_EXT_DATA_WORLD, 'usa'))
 
 
-K_DIR_GEN_IMG_WORLD <- a__f_createDir("gen/images/world")
+K_DIR_GEN_IMG <- a__f_createDir("gen/images")
+K_DIR_GEN_IMG_WORLD <- a__f_createDir(file.path(K_DIR_GEN_IMG, 'world'))
+K_DIR_GEN_IMG_EUROPE <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'eu'))
+K_DIR_GEN_IMG_FRANCE <- a__f_createDir(file.path(K_DIR_GEN_IMG, 'fr'))
+K_DIR_GEN_IMG_FR_GOUV <- a__f_createDir(file.path(K_DIR_GEN_IMG_FRANCE, 'gouv'))
 K_DIR_GEN_IMG_USA <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'usa'))
 K_DIR_GEN_IMG_OWID <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'owid'))
 
@@ -462,8 +466,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	
 	nomVar <- tranche_age
 	
-	repertoire <- paste0("gen/images/fr/gouv/Registre/Deces_Quotidiens/Tranche_age")
-	a__f_createDir(repertoire)
+	repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quotidiens/Tranche_age"))
 	
 	#Nom du fichier png à générer
 	pngFileRelPath <- paste0(repertoire, "/Deces_quotidiens_tranche_age_", nomVar, ".png")
@@ -501,6 +504,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 					
 					geom_line(mapping = aes(y = nbDeces),
 							linetype = "dotted") + 
+					geom_point(mapping = aes(y = nbDeces)) + 
 					
 					geom_line(mapping = aes(y = moyenne_mobile),
 							linetype = "solid",
@@ -516,9 +520,9 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 					geom_line(mapping = aes(y = bsup),
 							linetype = "solid") + 
 					
-					facet_wrap(~tranche_age) +
+					#facet_wrap(~tranche_age) +
 					
-					#theme(legend.position = "top")+
+					theme(legend.position = "top")+
 					
 					ggtitle("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens) par Tranche d'age") +
 					xlab("date de décès") + 
