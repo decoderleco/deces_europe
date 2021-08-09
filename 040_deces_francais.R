@@ -320,9 +320,9 @@ deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
 				maximum = max(nbDeces),
 				moyenne = mean(nbDeces),
 				premier_quartile = quantile(nbDeces,
-						probs=0.25),
+						probs = 0.25),
 				dernier_quartile = quantile(nbDeces,
-						probs=(0.75)))
+						probs = 0.75))
 
 # Ajouter la moyenne, le nb min/max et les quartiles des décès par département et trier par département
 deces_dep_jour <- deces_dep_jour %>%
@@ -439,34 +439,38 @@ if (shallDeleteVars) rm(deces_dep_jour)
 
 ################################################################################
 #
-# Deces par jour et par age depuis 2018
+# Deces Quotidiens depuis 2018 par age
 #
 ################################################################################
 
-# On va construire une table des deces par jour et age, avec au fur et à mesure des colonnes complémentaires
-deces_par_jour_age <- db_clean %>% 
-		group_by(deces_date_complete,
-				age_deces_millesime) %>% 
-		# Compter le nombre de décès pour chaque jour et chaque age
-		summarise(nbDeces = n()) %>% 
-		filter(deces_date_complete >= "2018-01-01")
+# On va construire une table des deces quotidiens par tranche d'age, 
+# avec au fur et à mesure des colonnes complémentaires
 
-# Pour chaque age de deces, 
+deces_par_jour_age <- db_clean %>% 
+		# Depuis 2018
+		filter(deces_date_complete >= "2018-01-01") %>%
+		# Grouper
+		group_by(age_deces_millesime,
+				deces_date_complete) %>% 
+		# Compter le nombre de décès pour chaque jour et chaque age
+		summarise(nbDeces = n())
+
+# Pour chaque age de deces, calculer les min, max, moyenne...
 nbDeces_moyen_par_age <- deces_par_jour_age %>% 
 		group_by(age_deces_millesime) %>% 
 		summarise(minimum = min(nbDeces),
 				maximum = max(nbDeces),
 				moyenne = mean(nbDeces),
 				premier_quartile = quantile(nbDeces,
-						probs=0.25),
+						probs = 0.25),
 				dernier_quartile = quantile(nbDeces,
-						probs=(0.75)))
+						probs = 0.75))
 
 # Ajouter les colonnes min, max, moyenne... de nombre de décès pour chaque age
 deces_par_jour_age <- deces_par_jour_age %>% 
 		left_join(nbDeces_moyen_par_age)
 
-# Ajouter la colonne avec le calcul du deces_centre_reduit (centrés et réduits au quartile)
+# Ajouter la colonne avec le calcul du nombre de deces_centre_reduit (centrés et réduits au quartile)
 deces_par_jour_age <- deces_par_jour_age %>% 
 		mutate(deces_centre_reduit = (nbDeces - moyenne) / max(dernier_quartile - moyenne,
 				                                               moyenne - premier_quartile))
@@ -477,35 +481,17 @@ deces_par_jour_age <- deces_par_jour_age %>%
 						             "confinement",
 						             "pas de confinement"))
 
-################################################################################
-#
-# Deces par jour et par age depuis 2018 des 0 ans
-#
-################################################################################
 
-# Deces des 0 an
-deces_par_jour_age_des_0an <- deces_par_jour_age %>% 
-		filter(age_deces_millesime == 0)
+# Recopier l'age de décès dans une colonne age en prévision de l'appel à la méthode d'ajout de tranche d'age
+deces_par_jour_age <- deces_par_jour_age %>%
+		mutate(age = age_deces_millesime)
 
-print(ggplot(data = deces_par_jour_age_des_0an,
-				mapping = aes(x = deces_date_complete,
-						colour = confinement)) +
-				
-		geom_line(aes(y = nbDeces)) +
-		
-		scale_colour_manual(values=c("red","black"))+
-		
-		facet_wrap(~paste(age_deces_millesime, "ans"))+
-		
-		ggtitle("Décès quotidiens par age") +
-		
-		xlab("date de décès") + 
-		# TODO M 2021_07_18 : Ce n'est pas le nombre de décès centrés réduits, mais le nbDeces
-		ylab("nombre de décès (centrés et réduits au quartile)")
-)
+# Ajouter la colonne tranche d'age de 10 ans
+deces_par_jour_age <- a__f_add_tranche_age_de_10_ans(deces_par_jour_age)
 
-if (shallDeleteVars) rm(nbDeces_moyen_par_age)
-if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
+# Réorganiser les colonnes
+deces_par_jour_age <- deces_par_jour_age %>%
+		select(age_deces_millesime, tranche_age, deces_date_complete, confinement, everything())
 
 
 ################################################################################
@@ -514,20 +500,11 @@ if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
 #
 ################################################################################
 
-# Ajouter la colonne tranche d'age
-deces_par_jour_age <- deces_par_jour_age %>% 
-		mutate(tranche_d_age = case_when(age_deces_millesime < 20 ~ "0-19 ans",
-						age_deces_millesime > 19 & age_deces_millesime < 40 ~"20-39 ans",
-						age_deces_millesime > 39 & age_deces_millesime < 60 ~"40-59 ans",
-						age_deces_millesime > 59 & age_deces_millesime < 80 ~"60-79 ans",
-						age_deces_millesime > 79  ~"plus de 89 ans"))
-
 # Synthetiser par jour et tranche d'age
 deces_par_jour_tranchedage <- deces_par_jour_age %>% 
-		group_by(deces_date_complete,
-				tranche_d_age) %>% 
-		summarise(nbDeces=sum(nbDeces))
-
+		group_by(tranche_age,
+				deces_date_complete) %>% 
+		summarise(nbDeces = sum(nbDeces))
 
 # Ajouter la colonne confinement
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
@@ -539,14 +516,19 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 
 #ajout centre 
 nbDeces_moyen_par_tranchedAge <- deces_par_jour_tranchedage %>% 
-		group_by(tranche_d_age) %>% 
+		group_by(tranche_age) %>% 
 		summarise(minimum = min(nbDeces),
 				maximum = max(nbDeces),
 				moyenne = mean(nbDeces),
+				variance = sd(nbDeces),
 				premier_quartile = quantile(nbDeces,
-						probs=0.25),
+						probs = 0.25),
 				dernier_quartile = quantile(nbDeces,
-						probs=(0.75)))
+						probs = 0.75),
+				bsup = moyenne + 2 * variance,
+				binf = moyenne - 2 * variance
+)
+
 
 # Ajouter la moyenne, min, max
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
@@ -559,41 +541,65 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 
 ################################################################################
 #
+# Deces par jour et par age depuis 2018 des 0 ans
+#
+################################################################################
+   
+# Deces des 0 an
+   deces_par_jour_age_des_0an <- deces_par_jour_age %>% 
+		   filter(age_deces_millesime == 0)
+   
+   print(ggplot(data = deces_par_jour_age_des_0an,
+						   mapping = aes(x = deces_date_complete,
+								   colour = confinement)) +
+				   
+				   geom_line(aes(y = nbDeces)) +
+				   
+				   scale_colour_manual(values=c("red","black"))+
+				   
+				   facet_wrap(~paste(age_deces_millesime, "ans"))+
+				   
+				   ggtitle("Décès quotidiens par age") +
+				   
+				   xlab("date de décès") + 
+				   # TODO M 2021_07_18 : Ce n'est pas le nombre de décès centrés réduits, mais le nbDeces
+				   ylab("nombre de décès (centrés et réduits au quartile)")
+   )
+   
+   if (shallDeleteVars) rm(nbDeces_moyen_par_age)
+   if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
+											   
+												   
+################################################################################
+#
 # Graphique des Deces Quotidiens depuis 2018 par Tranche d'age
 #
 ################################################################################
 												   
-deces_par_jour_a_tracer <- deces_par_jour_tranchedage %>%
+deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 		# Remplacer TRUE par FALSE pour filtrer
 		filter(TRUE | 
 						(substring(deces_date_complete,1,4) == "2020" |
 							substring(deces_date_complete,1,4) == "2021")) 
 
-deces_par_jour_0_19 <- deces_par_jour_a_tracer %>% 
-		filter(tranche_d_age == "0-19 ans") 
-a__f_plot_fr_deces_quotidiens_par_tranche_age(deces_par_jour_0_19)
-if (shallDeleteVars) rm(deces_par_jour_0_19)
+# Lister les tranches d'age disponibles
+tranchesAge <- deces_par_jour_tranchedage %>%
+		ungroup %>%
+		select(tranche_age) %>%
+		distinct()
 
-deces_par_jour_20_39 <- deces_par_jour_a_tracer %>% 
-		filter(tranche_d_age == "20-39 ans") 
-a__f_plot_fr_deces_quotidiens_par_tranche_age(deces_par_jour_20_39)
-if (shallDeleteVars) rm(deces_par_jour_20_39)
-
-deces_par_jour_40_59 <- deces_par_jour_a_tracer %>% 
-		filter(tranche_d_age == "40-59 ans") 
-a__f_plot_fr_deces_quotidiens_par_tranche_age(deces_par_jour_40_59)
-if (shallDeleteVars) rm(deces_par_jour_40_59)
-
-deces_par_jour_60_79 <- deces_par_jour_a_tracer %>% 
-		filter(tranche_d_age == "60-79 ans") 
-a__f_plot_fr_deces_quotidiens_par_tranche_age(deces_par_jour_60_79)
-if (shallDeleteVars) rm(deces_par_jour_60_79)
-
-deces_par_jour_ge80 <- deces_par_jour_a_tracer %>% 
-		filter(tranche_d_age == "plus de 89 ans") 
-a__f_plot_fr_deces_quotidiens_par_tranche_age(deces_par_jour_ge80)
-if (shallDeleteVars) rm(deces_par_jour_ge80)
-
+# Tracer les graphiques pour chaque tranche d'age
+for (trancheAge in tranchesAge$tranche_age) {
+	
+	message(paste0("trancheAge = ", trancheAge ))
+	
+	deces_par_jour_a_tracer <- deces_par_jour_tranchedage %>% 
+			filter(tranche_age == trancheAge) 
+	
+	a__f_plot_fr_deces_quotidiens_par_tranche_age(
+			deces_par_jour_a_tracer, 
+			trancheAge)
+}
 
 if (shallDeleteVars) rm(db_clean)
 
