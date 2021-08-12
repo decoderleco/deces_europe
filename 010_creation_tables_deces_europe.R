@@ -1419,20 +1419,20 @@ a__original_owid_covid_data <- a__f_downloadIfNeeded(
 		repertoire = file.path(K_DIR_EXT_DATA_WORLD,"owid/"),
 		var = a__original_owid_covid_data) 
 
-owid_covid_data <- a__original_owid_covid_data
+b__owid_covid_data <- a__original_owid_covid_data
 
-owid_covid_data <- owid_covid_data %>%
-		mutate(date=as.Date(date))
+b__owid_covid_data <- b__owid_covid_data %>%
+		mutate(date = as.Date(date))
 
 # Ajouter colonne time de la forme 2020W09
-owid_covid_data <- owid_covid_data %>%
+b__owid_covid_data <- b__owid_covid_data %>%
 		mutate(time = paste0(isoyear(date),
 						"W",
 						as.integer(isoweek(date)/10),
 						isoweek(date) - as.integer(isoweek(date)/10)*10))
 
 # Remplacer les na par 0
-owid_covid_data <- owid_covid_data %>%
+b__owid_covid_data <- b__owid_covid_data %>%
 		mutate(new_vaccinations = if_else(is.na(new_vaccinations),
 						0,
 						new_vaccinations)) %>%
@@ -1447,8 +1447,8 @@ owid_covid_data <- owid_covid_data %>%
 						new_vaccinations_smoothed_per_million))
 
 # Synthetiser par pays (uniquement Europe + Arménie et Georgie), code pays, n° semaine
-owid_covid_Europe_week <- owid_covid_data %>%
-		filter(continent=="Europe"|iso_code=="ARM"|iso_code == "GEO") %>%
+owid_covid_Europe_week <- b__owid_covid_data %>%
+		filter(continent == "Europe" | iso_code == "ARM" | iso_code == "GEO") %>%
 		group_by(location,
 				iso_code,
 				time) %>%
@@ -1456,8 +1456,6 @@ owid_covid_Europe_week <- owid_covid_data %>%
 				new_deaths = sum(new_deaths),
 				new_vaccinations = sum(new_vaccinations),
 				new_vaccinations_smoothed_per_million = sum(new_vaccinations_smoothed_per_million))
-
-if (shallDeleteVars) rm(owid_covid_data)
 
 # Ajouter une colonne geo avec les 2 premières lettre de l'iso_code des pays, sauf pour quelques uns
 owid_covid_Europe_week <- owid_covid_Europe_week %>%
@@ -1477,7 +1475,7 @@ owid_covid_Europe_week <- owid_covid_Europe_week %>%
 						iso_code == "FRO"~"FO",
 						TRUE~substr(iso_code, 1, 2)))
 
-# Ajouter les colonnes avec les numeros de semaine
+# Ajouter les colonnes avec les numeros de semaine depuis 2013
 owid_covid_Europe_week <- owid_covid_Europe_week %>%
 		left_join(numSemainesDepuis2013Complet)
 
@@ -1498,7 +1496,7 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(b__es_de
 if (shallDeleteVars) rm(owid_covid_Europe_geo_week)
 
 #-----------------------------------------------#
-#### ajout du nom des pays et zone est-ouest ####
+#### Ajout du nom des pays et zone est-ouest ####
 #-----------------------------------------------#
 
 # Extraire les ID et noms des pays
@@ -1530,16 +1528,7 @@ pays_geo_nom_zone <- pays_geo_nom_zone %>%
 						geo == "SK"~ "Est",
 						TRUE~ "Ouest", ))
 
-#Ajouter les colonnes avec les id, nom et zone des pays
-b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(b__es_deces_week_standardises_si_pop_2020_owid_vaccination,
-		pays_geo_nom_zone)
-
-# Réordonner les colonnes
-b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		select(geo | location | zone | time | numSemaineDepuis2013 | everything())
-
-
-#Ajouter les colonnes avec les id, nom et zone des pays
+# Ajouter les colonnes avec les id, nom et zone des pays
 b__es_deces_et_pop_par_annee <- left_join(b__es_deces_et_pop_par_annee,
 		pays_geo_nom_zone)
 
@@ -1555,6 +1544,101 @@ b__es_deces_et_pop_par_annee_agequinq <- left_join(b__es_deces_et_pop_par_annee_
 # Reorganiser les colonnes
 b__es_deces_et_pop_par_annee_agequinq <- b__es_deces_et_pop_par_annee_agequinq %>%
 		select(geo | location:zone | sex:time | population | pop2020 | pop_france2020 | deces | deces2020 | deces_theo_si_pop_2020 | surmortalite2020 | everything() )
+
+
+#Ajouter les colonnes avec les id, nom et zone des pays
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(b__es_deces_week_standardises_si_pop_2020_owid_vaccination,
+		pays_geo_nom_zone)
+
+# Réordonner les colonnes
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+		select(geo | location | zone | time | numSemaineDepuis2013 | everything())
+
+#-----------------------------------------------------------#
+#### complement de donnees pour etude de la surmortalite ####
+#-----------------------------------------------------------#
+
+# Ajout colonne deces_hors_covid
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+		mutate(deces_hors_covid = deces_tot - new_deaths)
+
+# Ajout colonne part_deces_covid
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+		mutate(part_deces_covid = new_deaths / deces_tot)
+
+# Calcul des colonnes moyenne, variance, bsup, binf
+IC_deces <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+		group_by(geo) %>% 
+		summarise(
+				moyenne = mean(deces_standardises_si_pop_2020), 
+				variance = sd(deces_standardises_si_pop_2020)) %>%
+		mutate(
+				bsup = moyenne + 2 * variance,
+				binf = moyenne - 2 * variance )
+
+# Ajout des colonnes moyenne, variance, bsup, binf
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(
+		b__es_deces_week_standardises_si_pop_2020_owid_vaccination, 
+		IC_deces)
+
+rm(IC_deces)
+
+# Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+		mutate(surmortalite = case_when(
+						deces_standardises_si_pop_2020 <= binf ~ "sous-mortalite",
+						deces_standardises_si_pop_2020 >= bsup ~ "surmortalite",
+						TRUE ~ "mortalite normale"))
+
+# Valeurs de Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+		mutate(valeur_surmortalite = case_when(
+						surmortalite == "sous-mortalite" ~ deces_standardises_si_pop_2020 - binf,
+						surmortalite == "surmortalite" ~ deces_standardises_si_pop_2020 - bsup,
+						TRUE ~ 0)) %>%
+		mutate(part_surmortalite = valeur_surmortalite / deces_standardises_si_pop_2020 * 100) %>%
+		mutate(ecart_moyenne = (deces_standardises_si_pop_2020 - moyenne) / moyenne * 100)
+
+
+# Créer un tableau avec les colonnes "_prec" qui correspondront après le left-join aux valeurs de la semaine précédente
+# grâce au décalage de 1 semaine
+
+valeurs_de_la_semaine_precedente <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+		mutate (numSemaineDepuis2013 = numSemaineDepuis2013 + 1, 
+				deces_standard_tot_prec = deces_standardises_si_pop_2020, 
+				new_deaths_prec= new_deaths,
+				deces_tot_prec = deces_tot,
+				new_cases_prec = new_cases,
+				new_vaccinations_prec = new_vaccinations,
+				Response_measure_prec = Response_measure,
+				#21
+				surmortalite_prec = surmortalite) %>%
+		select(geo, 
+				numSemaineDepuis2013, 
+				deces_standard_tot_prec, 
+				new_deaths_prec, 
+				deces_tot_prec, 
+				new_cases_prec, 
+				new_vaccinations_prec, 
+				Response_measure_prec, 
+				surmortalite_prec)
+
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(
+		b__es_deces_week_standardises_si_pop_2020_owid_vaccination , 
+		valeurs_de_la_semaine_precedente)
+
+rm(valeurs_de_la_semaine_precedente)
+
+# Ajouter les colonnes de variation des données entre la semaine précédente et la semaine courante
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+		mutate(
+				deces_tot_var = deces_tot - deces_tot_prec,
+				deces_standard_tot_var = deces_standardises_si_pop_2020 - deces_standard_tot_prec,
+				new_deaths_var = new_deaths - new_deaths_prec,
+				new_cases_var = new_cases - new_cases_prec,
+				new_vaccinations_var = new_vaccinations - new_vaccinations_prec)
+
+
 
 
 
