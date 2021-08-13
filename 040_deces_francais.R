@@ -65,149 +65,6 @@ a__f_nettoyer_partie_date <- function(
 K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS <- a__f_createDir(file.path(K_DIR_EXT_DATA_FR_GOUV, 'deces'))
 
 
-#
-# Telechargement des donnees
-#
-
-# Import des données de décès
-# 'https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/'
-
-# Liste des URLs des fichiers de patients décédés
-
-urls_listes_deces <- c(
-  '2021m07'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210811-104512/deces-2021-m07.txt',
-  '2021t2' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210709-174839/deces-2021-t2.txt',
-  '2021t1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210409-131502/deces-2021-t1.txt',
-  '2020'   = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
-  '2019'   = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20200113-173945/deces-2019.txt',
-  '2018'   = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191205-191652/deces-2018.txt'
-)
-
-
-chemins_fichiers_deces <- lapply(urls_listes_deces, a__f_downloadFileUrlAndGetFilePath)
-
-if (shallDeleteVars) rm(urls_listes_deces)
-
-
-################################################################################
-#
-# Importer les fichiers de décès qui ont une structure définie par des champs de largeurs fixe
-#
-################################################################################
-
-# Largeur des champs dans le fichier
-fields_widths <- c(
-		nom = 80,
-		sexe = 1,
-		naissance_date = 8,
-		naissance_code_lieu = 5,
-		naissance_commune = 30,
-		naissance_pays = 30,
-		deces_date = 8,
-		deces_code_lieu = 5,
-		deces_numero_acte = 9
-)
-
-dbs_raw_deces <- lapply(chemins_fichiers_deces, 
-		read_fwf,
-		# Calculer les positions de coupure des champs à partir de la largeur de chaque champ
-		col_positions = fwf_widths(fields_widths, 
-				                   col_names = names(fields_widths)),
-		col_types = cols(.default = col_character()))
-
-if (shallDeleteVars) rm(chemins_fichiers_deces)
-if (shallDeleteVars) rm(fields_widths)
-
-# Table des deces
-db <- bind_rows(dbs_raw_deces) %>%
-		unique()
-
-if (shallDeleteVars) rm(dbs_raw_deces)
-
-
-# Deces nettoyes
-db_clean <- db %>%
-		mutate(
-				naissance_annee = a__f_nettoyer_partie_date(naissance_date, 1, 4),
-				# si absent, prendre l'age moyen
-				naissance_annee_complete = a__f_complete_manquant(naissance_annee), 
-				
-				naissance_mois = a__f_nettoyer_partie_date(naissance_date, 5, 6),
-				naissance_mois_complete = a__f_complete_manquant(naissance_mois), 
-				
-				naissance_jour = a__f_nettoyer_partie_date(naissance_date, 7, 8),
-				naissance_jour_complete = a__f_complete_manquant(naissance_jour), 
-				
-				naissance_date_brute = naissance_date,
-				naissance_date = as.Date(naissance_date, '%Y%m%d'),
-				naissance_date_complete = as.Date(paste0(naissance_annee_complete, '-', naissance_mois_complete, '-', naissance_jour_complete)),
-				
-				deces_annee = a__f_nettoyer_partie_date(deces_date, 1, 4),
-				
-				# si absent, prendre l'age moyen
-				deces_annee_complete = a__f_complete_manquant(deces_annee), 
-				
-				deces_mois = a__f_nettoyer_partie_date(deces_date, 5, 6),
-				deces_mois_complete = a__f_complete_manquant(deces_mois), 
-				
-				deces_jour = a__f_nettoyer_partie_date(deces_date, 7, 8),
-				deces_jour_complete = a__f_complete_manquant(deces_jour), 
-				
-				deces_date = as.Date(deces_date, '%Y%m%d'),
-				deces_date_complete = as.Date(paste0(deces_annee_complete, '-', deces_mois_complete, '-', deces_jour_complete))
-
-		) 
-
-if (shallDeleteVars) rm(db)
-
-# Afficher quelques verifications sur la base nettoyees
-sum(is.na(db_clean$naissance_annee))
-
-sum(is.na(db_clean$naissance_mois))
-
-sum(is.na(db_clean$naissance_jour))
-
-any(is.na(db_clean$naissance_date_complete))
-
-any(is.na(db_clean$deces_date_complete))
-
-
-
-################################################################################
-#
-# Identifier le département FR en fonction du code lieu
-#
-################################################################################
-
-K_DIR_INSEE_GEO <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, "insee/geo"))
-
-# URL du zip à télécharger
-url_insee_nomenclatures <- 'https://www.insee.fr/fr/statistiques/fichier/4316069/cog_ensemble_2020_csv.zip'
-
-# Path du zip téléchargé
-insee_nomenclature_zip_path <- file.path(K_DIR_INSEE_GEO, basename(url_insee_nomenclatures))
-
-# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
-# qui a étépassé dans le parametre region
-varName <- deparse(substitute(b__fr_gouv_deces_quotidiens))
-
-
-if (exists(varName)) {
-	# La variable existe déjà
-	
-	message(paste0("(", varName, ") existe déjà. On ne la reconstruit pas. Supprimez-là et relancer si vous voulez la re-construire"))
-	
-	# Dezziper les fichiers
-	list_fichiers <- unzip(insee_nomenclature_zip_path, exdir = K_DIR_INSEE_GEO)
-
-	# Supprimer le fichier zip
-	file.remove(insee_nomenclature_zip_path)
-	
-	if (shallDeleteVars) rm(downloadedDatas)
-	
-} else {
-	# La variable n'existe pas déjà
-	
 	#
 	# Telechargement des donnees des décès quotidiens depuis 2018
 	#
@@ -218,6 +75,7 @@ if (exists(varName)) {
 	# Liste des URLs des fichiers de patients décédés
 	
 	urls_listes_deces <- c(
+	  '2021m07'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210811-104512/deces-2021-m07.txt',
 	  '2021t2'='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210709-174839/deces-2021-t2.txt',
 	  '2021t1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210409-131502/deces-2021-t1.txt',
 	  '2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
@@ -454,7 +312,6 @@ if (exists(varName)) {
 			arrange(deces_date_complete)
 			
 	#saveRDS(db_clean, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
-}
 
 
 ################################################################################
