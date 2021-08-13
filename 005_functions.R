@@ -440,7 +440,9 @@ a__f_plot_fr_deces_quotidiens_par_region <- function(region) {
 					# Faire un graphique par département, répartis sur 3 colonnes
 					facet_wrap(~dep_name) +
 					
-					ggtitle("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens) par département") +
+					theme(legend.position = "top") +
+					
+					ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(region$deces_date_complete) ,") par département")) +
 					
 					xlab("date de décès") + 
 					ylab("nombre de décès (centrés et réduits au quartile)"))
@@ -524,7 +526,8 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 					
 					theme(legend.position = "top")+
 					
-					ggtitle("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens) par Tranche d'age") +
+					ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(deces_par_jour$deces_date_complete) ,") par Tranche d'age")) +
+					
 					xlab("date de décès") + 
 					ylab("nombre de décès quotidiens")
 	)
