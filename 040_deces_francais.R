@@ -64,256 +64,269 @@ a__f_nettoyer_partie_date <- function(
 
 K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS <- a__f_createDir(file.path(K_DIR_EXT_DATA_FR_GOUV, 'deces'))
 
-#
-# Telechargement des donnees des décès quotidiens depuis 2018
-#
+# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+# qui a étépassé dans le parametre region
+varName <- deparse(substitute(b__fr_gouv_deces_quotidiens))
 
-# Import des données de décès
-# 'https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/'
-
-# Liste des URLs des fichiers de patients décédés
-
-urls_listes_deces <- c(
-  '2021m07'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210811-104512/deces-2021-m07.txt',
-  '2021t2' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210709-174839/deces-2021-t2.txt',
-  '2021t1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210409-131502/deces-2021-t1.txt',
-  '2020'   = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
-  '2019'   = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20200113-173945/deces-2019.txt',
-  '2018'   = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191205-191652/deces-2018.txt'
-)
-
-
-chemins_fichiers_deces <- lapply(urls_listes_deces, a__f_downloadFileUrlAndGetFilePath)
-
-if (shallDeleteVars) rm(urls_listes_deces)
-
-
-################################################################################
-#
-# Importer les fichiers de décès qui ont une structure définie par des champs de largeurs fixe
-#
-################################################################################
-
-# Largeur des champs dans le fichier
-fields_widths <- c(					# Colonne :
-		nom = 80,					# 80
-		sexe = 1,					# 81
-		naissance_date = 8,			# 89
-		naissance_code_lieu = 5,	# 94
-		naissance_commune = 30,		# 124
-		naissance_pays = 30,		# 154
-		deces_date = 8,				# 162
-		deces_code_lieu = 5,		# 167
-		deces_numero_acte = 9		# 176
-)
-
-# Lire tous les fichiers (*.txt) des décès quotidiens et construire une liste avec un df par fichier lu
-dbs_raw_deces <- lapply(chemins_fichiers_deces, 
-		read_fwf,
-		# Calculer les positions de coupure des champs à partir de la largeur de chaque champ
-		col_positions = fwf_widths(fields_widths, 
-				                   col_names = names(fields_widths)),
-		col_types = cols(.default = col_character()))
-
-if (shallDeleteVars) rm(chemins_fichiers_deces)
-if (shallDeleteVars) rm(fields_widths)
-
-# Créer la Table des deces en agrégeant les lignes de chaque fichier et en excluant les doublons
-# et en triant sur la date de décès pour que ce soit plus facile à lire
-a__original_fr_gouv_deces_quotidiens <- bind_rows(dbs_raw_deces) %>%
-		unique() %>%
-		arrange(deces_date)
-
-if (shallDeleteVars) rm(dbs_raw_deces)
-
-# Deces nettoyes
-b__fr_gouv_deces_quotidiens <- a__original_fr_gouv_deces_quotidiens %>%
-		mutate(
-				naissance_annee = a__f_nettoyer_partie_date(naissance_date, 1, 4),
-				# si absent, prendre l'age moyen
-				naissance_annee_complete = a__f_complete_manquant(naissance_annee), 
-				
-				naissance_mois = a__f_nettoyer_partie_date(naissance_date, 5, 6),
-				naissance_mois_complete = a__f_complete_manquant(naissance_mois), 
-				
-				naissance_jour = a__f_nettoyer_partie_date(naissance_date, 7, 8),
-				naissance_jour_complete = a__f_complete_manquant(naissance_jour), 
-				
-				naissance_date_brute = naissance_date,
-				naissance_date = as.Date(naissance_date, '%Y%m%d'),
-				naissance_date_complete = as.Date(paste0(naissance_annee_complete, '-', naissance_mois_complete, '-', naissance_jour_complete)),
-				
-				deces_annee = a__f_nettoyer_partie_date(deces_date, 1, 4),
-				
-				# si absent, prendre l'age moyen
-				deces_annee_complete = a__f_complete_manquant(deces_annee), 
-				
-				deces_mois = a__f_nettoyer_partie_date(deces_date, 5, 6),
-				deces_mois_complete = a__f_complete_manquant(deces_mois), 
-				
-				deces_jour = a__f_nettoyer_partie_date(deces_date, 7, 8),
-				deces_jour_complete = a__f_complete_manquant(deces_jour), 
-				
-				deces_date = as.Date(deces_date, '%Y%m%d'),
-				deces_date_complete = as.Date(paste0(deces_annee_complete, '-', deces_mois_complete, '-', deces_jour_complete))
-
-		) 
-
-# Afficher quelques verifications sur la base nettoyees
-sum(is.na(b__fr_gouv_deces_quotidiens$naissance_annee))
-
-sum(is.na(b__fr_gouv_deces_quotidiens$naissance_mois))
-
-sum(is.na(b__fr_gouv_deces_quotidiens$naissance_jour))
-
-any(is.na(b__fr_gouv_deces_quotidiens$naissance_date_complete))
-
-any(is.na(b__fr_gouv_deces_quotidiens$deces_date_complete))
-
-# Afficher le nombre de date de décès antérieures à 2018 (ce qui devrait en principe être 0
-# puisque l'on n'utilise que les fichiers depuis 2018. Mais il y a des erreurs de saisie
-# dans certains fichiers du gouvermnement (en particulier le deces-2021-t2.txt)
-nbErreurSaisie <- b__fr_gouv_deces_quotidiens %>%
-		filter(deces_date_complete < "2018-01-01") %>%
-		summarize(nb = n())
-message(paste0("Nombre de dates de décès antérieures à 2018 dans les fichiers depuis 2018 (erreurs de saisie ou enregistrement de régularisation ?) : ", nbErreurSaisie))
-
-if (shallDeleteVars) rm(nbErreurSaisie)
-
-################################################################################
-#
-# Identifier le département FR en fonction du code lieu
-#
-################################################################################
-
-K_DIR_INSEE_GEO <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, "insee/geo"))
-
-# URL du zip à télécharger
-url_insee_nomenclatures <- 'https://www.insee.fr/fr/statistiques/fichier/4316069/cog_ensemble_2020_csv.zip'
-
-# Path du zip téléchargé
-insee_nomenclature_zip_path <- file.path(K_DIR_INSEE_GEO, basename(url_insee_nomenclatures))
-
-if (!file.exists(insee_nomenclature_zip_path)) {
-	# Le fichier zip n'existe pas
+if (exists(varName)) {
+	# La variable existe déjà
 	
-	# Télécharger avec CURL
-	downloadedDatas <- a__f_downloadIfNeeded(
-			sourceType = K_SOURCE_TYPE_CURL, 
-			UrlOrEuroStatNameToDownload = url_insee_nomenclatures, 
-			fileRelPath = insee_nomenclature_zip_path,
-			var = downloadedDatas)
+	message(paste0("(", varName, ") existe déjà. On ne la reconstruit pas. Supprimez-là et relancer si vous voulez la re-construire"))
 	
-	# Dezziper les fichiers
-	list_fichiers <- unzip(insee_nomenclature_zip_path, exdir = K_DIR_INSEE_GEO)
-
-	# Supprimer le fichier zip
-	file.remove(insee_nomenclature_zip_path)
+} else {
+	# La variable n'existe pas déjà
+	
+	#
+	# Telechargement des donnees des décès quotidiens depuis 2018
+	#
+	
+	# Import des données de décès
+	# 'https://www.data.gouv.fr/fr/datasets/fichier-des-personnes-decedees/'
+	
+	# Liste des URLs des fichiers de patients décédés
+	
+	urls_listes_deces <- c(
+	  '2021m07'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210811-104512/deces-2021-m07.txt',
+	  '2021t2'='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210709-174839/deces-2021-t2.txt',
+	  '2021t1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210409-131502/deces-2021-t1.txt',
+	  '2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
+	  '2019' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20200113-173945/deces-2019.txt',
+	  '2018' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191205-191652/deces-2018.txt'
+	)
+	
+	
+	chemins_fichiers_deces <- lapply(urls_listes_deces, a__f_downloadFileUrlAndGetFilePath)
+	
+	if (shallDeleteVars) rm(urls_listes_deces)
+	
+	
+	################################################################################
+	#
+	# Importer les fichiers de décès qui ont une structure définie par des champs de largeurs fixe
+	#
+	################################################################################
+	
+	# Largeur des champs dans le fichier
+	fields_widths <- c(					# Colonne :
+			nom = 80,					# 80
+			sexe = 1,					# 81
+			naissance_date = 8,			# 89
+			naissance_code_lieu = 5,	# 94
+			naissance_commune = 30,		# 124
+			naissance_pays = 30,		# 154
+			deces_date = 8,				# 162
+			deces_code_lieu = 5,		# 167
+			deces_numero_acte = 9		# 176
+	)
+	
+	# Lire tous les fichiers (*.txt) des décès quotidiens et construire une liste avec un df par fichier lu
+	dbs_raw_deces <- lapply(chemins_fichiers_deces, 
+			read_fwf,
+			# Calculer les positions de coupure des champs à partir de la largeur de chaque champ
+			col_positions = fwf_widths(fields_widths, 
+					                   col_names = names(fields_widths)),
+			col_types = cols(.default = col_character()))
+	
+	if (shallDeleteVars) rm(chemins_fichiers_deces)
+	if (shallDeleteVars) rm(fields_widths)
+	
+	# Créer la Table des deces en agrégeant les lignes de chaque fichier et en excluant les doublons
+	# et en triant sur la date de décès pour que ce soit plus facile à lire
+	a__original_fr_gouv_deces_quotidiens <- bind_rows(dbs_raw_deces) %>%
+			unique() %>%
+			arrange(deces_date)
+	
+	if (shallDeleteVars) rm(dbs_raw_deces)
+	
+	# Deces nettoyes
+	b__fr_gouv_deces_quotidiens <- a__original_fr_gouv_deces_quotidiens %>%
+			mutate(
+					naissance_annee = a__f_nettoyer_partie_date(naissance_date, 1, 4),
+					# si absent, prendre l'age moyen
+					naissance_annee_complete = a__f_complete_manquant(naissance_annee), 
+					
+					naissance_mois = a__f_nettoyer_partie_date(naissance_date, 5, 6),
+					naissance_mois_complete = a__f_complete_manquant(naissance_mois), 
+					
+					naissance_jour = a__f_nettoyer_partie_date(naissance_date, 7, 8),
+					naissance_jour_complete = a__f_complete_manquant(naissance_jour), 
+					
+					naissance_date_brute = naissance_date,
+					naissance_date = as.Date(naissance_date, '%Y%m%d'),
+					naissance_date_complete = as.Date(paste0(naissance_annee_complete, '-', naissance_mois_complete, '-', naissance_jour_complete)),
+					
+					deces_annee = a__f_nettoyer_partie_date(deces_date, 1, 4),
+					
+					# si absent, prendre l'age moyen
+					deces_annee_complete = a__f_complete_manquant(deces_annee), 
+					
+					deces_mois = a__f_nettoyer_partie_date(deces_date, 5, 6),
+					deces_mois_complete = a__f_complete_manquant(deces_mois), 
+					
+					deces_jour = a__f_nettoyer_partie_date(deces_date, 7, 8),
+					deces_jour_complete = a__f_complete_manquant(deces_jour), 
+					
+					deces_date = as.Date(deces_date, '%Y%m%d'),
+					deces_date_complete = as.Date(paste0(deces_annee_complete, '-', deces_mois_complete, '-', deces_jour_complete))
+	
+			) 
+	
+	# Afficher quelques verifications sur la base nettoyees
+	sum(is.na(b__fr_gouv_deces_quotidiens$naissance_annee))
+	
+	sum(is.na(b__fr_gouv_deces_quotidiens$naissance_mois))
+	
+	sum(is.na(b__fr_gouv_deces_quotidiens$naissance_jour))
+	
+	any(is.na(b__fr_gouv_deces_quotidiens$naissance_date_complete))
+	
+	any(is.na(b__fr_gouv_deces_quotidiens$deces_date_complete))
+	
+	# Afficher le nombre de date de décès antérieures à 2018 (ce qui devrait en principe être 0
+	# puisque l'on n'utilise que les fichiers depuis 2018. Mais il y a des erreurs de saisie
+	# dans certains fichiers du gouvermnement (en particulier le deces-2021-t2.txt)
+	nbErreurSaisie <- b__fr_gouv_deces_quotidiens %>%
+			filter(deces_date_complete < "2018-01-01") %>%
+			summarize(nb = n())
+	message(paste0("Nombre de dates de décès antérieures à 2018 dans les fichiers depuis 2018 (erreurs de saisie ou enregistrement de régularisation ?) : ", nbErreurSaisie))
+	
+	if (shallDeleteVars) rm(nbErreurSaisie)
+	
+	################################################################################
+	#
+	# Identifier le département FR en fonction du code lieu
+	#
+	################################################################################
+	
+	K_DIR_INSEE_GEO <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, "insee/geo"))
+	
+	# URL du zip à télécharger
+	url_insee_nomenclatures <- 'https://www.insee.fr/fr/statistiques/fichier/4316069/cog_ensemble_2020_csv.zip'
+	
+	# Path du zip téléchargé
+	insee_nomenclature_zip_path <- file.path(K_DIR_INSEE_GEO, basename(url_insee_nomenclatures))
+	
+	if (!file.exists(insee_nomenclature_zip_path)) {
+		# Le fichier zip n'existe pas
+		
+		# Télécharger avec CURL
+		downloadedDatas <- a__f_downloadIfNeeded(
+				sourceType = K_SOURCE_TYPE_CURL, 
+				UrlOrEuroStatNameToDownload = url_insee_nomenclatures, 
+				fileRelPath = insee_nomenclature_zip_path,
+				var = downloadedDatas)
+		
+		# Dezziper les fichiers
+		list_fichiers <- unzip(insee_nomenclature_zip_path, exdir = K_DIR_INSEE_GEO)
+	
+		# Supprimer le fichier zip
+		file.remove(insee_nomenclature_zip_path)
 	
 	if (shallDeleteVars) rm(downloadedDatas)
 	
+	}
+	
+	if (shallDeleteVars) rm(list_fichiers)
+	if (shallDeleteVars) rm(url_insee_nomenclatures)
+	if (shallDeleteVars) rm(nomenclatures_insee_zip_path)
+	if (shallDeleteVars) rm(K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS)
+	
+	
+	# Lire les fichiers
+	
+	fr_insee_communes <- read_csv(file.path(K_DIR_INSEE_GEO, 'communes2020.csv'))
+	
+	fr_insee_departements <- read_csv(file.path(K_DIR_INSEE_GEO, 'departement2020.csv'))
+	
+	fr_insee_regions <- read_csv(file.path(K_DIR_INSEE_GEO, 'region2020.csv'))
+	
+	fr_insee_pays <- read_csv(file.path(K_DIR_INSEE_GEO, 'pays2020.csv'))
+	
+	# Verifier s'il y a des doublons
+	#any(duplicated(communes$com))
+	
+	# Préparer une base de commune sans doublon sur com (en prenant la première occurence)
+	
+	communes_deduplique <- fr_insee_communes %>%
+			filter(!duplicated(com))
+	
+	#verifier qu'il n'y a plus de doublons
+	any(duplicated(fr_insee_communes$com[fr_insee_communes$typecom == 'COM']))
+	
+	if (shallDeleteVars) rm(fr_insee_communes)
+	
+	# 
+	dbp <- b__fr_gouv_deces_quotidiens %>%
+			left_join(
+					communes_deduplique %>%
+							transmute(
+									deces_code_lieu = com,
+									deces_region = as.character(reg),
+									deces_dep = dep,
+									deces_commune_libelle = libelle
+							)
+	
+			) %>%
+			left_join(
+					fr_insee_departements %>%
+							select(
+									deces_dep = dep, 
+									deces_dep_libelle = libelle
+							)
+	
+			) %>%
+			left_join(fr_insee_regions %>%
+							select(deces_region = reg, deces_region_libelle = libelle)) %>%
+			left_join(
+					fr_insee_pays %>%
+							filter(actual == 1) %>%
+							select(
+									deces_code_lieu = cog, deces_pays = libcog))
+	
+	if (shallDeleteVars) rm(communes_deduplique)
+	if (shallDeleteVars) rm(fr_insee_departements)
+	if (shallDeleteVars) rm(fr_insee_regions)
+	if (shallDeleteVars) rm(fr_insee_pays)
+	
+	# verifier le nombre de NA
+	sum(is.na(dbp$deces_code_lieu))
+	
+	sum(is.na(dbp$deces_dep))
+	
+	# Afficher le nombre de deces par code_lieu et pays
+	dbp %>%
+			filter(is.na(deces_dep)) %>% 
+			select(naissance_commune, 
+					deces_code_lieu, 
+					deces_pays) %>%
+			group_by(deces_code_lieu, 
+					deces_pays) %>%
+			summarise(n = n()) %>%
+			arrange(desc(n))
+	
+	# Afficher les deces à Tahiti
+	dbp %>%
+			filter(deces_code_lieu == '98736')
+	
+	if (shallDeleteVars) rm(dbp)
+	
+	# Il manque encore les COM
+	
+	# Ceci devrait suffire pour notre pyramide des ages en france (hors COM)
+	
+	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
+			mutate(num_departement = str_sub(deces_code_lieu, 1, 2))
+	
+	# age_deces_millesime = age de la personne au moment de son décès
+	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
+			mutate(age_deces_millesime = deces_annee_complete - naissance_annee_complete)
+	
+	# Trier par date de décès pour que ce soit plus facile à lire
+	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
+			arrange(deces_date_complete)
+			
+	#saveRDS(db_clean, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
 }
-
-if (shallDeleteVars) rm(list_fichiers)
-if (shallDeleteVars) rm(url_insee_nomenclatures)
-if (shallDeleteVars) rm(nomenclatures_insee_zip_path)
-if (shallDeleteVars) rm(K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS)
-
-
-# Lire les fichiers
-
-fr_insee_communes <- read_csv(file.path(K_DIR_INSEE_GEO, 'communes2020.csv'))
-
-fr_insee_departements <- read_csv(file.path(K_DIR_INSEE_GEO, 'departement2020.csv'))
-
-fr_insee_regions <- read_csv(file.path(K_DIR_INSEE_GEO, 'region2020.csv'))
-
-fr_insee_pays <- read_csv(file.path(K_DIR_INSEE_GEO, 'pays2020.csv'))
-
-# Verifier s'il y a des doublons
-#any(duplicated(communes$com))
-
-# Préparer une base de commune sans doublon sur com (en prenant la première occurence)
-
-communes_deduplique <- fr_insee_communes %>%
-		filter(!duplicated(com))
-
-#verifier qu'il n'y a plus de doublons
-any(duplicated(fr_insee_communes$com[fr_insee_communes$typecom == 'COM']))
-
-if (shallDeleteVars) rm(fr_insee_communes)
-
-# 
-dbp <- b__fr_gouv_deces_quotidiens %>%
-		left_join(
-				communes_deduplique %>%
-						transmute(
-								deces_code_lieu = com,
-								deces_region = as.character(reg),
-								deces_dep = dep,
-								deces_commune_libelle = libelle
-						)
-
-		) %>%
-		left_join(
-				fr_insee_departements %>%
-						select(
-								deces_dep = dep, 
-								deces_dep_libelle = libelle
-						)
-
-		) %>%
-		left_join(fr_insee_regions %>%
-						select(deces_region = reg, deces_region_libelle = libelle)) %>%
-		left_join(
-				fr_insee_pays %>%
-						filter(actual == 1) %>%
-						select(
-								deces_code_lieu = cog, deces_pays = libcog))
-
-if (shallDeleteVars) rm(communes_deduplique)
-if (shallDeleteVars) rm(fr_insee_departements)
-if (shallDeleteVars) rm(fr_insee_regions)
-if (shallDeleteVars) rm(fr_insee_pays)
-
-# verifier le nombre de NA
-sum(is.na(dbp$deces_code_lieu))
-
-sum(is.na(dbp$deces_dep))
-
-# Afficher le nombre de deces par code_lieu et pays
-dbp %>%
-		filter(is.na(deces_dep)) %>% 
-		select(naissance_commune, 
-				deces_code_lieu, 
-				deces_pays) %>%
-		group_by(deces_code_lieu, 
-				deces_pays) %>%
-		summarise(n = n()) %>%
-		arrange(desc(n))
-
-# Afficher les deces à Tahiti
-dbp %>%
-		filter(deces_code_lieu == '98736')
-
-if (shallDeleteVars) rm(dbp)
-
-# Il manque encore les COM
-
-# Ceci devrait suffire pour notre pyramide des ages en france (hors COM)
-
-b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
-		mutate(num_departement = str_sub(deces_code_lieu, 1, 2))
-
-# age_deces_millesime = age de la personne au moment de son décès
-b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
-		mutate(age_deces_millesime = deces_annee_complete - naissance_annee_complete)
-
-# Trier par date de décès pour que ce soit plus facile à lire
-b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
-		arrange(deces_date_complete)
-		
-#saveRDS(db_clean, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
 
 
 ################################################################################
