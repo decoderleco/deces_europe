@@ -40,8 +40,13 @@ K_DIR_EXT_DATA_FR_GOUV <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, 'gouv'
 K_DIR_EXT_DATA_USA <- a__f_createDir(file.path(K_DIR_EXT_DATA_WORLD, 'usa'))
 
 
-K_DIR_GEN_IMG_WORLD <- a__f_createDir("gen/images/world")
+K_DIR_GEN_IMG <- a__f_createDir("gen/images")
+K_DIR_GEN_IMG_WORLD <- a__f_createDir(file.path(K_DIR_GEN_IMG, 'world'))
+K_DIR_GEN_IMG_EUROPE <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'eu'))
+K_DIR_GEN_IMG_FRANCE <- a__f_createDir(file.path(K_DIR_GEN_IMG, 'fr'))
+K_DIR_GEN_IMG_FR_GOUV <- a__f_createDir(file.path(K_DIR_GEN_IMG_FRANCE, 'gouv'))
 K_DIR_GEN_IMG_USA <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'usa'))
+K_DIR_GEN_IMG_OWID <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'owid'))
 
 ################################################################################
 # Télécharger ou charge un fichier EuroStat, CSV ou zip 
@@ -403,7 +408,7 @@ a__f_add_tranche_age_de_10_ans <- function(tabWithAge) {
 ################################################################################
 # Generer le graphique et le png associé
 ################################################################################
-a__f_plot_region <- function(region) {
+a__f_plot_fr_deces_quotidiens_par_region <- function(region) {
 	
 	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
 	# qui a étépassé dans le parametre region
@@ -435,7 +440,9 @@ a__f_plot_region <- function(region) {
 					# Faire un graphique par département, répartis sur 3 colonnes
 					facet_wrap(~dep_name) +
 					
-					ggtitle("Décès quotidiens par département") +
+					theme(legend.position = "top") +
+					
+					ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(region$deces_date_complete) ,") par département")) +
 					
 					xlab("date de décès") + 
 					ylab("nombre de décès (centrés et réduits au quartile)"))
@@ -453,16 +460,15 @@ a__f_plot_region <- function(region) {
 ################################################################################
 # Generer le graphique et le png associé : Deces quotidiens
 ################################################################################
-a__f_plot_deces_quotidiens <- function(deces_par_jour,
+a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
+		deces_par_jour,
+		tranche_age,
 		tailleFenetreGlissante = 7,
 		decalageSemaines = 6) {
 	
-	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
-	# qui a étépassé dans le parametre region
-	nomVar <- deparse(substitute(deces_par_jour))
+	nomVar <- tranche_age
 	
-	repertoire <- paste0("gen/images/fr/gouv/Registre/Deces_Quotidiens/Tranche_age")
-	a__f_createDir(repertoire)
+	repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quotidiens/Tranche_age"))
 	
 	#Nom du fichier png à générer
 	pngFileRelPath <- paste0(repertoire, "/Deces_quotidiens_tranche_age_", nomVar, ".png")
@@ -483,8 +489,8 @@ a__f_plot_deces_quotidiens <- function(deces_par_jour,
 	deces_par_jour <- deces_par_jour %>% 
 			left_join(moyenne_mobile) 
 	
-	# Ajouter la moyenne de la moyenne mobile
-	deces_par_jour$moyenne <- mean(moyenne_mobile)
+#	# Ajouter la moyenne de la moyenne mobile
+#	deces_par_jour$moyenne <- mean(moyenne_mobile)
 	
 	
 	print(ggplot(data = deces_par_jour,
@@ -500,16 +506,28 @@ a__f_plot_deces_quotidiens <- function(deces_par_jour,
 					
 					geom_line(mapping = aes(y = nbDeces),
 							linetype = "dotted") + 
+					geom_point(mapping = aes(y = nbDeces)) + 
 					
 					geom_line(mapping = aes(y = moyenne_mobile),
 							linetype = "solid",
 							size = 1) + 
 					
-					facet_wrap(~tranche_d_age) +
+					geom_line(mapping = aes(y = moyenne),
+							linetype = "solid",
+							size = 1) + 
 					
-					#theme(legend.position = "top")+
+					geom_line(mapping = aes(y = binf),
+							linetype = "solid") + 
 					
-					ggtitle("Décès quotidiens par age") +
+					geom_line(mapping = aes(y = bsup),
+							linetype = "solid") + 
+					
+					#facet_wrap(~tranche_age) +
+					
+					theme(legend.position = "top")+
+					
+					ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(deces_par_jour$deces_date_complete) ,") par Tranche d'age")) +
+					
 					xlab("date de décès") + 
 					ylab("nombre de décès quotidiens")
 	)
@@ -520,7 +538,7 @@ a__f_plot_deces_quotidiens <- function(deces_par_jour,
 ################################################################################
 # Generer le graphique et le png associé : deces_hebdo_std_moyenne_mobile
 ################################################################################
-a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_semaine, 
+a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_semaine, 
 		                                             ylim_max, 
 													 decalageSemaines = 51) {
 
@@ -562,6 +580,13 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	
 	es_deces_standard_pays_semaine$moyenne <- moyenne
 	
+	# Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
+	maxWeekTime <- es_deces_standard_pays_semaine %>%
+			ungroup %>%
+			filter(numSemaineDepuis2013 == max(numSemaineDepuis2013)) %>%
+			distinct() %>%
+			select(time)
+	maxWeekTime <- maxWeekTime[1, 1]
 	
 	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
 	     es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge40, 
@@ -573,7 +598,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 		 ylim=c(0, ylim_max), 
 		 type="o", 
 		 col="black", 
-		 main=paste0("Décès hebdomadaires standardisés : ",nomPays))
+		 main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
 	
 	# pour encadrer le graphique
  	box() 
@@ -587,15 +612,15 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26, 1000, "2013", cex=1.2)
-	text(78, 1000, "2014", cex=1.2)
-	text(130, 1000, "2015", cex=1.2)
-	text(183, 1000, "2016", cex=1.2)
-	text(235, 1000, "2017", cex=1.2)
-	text(287, 1000, "2018", cex=1.2)
-	text(339, 1000, "2019", cex=1.2)
-	text(391, 1000, "2020", cex=1.2)
-	text(440, 1000, "2021", cex=1.2)
+	text(26,  0, "2013", cex=1.2)
+	text(78,  0, "2014", cex=1.2)
+	text(130, 0, "2015", cex=1.2)
+	text(183, 0, "2016", cex=1.2)
+	text(235, 0, "2017", cex=1.2)
+	text(287, 0, "2018", cex=1.2)
+	text(339, 0, "2019", cex=1.2)
+	text(391, 0, "2020", cex=1.2)
+	text(440, 0, "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -668,7 +693,7 @@ a__f_plot_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_sema
 ################################################################################
 # Generer le graphique et le png associé : deces_hebdo_std_m40_p65_vaccination
 ################################################################################
-a__f_plot_deces_hebdo_std_lt40_ge65_vaccination <- function(es_deces_standard_pays_semaine, 
+a__f_plot_es_deces_hebdo_std_lt40_ge65_vaccination <- function(es_deces_standard_pays_semaine, 
 		                                                  ylim_max_left,
 														  ylim_max_right,
 														  ylim_max_left2,
@@ -746,15 +771,15 @@ a__f_plot_deces_hebdo_std_lt40_ge65_vaccination <- function(es_deces_standard_pa
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26, 1000, "2013", cex=1.2)
-	text(78, 1000, "2014", cex=1.2)
-	text(130, 1000, "2015", cex=1.2)
-	text(183, 1000, "2016", cex=1.2)
-	text(235, 1000, "2017", cex=1.2)
-	text(287, 1000, "2018", cex=1.2)
-	text(339, 1000, "2019", cex=1.2)
-	text(391, 1000, "2020", cex=1.2)
-	text(440, 1000, "2021", cex=1.2)
+	text(26,  0, "2013", cex=1.2)
+	text(78,  0, "2014", cex=1.2)
+	text(130, 0, "2015", cex=1.2)
+	text(183, 0, "2016", cex=1.2)
+	text(235, 0, "2017", cex=1.2)
+	text(287, 0, "2018", cex=1.2)
+	text(339, 0, "2019", cex=1.2)
+	text(391, 0, "2020", cex=1.2)
+	text(440, 0, "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -835,15 +860,15 @@ a__f_plot_deces_hebdo_std_lt40_ge65_vaccination <- function(es_deces_standard_pa
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26, 1000, "2013", cex=1.2)
-	text(78, 1000, "2014", cex=1.2)
-	text(130, 1000, "2015", cex=1.2)
-	text(183, 1000, "2016", cex=1.2)
-	text(235, 1000, "2017", cex=1.2)
-	text(287, 1000, "2018", cex=1.2)
-	text(339, 1000, "2019", cex=1.2)
-	text(391, 1000, "2020", cex=1.2)
-	text(440, 1000, "2021", cex=1.2)
+	text(26,  0, "2013", cex=1.2)
+	text(78,  0, "2014", cex=1.2)
+	text(130, 0, "2015", cex=1.2)
+	text(183, 0, "2016", cex=1.2)
+	text(235, 0, "2017", cex=1.2)
+	text(287, 0, "2018", cex=1.2)
+	text(339, 0, "2019", cex=1.2)
+	text(391, 0, "2020", cex=1.2)
+	text(440, 0, "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -889,7 +914,7 @@ a__f_plot_deces_hebdo_std_lt40_ge65_vaccination <- function(es_deces_standard_pa
 ################################################################################
 # Generer le graphique et le png associé : Deces vs Deces COVID
 ################################################################################
-a__f_plot_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_semaine, 
+a__f_plot_es_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_semaine, 
 		ylim_max) {
 	
 	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
@@ -942,15 +967,15 @@ a__f_plot_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_semai
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26, 1000, "2013", cex=1.2)
-	text(78, 1000, "2014", cex=1.2)
-	text(130, 1000, "2015", cex=1.2)
-	text(183, 1000, "2016", cex=1.2)
-	text(235, 1000, "2017", cex=1.2)
-	text(287, 1000, "2018", cex=1.2)
-	text(339, 1000, "2019", cex=1.2)
-	text(391, 1000, "2020", cex=1.2)
-	text(440, 1000, "2021", cex=1.2)
+	text(26,  0, "2013", cex=1.2)
+	text(78,  0, "2014", cex=1.2)
+	text(130, 0, "2015", cex=1.2)
+	text(183, 0, "2016", cex=1.2)
+	text(235, 0, "2017", cex=1.2)
+	text(287, 0, "2018", cex=1.2)
+	text(339, 0, "2019", cex=1.2)
+	text(391, 0, "2020", cex=1.2)
+	text(440, 0, "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -992,3 +1017,56 @@ a__f_plot_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_semai
 	if (shallDeleteVars) rm(list = c(nomVar), envir = globalenv())
 }
 
+################################################################################
+# Generer le graphique et le png associé
+################################################################################
+a__f_plot_generic <- function(df) {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	nomDf <- deparse(substitute(df))
+	
+	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+	repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_OWID,""))
+	
+	#Nom du fichier png à générer
+	pngFileRelPath <- paste0(repertoire, nomDf, ".png")
+	
+	# Message
+	message(paste0("Creation image (", pngFileRelPath,")"))
+	
+	# ATTENTION : Du fait que l'on est dans une fonction (ou un for), il faut impérativement
+	#             mettre un print() !!!
+	print(ggplot(data = df,
+							mapping = aes(
+									x = x,
+									y = y,
+									color = color)) + 
+					
+					geom_line() + 
+					geom_point() + 
+					
+					# Echelle verticale
+					#ylim(-3, 10) + 
+					
+					#scale_colour_manual(values=c("red", "black")) +
+					
+					# Faire un graphique par département, répartis sur 3 colonnes
+					#facet_wrap(~dep_name) +
+					
+					ggtitle("OWID : ") +
+					
+					xlab("date") 
+					#ylab("nombre de décès (centrés et réduits au quartile)")
+	)
+	
+	
+	
+	# Generer le fichier png
+	dev.print(device = png, 
+			file = pngFileRelPath, 
+			width = 1000)
+	
+	# Supprimer la variable de GlovaEnv correspondant à region car on n'en a plus besoin
+	if (shallDeleteVars) rm(list = c(nomDf), envir = globalenv())
+}
