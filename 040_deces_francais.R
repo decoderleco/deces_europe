@@ -65,7 +65,7 @@ a__f_nettoyer_partie_date <- function(
 K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS <- a__f_createDir(file.path(K_DIR_EXT_DATA_FR_GOUV, 'deces'))
 
 #
-# Telechargement des donnees
+# Telechargement des donnees des décès quotidiens depuis 2018
 #
 
 # Import des données de décès
@@ -94,16 +94,16 @@ if (shallDeleteVars) rm(urls_listes_deces)
 ################################################################################
 
 # Largeur des champs dans le fichier
-fields_widths <- c(
-		nom = 80,
-		sexe = 1,
-		naissance_date = 8,
-		naissance_code_lieu = 5,
-		naissance_commune = 30,
-		naissance_pays = 30,
-		deces_date = 8,
-		deces_code_lieu = 5,
-		deces_numero_acte = 9
+fields_widths <- c(					# Colonne :
+		nom = 80,					# 80
+		sexe = 1,					# 81
+		naissance_date = 8,			# 89
+		naissance_code_lieu = 5,	# 94
+		naissance_commune = 30,		# 124
+		naissance_pays = 30,		# 154
+		deces_date = 8,				# 162
+		deces_code_lieu = 5,		# 167
+		deces_numero_acte = 9		# 176
 )
 
 # Lire tous les fichiers (*.txt) des décès quotidiens et construire une liste avec un df par fichier lu
@@ -118,14 +118,15 @@ if (shallDeleteVars) rm(chemins_fichiers_deces)
 if (shallDeleteVars) rm(fields_widths)
 
 # Créer la Table des deces en agrégeant les lignes de chaque fichier et en excluant les doublons
-db <- bind_rows(dbs_raw_deces) %>%
-		unique()
+# et en triant sur la date de décès pour que ce soit plus facile à lire
+a__original_fr_gouv_deces_quotidiens <- bind_rows(dbs_raw_deces) %>%
+		unique() %>%
+		arrange(deces_date)
 
 if (shallDeleteVars) rm(dbs_raw_deces)
 
-
 # Deces nettoyes
-db_clean <- db %>%
+b__fr_gouv_deces_quotidiens <- a__original_fr_gouv_deces_quotidiens %>%
 		mutate(
 				naissance_annee = a__f_nettoyer_partie_date(naissance_date, 1, 4),
 				# si absent, prendre l'age moyen
@@ -157,20 +158,26 @@ db_clean <- db %>%
 
 		) 
 
-if (shallDeleteVars) rm(db)
-
 # Afficher quelques verifications sur la base nettoyees
-sum(is.na(db_clean$naissance_annee))
+sum(is.na(b__fr_gouv_deces_quotidiens$naissance_annee))
 
-sum(is.na(db_clean$naissance_mois))
+sum(is.na(b__fr_gouv_deces_quotidiens$naissance_mois))
 
-sum(is.na(db_clean$naissance_jour))
+sum(is.na(b__fr_gouv_deces_quotidiens$naissance_jour))
 
-any(is.na(db_clean$naissance_date_complete))
+any(is.na(b__fr_gouv_deces_quotidiens$naissance_date_complete))
 
-any(is.na(db_clean$deces_date_complete))
+any(is.na(b__fr_gouv_deces_quotidiens$deces_date_complete))
 
+# Afficher le nombre de date de décès antérieures à 2018 (ce qui devrait en principe être 0
+# puisque l'on n'utilise que les fichiers depuis 2018. Mais il y a des erreurs de saisie
+# dans certains fichiers du gouvermnement (en particulier le deces-2021-t2.txt)
+nbErreurSaisie <- b__fr_gouv_deces_quotidiens %>%
+		filter(deces_date_complete < "2018-01-01") %>%
+		summarize(nb = n())
+message(paste0("Nombre de dates de décès antérieures à 2018 dans les fichiers depuis 2018 (erreurs de saisie ou enregistrement de régularisation ?) : ", nbErreurSaisie))
 
+if (shallDeleteVars) rm(nbErreurSaisie)
 
 ################################################################################
 #
@@ -233,7 +240,7 @@ any(duplicated(fr_insee_communes$com[fr_insee_communes$typecom == 'COM']))
 if (shallDeleteVars) rm(fr_insee_communes)
 
 # 
-dbp <- db_clean %>%
+dbp <- b__fr_gouv_deces_quotidiens %>%
 		left_join(
 				communes_deduplique %>%
 						transmute(
@@ -291,13 +298,17 @@ if (shallDeleteVars) rm(dbp)
 
 # Ceci devrait suffire pour notre pyramide des ages en france (hors COM)
 
-db_clean <- db_clean %>%
+b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
 		mutate(num_departement = str_sub(deces_code_lieu, 1, 2))
 
 # age_deces_millesime = age de la personne au moment de son décès
-db_clean <- db_clean %>%
+b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
 		mutate(age_deces_millesime = deces_annee_complete - naissance_annee_complete)
 
+# Trier par date de décès pour que ce soit plus facile à lire
+b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
+		arrange(deces_date_complete)
+		
 #saveRDS(db_clean, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
 
 
@@ -308,7 +319,7 @@ db_clean <- db_clean %>%
 ################################################################################
 
 # Deces par jour et par departement depuis 01/01/2018
-deces_dep_jour <- db_clean %>%
+deces_dep_jour <- b__fr_gouv_deces_quotidiens %>%
 		group_by(num_departement,
 				deces_date_complete) %>%
 		summarise(nbDeces=n()) %>% 
@@ -447,7 +458,7 @@ if (shallDeleteVars) rm(deces_dep_jour)
 # On va construire une table des deces quotidiens par tranche d'age, 
 # avec au fur et à mesure des colonnes complémentaires
 
-deces_par_jour_age <- db_clean %>% 
+deces_par_jour_age <- b__fr_gouv_deces_quotidiens %>% 
 		# Depuis 2018
 		filter(deces_date_complete >= "2018-01-01") %>%
 		# Grouper
@@ -657,7 +668,7 @@ dev.print(device = png, file = pngFileRelPath, width = 1000)
 
 
 
-if (shallDeleteVars) rm(db_clean)
+if (shallDeleteVars) rm(a__original_fr_gouv_deces_quotidiens)
 
 if (shallDeleteVars) rm(deces_par_jour_age)
 if (shallDeleteVars) rm(deces_par_jour_a_tracer)
