@@ -73,6 +73,14 @@ if (exists(varName)) {
 	
 	message(paste0("(", varName, ") existe déjà. On ne la reconstruit pas. Supprimez-là et relancer si vous voulez la re-construire"))
 	
+	# Dezziper les fichiers
+	list_fichiers <- unzip(insee_nomenclature_zip_path, exdir = K_DIR_INSEE_GEO)
+
+	# Supprimer le fichier zip
+	file.remove(insee_nomenclature_zip_path)
+	
+	if (shallDeleteVars) rm(downloadedDatas)
+	
 } else {
 	# La variable n'existe pas déjà
 	

@@ -88,7 +88,9 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 		fileRelPath = paste0(file.path(repertoire, varName), ".RDS")
 		
 	} else {
+		# le path du fichier local est indiqué
 		
+		# RAF
 	}
 	
 	if (exists(varName)) {
@@ -101,7 +103,7 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 		#saveRDS(downloadedDatas, file = fileRelPath)
 		
 	} else if (file.exists(fileRelPath)) {
-		# La variable n'existe pas, mais le fichier rds existe sur disque
+		# La variable n'existe pas, mais le fichier existe sur disque
 		
 		message(paste0("Fichier (", fileRelPath, ") présent. On re-charge le fichier dans (", varName, "), sans le re-télécharger."))
 		
@@ -125,10 +127,15 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 					                    sep = sep)
 			
 		} else if ((ext == "zip") || (ext == "ZIP")) {
-			# Fichier de type CSV
+			# Fichier de type zip
 			
 			# RAF pour un zip
 		
+		} else if ((ext == "txt") || (ext == "TXT")) {
+			# Fichier de type txt
+			
+			# RAF pour un zip
+			
 		} else {
 		
 			message(paste0("ATTENTION : Fichier (", fileRelPath, ") de type inconnu. On ne peut pas le re-charger dans (", varName, ")."))
@@ -144,10 +151,11 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 		if (nchar(UrlOrEuroStatNameToDownload) > 0) {
 			# Il y a une URL
 		
+			message(paste0("Télécharger (", UrlOrEuroStatNameToDownload, ")"))
+		
+		
 			if (sourceType == K_SOURCE_TYPE_EUROSTAT)  {
 				# Source de type EuroStat
-				
-				message(paste0("Télécharger depuis EuroStat (", UrlOrEuroStatNameToDownload, ")"))
 				
 				# Télécharger depuis EuroStat
 				downloadedDatas <- get_eurostat(UrlOrEuroStatNameToDownload) 
