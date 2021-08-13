@@ -1250,7 +1250,7 @@ if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_65_69)
 a__original_eu_mesures  <- a__f_downloadIfNeeded(
 		sourceType = K_SOURCE_TYPE_CSV, 
 		UrlOrEuroStatNameToDownload = "https://www.ecdc.europa.eu/sites/default/files/documents/response_graphs_data_2021-04-15.csv",
-		repertoire = "inst/extdata/eu/",
+		repertoire = file.path(K_DIR_EXT_DATA_EUROPE,"ecdc"),
 		var = a__original_eu_mesures)
 
 eu_mesures_gouv <- a__original_eu_mesures
