@@ -200,6 +200,9 @@ if (!file.exists(insee_nomenclature_zip_path)) {
 
 	# Supprimer le fichier zip
 	file.remove(insee_nomenclature_zip_path)
+	
+	if (shallDeleteVars) rm(downloadedDatas)
+	
 }
 
 if (shallDeleteVars) rm(list_fichiers)
