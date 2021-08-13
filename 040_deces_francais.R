@@ -604,6 +604,10 @@ for (trancheAge in tranchesAge$tranche_age) {
 			trancheAge)
 }
 
+if (shallDeleteVars) rm(trancheAge)
+if (shallDeleteVars) rm(tranchesAge)
+
+
 # Graphe de la vue d'ensemble des tranches d'âge
 print(ggplot(data = deces_par_jour_tranchedage,
 						mapping = aes(x = deces_date_complete,
