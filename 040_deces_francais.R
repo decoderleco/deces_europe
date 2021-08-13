@@ -107,6 +107,7 @@ fields_widths <- c(
 		deces_numero_acte = 9
 )
 
+# Lire tous les fichiers (*.txt) des décès quotidiens et construire une liste avec un df par fichier lu
 dbs_raw_deces <- lapply(chemins_fichiers_deces, 
 		read_fwf,
 		# Calculer les positions de coupure des champs à partir de la largeur de chaque champ
@@ -117,7 +118,7 @@ dbs_raw_deces <- lapply(chemins_fichiers_deces,
 if (shallDeleteVars) rm(chemins_fichiers_deces)
 if (shallDeleteVars) rm(fields_widths)
 
-# Table des deces
+# Créer la Table des deces en agrégeant les lignes de chaque fichier et en excluant les doublons
 db <- bind_rows(dbs_raw_deces) %>%
 		unique()
 
@@ -563,6 +564,8 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 				   
 				   facet_wrap(~paste(age_deces_millesime, "ans"))+
 				   
+				   theme(legend.position = "top") +
+				   
 				   ggtitle("Décès quotidiens par age") +
 				   
 				   xlab("date de décès") + 
@@ -644,7 +647,8 @@ print(ggplot(data = deces_par_jour_tranchedage,
 				
 				theme(legend.position = "top")+
 				
-				ggtitle("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens) par Tranche d'age") +
+				ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(deces_par_jour_tranchedage$deces_date_complete) ,") par Tranche d'age")) +
+				
 				xlab("date de décès") + 
 				ylab("nombre de décès quotidiens")
 )
@@ -664,4 +668,4 @@ if (shallDeleteVars) rm(deces_par_jour_a_tracer)
 if (shallDeleteVars) rm(deces_par_jour_tranchedage)
 if (shallDeleteVars) rm(nbDeces_moyen_par_tranchedAge)
 
-message("Terminé")
+message("040_deces_francais.R : Terminé")
