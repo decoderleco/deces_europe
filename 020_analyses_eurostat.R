@@ -607,16 +607,16 @@ ggsave(paste0(repertoire, "/Eurostat_Deces_Annee_Maximum.png"), plot=p, width = 
 
 #typologie des décès de l'année 2020
 
-numSemaineDepuis2013_for_eu_lockdown_start <- annee_comparaison_2020 %>%
+niveau_mortalite_par_pays <- annee_comparaison_2020 %>%
 		select(location, typo)
 
 if (shallDeleteVars) rm(annee_comparaison_2020)
 
 
 worldmap <- worldmap %>%
-		left_join(numSemaineDepuis2013_for_eu_lockdown_start)
+		left_join(niveau_mortalite_par_pays)
 
-if (shallDeleteVars) rm(numSemaineDepuis2013_for_eu_lockdown_start)
+if (shallDeleteVars) rm(niveau_mortalite_par_pays)
 
 worldmap <- worldmap %>%
 		mutate (location=case_when(geounit == "Flemish Region"~"Belgium", 
