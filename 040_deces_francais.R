@@ -64,7 +64,18 @@ a__f_nettoyer_partie_date <- function(
 
 K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS <- a__f_createDir(file.path(K_DIR_EXT_DATA_FR_GOUV, 'deces'))
 
+# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+# qui a étépassé dans le parametre region
+varName <- deparse(substitute(b__fr_gouv_deces_quotidiens))
 
+if (exists(varName)) {
+	# La variable existe déjà
+	
+	message(paste0("(", varName, ") existe déjà. On ne la reconstruit pas. Supprimez-là et relancer si vous voulez la re-construire"))
+	
+} else {
+	# La variable n'existe pas déjà
+	
 	#
 	# Telechargement des donnees des décès quotidiens depuis 2018
 	#
@@ -210,6 +221,9 @@ K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS <- a__f_createDir(file.path(K_DIR_EXT_DA
 	
 		# Supprimer le fichier zip
 		file.remove(insee_nomenclature_zip_path)
+	
+		if (shallDeleteVars) rm(downloadedDatas)
+	
 	}
 	
 	if (shallDeleteVars) rm(list_fichiers)
@@ -312,6 +326,7 @@ K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS <- a__f_createDir(file.path(K_DIR_EXT_DA
 			arrange(deces_date_complete)
 			
 	#saveRDS(db_clean, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
+}
 
 
 ################################################################################
