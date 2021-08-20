@@ -298,6 +298,86 @@ om_ANTIBACTERIENS <- om_ANTIBACTERIENS %>%
 		arrange(classe_age, region)
 
 
+################################################################################
+#
+# Graphique Evol Antibiotiques 2019/2020
+#
+################################################################################
+
+tmp <- om_ANTIBACTERIENS 
+
+tmp <- tmp %>%
+		filter(!is.na(BOITES_2019),
+				!is.na(BOITES_2020),
+				!is.na(region)
+		)
+
+tmp <- tmp %>%
+		group_by(classe_age, 
+				region) %>% 
+		summarise("2019" = sum(BOITES_2019), 
+				"2020" = sum(BOITES_2020))
+
+tmp <- tmp %>%
+		pivot_longer(cols = !classe_age:region, 
+				names_to = "annee", 
+				values_to = "boites")
+
+tmp <- tmp %>%
+		# Trier les lignes par annee et classe_age
+		arrange(annee, classe_age)
+
+dataToPlot <- tmp %>%
+		#Trier les lignes
+		arrange(annee, classe_age, region) %>%
+		#Ordonner les colonnes
+		select(annee, classe_age, region, everything())
+
+if (shallDeleteVars) rm(tmp)
+
+message("Graphique évolution ANTIBIOTIQUES entre 2019 et 2020")
+
+print(ggplot(data = dataToPlot,
+						mapping = aes(x = annee, 
+								y = boites)) +
+				
+				# Faire un graphique par département, répartis sur 3 colonnes
+				facet_wrap(~region) +
+				
+				
+				geom_col(mapping = aes(fill = classe_age),
+						# Mettre les colonnes les unes à côté des autres
+						position="dodge") + 
+				
+				# Mettre les colonnes à l'horizontal
+				#coord_flip() +
+				
+				#geom_point(mapping = aes(color = "red")) +
+				
+#		ggtitle("Rivotril : Evolution du Nombre de boîtes distribuées en pharmacie") +
+				
+				labs(title = "Antibiotiques : Evolution du Nombre de boîtes distribuées en pharmacie",
+						caption="Source : Medicam
+								https://assurance-maladie.ameli.fr/etudes-et-donnees/medicaments-type-prescripteur-medicam-2021") +
+				
+				theme(legend.position="top") +
+				
+				# Axe x  
+				xlab("année") + 
+#       scale_x_date(labels = date_format("%m/%y"),
+#                    breaks = date_breaks("year")) +
+				theme(axis.text.x = element_text(angle=45)) +
+				
+				# Axe y  
+				ylab("nombre de boites") +
+				ylim(0, NA)
+)
+
+repertoire <- paste0("gen/images/fr/Medicam")
+a__f_createDir(repertoire)
+
+dev.print(device = png, file = paste0(repertoire, "/Medicam_evol_Antibiotiques.png"), width = 1000)
+
 
 ################################################################################
 #
@@ -328,8 +408,7 @@ tmp <- tmp %>%
 		# Trier les lignes par annee et classe_age
 		arrange(annee, classe_age)
 
-# TODO : A renommer
-om_JG_CLONAZEPAM <- tmp %>%
+dataToPlot <- tmp %>%
 		#Trier les lignes
 		arrange(annee, classe_age, region) %>%
 		#Ordonner les colonnes
@@ -339,7 +418,7 @@ if (shallDeleteVars) rm(tmp)
 
 message("Graphique évolution RIVOTRIL entre 2019 et 2020")
 
-print(ggplot(data = om_JG_CLONAZEPAM,
+print(ggplot(data = dataToPlot,
 						mapping = aes(x = annee, 
 								    y = boites)) +
 				
@@ -379,8 +458,8 @@ print(ggplot(data = om_JG_CLONAZEPAM,
 repertoire <- paste0("gen/images/fr/Medicam")
 a__f_createDir(repertoire)
 
-dev.print(device = png, file = paste0(repertoire, "/Medicam_Rivotril_evol.png"), width = 1000)
+dev.print(device = png, file = paste0(repertoire, "/Medicam_evol_Rivotril.png"), width = 1000)
 
-if (shallDeleteVars) rm(om_JG_CLONAZEPAM)
+if (shallDeleteVars) rm(dataToPlot)
 
 message("Terminé")

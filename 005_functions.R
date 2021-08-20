@@ -40,8 +40,13 @@ K_DIR_EXT_DATA_FR_GOUV <- a__f_createDir(file.path(K_DIR_EXT_DATA_FRANCE, 'gouv'
 K_DIR_EXT_DATA_USA <- a__f_createDir(file.path(K_DIR_EXT_DATA_WORLD, 'usa'))
 
 
-K_DIR_GEN_IMG_WORLD <- a__f_createDir("gen/images/world")
+K_DIR_GEN_IMG <- a__f_createDir("gen/images")
+K_DIR_GEN_IMG_WORLD <- a__f_createDir(file.path(K_DIR_GEN_IMG, 'world'))
+K_DIR_GEN_IMG_EUROPE <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'eu'))
+K_DIR_GEN_IMG_FRANCE <- a__f_createDir(file.path(K_DIR_GEN_IMG, 'fr'))
+K_DIR_GEN_IMG_FR_GOUV <- a__f_createDir(file.path(K_DIR_GEN_IMG_FRANCE, 'gouv'))
 K_DIR_GEN_IMG_USA <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'usa'))
+K_DIR_GEN_IMG_OWID <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'owid'))
 
 ################################################################################
 # Télécharger ou charge un fichier EuroStat, CSV ou zip 
@@ -83,7 +88,9 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 		fileRelPath = paste0(file.path(repertoire, varName), ".RDS")
 		
 	} else {
+		# le path du fichier local est indiqué
 		
+		# RAF
 	}
 	
 	if (exists(varName)) {
@@ -96,7 +103,7 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 		#saveRDS(downloadedDatas, file = fileRelPath)
 		
 	} else if (file.exists(fileRelPath)) {
-		# La variable n'existe pas, mais le fichier rds existe sur disque
+		# La variable n'existe pas, mais le fichier existe sur disque
 		
 		message(paste0("Fichier (", fileRelPath, ") présent. On re-charge le fichier dans (", varName, "), sans le re-télécharger."))
 		
@@ -120,10 +127,15 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 					                    sep = sep)
 			
 		} else if ((ext == "zip") || (ext == "ZIP")) {
-			# Fichier de type CSV
+			# Fichier de type zip
 			
 			# RAF pour un zip
 		
+		} else if ((ext == "txt") || (ext == "TXT")) {
+			# Fichier de type txt
+			
+			# RAF pour un zip
+			
 		} else {
 		
 			message(paste0("ATTENTION : Fichier (", fileRelPath, ") de type inconnu. On ne peut pas le re-charger dans (", varName, ")."))
@@ -139,10 +151,11 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 		if (nchar(UrlOrEuroStatNameToDownload) > 0) {
 			# Il y a une URL
 		
+			message(paste0("Télécharger (", UrlOrEuroStatNameToDownload, ")"))
+		
+		
 			if (sourceType == K_SOURCE_TYPE_EUROSTAT)  {
 				# Source de type EuroStat
-				
-				message(paste0("Télécharger depuis EuroStat (", UrlOrEuroStatNameToDownload, ")"))
 				
 				# Télécharger depuis EuroStat
 				downloadedDatas <- get_eurostat(UrlOrEuroStatNameToDownload) 
@@ -435,7 +448,9 @@ a__f_plot_fr_deces_quotidiens_par_region <- function(region) {
 					# Faire un graphique par département, répartis sur 3 colonnes
 					facet_wrap(~dep_name) +
 					
-					ggtitle("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens) par département") +
+					theme(legend.position = "top") +
+					
+					ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(region$deces_date_complete) ,") par département")) +
 					
 					xlab("date de décès") + 
 					ylab("nombre de décès (centrés et réduits au quartile)"))
@@ -453,16 +468,15 @@ a__f_plot_fr_deces_quotidiens_par_region <- function(region) {
 ################################################################################
 # Generer le graphique et le png associé : Deces quotidiens
 ################################################################################
-a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(deces_par_jour,
+a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
+		deces_par_jour,
+		tranche_age,
 		tailleFenetreGlissante = 7,
 		decalageSemaines = 6) {
 	
-	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
-	# qui a étépassé dans le parametre region
-	nomVar <- deparse(substitute(deces_par_jour))
+	nomVar <- tranche_age
 	
-	repertoire <- paste0("gen/images/fr/gouv/Registre/Deces_Quotidiens/Tranche_age")
-	a__f_createDir(repertoire)
+	repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quotidiens/Tranche_age"))
 	
 	#Nom du fichier png à générer
 	pngFileRelPath <- paste0(repertoire, "/Deces_quotidiens_tranche_age_", nomVar, ".png")
@@ -483,8 +497,8 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(deces_par_jour,
 	deces_par_jour <- deces_par_jour %>% 
 			left_join(moyenne_mobile) 
 	
-	# Ajouter la moyenne de la moyenne mobile
-	deces_par_jour$moyenne <- mean(moyenne_mobile)
+#	# Ajouter la moyenne de la moyenne mobile
+#	deces_par_jour$moyenne <- mean(moyenne_mobile)
 	
 	
 	print(ggplot(data = deces_par_jour,
@@ -500,16 +514,28 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(deces_par_jour,
 					
 					geom_line(mapping = aes(y = nbDeces),
 							linetype = "dotted") + 
+					geom_point(mapping = aes(y = nbDeces)) + 
 					
 					geom_line(mapping = aes(y = moyenne_mobile),
 							linetype = "solid",
 							size = 1) + 
 					
-					facet_wrap(~tranche_d_age) +
+					geom_line(mapping = aes(y = moyenne),
+							linetype = "solid",
+							size = 1) + 
 					
-					#theme(legend.position = "top")+
+					geom_line(mapping = aes(y = binf),
+							linetype = "solid") + 
 					
-					ggtitle("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens) par Tranche d'age") +
+					geom_line(mapping = aes(y = bsup),
+							linetype = "solid") + 
+					
+					#facet_wrap(~tranche_age) +
+					
+					theme(legend.position = "top")+
+					
+					ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(deces_par_jour$deces_date_complete) ,") par Tranche d'age")) +
+					
 					xlab("date de décès") + 
 					ylab("nombre de décès quotidiens")
 	)
@@ -999,3 +1025,56 @@ a__f_plot_es_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_se
 	if (shallDeleteVars) rm(list = c(nomVar), envir = globalenv())
 }
 
+################################################################################
+# Generer le graphique et le png associé
+################################################################################
+a__f_plot_generic <- function(df) {
+	
+	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+	# qui a étépassé dans le parametre region
+	nomDf <- deparse(substitute(df))
+	
+	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+	repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_OWID,""))
+	
+	#Nom du fichier png à générer
+	pngFileRelPath <- paste0(repertoire, nomDf, ".png")
+	
+	# Message
+	message(paste0("Creation image (", pngFileRelPath,")"))
+	
+	# ATTENTION : Du fait que l'on est dans une fonction (ou un for), il faut impérativement
+	#             mettre un print() !!!
+	print(ggplot(data = df,
+							mapping = aes(
+									x = x,
+									y = y,
+									color = color)) + 
+					
+					geom_line() + 
+					geom_point() + 
+					
+					# Echelle verticale
+					#ylim(-3, 10) + 
+					
+					#scale_colour_manual(values=c("red", "black")) +
+					
+					# Faire un graphique par département, répartis sur 3 colonnes
+					#facet_wrap(~dep_name) +
+					
+					ggtitle("OWID : ") +
+					
+					xlab("date") 
+					#ylab("nombre de décès (centrés et réduits au quartile)")
+	)
+	
+	
+	
+	# Generer le fichier png
+	dev.print(device = png, 
+			file = pngFileRelPath, 
+			width = 1000)
+	
+	# Supprimer la variable de GlovaEnv correspondant à region car on n'en a plus besoin
+	if (shallDeleteVars) rm(list = c(nomDf), envir = globalenv())
+}
