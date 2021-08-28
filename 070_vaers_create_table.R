@@ -117,43 +117,160 @@ vaers_data <- a__original_vaers_data %>%
 				TODAYS_DATE = as.Date(TODAYS_DATE, "%m/%d/%Y"),
 				VAX_DATE = as.Date(VAX_DATE, "%m/%d/%Y"),
 				ONSET_DATE = as.Date(ONSET_DATE, "%m/%d/%Y"),
+				DIED_DATE = as.Date(DATEDIED, "%m/%d/%Y"),
 				VAERS_ID = as.numeric(VAERS_ID),
 				age = as.numeric(AGE_YRS),
 				CAGE_YR = as.numeric(CAGE_YR),
 				CAGE_MO = as.numeric(CAGE_MO),
 				HOSPDAYS = as.numeric(HOSPDAYS),
 				NUMDAYS = as.numeric(NUMDAYS),
-				vax_year = format(as.Date(VAX_DATE, "%m/%d/%Y"),"%Y"))
+				vax_year = format(as.Date(VAX_DATE, "%m/%d/%Y"),"%Y"),
+				vax_month = format(as.Date(VAX_DATE, "%m/%d/%Y"),"%m"),
+				)
 
 # Ajouter une colonne avec la tranche d'age
 vaers_data <- a__f_add_tranche_age_de_10_ans(vaers_data)
 
 vaers_data <- vaers_data %>%
+		# Calculer la durée de survenue du décès
+		mutate(died_delay = DIED_DATE - VAX_DATE) %>%
 		select(vax_year, 
+				vax_month,
 				VAERS_ID, 
-				RECVDATE, 
+				DIED, 
 				VAX_DATE, 
-				ONSET_DATE, 
-				NUMDAYS, 
-				SEX,
-				tranche_age,
+				DIED_DATE,
+				died_delay,
 				AGE_YRS, 
+				tranche_age,
+				SEX,
+				RECVDATE, 
 				HOSPITAL, 
 				HOSPDAYS, 
 				RECOVD, 
-				DIED, 
-				DATEDIED, 
+				ONSET_DATE, 
+				NUMDAYS, 
 				# Tout le reste
-				everything())
+				everything()) %>%
+		# Tri des lignes
+		arrange(vax_year, 
+				vax_month,
+				SEX, 
+				tranche_age,
+				died_delay)
 
 
 # Filtrage de lignes (ne conserver que les lignes supérieures à 1990, car avant, ça n'a pas l'air consistant
 vaers_data <- vaers_data %>%
 		filter(vax_year >= 1990)
 
-# Tri des lignes
-vaers_data <- vaers_data %>%
-		arrange(vax_year, SEX, tranche_age)
+#
+# Analyse de l'évolution du nombre de décès par mois
+#
+
+# Afficher un résumé des décès depuis 2019
+dataToPlot <- vaers_data %>%
+		filter(DIED == "Y",
+				vax_year >= 2019) %>%
+		group_by(vax_year, 
+				vax_month) %>% 
+		summarise(nb = n())
+dataToPlot
+
+print(ggplot(data = dataToPlot,
+						mapping = aes(x = as.Date(paste(vax_year, vax_month, 15, sep="-"),"%Y-%m-%d"))) +
+				
+				geom_col(mapping = aes(y = nb)) + 
+				
+				#theme(legend.position = "top")+
+				
+				ggtitle("Nombre de décés par mois liés à une vaccination aux USA") +
+				xlab("Date du vaccin") + 
+				ylab("Nombre")
+)
+
+K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
+
+dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_nb_par_mois.png"), width = 1000)
+
+
+#
+# Analyse de l'évolution du nombre de décès cumulés
+#
+
+# Afficher un résumé des décès depuis 2019
+dataToPlot <- vaers_data %>%
+		filter(DIED == "Y",
+				vax_year >= 2019) %>%
+		group_by(vax_year, 
+				vax_month) %>% 
+		arrange(vax_year, 
+				vax_month) %>% 
+		summarise(nbDeces = n())
+
+dataToPlot <- dataToPlot %>%
+		ungroup() %>%
+		mutate(nb_deces_cumules = cumsum(nbDeces))
+dataToPlot
+
+print(ggplot(data = dataToPlot,
+						mapping = aes(x = as.Date(paste(vax_year, vax_month, 15, sep="-"),"%Y-%m-%d"))) +
+				
+				geom_line(mapping = aes(y = nb_deces_cumules)) + 
+				geom_point(mapping = aes(y = nb_deces_cumules)) + 
+				
+				#theme(legend.position = "top")+
+				
+				ggtitle("Nombre de décés cumulés liés à une vaccination aux USA") +
+				xlab("Date du vaccin") + 
+				ylab("Nombre")
+)
+
+K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
+
+dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_evol_par_mois.png"), width = 1000)
+
+
+#
+# Graphe du délai entre vaccination et décès 
+#
+
+# Afficher un résumé des décès depuis 2019
+dataToPlot <- vaers_data %>%
+		filter(DIED == "Y",
+				vax_year >= 2021) %>%
+		group_by(vax_year,
+				tranche_age,
+				died_delay) %>% 
+		summarise(nb_deces_cumules = n()) %>% 
+		# Ne garder que les délais de décès supérieurs à 0, les autres étant probablement des erreurs
+		filter(died_delay >= 0,
+				died_delay <= 30)
+#dataToPlot
+
+print(ggplot(data = dataToPlot,
+						mapping = aes(x = died_delay)) +
+				
+				geom_col(mapping = aes(y = nb_deces_cumules,
+								fill = tranche_age),
+						
+						# Mettre les colonnes les unes à côté des autres
+						position="dodge"
+				) + 
+				
+				facet_wrap(~tranche_age) +
+
+				#theme(legend.position = "top")+
+				
+				ggtitle("Nombre de décés dans les 30 jours suivant une vaccination aux USA") +
+				xlab("Délai entre vaccination et décès") + 
+				ylab("Nombre")
+)
+
+K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
+
+dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_delai_par_tranche_age.png"), width = 1000)
+
 
 #
 # Graphique de l'évolution du nombre de décès
@@ -162,9 +279,9 @@ vaers_data <- vaers_data %>%
 # Regroupement et synthèse
 dataToPlot <- vaers_data %>%
 		filter(DIED == "Y") %>%
-		group_by(vax_year, tranche_age) %>% 
+		group_by(vax_year, 
+				tranche_age) %>% 
 		summarise(nb = n())
-
 
 print(ggplot(data = dataToPlot,
 						mapping = aes(x = dataToPlot$vax_year)) +
@@ -180,7 +297,7 @@ print(ggplot(data = dataToPlot,
 
 K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
 
-dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_evol.png"), width = 1000)
+dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_nb.png"), width = 1000)
 
 
 #
@@ -211,7 +328,10 @@ print(ggplot(data = dataToPlot,
 				ylab("Nombre")
 )
 
-dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_evol_tranche_age_ge2018.png"), width = 1000)
+dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_nb_par_tranche_age.png"), width = 1000)
+
+
+
 
 
 if (shallDeleteVars) rm(vaers_data)
