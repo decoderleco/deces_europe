@@ -165,6 +165,38 @@ vaers_data <- vaers_data %>%
 		filter(vax_year >= 1990)
 
 #
+# Graphique de l'évolution du nombre de décès par an
+#
+
+# Regroupement et synthèse
+dataToPlot <- vaers_data %>%
+		filter(DIED == "Y") %>%
+		group_by(vax_year) %>% 
+		summarise(nb = n())
+
+print(ggplot(data = dataToPlot,
+						mapping = aes(x = vax_year,
+								y = nb)) +
+				
+				geom_col() + 
+				
+				# Afficher les valeur au dessus des colonnes
+				geom_text(aes(label = nb), 
+						vjust = -0.5) +
+				
+				#theme(legend.position = "top")+
+				
+				ggtitle("Nombre de décés liés à une vaccination aux USA") +
+				xlab("Date du vaccin") + 
+				ylab("Nombre")
+)
+
+K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
+
+dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_nb.png"), width = 1000)
+
+
+#
 # Analyse de l'évolution du nombre de décès par mois
 #
 
@@ -236,80 +268,6 @@ K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
 
 dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_evol_par_mois.png"), width = 1000)
 
-
-#
-# Graphe du délai entre vaccination et décès 
-#
-
-# Afficher un résumé des décès depuis 2019
-dataToPlot <- vaers_data %>%
-		filter(DIED == "Y",
-				vax_year >= 2021) %>%
-		group_by(vax_year,
-				tranche_age,
-				died_delay) %>% 
-		summarise(nb_deces_cumules = n()) %>% 
-		# Ne garder que les délais de décès supérieurs à 0, les autres étant probablement des erreurs
-		filter(died_delay >= 0,
-				died_delay <= 30)
-#dataToPlot
-
-print(ggplot(data = dataToPlot,
-						mapping = aes(x = died_delay,
-								y = nb_deces_cumules)) +
-				
-				geom_col(mapping = aes(fill = tranche_age),
-						
-						# Mettre les colonnes les unes à côté des autres
-						position = "dodge"
-				) + 
-				
-				facet_wrap(~tranche_age) +
-
-				#theme(legend.position = "top")+
-				
-				ggtitle("Nombre de décés dans les 30 jours suivant une vaccination aux USA") +
-				xlab("Délai entre vaccination et décès") + 
-				ylab("Nombre")
-)
-
-K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
-
-dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_delai_par_tranche_age.png"), width = 1000)
-
-
-#
-# Graphique de l'évolution du nombre de décès par an
-#
-
-# Regroupement et synthèse
-dataToPlot <- vaers_data %>%
-		filter(DIED == "Y") %>%
-		group_by(vax_year) %>% 
-		summarise(nb = n())
-
-print(ggplot(data = dataToPlot,
-						mapping = aes(x = vax_year,
-								y = nb)) +
-				
-				geom_col() + 
-				
-				# Afficher les valeur au dessus des colonnes
-				geom_text(aes(label = nb), 
-						vjust = -0.5) +
-				
-				#theme(legend.position = "top")+
-				
-				ggtitle("Nombre de décés liés à une vaccination aux USA") +
-				xlab("Date du vaccin") + 
-				ylab("Nombre")
-)
-
-K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
-
-dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_nb.png"), width = 1000)
-
-
 #
 # Graphique de l'évolution du nombre de décès par tranche d'age
 #
@@ -346,6 +304,48 @@ print(ggplot(data = dataToPlot,
 )
 
 dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_nb_par_tranche_age.png"), width = 1000)
+
+
+
+#
+# Graphe du délai entre vaccination et décès 
+#
+
+# Afficher un résumé des décès depuis 2019
+dataToPlot <- vaers_data %>%
+		filter(DIED == "Y",
+				vax_year >= 2021) %>%
+		group_by(vax_year,
+				tranche_age,
+				died_delay) %>% 
+		summarise(nb_deces_cumules = n()) %>% 
+		# Ne garder que les délais de décès supérieurs à 0, les autres étant probablement des erreurs
+		filter(died_delay >= 0,
+				died_delay <= 30)
+#dataToPlot
+
+print(ggplot(data = dataToPlot,
+						mapping = aes(x = died_delay,
+								y = nb_deces_cumules)) +
+				
+				geom_col(mapping = aes(fill = tranche_age),
+						
+						# Mettre les colonnes les unes à côté des autres
+						position = "dodge"
+				) + 
+				
+				facet_wrap(~tranche_age) +
+				
+				#theme(legend.position = "top")+
+				
+				ggtitle("Nombre de décés dans les 30 jours suivant une vaccination aux USA") +
+				xlab("Délai entre vaccination et décès") + 
+				ylab("Nombre")
+)
+
+K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
+
+dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_delai_par_tranche_age.png"), width = 1000)
 
 
 
