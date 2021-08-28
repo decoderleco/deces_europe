@@ -178,9 +178,15 @@ dataToPlot <- vaers_data %>%
 dataToPlot
 
 print(ggplot(data = dataToPlot,
-						mapping = aes(x = as.Date(paste(vax_year, vax_month, 15, sep="-"),"%Y-%m-%d"))) +
+						mapping = aes(x = as.Date(paste(vax_year, vax_month, 15, sep="-"),"%Y-%m-%d"),
+								y = nb)) +
 				
-				geom_col(mapping = aes(y = nb)) + 
+				geom_col() + 
+				
+				# Afficher les valeur au dessus des colonnes
+				geom_text(aes(label = nb), 
+						vjust = -0.5) +
+				
 				
 				#theme(legend.position = "top")+
 				
@@ -249,13 +255,13 @@ dataToPlot <- vaers_data %>%
 #dataToPlot
 
 print(ggplot(data = dataToPlot,
-						mapping = aes(x = died_delay)) +
+						mapping = aes(x = died_delay,
+								y = nb_deces_cumules)) +
 				
-				geom_col(mapping = aes(y = nb_deces_cumules,
-								fill = tranche_age),
+				geom_col(mapping = aes(fill = tranche_age),
 						
 						# Mettre les colonnes les unes à côté des autres
-						position="dodge"
+						position = "dodge"
 				) + 
 				
 				facet_wrap(~tranche_age) +
@@ -273,20 +279,24 @@ dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_delai
 
 
 #
-# Graphique de l'évolution du nombre de décès
+# Graphique de l'évolution du nombre de décès par an
 #
 
 # Regroupement et synthèse
 dataToPlot <- vaers_data %>%
 		filter(DIED == "Y") %>%
-		group_by(vax_year, 
-				tranche_age) %>% 
+		group_by(vax_year) %>% 
 		summarise(nb = n())
 
 print(ggplot(data = dataToPlot,
-						mapping = aes(x = dataToPlot$vax_year)) +
+						mapping = aes(x = vax_year,
+								y = nb)) +
 				
-				geom_col(mapping = aes(y = dataToPlot$nb)) + 
+				geom_col() + 
+				
+				# Afficher les valeur au dessus des colonnes
+				geom_text(aes(label = nb), 
+						vjust = -0.5) +
 				
 				#theme(legend.position = "top")+
 				
@@ -308,18 +318,25 @@ dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_nb.pn
 dataToPlot <- vaers_data %>%
 		filter(DIED == "Y",
 				vax_year >= 2019) %>%
-		group_by(vax_year, SEX, tranche_age) %>% 
+		group_by(vax_year, 
+				tranche_age) %>% 
 		summarise(nb = n())
 
 
 print(ggplot(data = dataToPlot,
-						mapping = aes(x = dataToPlot$vax_year)) +
+						mapping = aes(x = vax_year,
+								y = nb,
+								fill = tranche_age)) +
 				
-				geom_col(mapping = aes(y = dataToPlot$nb,
-								fill = tranche_age),
+				geom_col(
 						# Mettre les colonnes les unes à côté des autres
 						position="dodge"
 				) + 
+				
+				# Afficher les valeur au dessus des colonnes
+				geom_text(mapping = aes(label = nb),
+						position = position_dodge(width = 0.9),
+						vjust = -0.5) +
 				
 				#theme(legend.position = "top")+
 				
