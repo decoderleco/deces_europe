@@ -1298,7 +1298,12 @@ eu_mesures_gouv <- eu_mesures_gouv %>%
 						TRUE~str_to_upper(substr(Country, 1, 2)))) %>%
 		select(Country,
 				geo,
-				everything())
+				date_start:time_end,
+				everything()) %>%
+		# Trier
+		arrange(Country,
+				geo,
+				date_start)
 
 #
 # Créer un df geo, Response_measure (debut ou fin de confinement), time (week)
