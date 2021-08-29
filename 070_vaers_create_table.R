@@ -172,16 +172,16 @@ vaers_data <- vaers_data %>%
 dataToPlot <- vaers_data %>%
 		filter(DIED == "Y") %>%
 		group_by(vax_year) %>% 
-		summarise(nb = n())
+		summarise(nbDeces = n())
 
 print(ggplot(data = dataToPlot,
 						mapping = aes(x = vax_year,
-								y = nb)) +
+								y = nbDeces)) +
 				
 				geom_col() + 
 				
 				# Afficher les valeur au dessus des colonnes
-				geom_text(aes(label = nb), 
+				geom_text(aes(label = nbDeces), 
 						vjust = -0.5) +
 				
 				#theme(legend.position = "top")+
@@ -206,17 +206,17 @@ dataToPlot <- vaers_data %>%
 				vax_year >= 2019) %>%
 		group_by(vax_year, 
 				vax_month) %>% 
-		summarise(nb = n())
+		summarise(nbDeces = n())
 dataToPlot
 
 print(ggplot(data = dataToPlot,
 						mapping = aes(x = as.Date(paste(vax_year, vax_month, 15, sep="-"),"%Y-%m-%d"),
-								y = nb)) +
+								y = nbDeces)) +
 				
 				geom_col() + 
 				
 				# Afficher les valeur au dessus des colonnes
-				geom_text(aes(label = nb), 
+				geom_text(aes(label = nbDeces), 
 						vjust = -0.5) +
 				
 				
@@ -278,12 +278,12 @@ dataToPlot <- vaers_data %>%
 				vax_year >= 2019) %>%
 		group_by(vax_year, 
 				tranche_age) %>% 
-		summarise(nb = n())
+		summarise(nbDeces = n())
 
 
 print(ggplot(data = dataToPlot,
 						mapping = aes(x = vax_year,
-								y = nb,
+								y = nbDeces,
 								fill = tranche_age)) +
 				
 				geom_col(
@@ -292,7 +292,7 @@ print(ggplot(data = dataToPlot,
 				) + 
 				
 				# Afficher les valeur au dessus des colonnes
-				geom_text(mapping = aes(label = nb),
+				geom_text(mapping = aes(label = nbDeces),
 						position = position_dodge(width = 0.9),
 						vjust = -0.5) +
 				
@@ -318,7 +318,7 @@ dataToPlot <- vaers_data %>%
 		group_by(vax_year,
 				tranche_age,
 				died_delay) %>% 
-		summarise(nb_deces_cumules = n()) %>% 
+		summarise(nbDeces = n()) %>% 
 		# Ne garder que les délais de décès supérieurs à 0, les autres étant probablement des erreurs
 		filter(died_delay >= 0,
 				died_delay <= 30)
@@ -326,7 +326,7 @@ dataToPlot <- vaers_data %>%
 
 print(ggplot(data = dataToPlot,
 						mapping = aes(x = died_delay,
-								y = nb_deces_cumules)) +
+								y = nbDeces)) +
 				
 				geom_col(mapping = aes(fill = tranche_age),
 						
@@ -347,6 +347,70 @@ K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
 
 dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_delai_par_tranche_age.png"), width = 1000)
 
+
+
+#
+# Graphe si on retire les décès à plus de n jours (car considérés non liés à la vaccination) 
+#
+
+n = 10 # (3 semaines)
+
+# Afficher un résumé des décès depuis 2021 avec un délai de décès après vaccination inférieur à n jours
+dataToPlot <- vaers_data %>%
+		filter(DIED == "Y",
+				vax_year >= 2021,
+				# Ne garder que les délais de décès supérieurs à 0, les autres étant probablement des erreurs
+				died_delay >= 0,
+				# Décès moins de n jours après la vaccination
+				died_delay <= n) %>%
+		group_by(vax_year,
+				vax_month,
+				tranche_age) %>% 
+		summarise(nbDeces = n(),
+				died_delay_mean = mean(died_delay))
+#dataToPlot
+
+print(ggplot(data = dataToPlot,
+						mapping = aes(x = as.Date(paste(vax_year, vax_month, 15, sep="-"),"%Y-%m-%d"),
+								y = nbDeces)) +
+				
+				geom_col() + 
+				
+				# Afficher les valeur au dessus des colonnes
+				geom_text(aes(label = nbDeces), 
+						vjust = -0.5) +
+
+				facet_wrap(~tranche_age) +
+				
+				#theme(legend.position = "top")+
+				
+				ggtitle(paste0("Nombre de décés moins de ", n, " jours après une vaccination aux USA")) +
+				xlab("Date du vaccin") + 
+				ylab("Nombre")
+)
+
+print(ggplot(data = dataToPlot,
+						mapping = aes(x = died_delay,
+								y = nbDeces)) +
+				
+				geom_col(mapping = aes(fill = tranche_age),
+						
+						# Mettre les colonnes les unes à côté des autres
+						position = "dodge"
+				) + 
+				
+				facet_wrap(~tranche_age) +
+				
+				#theme(legend.position = "top")+
+				
+				ggtitle("Nombre de décés dans les 30 jours suivant une vaccination aux USA") +
+				xlab("Délai entre vaccination et décès") + 
+				ylab("Nombre")
+)
+
+K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
+
+dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_delai_par_tranche_age.png"), width = 1000)
 
 
 
@@ -371,7 +435,7 @@ vaers_vax <- vaers_vax %>%
 # Regroupement et synthèse
 dataToPlot <- vaers_vax %>%
 		group_by(VAX_TYPE) %>% 
-		summarise(nb = n())
+		summarise(nbDeces = n())
 
 
 if (shallDeleteVars) rm(vaers_vax)
@@ -394,6 +458,6 @@ vaers_symptoms <- a__original_vaers_symptoms
 # Regroupement et synthèse
 #dataToPlot <- vaers_symptoms %>%
 #		group_by(SYMPTOM1, SYMPTOM2, SYMPTOM3, SYMPTOM4, SYMPTOM5) %>% 
-#		summarise(nb = n())
+#		summarise(nbDeces = n())
 
 if (shallDeleteVars) rm(vaers_symptoms)
