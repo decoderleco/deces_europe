@@ -186,7 +186,7 @@ print(ggplot(data = dataToPlot,
 				
 				#theme(legend.position = "top")+
 				
-				ggtitle("Nombre de décés liés à une vaccination aux USA") +
+				ggtitle("Nombre de décés potentiellement liés à une vaccination aux USA") +
 				xlab("Date du vaccin") + 
 				ylab("Nombre")
 )
@@ -200,10 +200,15 @@ dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_nb.pn
 # Analyse de l'évolution du nombre de décès par mois
 #
 
+n = 10 # décès entre 0 et n jours
+
 # Afficher un résumé des décès depuis 2019
 dataToPlot <- vaers_data %>%
 		filter(DIED == "Y",
-				vax_year >= 2019) %>%
+				vax_year >= 2021,
+				died_delay >= 0,
+				died_delay < n
+				) %>%
 		group_by(vax_year, 
 				vax_month) %>% 
 		summarise(nbDeces = n())
@@ -213,18 +218,20 @@ print(ggplot(data = dataToPlot,
 						mapping = aes(x = as.Date(paste(vax_year, vax_month, 15, sep="-"),"%Y-%m-%d"),
 								y = nbDeces)) +
 				
-				geom_col() + 
+				geom_line() + 
+				geom_point() + 
 				
-				# Afficher les valeur au dessus des colonnes
-				geom_text(aes(label = nbDeces), 
-						vjust = -0.5) +
+				# Afficher le nom du mois et la valeur au dessus de chaque colonne
+				geom_text(aes(label = paste0(month(ym(paste0(vax_year, vax_month)), label = TRUE) , "\n", nbDeces)), 
+						vjust = -0.5,
+						size=3) +
 				
 				
 				#theme(legend.position = "top")+
 				
-				ggtitle("Nombre de décés par mois liés à une vaccination aux USA") +
-				xlab("Date du vaccin") + 
-				ylab("Nombre")
+				ggtitle(paste0("Nombre de décès moins de ", n, " jours après une vaccination aux USA")) +
+				xlab("Mois de vaccination") + 
+				ylab("Nombre de décès")
 )
 
 K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
@@ -259,7 +266,7 @@ print(ggplot(data = dataToPlot,
 				
 				#theme(legend.position = "top")+
 				
-				ggtitle("Nombre de décés cumulés liés à une vaccination aux USA") +
+				ggtitle("Nombre de décés cumulés potentiellement liés à une vaccination aux USA") +
 				xlab("Date du vaccin") + 
 				ylab("Nombre")
 )
@@ -298,7 +305,7 @@ print(ggplot(data = dataToPlot,
 				
 				#theme(legend.position = "top")+
 				
-				ggtitle("Nombre de décés liés à une vaccination aux USA") +
+				ggtitle("Nombre de décés potentiellement liés à une vaccination aux USA") +
 				xlab("Date du vaccin") + 
 				ylab("Nombre")
 )
@@ -311,6 +318,8 @@ dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_nb_pa
 # Graphe du délai entre vaccination et décès 
 #
 
+n = 50 # décès entre 0 et n jours
+
 # Afficher un résumé des décès depuis 2019
 dataToPlot <- vaers_data %>%
 		filter(DIED == "Y",
@@ -321,7 +330,7 @@ dataToPlot <- vaers_data %>%
 		summarise(nbDeces = n()) %>% 
 		# Ne garder que les délais de décès supérieurs à 0, les autres étant probablement des erreurs
 		filter(died_delay >= 0,
-				died_delay <= 30)
+				died_delay <= n)
 #dataToPlot
 
 print(ggplot(data = dataToPlot,
@@ -338,9 +347,9 @@ print(ggplot(data = dataToPlot,
 				
 				#theme(legend.position = "top")+
 				
-				ggtitle("Nombre de décés dans les 30 jours suivant une vaccination aux USA") +
+				ggtitle(paste0("Nombre de décès déclarés moins de ", n, " jours après une vaccination aux USA")) +
 				xlab("Délai entre vaccination et décès") + 
-				ylab("Nombre")
+				ylab("Nombre de décès")
 )
 
 K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
@@ -348,69 +357,6 @@ K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
 dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_delai_par_tranche_age.png"), width = 1000)
 
 
-
-#
-# Graphe si on retire les décès à plus de n jours (car considérés non liés à la vaccination) 
-#
-
-n = 10 # (3 semaines)
-
-# Afficher un résumé des décès depuis 2021 avec un délai de décès après vaccination inférieur à n jours
-dataToPlot <- vaers_data %>%
-		filter(DIED == "Y",
-				vax_year >= 2021,
-				# Ne garder que les délais de décès supérieurs à 0, les autres étant probablement des erreurs
-				died_delay >= 0,
-				# Décès moins de n jours après la vaccination
-				died_delay <= n) %>%
-		group_by(vax_year,
-				vax_month,
-				tranche_age) %>% 
-		summarise(nbDeces = n(),
-				died_delay_mean = mean(died_delay))
-#dataToPlot
-
-print(ggplot(data = dataToPlot,
-						mapping = aes(x = as.Date(paste(vax_year, vax_month, 15, sep="-"),"%Y-%m-%d"),
-								y = nbDeces)) +
-				
-				geom_col() + 
-				
-				# Afficher les valeur au dessus des colonnes
-				geom_text(aes(label = nbDeces), 
-						vjust = -0.5) +
-
-				facet_wrap(~tranche_age) +
-				
-				#theme(legend.position = "top")+
-				
-				ggtitle(paste0("Nombre de décés moins de ", n, " jours après une vaccination aux USA")) +
-				xlab("Date du vaccin") + 
-				ylab("Nombre")
-)
-
-print(ggplot(data = dataToPlot,
-						mapping = aes(x = died_delay,
-								y = nbDeces)) +
-				
-				geom_col(mapping = aes(fill = tranche_age),
-						
-						# Mettre les colonnes les unes à côté des autres
-						position = "dodge"
-				) + 
-				
-				facet_wrap(~tranche_age) +
-				
-				#theme(legend.position = "top")+
-				
-				ggtitle("Nombre de décés dans les 30 jours suivant une vaccination aux USA") +
-				xlab("Délai entre vaccination et décès") + 
-				ylab("Nombre")
-)
-
-K_DIR_GEN_IMG_VAERS <- a__f_createDir(file.path(K_DIR_GEN_IMG_USA, 'vaers'))
-
-dev.print(device = png, file = file.path(K_DIR_GEN_IMG_VAERS, "vaers_deces_delai_par_tranche_age.png"), width = 1000)
 
 
 
