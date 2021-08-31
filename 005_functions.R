@@ -559,8 +559,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	nomPays <- str_sub(nomVar, startIndex)
 
 	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/Lissage/", es_deces_standard_pays_semaine$zone[1], "/")
-	a__f_createDir(repertoire)
+	repertoire <- a__f_createDir(paste0("gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/", es_deces_standard_pays_semaine$zone[1], "/"))
 	
 	#Nom du fichier png à générer
 	pngFileRelPath <- paste0(repertoire, nomPays, ".png")

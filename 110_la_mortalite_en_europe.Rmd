@@ -203,7 +203,7 @@ Depuis le début de l'année 2020, des décisions inédites ont été prises en 
 ### 2.1 La mortalité hivernale n'est pas un phénomène de propagation
 
 L'étude de la carte des décès hebdomadaires standardisés en France depuis 2013 nous permet de visuliser les cycles de mortalité.
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/france.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/france.png){width=1000px}
 
 Chaque année, le nombre de décès augmente en hiver et diminue en été. Cette augmentation de décès l'hiver est concomitante des maladies hivernales, dont les infections respiratoires aiguës comme les grippes ou les coronavirus.
 
@@ -243,7 +243,7 @@ En France, l'année 2020 comporte plus de décès que l'année 2019 notamment pa
 
 La moyenne et les deux bornes des intervalles de confiance à 95 %, permettent de visualiser les périodes de mortalité anormale.
 
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/france.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/france.png){width=1000px}
 
 Ainsi, arrivé au mois de mars 2020, la France était sur une moyenne très basse de décès relativement aux années précédentes. Le pic de mars-avril en France a entraîné un rapprochement vers la moyenne de décès habituels, sans la franchir. Il s'agit donc d'un phénomène brutal avec un impact limité. La mortalité lissée sur 52 semaines ne dépasse la moyenne des 5 dernières années que depuis la hausse de mortalité en octobre 2020.
 
@@ -285,7 +285,7 @@ Ces décès ne sont pas considérés comme ayant un quelconque rapport avec la C
 
 Ce résultat de non-prise en charge peut expliquer le caractère particulier des données de Chypre.
 
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/chypre.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/chypre.png){width=1000px}
 
 De la même manière qu'en France, où l'on constate un nombre de décès inscrits à l'état civil plus important les lundis et mardis et très faibles les dimanches, à Chypre la fin du confinement n'est probablement pas liée à un excès mortalité, mais plutôt à la découverte tardive des décès non répertoriés.
 
@@ -498,51 +498,51 @@ Dans tous les cas, il est urgent de retrouver ce qui manque cruellement depuis p
 # Annexes
 ## Les décès hebdomadaires par pays
 ### Pays présentant un pic de mortalité en mars-avril
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/france.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/belgique.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/france.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/belgique.png){width=1000px}
 
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/suisse.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/espagne.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/suisse.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/espagne.png){width=1000px}
 
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/italie.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/luxembourg.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/italie.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/luxembourg.png){width=1000px}
 
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/paysbas.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/paysbas.png){width=1000px}
 
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/suede.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/chypre.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/suede.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/chypre.png){width=1000px}
 
 
 ### Pays ne présentant pas de pic de mortalité en mars-avril 2020
 
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/portugal.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/portugal.png){width=1000px}
 
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/malte.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/malte.png){width=1000px}
 
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/autriche.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/hongrie.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/bulgarie.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/rtcheque.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/danmark.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/estonie.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/croatie.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/islande.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/lichtenstein.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/lettonie.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/montenegro.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/norvege.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/pologne.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/serbie.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/slovaquie.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/slovenie.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Ouest/allemagne.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/albanie.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/autriche.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/hongrie.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/bulgarie.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/rtcheque.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/danmark.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/estonie.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/croatie.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/islande.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/lichtenstein.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/lettonie.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/montenegro.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/norvege.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/pologne.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/serbie.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/slovaquie.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/slovenie.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Ouest/allemagne.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/albanie.png){width=1000px}
 
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/grece.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/finlande.png){width=1000px}
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/roumanie.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/grece.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/finlande.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/roumanie.png){width=1000px}
 
-![](gen/images/Eurostat/Deces/Hebdo/Std/Lissage/Est/armenie.png){width=1000px}
+![](gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/Est/armenie.png){width=1000px}
 
 ## Les décès confrontés à la vaccination Covid par pays
 
