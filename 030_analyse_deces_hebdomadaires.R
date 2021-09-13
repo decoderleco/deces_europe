@@ -203,6 +203,43 @@ a__f_createDir(repertoire)
 
 dev.print(device = png, file = paste0(repertoire, "/Deces_Hebdo_france_suede_portugal.png"), width = 1000)
 
+#---------------------------------------#
+####     analyse juillet-juin        ####
+#---------------------------------------#
+
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
+  mutate(annee_coupee_ete = case_when(
+    numSemaineDepuis2013 >= 27 &  numSemaineDepuis2013 <= 78 ~ "2013-2014",
+    numSemaineDepuis2013 >= 79 &  numSemaineDepuis2013 <= 130 ~ "2014-2015",
+    numSemaineDepuis2013 >= 131 &  numSemaineDepuis2013 <= 182 ~ "2015-2016",
+    numSemaineDepuis2013 >= 183 &  numSemaineDepuis2013 <= 234 ~ "2016-2017",
+    numSemaineDepuis2013 >= 235 &  numSemaineDepuis2013 <= 286 ~ "2017-2018",
+    numSemaineDepuis2013 >= 287 &  numSemaineDepuis2013 <= 338 ~ "2018-2019",
+    numSemaineDepuis2013 >= 339 &  numSemaineDepuis2013 <= 390 ~ "2019-2020",
+    numSemaineDepuis2013 >= 391 &  numSemaineDepuis2013 <= 442 ~ "2020-2021",
+  ))
+
+derniere_semaine_remontee_pays <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
+  select (geo,numSemaineDepuis2013) %>% 
+  mutate(derniere_remontee = max(numSemaineDepuis2013))
+
+pays_a_garder <- derniere_semaine_remontee_pays %>% 
+  filter(derniere_remontee >= 442) %>% 
+  select(geo) %>% 
+  distinct (geo)
+
+a_sommer <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
+  select (geo, annee_coupee_ete, deces_standardises_si_pop_2020, deces_tot, deces_standardises_si_pop_2020_40_60, deces_standardises_si_pop_2020_ge60 )
+
+a_sommer <- a_sommer %>% inner_join(pays_a_garder)
+  
+annee_coupee_ete <- a_sommer %>% group_by(geo, annee_coupee_ete) %>% 
+  mutate(deces_standardises_si_pop_2020 = sum(deces_standardises_si_pop_2020),
+         deces_standardises_si_pop_2020_40_60 = sum(deces_standardises_si_pop_2020_40_60),
+         deces_standardises_si_pop_2020_ge60 = sum(deces_standardises_si_pop_2020_ge60),
+         deces_tot=sum(deces_tot)) %>% 
+  distinct(geo,annee_coupee_ete,deces_tot,deces_standardises_si_pop_2020,deces_standardises_si_pop_2020_40_60,deces_standardises_si_pop_2020_ge60)
+
 
 #---------------------------------------#
 # Graphe deces_hebdo_std_moyenne_mobile de chaque pays
