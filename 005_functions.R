@@ -534,7 +534,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 					
 					theme(legend.position = "top")+
 					
-					ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(deces_par_jour$deces_date_complete) ,") par Tranche d'age")) +
+					ggtitle(paste0("Décès quotidiens France (=> ", max(deces_par_jour$deces_date_complete) ,") des", nomVar)) +
 					
 					xlab("date de décès") + 
 					ylab("nombre de décès quotidiens")
