@@ -1,6 +1,7 @@
 library(dplyr)
 library(lubridate)
 library(stringr)
+library(tidyr)
 
 #### téléchargement traitement des données de météo france pour chercher une relation température / mortalité
 
@@ -16,7 +17,10 @@ library(stringr)
 
 meteo<-readRDS('C:/Users/xxx/Documents/R/deces_europe/gen/rds/meteo.rds')
 meteorecente<-readRDS('C:/Users/xxx/Documents/R/deces_europe/gen/rds/meteorecente.rds')
+poptot<-read.csv2(file = 'C:/Users/xxx/Documents/R/deces_europe/data/csv/poptot.csv')
 
+
+#transformation météo ancienne
 meteo_simple <- meteo %>% select (TempÃ.rature, department..code.,Date)
 meteo_simple <- meteo_simple %>% mutate(jour = str_sub(Date,1,10))
 meteo_simple$jour <- as.Date(meteo_simple$jour,'%Y-%m-%d')
@@ -25,15 +29,26 @@ meteo_simple <- meteo_simple %>% filter(TempÃ.rature>100)
 meteo_simple <- meteo_simple %>% mutate(temperature = as.numeric(TempÃ.rature))
 meteo_simple <- meteo_simple %>%  group_by(department..code.,jour) %>% 
   summarise(temperature = mean(temperature))
+meteo_simple <-meteo_simple %>% filter(year(jour)<2018)
 
-poptot<-read.csv2(file = 'C:/Users/xxx/Documents/R/deces_europe/data/csv/poptot.csv')
+
+#transformation meteo récente
+meteorecente <- meteorecente %>% 
+  rename(department..code.=code_insee_departement) %>%
+  rename(jour=date_obs) %>% 
+  rename(temperature=tmoy) %>% 
+  select(department..code.,jour,temperature) %>% 
+  mutate(temperature=as.numeric(temperature)) %>% 
+  mutate(temperature=temperature+273.15) %>% 
+  mutate(jour=as.Date(jour))
+
+meteo_simple <- rbind(meteo_simple,meteorecente) 
 
 
 
 #on recupere les temperatures par jour
 
 calendrier_temp<-meteo_simple %>% select( department..code., jour ,temperature) %>% 
-  filter(jour>="2018-01-01") %>% 
   filter ( department..code. != "" ) %>% 
   arrange (jour)
 
@@ -42,7 +57,7 @@ calendrier_temp<-calendrier_temp %>% mutate(jour_annee=yday(jour)) %>%
   rename(dep=department..code.)
 
 # on filtre les deces sur la p?riode dont on dispose
-deces<-b__fr_gouv_deces_quotidiens %>% filter(deces_date>="2018-01-01" & deces_date<="2018-05-31") %>% 
+deces<-b__fr_gouv_deces_quotidiens %>%
   rename (jour=deces_date)
 
 # pour chaque tranche d'age, on cr?e une table avec une variable correspondant au nombre de deces du jour dans le dep
@@ -186,13 +201,13 @@ calendrier_temp_deces<-calendrier_temp %>%
 
 
 # on filtre la pop sur les ann?es dont on dispose, et on met le dep au bon format
-pop_annee_n <- poptot %>% filter (annee=="2018") %>% 
+pop_annee_n <- poptot %>%  
   mutate (dep=if_else(nchar(DR19)==1,paste0("0",DR19),DR19)) %>% 
   select(annee,dep,starts_with("Y"))
 
 # on filtre la pop sur les ann?es dont on dispose +1, on met le dep au bon format,
 #et on remet l'annee a annee-1 pour la jointure
-pop_annee_nplus1 <- poptot %>% filter (annee=="2019") %>% 
+pop_annee_nplus1 <- poptot %>%
   mutate (dep=if_else(nchar(DR19)==1,paste0("0",DR19),DR19)) %>% 
   mutate (annee=as.integer(annee)-1) %>% 
   select(annee,dep,starts_with("Y"))
@@ -232,3 +247,11 @@ calendrier_temp_deces_pop<-calendrier_temp_deces_pop %>%
 
 test<-calendrier_temp_deces_pop %>% 
   select(popGE90,YGE90,YGE90_nplus1,dep,annee,jour,DGE90)
+
+saveRDS(calendrier_temp_deces_pop, file = 'gen/rds/calendrier_deces_2018_2021.rds')
+
+rm(calendrier_temp)
+rm(calendrier_temp_deces)
+rm(deces)
+rm(test)
+rm(b__fr_gouv_deces_quotidiens)
