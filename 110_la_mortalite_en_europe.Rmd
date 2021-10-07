@@ -2,8 +2,10 @@
 title: "La mortalité en Europe"
 author: "Pierre Décoder l'éco"
 date: "20/05/2021"
-output: 
-  html_document: 
+output:
+  pdf_document:
+    toc: yes
+  html_document:
     toc: yes
 ---
 
