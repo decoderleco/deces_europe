@@ -774,6 +774,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	box() 
 	
 	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+
 	
 	mtext("nombre de décès toutes causes des 15 - 24 ans", side=2, line=3)
 	mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
@@ -807,7 +808,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     ylab="", 
 	     type="o", 
 	     col="red") 
-	
+
 	# Superposer la moyenne 
 	par(new=T)
 	plot(essai$numSemaineDepuis2013, 
@@ -865,7 +866,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     ylab="", 
 	     type="o", 
 	     col="blue") 
-	
+	axis(4, col = "blue", col.axis = "blue", lwd = 2)	
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
 	
@@ -1009,7 +1010,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     ylab="", 
 	     type="o", 
 	     col="blue") 
-	
+	axis(4, col = "blue", col.axis = "blue", lwd = 2)
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
 	
@@ -1053,7 +1054,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     axes=F, 
 	     xlab="week", 
 	     ylab="", 
-	     ylim=c(0, ylim_max_left2*1.5), 
+	     ylim=c(0, ylim_max_left2*2), 
 	     type="o", 
 	     col="black", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -1091,7 +1092,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(0, ylim_max_left2*1.5), 
+	     ylim=c(0, ylim_max_left2*2), 
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -1105,7 +1106,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(0, ylim_max_left2*1.5), 
+	     ylim=c(0, ylim_max_left2*2), 
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -1119,7 +1120,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(0, ylim_max_left2*1.5), 
+	     ylim=c(0, ylim_max_left2*2), 
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -1134,7 +1135,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(0, ylim_max_left2*1.5), 
+	     ylim=c(0, ylim_max_left2*2), 
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -1147,7 +1148,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     pch=16, 
 	     axes=F, 
 	     cex=0, 
-	     ylim=c(0, ylim_max_right2), 
+	     ylim=c(0, ylim_max_right*2), 
 	     xlab="", 
 	     lwd=2,  
 	     ylab="", 
@@ -1155,6 +1156,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     col="blue") 
 	
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
+	axis(4, col = "blue", col.axis = "blue", lwd = 2)
 	
 	#
 	# Graphique 4 : Situation des 60- 69 ans
@@ -1290,13 +1292,13 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     pch=16, 
 	     axes=F, 
 	     cex=0, 
-	     ylim=c(0, ylim_max_right), 
+	     ylim=c(0, ylim_max_right*2), 
 	     xlab="", 
 	     lwd=2,  
 	     ylab="", 
 	     type="o", 
 	     col="blue") 
-	
+	axis(4, col = "blue", col.axis = "blue", lwd = 2)
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
 	
@@ -1340,7 +1342,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     axes=F, 
 	     xlab="week", 
 	     ylab="", 
-	     ylim=c(0, ylim_max_left2*6), 
+	     ylim=c(0, ylim_max_left2*7), 
 	     type="o", 
 	     col="black", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -1378,7 +1380,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(0, ylim_max_left2*6), 
+	     ylim=c(0, ylim_max_left2*7), 
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -1392,7 +1394,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(0, ylim_max_left2*6), 
+	     ylim=c(0, ylim_max_left2*7), 
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -1406,7 +1408,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(0, ylim_max_left2*6), 
+	     ylim=c(0, ylim_max_left2*7), 
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -1421,7 +1423,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(0, ylim_max_left2*6), 
+	     ylim=c(0, ylim_max_left2*7), 
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -1434,13 +1436,13 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     pch=16, 
 	     axes=F, 
 	     cex=0, 
-	     ylim=c(0, ylim_max_right), 
+	     ylim=c(0, ylim_max_right*2), 
 	     xlab="", 
 	     lwd=2,  
 	     ylab="", 
 	     type="o", 
 	     col="blue") 
-	
+	axis(4, col = "blue", col.axis = "blue", lwd = 2)
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
 	
@@ -1585,7 +1587,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     ylab="", 
 	     type="o", 
 	     col="blue") 
-	
+	axis(4, col = "blue", col.axis = "blue", lwd = 2)
 	dev.print(device = png, file = pngFileRelPath, width = 1000)	
 	# Supprimer la variable de GlovaEnv correspondant à region car on n'en a plus besoin
 	#	if (shallDeleteVars) rm(list = c(nomRegion), envir = globalenv())
