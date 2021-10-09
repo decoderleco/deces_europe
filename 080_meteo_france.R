@@ -8,14 +8,14 @@ library(stringr)
 
 # Faire tourner les 2 lignes suivantes uniquement quand on veut recharger tout la base
 
-#meteo<-read.csv2(file = 'https://public.opendatasoft.com/explore/dataset/donnees-synop-essentielles-omm/download/?format=csv&timezone=Europe/Berlin&lang=fr&use_labels_for_header=true&csv_separator=%3B')
-#meteorecente <- read.csv2(file='https://www.data.gouv.fr/fr/datasets/r/dd0df06a-85f2-4621-8b8b-5a3fe195bcd7')
+meteo<-read.csv2(file = 'https://public.opendatasoft.com/explore/dataset/donnees-synop-essentielles-omm/download/?format=csv&timezone=Europe/Berlin&lang=fr&use_labels_for_header=true&csv_separator=%3B')
+meteorecente <- read.csv2(file='https://www.data.gouv.fr/fr/datasets/r/dd0df06a-85f2-4621-8b8b-5a3fe195bcd7')
 
-#saveRDS(meteo,file='C:/Users/xxx/Documents/R/deces_europe/gen/rds/meteo.rds')
-#saveRDS(meteorecente,file='C:/Users/xxx/Documents/R/deces_europe/gen/rds/meteorecente.rds')
+saveRDS(meteo,file='gen/rds/meteo.rds')
+saveRDS(meteorecente,file='gen/rds/meteorecente.rds')
 
-meteo<-readRDS('C:/Users/xxx/Documents/R/deces_europe/gen/rds/meteo.rds')
-meteorecente<-readRDS('C:/Users/xxx/Documents/R/deces_europe/gen/rds/meteorecente.rds')
+meteo<-readRDS('gen/rds/meteo.rds')
+meteorecente<-readRDS('gen/rds/meteorecente.rds')
 
 meteo_simple <- meteo %>% select (TempÃ.rature, department..code.,Date)
 meteo_simple <- meteo_simple %>% mutate(jour = str_sub(Date,1,10))
