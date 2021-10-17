@@ -510,11 +510,10 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 					
 					scale_linetype_manual(values=c("dotted", "solid")) +
 					
-					scale_size_manual(values=c(0.1, 1.5)) +
+					scale_size_manual(values=c(0.1, 0.1)) +
 					
 					geom_line(mapping = aes(y = nbDeces),
 							linetype = "dotted") + 
-					geom_point(mapping = aes(y = nbDeces)) + 
 					
 					geom_line(mapping = aes(y = moyenne_mobile),
 							linetype = "solid",
@@ -534,7 +533,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 					
 					theme(legend.position = "top")+
 					
-					ggtitle(paste0("Décès quotidiens France (=> ", max(deces_par_jour$deces_date_complete) ,") des", nomVar)) +
+					ggtitle(paste0("Décès quotidiens France (=> ", max(deces_par_jour$deces_date_complete) ,") des ", nomVar)) +
 					
 					xlab("date de décès") + 
 					ylab("nombre de décès quotidiens")

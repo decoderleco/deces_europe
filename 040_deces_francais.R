@@ -562,8 +562,8 @@ nbDeces_moyen_par_tranchedAge <- deces_par_jour_tranchedage %>%
 						probs = 0.25),
 				dernier_quartile = quantile(nbDeces,
 						probs = 0.75),
-				bsup = moyenne + 2 * variance,
-				binf = moyenne - 2 * variance
+				bsup = moyenne +   variance,
+				binf = moyenne -   variance
 )
 
 
