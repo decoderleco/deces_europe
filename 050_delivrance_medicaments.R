@@ -113,6 +113,52 @@ a__f_createDir(repertoire)
 
 dev.print(device = png, file = paste0(repertoire, "/Medicam_Vaccins_Grippe_Distribues.png"), width = 1000)
 
+###### Graphe par année ######
+
+medicam_vaccins_grippes_par_annee <- medicam_vaccins_grippes %>%
+		mutate(annee = str_sub(mois_annee, 1, 4)) %>%
+		select(annee, 
+				Nom_vaccin, 
+				nombre_de_boites) %>%
+		group_by(annee, Nom_vaccin)
+
+# Nombre de boites de vaccin pour la grippe (toutes marques confondues) par mois
+# nombre_vaccins_grippes <- vaccins_grippes %>%
+#                           group_by(mois_annee) %>%
+#                           summarise(nombre_de_boites=sum(nombre_de_boites))
+
+print(ggplot(medicam_vaccins_grippes_par_annee, 
+						aes(x = annee, 
+								y = nombre_de_boites))+
+				
+				# Nb de boites empilée (Colorier les colonnes en fonction du nom du vaccin)
+				
+				geom_col(aes(fill = Nom_vaccin))+ 
+				
+				ggtitle("Nombre de vaccins contre la Grippe, distribués en pharmacie par année") +
+				
+				theme(legend.position="bottom") +
+				
+				labs(caption="Source : Medicam
+								https://assurance-maladie.ameli.fr/etudes-et-donnees/medicaments-type-prescripteur-medicam-2021") +
+				
+				
+				ylab("nombre de vaccins")+
+				
+				xlab("mois") + 
+				#scale_x_date(labels = date_format("%m/%y"), breaks = date_breaks("year")) +
+				theme(axis.text.x = element_text(angle=45))
+)
+
+repertoire <- paste0("gen/images/fr/Medicam")
+a__f_createDir(repertoire)
+
+dev.print(device = png, file = paste0(repertoire, "/Medicam_Vaccins_Grippe_Distribues_par_annee.png"), width = 1000)
+
+
+if (shallDeleteVars) rm(medicam_vaccins_grippes)
+if (shallDeleteVars) rm(medicam_vaccins_grippes_par_annee)
+
 
 ################################################################################
 #

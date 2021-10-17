@@ -698,9 +698,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 }
 
 ################################################################################
-# Generer le graphique et le png associé : deces_hebdo_std_m40_p65_vaccination
+# Generer le graphique et le png associé : deces_hebdo_std_vaccination
 ################################################################################
-a__f_plot_es_deces_hebdo_std_15_40_ge65_vaccination <- function(es_deces_standard_pays_semaine, 
+a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_semaine, 
 		                                                  ylim_max_left,
 														  ylim_max_right,
 														  ylim_max_left2,
@@ -715,219 +715,20 @@ a__f_plot_es_deces_hebdo_std_15_40_ge65_vaccination <- function(es_deces_standar
 	startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
 	nomPays <- str_sub(nomVar, startIndex)
 	
+	# Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
+	maxWeekTime <- es_deces_standard_pays_semaine %>%
+	  ungroup %>%
+	  filter(numSemaineDepuis2013 == max(numSemaineDepuis2013)) %>%
+	  distinct() %>%
+	  select(time)
+	maxWeekTime <- maxWeekTime[1, 1]
+	
+	
 	#
-	# Graphique 1 : Situation des + 65ans et - 65 ans
+	# Graphique 1 : Situation des 15_24 ans
 	#
 
 	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/ge65/", es_deces_standard_pays_semaine$zone[1], "/")
-	a__f_createDir(repertoire)
-	
-	#Nom du fichier png à générer
-	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
-	
-	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
-	
-	# Moyenne mobile sur 8 semaines, des 15 - 50 ans
-	es_deces_standard_pays_semaine$deces_tot_15_50<-es_deces_standard_pays_semaine$deces_tot_15_40+es_deces_standard_pays_semaine$deces_tot_40_50
-	
-	moyenne_mobile_15_50 <- running_mean(es_deces_standard_pays_semaine$deces_tot_15_50, 
-			8)
-	moyenne_mobile_15_24 <- running_mean(es_deces_standard_pays_semaine$deces_tot_15_24, 
-	                                     8)
-	
-	# Moyenne de la Moyenne mobile
-	moyenne_15_50 <- mean(moyenne_mobile_15_50)
-	moyenne_15_24 <- mean(moyenne_mobile_15_24)
-	
-	moyenne_mobile_15_50 <- data_frame(moyenne_mobile_15_50)
-	moyenne_mobile_15_24 <- data_frame(moyenne_mobile_15_24)
-	
-	moyenne_mobile_15_50$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_15_50) + decalageSemaines
-	moyenne_mobile_15_24$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_15_24) + decalageSemaines
-	
-	# Ajouter les colonnes de la moyenne mobile 
-	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-			left_join(moyenne_mobile_15_50)%>%
-	  left_join(moyenne_mobile_15_24)
-	
-
-	# Ajouter la moyenne des moins de 40 ans
-	es_deces_standard_pays_semaine$moyenne_15_50 <- moyenne_15_50
-	es_deces_standard_pays_semaine$moyenne_15_24 <- moyenne_15_24
-	essai <- es_deces_standard_pays_semaine %>%
-			filter(numSemaineDepuis2013>250)
-	
-	#
-	par(mar=c(4, 4, 3, 5))
-	
-	plot(essai$numSemaineDepuis2013, 
-			# >= 65 ans
-			essai$deces_tot_plus_60 - essai$deces_tot_60_64, 
-			pch=16, 
-			cex=0, 
-			axes=F, 
-			xlab="week", 
-			ylab="", 
-			ylim=c(0, ylim_max_left), 
-			type="o", 
-			col="black", 
-			main=paste0("Situation pour : ",nomPays))
-	
-	# pour encadrer le graphique
-	box() 
-	
-	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, ylim_max_left), col="red")
-	
-	mtext("Nombre de deces toutes causes standardises des plus de 65 ans", side=2, line=3)
-	mtext("Nombre de deces toutes causes standardises des moins de 65 ans", side=2, line=2, col="red")
-	mtext("                                                                   Source : Eurostat deces hebdomadaires et population + OurWorldInData", side=1, col="black", line=2.5)
-	
-	# Lignes verticales
-	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-	
-	text(26,  0, "2013", cex=1.2)
-	text(78,  0, "2014", cex=1.2)
-	text(130, 0, "2015", cex=1.2)
-	text(183, 0, "2016", cex=1.2)
-	text(235, 0, "2017", cex=1.2)
-	text(287, 0, "2018", cex=1.2)
-	text(339, 0, "2019", cex=1.2)
-	text(391, 0, "2020", cex=1.2)
-	text(440, 0, "2021", cex=1.2)
-	
-	#text(26, 22000, nomPays, cex=1.2)
-	
-	# Superposer décès des < 65 ans
-	par(new=T)
-	plot(essai$numSemaineDepuis2013, 
-			# < 65 ans
-			essai$deces_tot_moins15 + essai$deces_tot_15_40 + essai$deces_tot_40_60 + essai$deces_tot_60_64, 
-			pch=16, 
-			axes=F, 
-			cex=0, 
-			ylim=c(0, ylim_max_left), 
-			xlab="", 
-			# lwd=3,  
-			ylab="", 
-			type="o", 
-			col="red") 
-	
-	# Superposer la vaccination 
-	par(new=T)
-	plot(essai$numSemaineDepuis2013, 
-			essai$new_vaccinations_smoothed_per_million, 
-			pch=16, 
-			axes=F, 
-			cex=0, 
-			ylim=c(0, ylim_max_right), 
-			xlab="", 
-			lwd=2,  
-			ylab="", 
-			type="o", 
-			col="blue") 
-	
-	mtext("nombre de vaccinés par million d'habitants", side=4, col="blue", line=2.5)
-	
-	axis(PLOT_AXIS_SIDE_RIGHT, ylim=c(0, 3), col="blue", col.axis="blue")
-	
-	dev.print(device = png, file = pngFileRelPath, width = 1000)
-	
-	
-	#
-	# Graphique 2 : Situation des 15- 50 ans
-	#
-
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/15-50/", es_deces_standard_pays_semaine$zone[1], "/")
-	a__f_createDir(repertoire)
-
-	#Nom du fichier png à générer
-	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
-	
-	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
-	
-	#
-	par(mar=c(4, 4, 3, 5))
-	
-	plot(essai$numSemaineDepuis2013, 
-			essai$deces_tot_15_50, 
-			pch=16, 
-			cex=0, 
-			axes=F, 
-			xlab="week", 
-			ylab="", 
-			ylim=c(0, ylim_max_left2), 
-			type="o", 
-			col="black", 
-			main=paste0("Situation de la ",nomPays, " (pour les moins de 50 ans)"))
-	
-	# pour encadrer le graphique
-	box() 
-	
-	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, ylim_max_left2), col="red")
-	
-	mtext("nombre de décès toutes causes standardisés des 15- 50 ans", side=2, line=3)
-	mtext("nombre de décès toutes causes standardisés lissés sur 8 semaines des 15- 50 ans", side=2, line=2, col="red")
-	
-	mtext("                                                                   Source : Eurostat décès hebdomadaires et population + OurWorldInData", side=1, col="black", line=2.5)
-	
-	# Lignes verticales
-	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-	
-	text(26,  0, "2013", cex=1.2)
-	text(78,  0, "2014", cex=1.2)
-	text(130, 0, "2015", cex=1.2)
-	text(183, 0, "2016", cex=1.2)
-	text(235, 0, "2017", cex=1.2)
-	text(287, 0, "2018", cex=1.2)
-	text(339, 0, "2019", cex=1.2)
-	text(391, 0, "2020", cex=1.2)
-	text(440, 0, "2021", cex=1.2)
-	
-	#text(26, 22000, nomPays, cex=1.2)
-	
-	# Superposer moyenne mobile moins de 50 ans
-	par(new=T)
-	plot(essai$numSemaineDepuis2013, 
-			essai$moyenne_mobile_15_50, 
-			pch=16, 
-			axes=F, 
-			cex=0, 
-			ylim=c(0, ylim_max_left2), 
-			xlab="", 
-			lwd=3,  
-			ylab="", 
-			type="o", 
-			col="red") 
-	
-	# Superposer la vaccination 
-	par(new=T)
-	plot(essai$numSemaineDepuis2013, 
-			essai$Age15_17+essai$Age18_24+essai$Age25_49, 
-			pch=16, 
-			axes=F, 
-			cex=0, 
-			ylim=c(0, ylim_max_right2), 
-			xlab="", 
-			lwd=2,  
-			ylab="", 
-			type="o", 
-			col="blue") 
-	
-	mtext("nombre de vaccinés", side=PLOT_AXIS_SIDE_RIGHT, col="blue", line=2.5)
-	
-	axis(PLOT_AXIS_SIDE_RIGHT, ylim=c(0, 3), col="blue", col.axis="blue")
-	
-	dev.print(device = png, file = pngFileRelPath, width = 1000)
-	
-	
-	
-	#
-	# Graphique 3 : Situation des 15- 24 ans
-	#
-	
 	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/15-24/", es_deces_standard_pays_semaine$zone[1], "/")
 	a__f_createDir(repertoire)
 	
@@ -937,30 +738,47 @@ a__f_plot_es_deces_hebdo_std_15_40_ge65_vaccination <- function(es_deces_standar
 	# Message
 	message(paste0("Creation image (", pngFileRelPath,")"))
 	
-	#
-	par(mar=c(4, 4, 3, 5))
+	# Moyenne mobile sur 8 semaines, des 15-24 ans
+
+	moyenne_mobile_15_24 <- running_mean(es_deces_standard_pays_semaine$deces_tot_15_24, 
+			8)
 	
+	# Moyenne de la Moyenne mobile
+	
+	moyenne_mobile_15_24 <- data_frame(moyenne_mobile_15_24)
+	
+	moyenne_mobile_15_24$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_15_24) + decalageSemaines
+
+	# Ajouter les colonnes de la moyenne mobile 
+	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
+	  left_join(moyenne_mobile_15_24)
+	
+
+	essai <- es_deces_standard_pays_semaine %>%
+			filter(numSemaineDepuis2013>287)
+	
+	#création du graphiques
 	plot(essai$numSemaineDepuis2013, 
-	     essai$deces_tot_15_24, 
+	     essai$deces_standardises_si_pop_2020_15_24, 
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
 	     xlab="week", 
 	     ylab="", 
-	     ylim=c(0, ylim_max_left2/10), 
+	     ylim=c(0, ylim_max_left), 
 	     type="o", 
 	     col="black", 
-	     main=paste0("Situation de la ",nomPays, " (pour les moins de 50 ans)"))
+	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
 	
 	# pour encadrer le graphique
 	box() 
 	
-	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, ylim_max_left2), col="red")
+	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+
 	
-	mtext("nombre de décès toutes causes standardisés des 15- 50 ans", side=2, line=3)
-	mtext("nombre de décès toutes causes standardisés lissés sur 8 semaines des 15- 50 ans", side=2, line=2, col="red")
-	
-	mtext("                                                                   Source : Eurostat décès hebdomadaires et population + OurWorldInData", side=1, col="black", line=2.5)
+	mtext("nombre de décès toutes causes des 15 - 24 ans", side=2, line=3)
+	mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
@@ -977,19 +795,63 @@ a__f_plot_es_deces_hebdo_std_15_40_ge65_vaccination <- function(es_deces_standar
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
-	# Superposer moyenne mobile moins de 24 ans
+	# Superposer la moyenne mobile
 	par(new=T)
 	plot(essai$numSemaineDepuis2013, 
 	     essai$moyenne_mobile_15_24, 
 	     pch=16, 
 	     axes=F, 
 	     cex=0, 
-	     ylim=c(0, ylim_max_left2/10), 
 	     xlab="", 
 	     lwd=3,  
+	     ylim=c(0, ylim_max_left), 
 	     ylab="", 
 	     type="o", 
 	     col="red") 
+
+	# Superposer la moyenne 
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$moyenne_15_24, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5,  
+	     ylim=c(0, ylim_max_left), 
+	     ylab="", 
+	     type="o", 
+	     col="purple") 
+	
+	# Superposer la bsup
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$bsup_15_24, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5,  
+	     ylim=c(0, ylim_max_left), 
+	     ylab="", 
+	     lty=2, 
+	     type="o", 
+	     col="purple") 
+	
+	# Superposer la binf
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$binf_15_24, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5, 
+	     ylim=c(0, ylim_max_left), 
+	     ylab="",
+	     lty=2, 
+	     type="o", 
+	     col="purple") 	
 	
 	# Superposer la vaccination 
 	par(new=T)
@@ -998,21 +860,735 @@ a__f_plot_es_deces_hebdo_std_15_40_ge65_vaccination <- function(es_deces_standar
 	     pch=16, 
 	     axes=F, 
 	     cex=0, 
-	     ylim=c(0, ylim_max_right2/10), 
+	     ylim=c(0, ylim_max_right), 
+	     xlab="", 
+	     lwd=2,  
+	     ylab="", 
+	     type="o", 
+	     col="blue") 
+	axis(4, col = "blue", col.axis = "blue", lwd = 2)	
+	dev.print(device = png, file = pngFileRelPath, width = 1000)
+	
+	
+	#
+	# Graphique 2 : Situation des 25- 50 ans
+	#
+
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/25-50/", essai$zone[1], "/")
+	a__f_createDir(repertoire)
+
+	#Nom du fichier png à générer
+	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+	
+	# Message
+	message(paste0("Creation image (", pngFileRelPath,")"))
+	
+	# Moyenne mobile sur 8 semaines, des 25-50 ans
+	
+	moyenne_mobile_25_49<- running_mean(es_deces_standard_pays_semaine$deces_tot_25_49, 
+	                                     8)
+	
+	# Moyenne de la Moyenne mobile
+
+	moyenne_mobile_25_49 <- data_frame(moyenne_mobile_25_49)
+	
+	moyenne_mobile_25_49$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_25_49) + decalageSemaines
+	
+	# Ajouter les colonnes de la moyenne mobile 
+	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
+	  left_join(moyenne_mobile_25_49)
+	
+	essai <- es_deces_standard_pays_semaine %>%
+	  filter(numSemaineDepuis2013>287)
+	
+	
+	#création du graphiques
+	plot(essai$numSemaineDepuis2013, 
+	     essai$deces_standardises_si_pop_2020_25_49, 
+	     pch=16, 
+	     cex=0, 
+	     axes=F, 
+	     xlab="week", 
+	     ylab="", 
+	     ylim=c(0, ylim_max_left2), 
+	     type="o", 
+	     col="black", 
+	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
+	
+	# pour encadrer le graphique
+	box() 
+	
+	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+	
+	mtext("nombre de décès toutes causes des 25 - 49 ans", side=2, line=3)
+	mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
+	
+	# Lignes verticales
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	
+	text(26,  0, "2013", cex=1.2)
+	text(78,  0, "2014", cex=1.2)
+	text(130, 0, "2015", cex=1.2)
+	text(183, 0, "2016", cex=1.2)
+	text(235, 0, "2017", cex=1.2)
+	text(287, 0, "2018", cex=1.2)
+	text(339, 0, "2019", cex=1.2)
+	text(391, 0, "2020", cex=1.2)
+	text(440, 0, "2021", cex=1.2)
+	
+	#text(26, 22000, nomPays, cex=1.2)
+	
+	# Superposer la moyenne mobile
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$moyenne_mobile_25_49, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=3,  
+	     ylim=c(0, ylim_max_left2), 
+	     ylab="", 
+	     type="o", 
+	     col="red") 
+	
+	# Superposer la moyenne 
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$moyenne_25_49, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5,  
+	     ylim=c(0, ylim_max_left2), 
+	     ylab="", 
+	     type="o", 
+	     col="purple") 
+	
+	# Superposer la bsup
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$bsup_25_49, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5,  
+	     ylim=c(0, ylim_max_left2), 
+	     ylab="", 
+	     lty=2, 
+	     type="o", 
+	     col="purple") 
+	
+	# Superposer la binf
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$binf_25_49, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5, 
+	     ylim=c(0, ylim_max_left2), 
+	     ylab="",
+	     lty=2, 
+	     type="o", 
+	     col="purple") 	
+	
+	# Superposer la vaccination 
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$Age25_49, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     ylim=c(0, ylim_max_right2), 
+	     xlab="", 
+	     lwd=2,  
+	     ylab="", 
+	     type="o", 
+	     col="blue") 
+	axis(4, col = "blue", col.axis = "blue", lwd = 2)
+	dev.print(device = png, file = pngFileRelPath, width = 1000)
+	
+	
+	#
+	# Graphique 3 : Situation des 50- 59 ans
+	#
+	
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/50-59/", essai$zone[1], "/")
+	a__f_createDir(repertoire)
+	
+	#Nom du fichier png à générer
+	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+	
+	# Message
+	message(paste0("Creation image (", pngFileRelPath,")"))
+	
+	# Moyenne mobile sur 8 semaines, des 50-59 ans
+	
+	moyenne_mobile_50_59<- running_mean(es_deces_standard_pays_semaine$deces_tot_50_59, 
+	                                    8)
+	
+	# Moyenne de la Moyenne mobile
+	
+	moyenne_mobile_50_59 <- data_frame(moyenne_mobile_50_59)
+	
+	moyenne_mobile_50_59$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_50_59) + decalageSemaines
+	
+	# Ajouter les colonnes de la moyenne mobile 
+	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
+	  left_join(moyenne_mobile_50_59)
+	
+	essai <- es_deces_standard_pays_semaine %>%
+	  filter(numSemaineDepuis2013>287)
+	
+	
+	#création du graphiques
+	plot(essai$numSemaineDepuis2013, 
+	     essai$deces_standardises_si_pop_2020_50_59, 
+	     pch=16, 
+	     cex=0, 
+	     axes=F, 
+	     xlab="week", 
+	     ylab="", 
+	     ylim=c(0, ylim_max_left2*2), 
+	     type="o", 
+	     col="black", 
+	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
+	
+	# pour encadrer le graphique
+	box() 
+	
+	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+	
+	mtext("nombre de décès toutes causes des 50 - 59 ans", side=2, line=3)
+	mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
+	
+	# Lignes verticales
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	
+	text(26,  0, "2013", cex=1.2)
+	text(78,  0, "2014", cex=1.2)
+	text(130, 0, "2015", cex=1.2)
+	text(183, 0, "2016", cex=1.2)
+	text(235, 0, "2017", cex=1.2)
+	text(287, 0, "2018", cex=1.2)
+	text(339, 0, "2019", cex=1.2)
+	text(391, 0, "2020", cex=1.2)
+	text(440, 0, "2021", cex=1.2)
+	
+	#text(26, 22000, nomPays, cex=1.2)
+	
+	# Superposer la moyenne mobile
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$moyenne_mobile_50_59, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=3,  
+	     ylim=c(0, ylim_max_left2*2), 
+	     ylab="", 
+	     type="o", 
+	     col="red") 
+	
+	# Superposer la moyenne 
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$moyenne_50_59, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5,  
+	     ylim=c(0, ylim_max_left2*2), 
+	     ylab="", 
+	     type="o", 
+	     col="purple") 
+	
+	# Superposer la bsup
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$bsup_50_59, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5,  
+	     ylim=c(0, ylim_max_left2*2), 
+	     ylab="", 
+	     lty=2, 
+	     type="o", 
+	     col="purple") 
+	
+	# Superposer la binf
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$binf_50_59, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5, 
+	     ylim=c(0, ylim_max_left2*2), 
+	     ylab="",
+	     lty=2, 
+	     type="o", 
+	     col="purple") 	
+	
+	# Superposer la vaccination 
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$Age50_59, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     ylim=c(0, ylim_max_right*2), 
 	     xlab="", 
 	     lwd=2,  
 	     ylab="", 
 	     type="o", 
 	     col="blue") 
 	
-	mtext("nombre de vaccinés", side=PLOT_AXIS_SIDE_RIGHT, col="blue", line=2.5)
+	dev.print(device = png, file = pngFileRelPath, width = 1000)
+	axis(4, col = "blue", col.axis = "blue", lwd = 2)
 	
-	axis(PLOT_AXIS_SIDE_RIGHT, ylim=c(0, 3), col="blue", col.axis="blue")
+	#
+	# Graphique 4 : Situation des 60- 69 ans
+	#
 	
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/", essai$zone[1], "/")
+	a__f_createDir(repertoire)
+	
+	#Nom du fichier png à générer
+	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+	
+	# Message
+	message(paste0("Creation image (", pngFileRelPath,")"))
+	
+	# Moyenne mobile sur 8 semaines, des 60-69 ans
+	
+	moyenne_mobile_60_69<- running_mean(es_deces_standard_pays_semaine$deces_tot_60_69, 
+	                                    8)
+	
+	# Moyenne de la Moyenne mobile
+	
+	moyenne_mobile_60_69 <- data_frame(moyenne_mobile_60_69)
+	
+	moyenne_mobile_60_69$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_60_69) + decalageSemaines
+	
+	# Ajouter les colonnes de la moyenne mobile 
+	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
+	  left_join(moyenne_mobile_60_69)
+	
+	essai <- es_deces_standard_pays_semaine %>%
+	  filter(numSemaineDepuis2013>287)
+	
+	
+	#création du graphiques
+	plot(essai$numSemaineDepuis2013, 
+	     essai$deces_standardises_si_pop_2020_60_69, 
+	     pch=16, 
+	     cex=0, 
+	     axes=F, 
+	     xlab="week", 
+	     ylab="", 
+	     ylim=c(0, ylim_max_left2*4), 
+	     type="o", 
+	     col="black", 
+	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
+	
+	# pour encadrer le graphique
+	box() 
+	
+	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+	
+	mtext("nombre de décès toutes causes des 60 - 69 ans", side=2, line=3)
+	mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
+	
+	# Lignes verticales
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	
+	text(26,  0, "2013", cex=1.2)
+	text(78,  0, "2014", cex=1.2)
+	text(130, 0, "2015", cex=1.2)
+	text(183, 0, "2016", cex=1.2)
+	text(235, 0, "2017", cex=1.2)
+	text(287, 0, "2018", cex=1.2)
+	text(339, 0, "2019", cex=1.2)
+	text(391, 0, "2020", cex=1.2)
+	text(440, 0, "2021", cex=1.2)
+	
+	#text(26, 22000, nomPays, cex=1.2)
+	
+	# Superposer la moyenne mobile
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$moyenne_mobile_60_69, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=3,  
+	     ylim=c(0, ylim_max_left2*4), 
+	     ylab="", 
+	     type="o", 
+	     col="red") 
+	
+	# Superposer la moyenne 
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$moyenne_60_69, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5,  
+	     ylim=c(0, ylim_max_left2*4), 
+	     ylab="", 
+	     type="o", 
+	     col="purple") 
+	
+	# Superposer la bsup
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$bsup_60_69, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5,  
+	     ylim=c(0, ylim_max_left2*4), 
+	     ylab="", 
+	     lty=2, 
+	     type="o", 
+	     col="purple") 
+	
+	# Superposer la binf
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$binf_60_69, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5, 
+	     ylim=c(0, ylim_max_left2*4), 
+	     ylab="",
+	     lty=2, 
+	     type="o", 
+	     col="purple") 	
+	
+	# Superposer la vaccination 
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$Age60_69, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     ylim=c(0, ylim_max_right*2), 
+	     xlab="", 
+	     lwd=2,  
+	     ylab="", 
+	     type="o", 
+	     col="blue") 
+	axis(4, col = "blue", col.axis = "blue", lwd = 2)
+	dev.print(device = png, file = pngFileRelPath, width = 1000)
+	
+	
+	#
+	# Graphique 5 : Situation des 70- 79 ans
+	#
+	
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/70-79/", essai$zone[1], "/")
+	a__f_createDir(repertoire)
+	
+	#Nom du fichier png à générer
+	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+	
+	# Message
+	message(paste0("Creation image (", pngFileRelPath,")"))
+	
+	# Moyenne mobile sur 8 semaines, des 70-79 ans
+	
+	moyenne_mobile_70_79<- running_mean(es_deces_standard_pays_semaine$deces_tot_70_79, 
+	                                    8)
+	
+	# Moyenne de la Moyenne mobile
+	
+	moyenne_mobile_70_79 <- data_frame(moyenne_mobile_70_79)
+	
+	moyenne_mobile_70_79$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_70_79) + decalageSemaines
+	
+	# Ajouter les colonnes de la moyenne mobile 
+	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
+	  left_join(moyenne_mobile_70_79)
+	
+	essai <- es_deces_standard_pays_semaine %>%
+	  filter(numSemaineDepuis2013>287)
+	
+	
+	#création du graphiques
+	plot(essai$numSemaineDepuis2013, 
+	     essai$deces_standardises_si_pop_2020_70_79, 
+	     pch=16, 
+	     cex=0, 
+	     axes=F, 
+	     xlab="week", 
+	     ylab="", 
+	     ylim=c(0, ylim_max_left2*7), 
+	     type="o", 
+	     col="black", 
+	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
+	
+	# pour encadrer le graphique
+	box() 
+	
+	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+	
+	mtext("nombre de décès toutes causes des 70 - 79 ans", side=2, line=3)
+	mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
+	
+	# Lignes verticales
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	
+	text(26,  0, "2013", cex=1.2)
+	text(78,  0, "2014", cex=1.2)
+	text(130, 0, "2015", cex=1.2)
+	text(183, 0, "2016", cex=1.2)
+	text(235, 0, "2017", cex=1.2)
+	text(287, 0, "2018", cex=1.2)
+	text(339, 0, "2019", cex=1.2)
+	text(391, 0, "2020", cex=1.2)
+	text(440, 0, "2021", cex=1.2)
+	
+	#text(26, 22000, nomPays, cex=1.2)
+	
+	# Superposer la moyenne mobile
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$moyenne_mobile_70_79, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=3,  
+	     ylim=c(0, ylim_max_left2*7), 
+	     ylab="", 
+	     type="o", 
+	     col="red") 
+	
+	# Superposer la moyenne 
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$moyenne_70_79, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5,  
+	     ylim=c(0, ylim_max_left2*7), 
+	     ylab="", 
+	     type="o", 
+	     col="purple") 
+	
+	# Superposer la bsup
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$bsup_70_79, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5,  
+	     ylim=c(0, ylim_max_left2*7), 
+	     ylab="", 
+	     lty=2, 
+	     type="o", 
+	     col="purple") 
+	
+	# Superposer la binf
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$binf_70_79, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5, 
+	     ylim=c(0, ylim_max_left2*7), 
+	     ylab="",
+	     lty=2, 
+	     type="o", 
+	     col="purple") 	
+	
+	# Superposer la vaccination 
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$Age70_79, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     ylim=c(0, ylim_max_right*2), 
+	     xlab="", 
+	     lwd=2,  
+	     ylab="", 
+	     type="o", 
+	     col="blue") 
+	axis(4, col = "blue", col.axis = "blue", lwd = 2)
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
 	
 	
+	#
+	# Graphique 6 : Situation des plus de 80 ans
+	#
+	
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/80plus/", essai$zone[1], "/")
+	a__f_createDir(repertoire)
+	
+	#Nom du fichier png à générer
+	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+	
+	# Message
+	message(paste0("Creation image (", pngFileRelPath,")"))
+	
+	# Moyenne mobile sur 8 semaines, des 80-89 ans
+	
+	moyenne_mobile_ge80<- running_mean(es_deces_standard_pays_semaine$deces_tot_plus_80, 
+	                                    8)
+	
+	# Moyenne de la Moyenne mobile
+	
+	moyenne_mobile_ge80 <- data_frame(moyenne_mobile_ge80)
+	
+	moyenne_mobile_ge80$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_ge80) + decalageSemaines
+	
+	# Ajouter les colonnes de la moyenne mobile 
+	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
+	  left_join(moyenne_mobile_ge80)
+	
+	essai <- es_deces_standard_pays_semaine %>%
+	  filter(numSemaineDepuis2013>287)
+	
+	
+	#création du graphiques
+	plot(essai$numSemaineDepuis2013, 
+	     essai$deces_standardises_si_pop_2020_ge80, 
+	     pch=16, 
+	     cex=0, 
+	     axes=F, 
+	     xlab="week", 
+	     ylab="", 
+	     ylim=c(0, ylim_max_left2*20), 
+	     type="o", 
+	     col="black", 
+	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
+	
+	# pour encadrer le graphique
+	box() 
+	
+	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+	
+	mtext("nombre de décès toutes causes des plus de 80 ans", side=2, line=3)
+	mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
+	
+	# Lignes verticales
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	
+	text(26,  0, "2013", cex=1.2)
+	text(78,  0, "2014", cex=1.2)
+	text(130, 0, "2015", cex=1.2)
+	text(183, 0, "2016", cex=1.2)
+	text(235, 0, "2017", cex=1.2)
+	text(287, 0, "2018", cex=1.2)
+	text(339, 0, "2019", cex=1.2)
+	text(391, 0, "2020", cex=1.2)
+	text(440, 0, "2021", cex=1.2)
+	
+	#text(26, 22000, nomPays, cex=1.2)
+	
+	# Superposer la moyenne mobile
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$moyenne_mobile_ge80, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=3,  
+	     ylim=c(0, ylim_max_left2*20), 
+	     ylab="", 
+	     type="o", 
+	     col="red") 
+	
+	# Superposer la moyenne 
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$moyenne_ge80, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5,  
+	     ylim=c(0, ylim_max_left2*20), 
+	     ylab="", 
+	     type="o", 
+	     col="purple") 
+	
+	# Superposer la bsup
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$bsup_ge80, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5,  
+	     ylim=c(0, ylim_max_left2*20), 
+	     ylab="", 
+	     lty=2, 
+	     type="o", 
+	     col="purple") 
+	
+	# Superposer la binf
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$binf_ge80, 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     xlab="", 
+	     lwd=1.5, 
+	     ylim=c(0, ylim_max_left2*20), 
+	     ylab="",
+	     lty=2, 
+	     type="o", 
+	     col="purple") 	
+	
+	# Superposer la vaccination 
+	par(new=T)
+	plot(essai$numSemaineDepuis2013, 
+	     essai$'Age80+', 
+	     pch=16, 
+	     axes=F, 
+	     cex=0, 
+	     ylim=c(0, ylim_max_right2/2), 
+	     xlab="", 
+	     lwd=2,  
+	     ylab="", 
+	     type="o", 
+	     col="blue") 
+	axis(4, col = "blue", col.axis = "blue", lwd = 2)
+	dev.print(device = png, file = pngFileRelPath, width = 1000)	
 	# Supprimer la variable de GlovaEnv correspondant à region car on n'en a plus besoin
 	#	if (shallDeleteVars) rm(list = c(nomRegion), envir = globalenv())
 }

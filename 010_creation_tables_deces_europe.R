@@ -1125,94 +1125,19 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
 		select(geo:time | numSemaineDepuis2013 | everything())
 
-
-# on somme pour avoir les deces par pays et par semaine, des plus de 40 ans
-
-# TODO : Est-ce qu'on ne compte pas 2 fois les 85-89 ans ?
-# REP : Non car si on a Y_GE85, c'est qu'on n'a pas de 85_89 et inversement.
-es_taux_mortalite_week_ge40 <- es_taux_mortalite_week %>%
-		filter(agequinq %in% c("Y_GE85", "Y40-44", "Y45-49", "Y50-54", "Y55-59", "Y60-64", "Y65-69", "Y70-74", "Y75-79", "Y80-84", "Y85-89", "Y_GE90")) 
-
-es_deces_week_standardises_si_pop_2020_ge40 <- es_taux_mortalite_week_ge40 %>%
-		group_by(geo, time) %>% 
-		summarise(deces_tot_plus_40 = sum(deces), 
-				deces_standardises_si_pop_2020_ge40 = sum(deces_standardises_si_pop_2020), 
-				deces_standardises_si_pop_FR_2020_ge40 = sum(deces_standardises_si_pop_FR_2020))
-
-es_deces_week_standardises_si_pop_2020_ge40 <- es_deces_week_standardises_si_pop_2020_ge40 %>%
-		left_join(numSemainesDepuis2013)
-
-#on somme pour avoir les deces par pays et par semaine, plus de 60 ans
-# TODO : Est-ce qu'on ne compte pas 2 fois les 85-89 ans ?
-es_taux_mortalite_week_ge60 <- es_taux_mortalite_week %>%
-		filter(agequinq %in% c("Y_GE85", "Y60-64", "Y65-69", "Y70-74", "Y75-79", "Y80-84", "Y85-89", "Y_GE90")) 
-
-es_deces_week_standardises_si_pop_2020_ge60 <- es_taux_mortalite_week_ge60 %>%
-		group_by(geo, time) %>% 
-		summarise(
-				deces_tot_plus_60 = sum(deces), 
-				deces_standardises_si_pop_2020_ge60 = sum(deces_standardises_si_pop_2020), 
-				deces_standardises_si_pop_FR_2020_ge60 = sum(deces_standardises_si_pop_FR_2020))
-
-es_deces_week_standardises_si_pop_2020_ge60 <- es_deces_week_standardises_si_pop_2020_ge60 %>%
-		left_join(numSemainesDepuis2013)
-
-#on somme pour avoir les deces par pays et par semaine, des 40-60 ans
-es_taux_mortalite_week_40_60 <- es_taux_mortalite_week %>%
-		filter(agequinq %in% c("Y40-44", "Y45-49", "Y50-54", "Y55-59")) 
-
-es_deces_week_standardises_si_pop_2020_40_60 <- es_taux_mortalite_week_40_60 %>%
-		group_by(geo, time) %>% 
-		summarise(
-				deces_tot_40_60=sum(deces), 
-				deces_standardises_si_pop_2020_40_60=sum(deces_standardises_si_pop_2020), 
-				deces_standardises_si_pop_FR_2020_40_60=sum(deces_standardises_si_pop_FR_2020))
-
-es_deces_week_standardises_si_pop_2020_40_60 <- es_deces_week_standardises_si_pop_2020_40_60 %>%
-		left_join(numSemainesDepuis2013)
-
-#on somme pour avoir les deces par pays et par semaine, des 40-50 ans
-es_taux_mortalite_week_40_50 <- es_taux_mortalite_week %>%
-  filter(agequinq %in% c("Y40-44", "Y45-49")) 
-
-es_deces_week_standardises_si_pop_2020_40_50 <- es_taux_mortalite_week_40_50 %>%
-  group_by(geo, time) %>% 
-  summarise(
-    deces_tot_40_50=sum(deces), 
-    deces_standardises_si_pop_2020_40_50=sum(deces_standardises_si_pop_2020), 
-    deces_standardises_si_pop_FR_2020_40_50=sum(deces_standardises_si_pop_FR_2020))
-
-es_deces_week_standardises_si_pop_2020_40_50 <- es_deces_week_standardises_si_pop_2020_40_50 %>%
-  left_join(numSemainesDepuis2013)
-
 #on somme pour avoir les deces par pays et par semaine, moins de 15 ans
 
 es_taux_mortalite_week_lt15 <- es_taux_mortalite_week %>%
-		filter(agequinq %in% c("Y_LT5", "Y5-9", "Y10-14")) 
+  filter(agequinq %in% c("Y_LT5", "Y5-9", "Y10-14")) 
 
 es_deces_week_standardises_si_pop_2020_lt15 <- es_taux_mortalite_week_lt15 %>%
-		group_by(geo, time) %>% 
-		summarise(
-				deces_tot_moins15=sum(deces), 
-				deces_standardises_si_pop_2020_lt15=sum(deces_standardises_si_pop_2020), 
-				deces_standardises_si_pop_FR_2020_lt15=sum(deces_standardises_si_pop_FR_2020))
-
-es_deces_week_standardises_si_pop_2020_lt15 <- es_deces_week_standardises_si_pop_2020_lt15 %>%
-		left_join(numSemainesDepuis2013)
-
-#on somme pour avoir les deces par pays et par semaine, des 15-40 ans
-
-es_taux_mortalite_week_15_40 <- es_taux_mortalite_week %>%
-  filter(agequinq %in% c("Y15-19", "Y20-24", "Y25-29", "Y30-34", "Y35-39")) 
-
-es_deces_week_standardises_si_pop_2020_15_40 <- es_taux_mortalite_week_15_40 %>%
   group_by(geo, time) %>% 
   summarise(
-    deces_tot_15_40=sum(deces), 
-    deces_standardises_si_pop_2020_15_40=sum(deces_standardises_si_pop_2020), 
-    deces_standardises_si_pop_FR_2020_15_40=sum(deces_standardises_si_pop_FR_2020))
+    deces_tot_moins15=sum(deces), 
+    deces_standardises_si_pop_2020_lt15=sum(deces_standardises_si_pop_2020), 
+    deces_standardises_si_pop_FR_2020_lt15=sum(deces_standardises_si_pop_FR_2020))
 
-es_deces_week_standardises_si_pop_2020_15_40 <- es_deces_week_standardises_si_pop_2020_15_40 %>%
+es_deces_week_standardises_si_pop_2020_lt15 <- es_deces_week_standardises_si_pop_2020_lt15 %>%
   left_join(numSemainesDepuis2013)
 
 #on somme pour avoir les deces par pays et par semaine, des 15-24 ans
@@ -1230,70 +1155,221 @@ es_deces_week_standardises_si_pop_2020_15_24 <- es_taux_mortalite_week_15_24 %>%
 es_deces_week_standardises_si_pop_2020_15_24 <- es_deces_week_standardises_si_pop_2020_15_24 %>%
   left_join(numSemainesDepuis2013)
 
-#on somme pour avoir les deces par pays et par semaine des 60-64 ans
+#on somme pour avoir les deces par pays et par semaine, des 15-40 ans
 
-es_taux_mortalite_week_60_64 <- es_taux_mortalite_week %>%
-		filter(agequinq %in% c("Y60-64"))
+es_taux_mortalite_week_15_40 <- es_taux_mortalite_week %>%
+  filter(agequinq %in% c("Y15-19", "Y20-24", "Y25-29", "Y30-34", "Y35-39")) 
 
-es_deces_week_standardises_si_pop_2020_60_64 <- es_taux_mortalite_week_60_64 %>%
+es_deces_week_standardises_si_pop_2020_15_40 <- es_taux_mortalite_week_15_40 %>%
+  group_by(geo, time) %>% 
+  summarise(
+    deces_tot_15_40=sum(deces), 
+    deces_standardises_si_pop_2020_15_40=sum(deces_standardises_si_pop_2020), 
+    deces_standardises_si_pop_FR_2020_15_40=sum(deces_standardises_si_pop_FR_2020))
+
+es_deces_week_standardises_si_pop_2020_15_40 <- es_deces_week_standardises_si_pop_2020_15_40 %>%
+  left_join(numSemainesDepuis2013)
+
+#on somme pour avoir les deces par pays et par semaine, des 25-49 ans
+
+es_taux_mortalite_week_25_49 <- es_taux_mortalite_week %>%
+  filter(agequinq %in% c("Y25-29", "Y30-34", "Y35-39","Y40-44", "Y45-49")) 
+
+es_deces_week_standardises_si_pop_2020_25_49 <- es_taux_mortalite_week_25_49 %>%
+  group_by(geo, time) %>% 
+  summarise(
+    deces_tot_25_49=sum(deces), 
+    deces_standardises_si_pop_2020_25_49=sum(deces_standardises_si_pop_2020), 
+    deces_standardises_si_pop_FR_2020_25_49=sum(deces_standardises_si_pop_FR_2020))
+
+es_deces_week_standardises_si_pop_2020_25_49 <- es_deces_week_standardises_si_pop_2020_25_49 %>%
+  left_join(numSemainesDepuis2013)
+
+
+# on somme pour avoir les deces par pays et par semaine, des plus de 40 ans
+
+es_taux_mortalite_week_ge40 <- es_taux_mortalite_week %>%
+		filter(agequinq %in% c("Y_GE85", "Y40-44", "Y45-49", "Y50-54", "Y55-59", "Y60-64", "Y65-69", "Y70-74", "Y75-79", "Y80-84", "Y85-89", "Y_GE90")) 
+
+es_deces_week_standardises_si_pop_2020_ge40 <- es_taux_mortalite_week_ge40 %>%
 		group_by(geo, time) %>% 
-		summarise(
-				deces_tot_60_64=sum(deces), 
-				deces_standardises_si_pop_2020_60_64=sum(deces_standardises_si_pop_2020), 
-				deces_standardises_si_pop_FR_2020_60_64=sum(deces_standardises_si_pop_FR_2020))
+		summarise(deces_tot_plus_40 = sum(deces), 
+				deces_standardises_si_pop_2020_ge40 = sum(deces_standardises_si_pop_2020), 
+				deces_standardises_si_pop_FR_2020_ge40 = sum(deces_standardises_si_pop_FR_2020))
 
-es_deces_week_standardises_si_pop_2020_60_64 <- es_deces_week_standardises_si_pop_2020_60_64 %>%
+es_deces_week_standardises_si_pop_2020_ge40 <- es_deces_week_standardises_si_pop_2020_ge40 %>%
 		left_join(numSemainesDepuis2013)
+
+#on somme pour avoir les deces par pays et par semaine, des 40-50 ans
+es_taux_mortalite_week_40_50 <- es_taux_mortalite_week %>%
+  filter(agequinq %in% c("Y40-44", "Y45-49")) 
+
+es_deces_week_standardises_si_pop_2020_40_50 <- es_taux_mortalite_week_40_50 %>%
+  group_by(geo, time) %>% 
+  summarise(
+    deces_tot_40_50=sum(deces), 
+    deces_standardises_si_pop_2020_40_50=sum(deces_standardises_si_pop_2020), 
+    deces_standardises_si_pop_FR_2020_40_50=sum(deces_standardises_si_pop_FR_2020))
+
+es_deces_week_standardises_si_pop_2020_40_50 <- es_deces_week_standardises_si_pop_2020_40_50 %>%
+  left_join(numSemainesDepuis2013)
+
+#on somme pour avoir les deces par pays et par semaine, des 40-60 ans
+es_taux_mortalite_week_40_60 <- es_taux_mortalite_week %>%
+  filter(agequinq %in% c("Y40-44", "Y45-49", "Y50-54", "Y55-59")) 
+
+es_deces_week_standardises_si_pop_2020_40_60 <- es_taux_mortalite_week_40_60 %>%
+  group_by(geo, time) %>% 
+  summarise(
+    deces_tot_40_60=sum(deces), 
+    deces_standardises_si_pop_2020_40_60=sum(deces_standardises_si_pop_2020), 
+    deces_standardises_si_pop_FR_2020_40_60=sum(deces_standardises_si_pop_FR_2020))
+
+es_deces_week_standardises_si_pop_2020_40_60 <- es_deces_week_standardises_si_pop_2020_40_60 %>%
+  left_join(numSemainesDepuis2013)
+
+#on somme pour avoir les deces par pays et par semaine des 50-59 ans
+
+es_taux_mortalite_week_50_59 <- es_taux_mortalite_week %>%
+  filter(agequinq %in% c("Y50-54","Y55-59"))
+
+es_deces_week_standardises_si_pop_2020_50_59 <- es_taux_mortalite_week_50_59 %>%
+  group_by(geo, time) %>% 
+  summarise(
+    deces_tot_50_59=sum(deces), 
+    deces_standardises_si_pop_2020_50_59=sum(deces_standardises_si_pop_2020), 
+    deces_standardises_si_pop_FR_2020_50_59=sum(deces_standardises_si_pop_FR_2020))
+
+es_deces_week_standardises_si_pop_2020_50_59 <- es_deces_week_standardises_si_pop_2020_50_59 %>%
+  left_join(numSemainesDepuis2013)
+
+#on somme pour avoir les deces par pays et par semaine des 60-69 ans
+
+es_taux_mortalite_week_60_69 <- es_taux_mortalite_week %>%
+  filter(agequinq %in% c("Y60-64","Y65-69"))
+
+es_deces_week_standardises_si_pop_2020_60_69 <- es_taux_mortalite_week_60_69 %>%
+  group_by(geo, time) %>% 
+  summarise(
+    deces_tot_60_69=sum(deces), 
+    deces_standardises_si_pop_2020_60_69=sum(deces_standardises_si_pop_2020), 
+    deces_standardises_si_pop_FR_2020_60_69=sum(deces_standardises_si_pop_FR_2020))
+
+es_deces_week_standardises_si_pop_2020_60_69 <- es_deces_week_standardises_si_pop_2020_60_69 %>%
+  left_join(numSemainesDepuis2013)
 
 #on somme pour avoir les deces par pays et par semaine 65-69 ans
 
 es_taux_mortalite_week_65_69 <- es_taux_mortalite_week %>%
-		filter(agequinq %in% c("Y65-69"))
+  filter(agequinq %in% c("Y65-69"))
 
 es_deces_week_standardises_si_pop_2020_65_69 <- es_taux_mortalite_week_65_69 %>%
-		group_by(geo, time) %>% 
-		summarise(
-				deces_tot_65_69=sum(deces), 
-				deces_standardises_si_pop_2020_65_69=sum(deces_standardises_si_pop_2020), 
-				deces_standardises_si_pop_FR_2020_65_69=sum(deces_standardises_si_pop_FR_2020))
+  group_by(geo, time) %>% 
+  summarise(
+    deces_tot_65_69=sum(deces), 
+    deces_standardises_si_pop_2020_65_69=sum(deces_standardises_si_pop_2020), 
+    deces_standardises_si_pop_FR_2020_65_69=sum(deces_standardises_si_pop_FR_2020))
 
 es_deces_week_standardises_si_pop_2020_65_69 <- es_deces_week_standardises_si_pop_2020_65_69 %>%
+  left_join(numSemainesDepuis2013)
+
+#on somme pour avoir les deces par pays et par semaine, plus de 60 ans
+
+es_taux_mortalite_week_ge60 <- es_taux_mortalite_week %>%
+		filter(agequinq %in% c("Y_GE85", "Y60-64", "Y65-69", "Y70-74", "Y75-79", "Y80-84", "Y85-89", "Y_GE90")) 
+
+es_deces_week_standardises_si_pop_2020_ge60 <- es_taux_mortalite_week_ge60 %>%
+		group_by(geo, time) %>% 
+		summarise(
+				deces_tot_plus_60 = sum(deces), 
+				deces_standardises_si_pop_2020_ge60 = sum(deces_standardises_si_pop_2020), 
+				deces_standardises_si_pop_FR_2020_ge60 = sum(deces_standardises_si_pop_FR_2020))
+
+es_deces_week_standardises_si_pop_2020_ge60 <- es_deces_week_standardises_si_pop_2020_ge60 %>%
 		left_join(numSemainesDepuis2013)
+
+#on somme pour avoir les deces par pays et par semaine, 70-79 ans
+
+es_taux_mortalite_week_70_79 <- es_taux_mortalite_week %>%
+  filter(agequinq %in% c("Y70-74", "Y75-79")) 
+
+es_deces_week_standardises_si_pop_2020_70_79 <- es_taux_mortalite_week_70_79 %>%
+  group_by(geo, time) %>% 
+  summarise(
+    deces_tot_70_79 = sum(deces), 
+    deces_standardises_si_pop_2020_70_79 = sum(deces_standardises_si_pop_2020), 
+    deces_standardises_si_pop_FR_2020_70_79 = sum(deces_standardises_si_pop_FR_2020))
+
+es_deces_week_standardises_si_pop_2020_70_79 <- es_deces_week_standardises_si_pop_2020_70_79 %>%
+  left_join(numSemainesDepuis2013)
+
+
+#on somme pour avoir les deces par pays et par semaine, plus de 80 ans
+
+es_taux_mortalite_week_ge80 <- es_taux_mortalite_week %>%
+  filter(agequinq %in% c("Y80-84", "Y85-89", "Y_GE90")) 
+
+es_deces_week_standardises_si_pop_2020_ge80 <- es_taux_mortalite_week_ge80 %>%
+  group_by(geo, time) %>% 
+  summarise(
+    deces_tot_plus_80 = sum(deces), 
+    deces_standardises_si_pop_2020_ge80 = sum(deces_standardises_si_pop_2020), 
+    deces_standardises_si_pop_FR_2020_ge80 = sum(deces_standardises_si_pop_FR_2020))
+
+es_deces_week_standardises_si_pop_2020_ge80 <- es_deces_week_standardises_si_pop_2020_ge80 %>%
+  left_join(numSemainesDepuis2013)
+
+
 
 #jointure des colonnes
 
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
 		left_join(es_deces_week_standardises_si_pop_2020_ge40) %>% 
 		left_join(es_deces_week_standardises_si_pop_2020_ge60) %>%
+    left_join(es_deces_week_standardises_si_pop_2020_ge80) %>%
 		left_join(es_deces_week_standardises_si_pop_2020_40_60) %>% 
     left_join(es_deces_week_standardises_si_pop_2020_40_50) %>% 
 		left_join(es_deces_week_standardises_si_pop_2020_lt15) %>%
-		left_join(es_deces_week_standardises_si_pop_2020_60_64)%>% 
+		left_join(es_deces_week_standardises_si_pop_2020_50_59)%>%
+    left_join(es_deces_week_standardises_si_pop_2020_60_69)%>% 
 		left_join(es_deces_week_standardises_si_pop_2020_65_69)%>% 
     left_join(es_deces_week_standardises_si_pop_2020_15_40)%>% 
-    left_join(es_deces_week_standardises_si_pop_2020_15_24)
+    left_join(es_deces_week_standardises_si_pop_2020_15_24)%>% 
+    left_join(es_deces_week_standardises_si_pop_2020_70_79)%>% 
+    left_join(es_deces_week_standardises_si_pop_2020_25_49)
+
+
 
 
 if (shallDeleteVars) rm(es_taux_mortalite_week)
 if (shallDeleteVars) rm(es_taux_mortalite_week_ge40)
 if (shallDeleteVars) rm(es_taux_mortalite_week_ge60)
+if (shallDeleteVars) rm(es_taux_mortalite_week_ge80)
 if (shallDeleteVars) rm(es_taux_mortalite_week_40_60)
 if (shallDeleteVars) rm(es_taux_mortalite_week_40_50)
 if (shallDeleteVars) rm(es_taux_mortalite_week_lt15)
 if (shallDeleteVars) rm(es_taux_mortalite_week_15_40)
 if (shallDeleteVars) rm(es_taux_mortalite_week_15_24)
-if (shallDeleteVars) rm(es_taux_mortalite_week_60_64)
+if (shallDeleteVars) rm(es_taux_mortalite_week_50_59)
+if (shallDeleteVars) rm(es_taux_mortalite_week_60_69)
 if (shallDeleteVars) rm(es_taux_mortalite_week_65_69)
+if (shallDeleteVars) rm(es_taux_mortalite_week_70_79)
+if (shallDeleteVars) rm(es_taux_mortalite_week_25_49)
+
 
 if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_ge40) 
 if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_ge60)
-if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_40_60) 
+if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_ge80)
+if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_40_60)
+if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_70_79) 
 if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_40_50) 
 if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_lt15)
 if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_15_40)
 if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_15_24)
-if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_60_64) 
+if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_50_59) 
+if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_60_69) 
 if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_65_69)
+if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_25_49)
 
 
 ################################################################################
@@ -1654,6 +1730,13 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
 # Ajout colonne part_deces_covid
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
 		mutate(part_deces_covid = new_deaths / deces_tot)
+#----------------------------------------------------------------------#
+#### Calcul des binf, bsup, moyenne, surmortalité par tranche d'âge ####
+#----------------------------------------------------------------------#
+
+#-----#
+#Total#
+#-----#
 
 # Calcul des colonnes moyenne, variance, bsup, binf
 IC_deces <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
@@ -1662,8 +1745,8 @@ IC_deces <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
 				moyenne = mean(deces_standardises_si_pop_2020), 
 				variance = sd(deces_standardises_si_pop_2020)) %>%
 		mutate(
-				bsup = moyenne + 2 * variance,
-				binf = moyenne - 2 * variance )
+				bsup = moyenne + 1.5 * variance,
+				binf = moyenne - 1.5 * variance )
 
 # Ajout des colonnes moyenne, variance, bsup, binf
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(
@@ -1687,6 +1770,237 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
 						TRUE ~ 0)) %>%
 		mutate(part_surmortalite = valeur_surmortalite / deces_standardises_si_pop_2020 * 100) %>%
 		mutate(ecart_moyenne = (deces_standardises_si_pop_2020 - moyenne) / moyenne * 100)
+
+#-----#
+#15-24#
+#-----#
+
+# Calcul des colonnes moyenne, variance, bsup, binf
+IC_deces <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  filter(numSemaineDepuis2013 > 287 ) %>% 
+  group_by(geo) %>% 
+  summarise(
+    moyenne_15_24 = mean(deces_standardises_si_pop_2020_15_24), 
+    variance_15_24 = sd(deces_standardises_si_pop_2020_15_24)) %>%
+  mutate(
+    bsup_15_24 = moyenne_15_24 + 1.5 * variance_15_24,
+    binf_15_24 = moyenne_15_24 - 1.5 * variance_15_24 )
+
+# Ajout des colonnes moyenne, variance, bsup, binf
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(
+  b__es_deces_week_standardises_si_pop_2020_owid_vaccination, 
+  IC_deces)
+
+rm(IC_deces)
+
+# Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  mutate(surmortalite_15_24 = case_when(
+    deces_standardises_si_pop_2020_15_24 <= binf_15_24 ~ "sous-mortalite",
+    deces_standardises_si_pop_2020_15_24 >= bsup_15_24 ~ "surmortalite",
+    TRUE ~ "mortalite normale"))
+
+# Valeurs de Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  mutate(valeur_surmortalite_15_24 = case_when(
+    surmortalite_15_24 == "sous-mortalite" ~ deces_standardises_si_pop_2020_15_24 - binf_15_24,
+    surmortalite_15_24 == "surmortalite" ~ deces_standardises_si_pop_2020_15_24 - bsup_15_24,
+    TRUE ~ 0)) %>%
+  mutate(part_surmortalite_15_24 = valeur_surmortalite_15_24 / deces_standardises_si_pop_2020_15_24 * 100) %>%
+  mutate(ecart_moyenne_15_24 = (deces_standardises_si_pop_2020_15_24 - moyenne_15_24) / moyenne_15_24 * 100)
+
+#-----#
+#25-49#
+#-----#
+
+# Calcul des colonnes moyenne, variance, bsup, binf
+IC_deces <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  filter(numSemaineDepuis2013 > 287 ) %>% 
+  group_by(geo) %>% 
+  summarise(
+    moyenne_25_49 = mean(deces_standardises_si_pop_2020_25_49), 
+    variance_25_49 = sd(deces_standardises_si_pop_2020_25_49)) %>%
+  mutate(
+    bsup_25_49 = moyenne_25_49 + 1.5 * variance_25_49,
+    binf_25_49 = moyenne_25_49 - 1.5 * variance_25_49 )
+
+# Ajout des colonnes moyenne, variance, bsup, binf
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(
+  b__es_deces_week_standardises_si_pop_2020_owid_vaccination, 
+  IC_deces)
+
+rm(IC_deces)
+
+# Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  mutate(surmortalite_25_49 = case_when(
+    deces_standardises_si_pop_2020_25_49 <= binf_25_49 ~ "sous-mortalite",
+    deces_standardises_si_pop_2020_25_49 >= bsup_25_49 ~ "surmortalite",
+    TRUE ~ "mortalite normale"))
+
+# Valeurs de Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  mutate(valeur_surmortalite_25_49 = case_when(
+    surmortalite_25_49 == "sous-mortalite" ~ deces_standardises_si_pop_2020_25_49 - binf_25_49,
+    surmortalite_25_49 == "surmortalite" ~ deces_standardises_si_pop_2020_25_49 - bsup_25_49,
+    TRUE ~ 0)) %>%
+  mutate(part_surmortalite_25_49 = valeur_surmortalite_25_49 / deces_standardises_si_pop_2020_25_49 * 100) %>%
+  mutate(ecart_moyenne_25_49 = (deces_standardises_si_pop_2020_25_49 - moyenne_25_49) / moyenne_25_49 * 100)
+
+#-----#
+#50-59#
+#-----#
+
+# Calcul des colonnes moyenne, variance, bsup, binf
+IC_deces <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  filter(numSemaineDepuis2013 > 287 ) %>% 
+  group_by(geo) %>% 
+  summarise(
+    moyenne_50_59 = mean(deces_standardises_si_pop_2020_50_59), 
+    variance_50_59 = sd(deces_standardises_si_pop_2020_50_59)) %>%
+  mutate(
+    bsup_50_59 = moyenne_50_59 + 1.5 * variance_50_59,
+    binf_50_59 = moyenne_50_59 - 1.5 * variance_50_59 )
+
+# Ajout des colonnes moyenne, variance, bsup, binf
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(
+  b__es_deces_week_standardises_si_pop_2020_owid_vaccination, 
+  IC_deces)
+
+rm(IC_deces)
+
+# Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  mutate(surmortalite_50_59 = case_when(
+    deces_standardises_si_pop_2020_50_59 <= binf_50_59 ~ "sous-mortalite",
+    deces_standardises_si_pop_2020_50_59 >= bsup_50_59 ~ "surmortalite",
+    TRUE ~ "mortalite normale"))
+
+# Valeurs de Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  mutate(valeur_surmortalite_50_59 = case_when(
+    surmortalite_50_59 == "sous-mortalite" ~ deces_standardises_si_pop_2020_50_59 - binf_50_59,
+    surmortalite_50_59 == "surmortalite" ~ deces_standardises_si_pop_2020_50_59 - bsup_50_59,
+    TRUE ~ 0)) %>%
+  mutate(part_surmortalite_50_59 = valeur_surmortalite_50_59 / deces_standardises_si_pop_2020_50_59 * 100) %>%
+  mutate(ecart_moyenne_50_59 = (deces_standardises_si_pop_2020_50_59 - moyenne_50_59) / moyenne_50_59 * 100)
+
+#-----#
+#60-69#
+#-----#
+
+# Calcul des colonnes moyenne, variance, bsup, binf
+IC_deces <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  filter(numSemaineDepuis2013 > 287 ) %>% 
+  group_by(geo) %>% 
+  summarise(
+    moyenne_60_69 = mean(deces_standardises_si_pop_2020_60_69), 
+    variance_60_69 = sd(deces_standardises_si_pop_2020_60_69)) %>%
+  mutate(
+    bsup_60_69 = moyenne_60_69 + 1.5 * variance_60_69,
+    binf_60_69 = moyenne_60_69 - 1.5 * variance_60_69 )
+
+# Ajout des colonnes moyenne, variance, bsup, binf
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(
+  b__es_deces_week_standardises_si_pop_2020_owid_vaccination, 
+  IC_deces)
+
+rm(IC_deces)
+
+# Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  mutate(surmortalite_60_69 = case_when(
+    deces_standardises_si_pop_2020_60_69 <= binf_60_69 ~ "sous-mortalite",
+    deces_standardises_si_pop_2020_60_69 >= bsup_60_69 ~ "surmortalite",
+    TRUE ~ "mortalite normale"))
+
+# Valeurs de Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  mutate(valeur_surmortalite_60_69 = case_when(
+    surmortalite_60_69 == "sous-mortalite" ~ deces_standardises_si_pop_2020_60_69 - binf_60_69,
+    surmortalite_60_69 == "surmortalite" ~ deces_standardises_si_pop_2020_60_69 - bsup_60_69,
+    TRUE ~ 0)) %>%
+  mutate(part_surmortalite_60_69 = valeur_surmortalite_60_69 / deces_standardises_si_pop_2020_60_69 * 100) %>%
+  mutate(ecart_moyenne_60_69 = (deces_standardises_si_pop_2020_60_69 - moyenne_60_69) / moyenne_60_69 * 100)
+
+
+#-----#
+#70-79#
+#-----#
+
+# Calcul des colonnes moyenne, variance, bsup, binf
+IC_deces <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  filter(numSemaineDepuis2013 > 287 ) %>% 
+  group_by(geo) %>% 
+  summarise(
+    moyenne_70_79 = mean(deces_standardises_si_pop_2020_70_79), 
+    variance_70_79 = sd(deces_standardises_si_pop_2020_70_79)) %>%
+  mutate(
+    bsup_70_79 = moyenne_70_79 + 1.5 * variance_70_79,
+    binf_70_79 = moyenne_70_79 - 1.5 * variance_70_79 )
+
+# Ajout des colonnes moyenne, variance, bsup, binf
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(
+  b__es_deces_week_standardises_si_pop_2020_owid_vaccination, 
+  IC_deces)
+
+rm(IC_deces)
+
+# Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  mutate(surmortalite_70_79 = case_when(
+    deces_standardises_si_pop_2020_70_79 <= binf_70_79 ~ "sous-mortalite",
+    deces_standardises_si_pop_2020_70_79 >= bsup_70_79 ~ "surmortalite",
+    TRUE ~ "mortalite normale"))
+
+# Valeurs de Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  mutate(valeur_surmortalite_70_79 = case_when(
+    surmortalite_70_79 == "sous-mortalite" ~ deces_standardises_si_pop_2020_70_79 - binf_70_79,
+    surmortalite_70_79 == "surmortalite" ~ deces_standardises_si_pop_2020_70_79 - bsup_70_79,
+    TRUE ~ 0)) %>%
+  mutate(part_surmortalite_70_79 = valeur_surmortalite_70_79 / deces_standardises_si_pop_2020_70_79 * 100) %>%
+  mutate(ecart_moyenne_70_79 = (deces_standardises_si_pop_2020_70_79 - moyenne_70_79) / moyenne_70_79 * 100)
+
+
+
+#-----#
+# ge80#
+#-----#
+
+# Calcul des colonnes moyenne, variance, bsup, binf
+IC_deces <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  filter(numSemaineDepuis2013 > 287 ) %>% 
+  group_by(geo) %>% 
+  summarise(
+    moyenne_ge80 = mean(deces_standardises_si_pop_2020_ge80), 
+    variance_ge80 = sd(deces_standardises_si_pop_2020_ge80)) %>%
+  mutate(
+    bsup_ge80 = moyenne_ge80 + 1.5 * variance_ge80,
+    binf_ge80 = moyenne_ge80 - 1.5 * variance_ge80 )
+
+# Ajout des colonnes moyenne, variance, bsup, binf
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(
+  b__es_deces_week_standardises_si_pop_2020_owid_vaccination, 
+  IC_deces)
+
+rm(IC_deces)
+
+# Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  mutate(surmortalite_ge80 = case_when(
+    deces_standardises_si_pop_2020_ge80 <= binf_ge80 ~ "sous-mortalite",
+    deces_standardises_si_pop_2020_ge80 >= bsup_ge80 ~ "surmortalite",
+    TRUE ~ "mortalite normale"))
+
+# Valeurs de Sur-mortalité et sous-mortalité (lorsque ça dépasse les bornes)
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  mutate(valeur_surmortalite_ge80 = case_when(
+    surmortalite_ge80 == "sous-mortalite" ~ deces_standardises_si_pop_2020_ge80 - binf_ge80,
+    surmortalite_ge80 == "surmortalite" ~ deces_standardises_si_pop_2020_ge80 - bsup_ge80,
+    TRUE ~ 0)) %>%
+  mutate(part_surmortalite_ge80 = valeur_surmortalite_ge80 / deces_standardises_si_pop_2020_ge80 * 100) %>%
+  mutate(ecart_moyenne_ge80 = (deces_standardises_si_pop_2020_ge80 - moyenne_ge80) / moyenne_ge80 * 100)
 
 
 # Créer un tableau avec les colonnes "_prec" qui correspondront après le left-join aux valeurs de la semaine précédente
