@@ -1562,8 +1562,29 @@ vaccination_simple <-dcast(a__vaccination_age,
                            time + Region ~ TargetGroup,
                            value.var = "total_dose",
                            fun.aggregate = sum)
-vaccination_simple <- vaccination_simple %>% mutate(geo = Region) %>% 
-  select(-Region)
+
+vaccination_dose1 <-dcast(a__vaccination_age,
+                           time + Region ~ TargetGroup,
+                           value.var = "FirstDose",
+                           fun.aggregate = sum)
+
+colnames(vaccination_dose1)[3:19] <- paste(colnames(vaccination_dose1)[3:19], "dose1", sep = "_")
+
+vaccination_dose2 <-dcast(a__vaccination_age,
+                          time + Region ~ TargetGroup,
+                          value.var = "SecondDose",
+                          fun.aggregate = sum)
+
+colnames(vaccination_dose2)[3:19] <- paste(colnames(vaccination_dose2)[3:19], "dose2", sep = "_")
+
+vaccination_simple <-vaccination_simple %>% left_join(vaccination_dose1) %>% 
+  left_join(vaccination_dose2)
+
+if (shallDeleteVars) rm(vaccination_dose2)
+if (shallDeleteVars) rm(vaccination_dose1)
+
+vaccination_simple <- vaccination_simple %>% rename(geo = Region)
+
 
 #Ajouter les infos de vaccination de owid aux données de décès EuroStat
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(b__es_deces_week_standardises_si_pop_2020_owid_vaccination,

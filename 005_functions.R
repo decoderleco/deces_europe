@@ -822,7 +822,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 # Generer le graphique et le png associé : deces_hebdo_std_vaccination
 ################################################################################
 a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_semaine, 
-														  decalageSemaines = 8) {
+														  decalageSemaines = 4) {
 	
 	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
 	# qui a étépassé dans le parametre region
@@ -841,14 +841,8 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	maxWeekTime <- maxWeekTime[1, 1]
 	
 	es_deces_standard_pays_semaine<-es_deces_standard_pays_semaine %>%
-	  filter(!is.na(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_15_24)) %>% 
-	  mutate(Age15_17=ifelse(is.na(Age15_17),0,Age15_17),
-	         Age18_24=ifelse(is.na(Age18_24),0,Age18_24),
-	         Age25_49=ifelse(is.na(Age25_49),0,Age25_49),
-	         Age50_59=ifelse(is.na(Age50_59),0,Age50_59),
-	         Age60_69=ifelse(is.na(Age60_69),0,Age60_69),
-	         Age70_79=ifelse(is.na(Age70_79),0,Age70_79),
-	         `Age80+`=ifelse(is.na(`Age80+`),0,`Age80+`))
+	  filter(!is.na(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_15_24))
+
 	
 	#
 	# Graphique 1 : Situation des 15_24 ans
@@ -910,15 +904,15 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26,  0, "2013", cex=1.2)
-	text(78,  0, "2014", cex=1.2)
-	text(130, 0, "2015", cex=1.2)
-	text(183, 0, "2016", cex=1.2)
-	text(235, 0, "2017", cex=1.2)
-	text(287, 0, "2018", cex=1.2)
-	text(339, 0, "2019", cex=1.2)
-	text(391, 0, "2020", cex=1.2)
-	text(440, 0, "2021", cex=1.2)
+	text(26,  min(essai$deces_standardises_si_pop_2020_15_24), "2013", cex=1.2)
+	text(78,  min(essai$deces_standardises_si_pop_2020_15_24), "2014", cex=1.2)
+	text(130, min(essai$deces_standardises_si_pop_2020_15_24), "2015", cex=1.2)
+	text(183, min(essai$deces_standardises_si_pop_2020_15_24), "2016", cex=1.2)
+	text(235, min(essai$deces_standardises_si_pop_2020_15_24), "2017", cex=1.2)
+	text(287, min(essai$deces_standardises_si_pop_2020_15_24), "2018", cex=1.2)
+	text(339, min(essai$deces_standardises_si_pop_2020_15_24), "2019", cex=1.2)
+	text(391, min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
+	text(440, min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
 
 	# Superposer la moyenne mobile
 	par(new=T)
@@ -978,19 +972,39 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     type="o", 
 	     col="purple") 	
 	
-	if(max(essai$Age15_17)!=0){
-	# Superposer la vaccination 
-	par(new=T)
-	plot(essai$numSemaineDepuis2013, 
-	     essai$Age15_17+essai$Age18_24, 
-	     pch=16, 
-	     axes=F, 
-	     cex=0, 
-	     xlab="", 
-	     lwd=2,  
-	     ylab="", 
-	     type="o", 
-	     col="blue") 
+	if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
+	  # Superposer la vaccination 
+	  par(new=T)
+	  plot(essai$numSemaineDepuis2013, 
+	       essai$Age15_17_dose1+essai$Age18_24_dose1, 
+	       pch=16, 
+	       axes=F, 
+	       cex=0, 
+	       xlab="", 
+	       lty=2, 
+	       lwd=2,
+	       ylim=c(0, max(max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
+	       ylab="", 
+	       type="o", 
+	       col="blue") 
+	  axis(4, col = "blue", col.axis = "blue", lwd = 2)
+	  
+	  par(new=T)
+	  plot(essai$numSemaineDepuis2013, 
+	       essai$Age15_17_dose2+essai$Age18_24_dose2, 
+	       pch=16, 
+	       axes=F, 
+	       cex=0, 
+	       xlab="",
+	       lty=2, 
+	       lwd=2,
+	       ylim=c(0, max(max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
+	       ylab="", 
+	       type="o", 
+	       col="dark blue") 
+	  mtext("première dose", side=1, col="blue", line=2)
+	  mtext("                                                                                      deuxième dose", side=1, col="dark blue", line=2)
+	  
 	axis(4, col = "blue", col.axis = "blue", lwd = 2)	
 	}
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
@@ -1124,19 +1138,39 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     type="o", 
 	     col="purple") 	
 	
-	if(max(essai$Age25_49)!=0){
-	# Superposer la vaccination 
-	par(new=T)
-	plot(essai$numSemaineDepuis2013, 
-	     essai$Age25_49, 
-	     pch=16, 
-	     axes=F, 
-	     cex=0, 
-	     xlab="", 
-	     lwd=2,  
-	     ylab="", 
-	     type="o", 
-	     col="blue") 
+	if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
+	  # Superposer la vaccination 
+	  par(new=T)
+	  plot(essai$numSemaineDepuis2013, 
+	       essai$Age25_49_dose1, 
+	       pch=16, 
+	       axes=F, 
+	       cex=0, 
+	       xlab="",
+	       lty=2, 
+	       lwd=2,
+	       ylim=c(0, max(max(essai$Age25_49_dose1,na.rm=TRUE),max(essai$Age25_49_dose2,na.rm=TRUE))), 
+	       ylab="", 
+	       type="o", 
+	       col="blue") 
+	  axis(4, col = "blue", col.axis = "blue", lwd = 2)
+	  
+	  par(new=T)
+	  plot(essai$numSemaineDepuis2013, 
+	       essai$Age25_49_dose2, 
+	       pch=16, 
+	       axes=F, 
+	       cex=0, 
+	       xlab="", 
+	       lwd=2,
+	       lty=2, 
+	       ylim=c(0, max(max(essai$Age25_49_dose1,na.rm=TRUE),max(essai$Age25_49_dose2,na.rm=TRUE))),
+	       ylab="", 
+	       type="o", 
+	       col="dark blue") 
+	  mtext("première dose", side=1, col="blue", line=2)
+	  mtext("                                                                                      deuxième dose", side=1, col="dark blue", line=2)
+	  
 	axis(4, col = "blue", col.axis = "blue", lwd = 2)
 	}
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
@@ -1270,19 +1304,39 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     type="o", 
 	     col="purple") 	
 	
-	if(max(essai$Age50_59)!=0){
-	# Superposer la vaccination 
-	par(new=T)
-	plot(essai$numSemaineDepuis2013, 
-	     essai$Age50_59, 
-	     pch=16, 
-	     axes=F, 
-	     cex=0, 
-	     xlab="", 
-	     lwd=2,  
-	     ylab="", 
-	     type="o", 
-	     col="blue") 
+	if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
+	  # Superposer la vaccination 
+	  par(new=T)
+	  plot(essai$numSemaineDepuis2013, 
+	       essai$Age50_59_dose1, 
+	       pch=16, 
+	       axes=F, 
+	       cex=0, 
+	       xlab="",
+	       lty=2, 
+	       lwd=2,
+	       ylim=c(0, max(max(essai$Age50_59_dose1,na.rm=TRUE),max(essai$Age50_59_dose2,na.rm=TRUE))), 
+	       ylab="", 
+	       type="o", 
+	       col="blue") 
+	  axis(4, col = "blue", col.axis = "blue", lwd = 2)
+	  
+	  par(new=T)
+	  plot(essai$numSemaineDepuis2013, 
+	       essai$Age50_59_dose2, 
+	       pch=16, 
+	       axes=F, 
+	       cex=0, 
+	       xlab="", 
+	       lwd=2,
+	       lty=2, 
+	       ylim=c(0, max(max(essai$Age50_59_dose1,na.rm=TRUE),max(essai$Age50_59_dose2,na.rm=TRUE))),
+	       ylab="", 
+	       type="o", 
+	       col="dark blue") 
+	  mtext("première dose", side=1, col="blue", line=2)
+	  mtext("                                                                                      deuxième dose", side=1, col="dark blue", line=2)
+	  
 	axis(4, col = "blue", col.axis = "blue", lwd = 2)	
 	}
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
@@ -1416,19 +1470,39 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     type="o", 
 	     col="purple") 	
 	
-	if(max(essai$Age60_69)!=0){
-	# Superposer la vaccination 
-	par(new=T)
-	plot(essai$numSemaineDepuis2013, 
-	     essai$Age60_69, 
-	     pch=16, 
-	     axes=F, 
-	     cex=0, 
-	     xlab="", 
-	     lwd=2,  
-	     ylab="", 
-	     type="o", 
-	     col="blue") 
+	if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
+	  # Superposer la vaccination 
+	  par(new=T)
+	  plot(essai$numSemaineDepuis2013, 
+	       essai$Age60_69_dose1, 
+	       pch=16, 
+	       axes=F, 
+	       cex=0, 
+	       xlab="",
+	       lty=2, 
+	       lwd=2,
+	       ylim=c(0, max(max(essai$Age60_69_dose1,na.rm=TRUE),max(essai$Age60_69_dose2,na.rm=TRUE))), 
+	       ylab="", 
+	       type="o", 
+	       col="blue") 
+	  axis(4, col = "blue", col.axis = "blue", lwd = 2)
+	  
+	  par(new=T)
+	  plot(essai$numSemaineDepuis2013, 
+	       essai$Age60_69_dose2, 
+	       pch=16, 
+	       axes=F, 
+	       cex=0, 
+	       xlab="", 
+	       lwd=2,
+	       lty=2, 
+	       ylim=c(0, max(max(essai$Age60_69_dose1,na.rm=TRUE),max(essai$Age60_69_dose2,na.rm=TRUE))),
+	       ylab="", 
+	       type="o", 
+	       col="dark blue") 
+	  mtext("première dose", side=1, col="blue", line=2)
+	  mtext("                                                                                      deuxième dose", side=1, col="dark blue", line=2)
+	  
 	axis(4, col = "blue", col.axis = "blue", lwd = 2)
 	}
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
@@ -1562,19 +1636,39 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     type="o", 
 	     col="purple") 	
 	
-	if(max(essai$Age70_79)!=0){
-	# Superposer la vaccination 
-	par(new=T)
-	plot(essai$numSemaineDepuis2013, 
-	     essai$Age70_79, 
-	     pch=16, 
-	     axes=F, 
-	     cex=0, 
-	     xlab="", 
-	     lwd=2,  
-	     ylab="", 
-	     type="o", 
-	     col="blue") 
+	if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
+	  # Superposer la vaccination 
+	  par(new=T)
+	  plot(essai$numSemaineDepuis2013, 
+	       essai$Age70_79_dose1, 
+	       pch=16, 
+	       axes=F, 
+	       cex=0, 
+	       xlab="",
+	       lty=2, 
+	       lwd=2,
+	       ylim=c(0, max(max(essai$Age70_79_dose1,na.rm=TRUE),max(essai$Age70_79_dose2,na.rm=TRUE))), 
+	       ylab="", 
+	       type="o", 
+	       col="blue") 
+	  axis(4, col = "blue", col.axis = "blue", lwd = 2)
+	  
+	  par(new=T)
+	  plot(essai$numSemaineDepuis2013, 
+	       essai$Age70_79_dose2, 
+	       pch=16, 
+	       axes=F, 
+	       cex=0, 
+	       xlab="", 
+	       lwd=2,
+	       lty=2, 
+	       ylim=c(0, max(max(essai$Age70_79_dose1,na.rm=TRUE),max(essai$Age70_79_dose2,na.rm=TRUE))),
+	       ylab="", 
+	       type="o", 
+	       col="dark blue") 
+	  mtext("première dose", side=1, col="blue", line=2)
+	  mtext("                                                                                      deuxième dose", side=1, col="dark blue", line=2)
+	  
 	axis(4, col = "blue", col.axis = "blue", lwd = 2)
 	}
 	
@@ -1709,20 +1803,40 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     type="o", 
 	     col="purple") 	
 	
-	if(max(essai$'Age80+')!=0){
-	# Superposer la vaccination 
-	par(new=T)
-	plot(essai$numSemaineDepuis2013, 
-	     essai$'Age80+', 
-	     pch=16, 
-	     axes=F, 
-	     cex=0, 
-	     xlab="", 
-	     lwd=2,  
-	     ylab="", 
-	     type="o", 
-	     col="blue") 
-	axis(4, col = "blue", col.axis = "blue", lwd = 2)
+
+	  if(!is.na(mean(essai$'Age80+', na.rm = TRUE))){
+	    # Superposer la vaccination 
+	    par(new=T)
+	    plot(essai$numSemaineDepuis2013, 
+	         essai$'Age80+_dose1', 
+	         pch=16, 
+	         axes=F, 
+	         cex=0, 
+	         xlab="",
+	         lty=2, 
+	         lwd=2,
+	         ylim=c(0, max(max(essai$'Age80+_dose1',na.rm=TRUE),max(essai$'Age80+_dose2',na.rm=TRUE))), 
+	         ylab="", 
+	         type="o", 
+	         col="blue") 
+	    axis(4, col = "blue", col.axis = "blue", lwd = 2)
+	    
+	    par(new=T)
+	    plot(essai$numSemaineDepuis2013, 
+	         essai$'Age80+_dose2', 
+	         pch=16, 
+	         axes=F, 
+	         cex=0, 
+	         xlab="", 
+	         lwd=2,
+	         lty=2, 
+	         ylim=c(0, max(max(essai$Age70_79_dose1,na.rm=TRUE),max(essai$Age70_79_dose2,na.rm=TRUE))),
+	         ylab="", 
+	         type="o", 
+	         col="dark blue") 
+	    mtext("première dose", side=1, col="blue", line=2)
+	    mtext("                                                                                      deuxième dose", side=1, col="dark blue", line=2)
+	    
 	}
 	dev.print(device = png, file = pngFileRelPath, width = 1000)	
 	# Supprimer la variable de GlovaEnv correspondant à region car on n'en a plus besoin
@@ -1769,7 +1883,21 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
            Age50_59,
            Age60_69,
            Age70_79,
-           `Age80+`)
+           `Age80+`,
+           Age15_17_dose1,
+           Age18_24_dose1,
+           Age25_49_dose1,
+           Age50_59_dose1,
+           Age60_69_dose1,
+           Age70_79_dose1,
+           `Age80+_dose1`,
+           Age15_17_dose2,
+           Age18_24_dose2,
+           Age25_49_dose2,
+           Age50_59_dose2,
+           Age60_69_dose2,
+           Age70_79_dose2,
+           `Age80+_dose2`)
   
   annees_13_19 <- ungroup(es_deces_standard_pays_semaine) %>% 
     filter(!(str_sub(time,1,4)=="2020"|str_sub(time,1,4)=="2021"))%>% 
@@ -1837,11 +1965,12 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        pch=16, 
        cex=0, 
        axes=F, 
+       lwd=2, 
        xlab="week", 
        ylab="", 
        ylim=c(min(essai$diff_15_24), max(essai$diff_15_24)), 
        type="o", 
-       col="black", 
+       col="grey", 
        main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
   
   # pour encadrer le graphique
@@ -1854,6 +1983,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
   mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
   mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+  mtext("première dose", side=1, col="blue", line=2)
+  mtext("                                                                                      deuxième dose", side=1, col="dark blue", line=2)
   
   # Lignes verticales
   abline(v=c(366,419), col="blue", lty=3)
@@ -1921,19 +2052,34 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        type="o", 
        col="purple") 	
   if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
+    
   # Superposer la vaccination 
   par(new=T)
   plot(essai$numSemaineDepuis2013, 
-       essai$Age15_17+essai$Age18_24, 
+       essai$Age15_17_dose1+essai$Age18_24_dose1, 
        pch=16, 
        axes=F, 
        cex=0, 
        xlab="", 
-       lwd=2,  
+       lwd=2,
+       ylim=c(0, max(max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
        ylab="", 
        type="o", 
        col="blue") 
-  axis(4, col = "blue", col.axis = "blue", lwd = 2)	
+  axis(4, col = "blue", col.axis = "blue", lwd = 2)
+  
+  par(new=T)
+  plot(essai$numSemaineDepuis2013, 
+       essai$Age15_17_dose2+essai$Age18_24_dose2, 
+       pch=16, 
+       axes=F, 
+       cex=0, 
+       xlab="", 
+       lwd=2,
+       ylim=c(0, max(max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
+       ylab="", 
+       type="o", 
+       col="dark blue") 
   }
   dev.print(device = png, file = pngFileRelPath, width = 1000)
   
@@ -1976,11 +2122,12 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        pch=16, 
        cex=0, 
        axes=F, 
-       xlab="week", 
+       xlab="week",
+       lwd=2, 
        ylab="", 
        ylim=c(min(essai$diff_25_49), max(essai$diff_25_49)), 
        type="o", 
-       col="black", 
+       col="grey", 
        main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
   
   # pour encadrer le graphique
@@ -1993,6 +2140,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
   mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
   mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+  mtext("première dose", side=1, col="blue", line=2)
+  mtext("                                                                                      deuxième dose", side=1, col="dark blue", line=2)
   
   # Lignes verticales
   abline(v=c(366,419), col="blue", lty=3)
@@ -2059,18 +2208,32 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        col="purple") 	
   if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
   # Superposer la vaccination 
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$Age25_49, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=2,  
-       ylab="", 
-       type="o", 
-       col="blue") 
-  axis(4, col = "blue", col.axis = "blue", lwd = 2)	
+    par(new=T)
+    plot(essai$numSemaineDepuis2013, 
+         essai$Age25_49_dose1, 
+         pch=16, 
+         axes=F, 
+         cex=0, 
+         xlab="", 
+         lwd=2,
+         ylim=c(0, max(max(essai$Age25_49_dose1,na.rm=TRUE),max(essai$Age25_49_dose2,na.rm=TRUE))), 
+         ylab="", 
+         type="o", 
+         col="blue") 
+    axis(4, col = "blue", col.axis = "blue", lwd = 2)
+    
+    par(new=T)
+    plot(essai$numSemaineDepuis2013, 
+         essai$Age25_49_dose2, 
+         pch=16, 
+         axes=F, 
+         cex=0, 
+         xlab="", 
+         lwd=2,
+         ylim=c(0, max(max(essai$Age25_49_dose1,na.rm=TRUE),max(essai$Age25_49_dose2,na.rm=TRUE))),  
+         ylab="", 
+         type="o", 
+         col="dark blue") 	
   }
   dev.print(device = png, file = pngFileRelPath, width = 1000)
   
@@ -2117,10 +2280,11 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        axes=F, 
        xlab="week", 
+       lwd=2, 
        ylab="", 
        ylim=c(min(essai$diff_50_59), max(essai$diff_50_59)), 
        type="o", 
-       col="black", 
+       col="grey", 
        main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
   
   # pour encadrer le graphique
@@ -2133,6 +2297,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
   mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
   mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+  mtext("première dose", side=1, col="blue", line=2)
+  mtext("                                                                                      deuxième dose", side=1, col="dark blue", line=2)
   
   # Lignes verticales
   abline(v=c(366,419), col="blue", lty=3)
@@ -2201,18 +2367,32 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        col="purple") 	
   if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
   # Superposer la vaccination 
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$Age50_59, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=2,  
-       ylab="", 
-       type="o", 
-       col="blue") 
-  axis(4, col = "blue", col.axis = "blue", lwd = 2)	
+    par(new=T)
+    plot(essai$numSemaineDepuis2013, 
+         essai$Age50_59_dose1, 
+         pch=16, 
+         axes=F, 
+         cex=0, 
+         xlab="", 
+         lwd=2,
+         ylim=c(0, max(max(essai$Age50_59_dose1,na.rm=TRUE),max(essai$Age50_59_dose2,na.rm=TRUE))), 
+         ylab="", 
+         type="o", 
+         col="blue") 
+    axis(4, col = "blue", col.axis = "blue", lwd = 2)
+    
+    par(new=T)
+    plot(essai$numSemaineDepuis2013, 
+         essai$Age50_59_dose2, 
+         pch=16, 
+         axes=F, 
+         cex=0, 
+         xlab="", 
+         lwd=2,
+         ylim=c(0, max(max(essai$Age50_59_dose1,na.rm=TRUE),max(essai$Age50_59_dose2,na.rm=TRUE))),  
+         ylab="", 
+         type="o", 
+         col="dark blue") 
   }
   dev.print(device = png, file = pngFileRelPath, width = 1000)
 
@@ -2256,10 +2436,11 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        axes=F, 
        xlab="week", 
+       lwd=2, 
        ylab="", 
        ylim=c(min(essai$diff_60_69), max(essai$diff_60_69)), 
        type="o", 
-       col="black", 
+       col="grey", 
        main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
   
   # pour encadrer le graphique
@@ -2272,6 +2453,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
   mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
   mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+  mtext("première dose", side=1, col="blue", line=2)
+  mtext("                                                                                      deuxième dose", side=1, col="dark blue", line=2)
   
   # Lignes verticales
   abline(v=c(366,419), col="blue", lty=3)
@@ -2341,18 +2524,32 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   
   # Superposer la vaccination 
   if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$Age60_69, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=2,  
-       ylab="", 
-       type="o", 
-       col="blue") 
-  axis(4, col = "blue", col.axis = "blue", lwd = 2)	
+    par(new=T)
+    plot(essai$numSemaineDepuis2013, 
+         essai$Age60_69_dose1, 
+         pch=16, 
+         axes=F, 
+         cex=0, 
+         xlab="", 
+         lwd=2,
+         ylim=c(0, max(max(essai$Age60_69_dose1,na.rm=TRUE),max(essai$Age60_69_dose2,na.rm=TRUE))), 
+         ylab="", 
+         type="o", 
+         col="blue") 
+    axis(4, col = "blue", col.axis = "blue", lwd = 2)
+    
+    par(new=T)
+    plot(essai$numSemaineDepuis2013, 
+         essai$Age60_69_dose2, 
+         pch=16, 
+         axes=F, 
+         cex=0, 
+         xlab="", 
+         lwd=2,
+         ylim=c(0, max(max(essai$Age60_69_dose1,na.rm=TRUE),max(essai$Age60_69_dose2,na.rm=TRUE))),  
+         ylab="", 
+         type="o", 
+         col="dark blue") 	
   }
   dev.print(device = png, file = pngFileRelPath, width = 1000)
   
@@ -2395,11 +2592,12 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        pch=16, 
        cex=0, 
        axes=F, 
+       lwd=2, 
        xlab="week", 
        ylab="", 
        ylim=c(min(essai$diff_70_79), max(essai$diff_70_79)), 
        type="o", 
-       col="black", 
+       col="grey", 
        main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
   
   # pour encadrer le graphique
@@ -2412,6 +2610,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
   mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
   mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+  mtext("première dose", side=1, col="blue", line=2)
+  mtext("                                                                                      deuxième dose", side=1, col="dark blue", line=2)
   
   # Lignes verticales
   abline(v=c(366,419), col="blue", lty=3)
@@ -2481,17 +2681,32 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   
   # Superposer la vaccination 
   if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$Age70_79, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=2,  
-       ylab="", 
-       type="o", 
-       col="blue") 
+    par(new=T)
+    plot(essai$numSemaineDepuis2013, 
+         essai$Age70_79_dose1, 
+         pch=16, 
+         axes=F, 
+         cex=0, 
+         xlab="", 
+         lwd=2,
+         ylim=c(0, max(max(essai$Age70_79_dose1,na.rm=TRUE),max(essai$Age70_79_dose2,na.rm=TRUE))), 
+         ylab="", 
+         type="o", 
+         col="blue") 
+    axis(4, col = "blue", col.axis = "blue", lwd = 2)
+    
+    par(new=T)
+    plot(essai$numSemaineDepuis2013, 
+         essai$Age70_79_dose2, 
+         pch=16, 
+         axes=F, 
+         cex=0, 
+         xlab="", 
+         lwd=2,
+         ylim=c(0, max(max(essai$Age70_79_dose1,na.rm=TRUE),max(essai$Age70_79_dose2,na.rm=TRUE))),  
+         ylab="", 
+         type="o", 
+         col="dark blue") 
   axis(4, col = "blue", col.axis = "blue", lwd = 2)	
   }
   dev.print(device = png, file = pngFileRelPath, width = 1000)
@@ -2536,11 +2751,12 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        pch=16, 
        cex=0, 
        axes=F, 
-       xlab="week", 
+       xlab="week",
+       lwd=2,  
        ylab="", 
        ylim=c(min(essai$diff_ge80), max(essai$diff_ge80)), 
        type="o", 
-       col="black", 
+       col="grey", 
        main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
   
   # pour encadrer le graphique
@@ -2553,6 +2769,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
   mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
   mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+  mtext("première dose", side=1, col="blue", line=2)
+  mtext("                                                                                      deuxième dose", side=1, col="dark blue", line=2)
   
   # Lignes verticales
   abline(v=c(366,419), col="blue", lty=3)
@@ -2624,15 +2842,30 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
   par(new=T)
   plot(essai$numSemaineDepuis2013, 
-       essai$`Age80+`, 
+       essai$`Age80+_dose1`, 
        pch=16, 
        axes=F, 
        cex=0, 
        xlab="", 
-       lwd=2,  
+       lwd=2,
+       ylim=c(0, max(max(essai$`Age80+_dose1`,na.rm=TRUE),max(essai$`Age80+_dose2`,na.rm=TRUE))), 
        ylab="", 
        type="o", 
        col="blue") 
+  axis(4, col = "blue", col.axis = "blue", lwd = 2)
+  
+  par(new=T)
+  plot(essai$numSemaineDepuis2013, 
+       essai$`Age80+_dose2`, 
+       pch=16, 
+       axes=F, 
+       cex=0, 
+       xlab="", 
+       lwd=2,
+       ylim=c(0, max(max(essai$`Age80+_dose1`,na.rm=TRUE),max(essai$`Age80+_dose2`,na.rm=TRUE))),  
+       ylab="", 
+       type="o", 
+       col="dark blue") 
   axis(4, col = "blue", col.axis = "blue", lwd = 2)
   }
   dev.print(device = png, file = pngFileRelPath, width = 1000)	
