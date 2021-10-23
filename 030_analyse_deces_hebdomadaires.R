@@ -383,6 +383,214 @@ a__f_plot_es_deces_hebdo_std_vs_decesCovid(es_deces_standard_pays_semaine_slovaq
 a__f_plot_es_deces_hebdo_std_vs_decesCovid(es_deces_standard_pays_semaine_slovenie, 1000)
 
 
+
+#-------------------------------------------------#
+####    vaccinations grippe et deces France    ####
+#-------------------------------------------------#
+
+
+
+
+# Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
+maxWeekTime <- es_deces_standard_pays_semaine_france %>%
+  ungroup %>%
+  filter(numSemaineDepuis2013 == max(numSemaineDepuis2013)) %>%
+  distinct() %>%
+  select(time)
+maxWeekTime <- maxWeekTime[1, 1]
+
+
+# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays/")
+a__f_createDir(repertoire)
+
+#Nom du fichier png à générer
+pngFileRelPath <- paste0(repertoire,"France.png")
+
+# Message
+message(paste0("Creation image (", pngFileRelPath,")"))
+
+# Moyenne mobile sur 8 semaines, des 15-24 ans
+
+moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020_ge60, 
+                                     8)
+
+# Moyenne de la Moyenne mobile
+
+moyenne_mobile <- data_frame(moyenne_mobile)
+
+moyenne_mobile$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile) + 5
+
+# Ajouter les colonnes de la moyenne mobile 
+es_deces_standard_pays_semaine_france <- es_deces_standard_pays_semaine_france %>%
+  left_join(moyenne_mobile)
+
+es_deces_standard_pays_semaine_france$moyenne_ge60 <- mean(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020_ge60)
+es_deces_standard_pays_semaine_france$binf_ge60 <- mean(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020_ge60) - 2*sd(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020_ge60)
+es_deces_standard_pays_semaine_france$bsup_ge60 <- mean(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020_ge60) + 2*sd(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020_ge60)
+
+essai <- es_deces_standard_pays_semaine_france %>% filter(numSemaineDepuis2013 > 192)
+
+#création du graphiques
+plot(essai$numSemaineDepuis2013, 
+     essai$deces_standardises_si_pop_2020_ge60, 
+     pch=16, 
+     cex=0, 
+     axes=F, 
+     xlab="week", 
+     ylab="", 
+     ylim=c(0, max(essai$deces_standardises_si_pop_2020_ge60)), 
+     type="o", 
+     col="black", 
+     main=paste0("Décès hebdomadaires standardisés à population 2020 en France => ", maxWeekTime ))
+
+# pour encadrer le graphique
+box() 
+
+axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+
+
+mtext("nombre de décès toutes causes des plus de 60 ans", side=2, line=3)
+mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
+mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
+mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+
+# Lignes verticales
+abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+
+
+# Superposer la moyenne mobile
+par(new=T)
+plot(essai$numSemaineDepuis2013, 
+     essai$moyenne_mobile, 
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=2,  
+     ylim=c(0, max(essai$deces_standardises_si_pop_2020_ge60)),
+     ylab="", 
+     type="o", 
+     col="red") 
+
+# Superposer la moyenne 
+par(new=T)
+plot(essai$numSemaineDepuis2013, 
+     essai$moyenne_ge60, 
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=1.5,  
+     ylim=c(0, max(essai$deces_standardises_si_pop_2020_ge60)),
+     ylab="", 
+     type="o", 
+     col="purple") 
+
+# Superposer la bsup
+par(new=T)
+plot(essai$numSemaineDepuis2013, 
+     essai$bsup_ge60, 
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=1.5,  
+     ylim=c(0, max(essai$deces_standardises_si_pop_2020_ge60)),
+     ylab="", 
+     lty=2, 
+     type="o", 
+     col="purple") 
+
+# Superposer la binf
+par(new=T)
+plot(essai$numSemaineDepuis2013, 
+     essai$binf_ge60, 
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=1.5, 
+     ylim=c(0, max(essai$deces_standardises_si_pop_2020_ge60)),
+     ylab="",
+     lty=2, 
+     type="o", 
+     col="purple") 	
+
+grippe_lissage <- read.csv("C:/Users/xxx/Documents/R/deces_europe/data/csv/lissage_grippe.csv", sep=";")
+essai<-essai %>% left_join(grippe_lissage)
+essai<-essai %>% mutate(vaccins_grippe=ifelse(is.na(vaccins_grippe),0,vaccins_grippe))
+
+  # Superposer la vaccination 
+  par(new=T)
+  plot(essai$numSemaineDepuis2013, 
+       essai$Age60_69_dose1+essai$Age70_79_dose1+essai$`Age80+_dose1`, 
+       pch=16, 
+       axes=F, 
+       cex=0, 
+       xlab="", 
+       lty=1, 
+       lwd=2,
+       ylim=c(0, max(essai$vaccins_grippe,na.rm=TRUE)),
+       ylab="", 
+       type="o", 
+       col="blue") 
+  axis(4, col = "blue", col.axis = "blue", lwd = 2)
+  
+  par(new=T)
+  plot(essai$numSemaineDepuis2013, 
+       essai$Age60_69_dose2+essai$Age70_79_dose2+essai$`Age80+_dose2`,  
+       pch=16, 
+       axes=F, 
+       cex=0, 
+       xlab="",
+       lty=1, 
+       lwd=2,
+       ylim=c(0, max(essai$vaccins_grippe,na.rm=TRUE)), 
+       ylab="", 
+       type="o", 
+       col="dark blue") 
+  mtext("Covid première dose", side=1, col="blue", line=2)
+  mtext("                                                                                                       Covid deuxième dose", side=1, col="dark blue", line=2)
+  mtext("vaccin grippe                                                                                          ", side=1, col="orange", line=2)
+  
+  
+
+
+par(new=T)
+plot(essai$numSemaineDepuis2013, 
+     essai$vaccins_grippe,  
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="",
+     lty=1, 
+     lwd=2,
+     ylim=c(0, max(essai$vaccins_grippe,na.rm=TRUE)), 
+     ylab="", 
+     type="o", 
+     col="orange") 
+
+text(26,  min(essai$deces_standardises_si_pop_2020_15_24), "2013", cex=1.2)
+text(78,  min(essai$deces_standardises_si_pop_2020_15_24), "2014", cex=1.2)
+text(130, min(essai$deces_standardises_si_pop_2020_15_24), "2015", cex=1.2)
+text(183, min(essai$deces_standardises_si_pop_2020_15_24), "2016", cex=1.2)
+text(235, min(essai$deces_standardises_si_pop_2020_15_24), "2017", cex=1.2)
+text(287, min(essai$deces_standardises_si_pop_2020_15_24), "2018", cex=1.2)
+text(339, min(essai$deces_standardises_si_pop_2020_15_24), "2019", cex=1.2)
+text(391, min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
+text(440, min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
+
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+
+
+
+
+
+
+
 #es_deces_standard_pays_semaine__analysables <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 #		filter(time >"2015-01-01")
 
