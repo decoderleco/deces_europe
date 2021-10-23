@@ -399,14 +399,6 @@ maxWeekTime <- es_deces_standard_pays_semaine_france %>%
   select(time)
 maxWeekTime <- maxWeekTime[1, 1]
 
-
-# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
-repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays/")
-a__f_createDir(repertoire)
-
-#Nom du fichier png à générer
-pngFileRelPath <- paste0(repertoire,"France.png")
-
 # Message
 message(paste0("Creation image (", pngFileRelPath,")"))
 
@@ -582,7 +574,7 @@ text(391, min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
 text(440, min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
 
 
-dev.print(device = png, file = pngFileRelPath, width = 1000)
+dev.print(device = png, file = "gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays/France_vaccins.png", width = 1000)
 
 
 
