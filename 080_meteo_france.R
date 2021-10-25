@@ -17,8 +17,7 @@ library(readr)
 library(lsr)
 library(igraph)
 library(readr)
-library(dplyr)
-
+library(mgcv)
 
 
 #----------------------------------------------------------------------------------------------------------------#
@@ -489,32 +488,6 @@ calend_general_france <- calend_general_france %>%
          Mort80.84=D80.84/pop80.84,
          Mort85.89=D85.89/pop85.89,
          MortGe90=DGE90/popGE90)
-
-
-calend_general_estival_france <- calend_general_france %>% filter(((jour > '2010-06-30')&(jour < '2010-10-01')|
-                                                       (jour > '2011-06-30')&(jour < '2011-10-01')|
-                                                       (jour > '2012-06-30')&(jour < '2012-10-01')|
-                                                       (jour > '2013-06-30')&(jour < '2013-10-01')|
-                                                       (jour > '2014-06-30')&(jour < '2014-10-01')|
-                                                       (jour > '2015-06-30')&(jour < '2015-10-01')|
-                                                       (jour > '2016-06-30')&(jour < '2016-10-01')|
-                                                       (jour > '2017-06-30')&(jour < '2017-10-01')|
-                                                       (jour > '2018-06-30')&(jour < '2018-10-01')|
-                                                       (jour > '2019-06-30')&(jour < '2019-10-01')|
-                                                       (jour > '2020-06-30')&(jour < '2020-10-01')|
-                                                       (jour > '2021-06-30')&(jour < '2021-10-01')))
-calend_general_hivernal_france <- calend_general_france %>% filter(!((jour > '2010-06-30')&(jour < '2010-10-01')|
-                                                         (jour > '2011-06-30')&(jour < '2011-10-01')|
-                                                         (jour > '2012-06-30')&(jour < '2012-10-01')|
-                                                         (jour > '2013-06-30')&(jour < '2013-10-01')|
-                                                         (jour > '2014-06-30')&(jour < '2014-10-01')|
-                                                         (jour > '2015-06-30')&(jour < '2015-10-01')|
-                                                         (jour > '2016-06-30')&(jour < '2016-10-01')|
-                                                         (jour > '2017-06-30')&(jour < '2017-10-01')|
-                                                         (jour > '2018-06-30')&(jour < '2018-10-01')|
-                                                         (jour > '2019-06-30')&(jour < '2019-10-01')|
-                                                         (jour > '2020-06-30')&(jour < '2020-10-01')|
-                                                         (jour > '2021-06-30')&(jour < '2021-10-01')))
 
 
 #------------------------------------------------#
@@ -1378,7 +1351,235 @@ for (departement in departement_different) {
   
   dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm45',departement,'.png'), width = 1000)
   
-  
-  
-  
 }
+                                        ##------------------------##
+                                        #### utilisation de GAM ####
+                                        ##------------------------##
+
+
+mod_gam <- gam(moyenne_mobile_MortGe90 ~ s(moyenne_mobile_temperature, bs="cr"), data=calend_general_france_17_19)
+
+summary(mod_gam)
+
+AIC(mod_gam)
+summary(mod_gam)$sp.criterion
+summary(mod_gam)$r.sq 
+
+testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_temperature,
+                      estimateur_MortGe90= mod_gam$fitted.values)
+
+calend_general_france_17_19 <- calend_general_france_17_19 %>% left_join(testdata)
+
+
+#création des graphiques + 90 ans
+plot(calend_general_france_17_19$jour, 
+     calend_general_france_17_19$moyenne_mobile_MortGe90, 
+     pch=16,
+     cex=0, 
+     xlab="date de décès",
+     ylim=c(0, max(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
+     ylab="", 
+     type="l", 
+     col="blue",
+     main= "Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans ")
+axis(2, col = "blue", col.axis = "blue", lwd = 2)
+
+# pour encadrer le graphique
+box() 
+
+mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
+mtext("Estimateur température", side=2, line=2, col="red")
+
+# Superposer lestimateur
+
+par(new=T)
+plot(calend_general_france_17_19$jour, 
+     calend_general_france_17_19$estimateur_MortGe90,
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=3,  
+     ylim=c(0, max(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
+     ylab="", 
+     type="l", 
+     col="red") 
+axis(4, col = "red", col.axis = "dark red", lwd = 2)
+
+dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm90_fit.png'), width = 1000)
+
+calend_general_france_mobile_depuis17<-calend_general_france_mobile %>% 
+  filter(jour>="2017-01-01")
+
+testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_temperature,
+                      estimateur_MortGe90= mod_gam$fitted.values)
+testdata <- testdata[order(testdata$moyenne_mobile_temperature),]
+testdata$numero <- 1:nrow(testdata)
+jointure <- cbind(calend_general_france_mobile_depuis17$moyenne_mobile_temperature, 
+      findInterval(calend_general_france_mobile_depuis17$moyenne_mobile_temperature, testdata$moyenne_mobile_temperature))
+jointure <- data.frame(jointure)
+jointure <- jointure %>% rename(moyenne_mobile_temperature = X1,numero=X2)
+testdata <- testdata %>% select(numero,estimateur_MortGe90)
+jointure <- jointure %>% left_join(testdata)
+
+calend_general_france_mobile_depuis17<-calend_general_france_mobile_depuis17 %>% left_join(jointure)
+  
+
+#création des graphiques + 90 ans
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$moyenne_mobile_MortGe90, 
+     pch=16,
+     cex=0, 
+     xlab="date de décès",
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_MortGe90,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="blue",
+     main= "Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans ")
+axis(2, col = "blue", col.axis = "blue", lwd = 2)
+
+
+
+# pour encadrer le graphique
+box() 
+
+mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
+mtext("Estimateur température", side=2, line=2, col="red")
+
+# Superposer l'estimateur
+
+par(new=T)
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$estimateur_MortGe90,
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=3,  
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_MortGe90,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="red") 
+axis(4, col = "red", col.axis = "dark red", lwd = 2)
+
+dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm90_total.png'), width = 1000)
+
+
+
+#départements GAM
+
+calend_general<-calend_general %>% filter(!is.na(pop5.9)) %>% filter(dep!="971"&dep!="972"&dep!="973"&dep!="974"&dep!="976")
+departement_different <- calend_general$dep_name
+departement_different <- unique(departement_different)
+
+for (departement in departement_different) {
+  message(departement)
+  calend_departement <- calend_general %>% filter(dep_name==departement)
+  calend_departement_mobile <- a__f_moyenne_mobile(calend_departement,7,6,7,16)
+  
+  calend_departement_mobile_17_19 <- calend_departement_mobile %>% filter((jour>'2016-12-31')&(jour<'2020-01-01'))
+
+  
+  mod_gam <- gam(moyenne_mobile_MortGe90 ~ s(moyenne_mobile_temperature, bs="cr"), data=calend_departement_mobile_17_19)
+  
+  
+  testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_temperature,
+                        estimateur_MortGe90= mod_gam$fitted.values)
+  
+  calend_departement_mobile_17_19 <- calend_departement_mobile_17_19 %>% left_join(testdata)
+  
+  
+  #création des graphiques + 90 ans
+  plot(calend_departement_mobile_17_19$jour, 
+       calend_departement_mobile_17_19$moyenne_mobile_MortGe90, 
+       pch=16,
+       cex=0, 
+       xlab="date de décès",
+       ylim=c(0, max(calend_departement_mobile_17_19$moyenne_mobile_MortGe90,na.rm=TRUE)), 
+       ylab="", 
+       type="l", 
+       col="blue",
+       main= "Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans ")
+  axis(2, col = "blue", col.axis = "blue", lwd = 2)
+  
+  # pour encadrer le graphique
+  box() 
+  
+  mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
+  mtext("Estimateur température", side=2, line=2, col="red")
+  
+  # Superposer la température
+  
+  par(new=T)
+  plot(calend_departement_mobile_17_19$jour, 
+       calend_departement_mobile_17_19$estimateur_MortGe90,
+       pch=16, 
+       axes=F, 
+       cex=0, 
+       xlab="", 
+       lwd=3,  
+       ylim=c(0, max(calend_departement_mobile_17_19$moyenne_mobile_MortGe90,na.rm=TRUE)), 
+       ylab="", 
+       type="l", 
+       col="red") 
+  axis(4, col = "red", col.axis = "dark red", lwd = 2)
+  
+  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm90_fit_',departement,'.png'), width = 1000)
+  
+  
+  
+  calend_departement_mobile_depuis17<-calend_departement_mobile %>% 
+    filter(jour>="2017-01-01")
+  
+
+  testdata <- testdata[order(testdata$moyenne_mobile_temperature),]
+  testdata$numero <- 1:nrow(testdata)
+  jointure <- cbind(calend_departement_mobile_depuis17$moyenne_mobile_temperature, 
+                    findInterval(calend_departement_mobile_depuis17$moyenne_mobile_temperature, testdata$moyenne_mobile_temperature))
+  jointure <- data.frame(jointure)
+  jointure <- jointure %>% rename(moyenne_mobile_temperature = X1,numero=X2)
+  testdata <- testdata %>% select(numero,estimateur_MortGe90)
+  jointure <- jointure %>% left_join(testdata)
+  
+  calend_departement_mobile_depuis17<-calend_departement_mobile_depuis17 %>% left_join(jointure)
+  
+  
+  #création des graphiques + 90 ans
+  plot(calend_departement_mobile_depuis17$jour, 
+       calend_departement_mobile_depuis17$moyenne_mobile_MortGe90, 
+       pch=16,
+       cex=0, 
+       xlab="date de décès",
+       ylim=c(0, max(calend_departement_mobile_depuis17$moyenne_mobile_MortGe90,na.rm=TRUE)), 
+       ylab="", 
+       type="l", 
+       col="blue",
+       main= "Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans ")
+  axis(2, col = "blue", col.axis = "blue", lwd = 2)
+  
+  # pour encadrer le graphique
+  box() 
+  
+  mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
+  mtext("Estimateur température", side=2, line=2, col="red")
+  
+  # Superposer l'estimateur
+  
+  par(new=T)
+  plot(calend_departement_mobile_depuis17$jour, 
+       calend_departement_mobile_depuis17$estimateur_MortGe90,
+       pch=16, 
+       axes=F, 
+       cex=0, 
+       xlab="", 
+       lwd=3,  
+       ylim=c(0, max(calend_departement_mobile_depuis17$moyenne_mobile_MortGe90,na.rm=TRUE)), 
+       ylab="", 
+       type="l", 
+       col="red") 
+  axis(4, col = "red", col.axis = "dark red", lwd = 2)
+  
+  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm90_total_',departement,'.png'), width = 1000)
+  
+  
+  }
