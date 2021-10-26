@@ -34,19 +34,19 @@ library(mgcv)
 
 # Faire tourner les 2 lignes suivantes uniquement quand on veut recharger tout la base
 
-meteo<-read.csv2(file = 'https://public.opendatasoft.com/explore/dataset/donnees-synop-essentielles-omm/download/?format=csv&timezone=Europe/Berlin&lang=fr&use_labels_for_header=true&csv_separator=%3B')
-meteorecente <- read.csv2(file='https://www.data.gouv.fr/fr/datasets/r/dd0df06a-85f2-4621-8b8b-5a3fe195bcd7')
+#meteo<-read.csv2(file = 'https://public.opendatasoft.com/explore/dataset/donnees-synop-essentielles-omm/download/?format=csv&timezone=Europe/Berlin&lang=fr&use_labels_for_header=true&csv_separator=%3B')
+#meteorecente <- read.csv2(file='https://www.data.gouv.fr/fr/datasets/r/dd0df06a-85f2-4621-8b8b-5a3fe195bcd7')
 
-saveRDS(meteo,file='gen/rds/meteo.rds')
-saveRDS(meteorecente,file='gen/rds/meteorecente.rds')
+#saveRDS(meteo,file='gen/rds/meteo.rds')
+#saveRDS(meteorecente,file='gen/rds/meteorecente.rds')
 
 #------------------------------------------------------------------------------------#
 #### création de la base des données météorologiques (température pour le moment) ####
 #------------------------------------------------------------------------------------#
 
-meteo<-readRDS('C:/Users/xxx/Documents/R/deces_europe/gen/rds/meteo.rds')
-meteorecente<-readRDS('C:/Users/xxx/Documents/R/deces_europe/gen/rds/meteorecente.rds')
-poptot<-read.csv2(file = 'C:/Users/xxx/Documents/R/deces_europe/data/csv/poptot.csv')
+meteo<-readRDS('gen/rds/meteo.rds')
+meteorecente<-readRDS('gen/rds/meteorecente.rds')
+poptot<-read.csv2(file = 'data/csv/poptot.csv')
 
 
 #transformation météo ancienne
@@ -408,8 +408,8 @@ calend_general <- calend_general %>%
          Mort85.89=D85.89/pop85.89,
          MortGe90=DGE90/popGE90)
 
-saveRDS(calend_general,file='C:/Users/xxx/Documents/R/deces_europe/gen/rds/calend_general.rds')
-write.csv2(calend_general,file='C:/Users/xxx/Documents/R/deces_europe/gen/csv/calend_general.csv')
+saveRDS(calend_general,file='gen/rds/calend_general.rds')
+write.csv2(calend_general,file='gen/csv/calend_general.csv')
 
 rm(calend_2011_2014)
 rm(calend_2015_2017)
@@ -419,8 +419,8 @@ rm(veirif_gen)
 #-----------------------------------------------#
 #### Exploitation ####
 #-----------------------------------------------#
-calend_general<-readRDS(file='C:/Users/xxx/Documents/R/deces_europe/gen/rds/calend_general.rds')
-nom_dep<-read.csv2('C:/Users/xxx/Documents/R/deces_europe/data/csv/departements-region.csv',fileEncoding="UTF-8",sep=",") %>% 
+calend_general<-readRDS(file='gen/rds/calend_general.rds')
+nom_dep<-read.csv2('data/csv/departements-region.csv',fileEncoding="UTF-8",sep=",") %>% 
   rename(dep=num_dep)
 calend_general <- calend_general %>% left_join(nom_dep) %>% filter(!(dep_name=='NA'))
 
@@ -558,7 +558,7 @@ plot(calend_general_france_17_19$jour,
      col="red") 
 axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
-dev.print(device = png, file = 'C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm90.png', width = 1000)
+dev.print(device = png, file = 'gen/images/fr/meteo/tm90.png', width = 1000)
 
 #création des graphiques + 85-89 ans
 plot(calend_general_france_17_19$jour, 
@@ -596,7 +596,7 @@ plot(calend_general_france_17_19$jour,
      type="l", 
      col="red") 
 axis(4, col = "red", col.axis = "dark red", lwd = 2)
-dev.print(device = png, file = 'C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm85.png', width = 1000)
+dev.print(device = png, file = 'gen/images/fr/meteo/tm85.png', width = 1000)
 
 
 #création des graphiques + 80-84 ans
@@ -637,7 +637,7 @@ plot(calend_general_france_17_19$jour,
      col="red") 
 axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
-dev.print(device = png, file = 'C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm80.png', width = 1000)
+dev.print(device = png, file = 'gen/images/fr/meteo/tm80.png', width = 1000)
 
 
 #création des graphiques + 75-79 ans
@@ -678,7 +678,7 @@ plot(calend_general_france_17_19$jour,
      col="red") 
 axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
-dev.print(device = png, file = 'C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm75.png', width = 1000)
+dev.print(device = png, file = 'gen/images/fr/meteo/tm75.png', width = 1000)
 
 
 #création des graphiques + 70-74 ans
@@ -718,7 +718,7 @@ plot(calend_general_france_17_19$jour,
      col="red") 
 axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
-dev.print(device = png, file = 'C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm70.png', width = 1000)
+dev.print(device = png, file = 'gen/images/fr/meteo/tm70.png', width = 1000)
 
 
 #création des graphiques + 65-69 ans
@@ -758,7 +758,7 @@ plot(calend_general_france_17_19$jour,
      col="red") 
 axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
-dev.print(device = png, file = 'C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm65.png', width = 1000)
+dev.print(device = png, file = 'gen/images/fr/meteo/tm65.png', width = 1000)
 
 
 
@@ -799,7 +799,7 @@ plot(calend_general_france_17_19$jour,
      col="red") 
 axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
-dev.print(device = png, file = 'C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm60.png', width = 1000)
+dev.print(device = png, file = 'gen/images/fr/meteo/tm60.png', width = 1000)
 
 
 #création des graphiques + 55-59 ans
@@ -839,7 +839,7 @@ plot(calend_general_france_17_19$jour,
      col="red") 
 axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
-dev.print(device = png, file = 'C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm55.png', width = 1000)
+dev.print(device = png, file = 'gen/images/fr/meteo/tm55.png', width = 1000)
 
 
 #création des graphiques + 50-54 ans
@@ -879,7 +879,7 @@ plot(calend_general_france_17_19$jour,
      col="red") 
 axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
-dev.print(device = png, file = 'C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm50.png', width = 1000)
+dev.print(device = png, file = 'gen/images/fr/meteo/tm50.png', width = 1000)
 
 
 
@@ -920,7 +920,7 @@ plot(calend_general_france_17_19$jour,
      col="red") 
 axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
-dev.print(device = png, file = 'C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm45.png', width = 1000)
+dev.print(device = png, file = 'gen/images/fr/meteo/tm45.png', width = 1000)
 
 
 #-------------------------------------------------------------#
@@ -987,7 +987,7 @@ for (departement in departement_different) {
        col="red") 
   axis(4, col = "red", col.axis = "dark red", lwd = 2)
   
-  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm90',departement,'.png'), width = 1000)
+  dev.print(device = png, file = paste0('gen/images/fr/meteo/tm90',departement,'.png'), width = 1000)
   
   #création des graphiques + 85-89 ans
   plot(calend_departement_mobile_17_19$jour, 
@@ -1025,7 +1025,7 @@ for (departement in departement_different) {
        type="l", 
        col="red") 
   axis(4, col = "red", col.axis = "dark red", lwd = 2)
-  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm85',departement,'.png'), width = 1000)
+  dev.print(device = png, file = paste0('gen/images/fr/meteo/tm85',departement,'.png'), width = 1000)
   
   
   #création des graphiques + 80-84 ans
@@ -1066,7 +1066,7 @@ for (departement in departement_different) {
        col="red") 
   axis(4, col = "red", col.axis = "dark red", lwd = 2)
   
-  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm80',departement,'.png'), width = 1000)
+  dev.print(device = png, file = paste0('gen/images/fr/meteo/tm80',departement,'.png'), width = 1000)
   
   
   #création des graphiques + 75-79 ans
@@ -1107,7 +1107,7 @@ for (departement in departement_different) {
        col="red") 
   axis(4, col = "red", col.axis = "dark red", lwd = 2)
   
-  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm75',departement,'.png'), width = 1000)
+  dev.print(device = png, file = paste0('gen/images/fr/meteo/tm75',departement,'.png'), width = 1000)
   
   
   #création des graphiques + 70-74 ans
@@ -1147,7 +1147,7 @@ for (departement in departement_different) {
        col="red") 
   axis(4, col = "red", col.axis = "dark red", lwd = 2)
   
-  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm70',departement,'.png'), width = 1000)
+  dev.print(device = png, file = paste0('gen/images/fr/meteo/tm70',departement,'.png'), width = 1000)
   
   
   #création des graphiques + 65-69 ans
@@ -1187,7 +1187,7 @@ for (departement in departement_different) {
        col="red") 
   axis(4, col = "red", col.axis = "dark red", lwd = 2)
   
-  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm65',departement,'.png'), width = 1000)
+  dev.print(device = png, file = paste0('gen/images/fr/meteo/tm65',departement,'.png'), width = 1000)
   
   
   
@@ -1228,7 +1228,7 @@ for (departement in departement_different) {
        col="red") 
   axis(4, col = "red", col.axis = "dark red", lwd = 2)
   
-  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm60',departement,'.png'), width = 1000)
+  dev.print(device = png, file = paste0('gen/images/fr/meteo/tm60',departement,'.png'), width = 1000)
   
   
   #création des graphiques + 55-59 ans
@@ -1268,7 +1268,7 @@ for (departement in departement_different) {
        col="red") 
   axis(4, col = "red", col.axis = "dark red", lwd = 2)
   
-  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm55',departement,'.png'), width = 1000)
+  dev.print(device = png, file = paste0('gen/images/fr/meteo/tm55',departement,'.png'), width = 1000)
   
   
   #création des graphiques + 50-54 ans
@@ -1308,7 +1308,7 @@ for (departement in departement_different) {
        col="red") 
   axis(4, col = "red", col.axis = "dark red", lwd = 2)
   
-  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm50',departement,'.png'), width = 1000)
+  dev.print(device = png, file = paste0('gen/images/fr/meteo/tm50',departement,'.png'), width = 1000)
   
   
   
@@ -1349,7 +1349,7 @@ for (departement in departement_different) {
        col="red") 
   axis(4, col = "red", col.axis = "dark red", lwd = 2)
   
-  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/tm45',departement,'.png'), width = 1000)
+  dev.print(device = png, file = paste0('gen/images/fr/meteo/tm45',departement,'.png'), width = 1000)
   
 }
                                         ##------------------------##
@@ -1406,7 +1406,7 @@ plot(calend_general_france_17_19$jour,
      col="red") 
 axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
-dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm90_fit.png'), width = 1000)
+dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm90_fit.png'), width = 1000)
 
 calend_general_france_mobile_depuis17<-calend_general_france_mobile %>% 
   filter(jour>="2017-01-01")
@@ -1462,7 +1462,7 @@ plot(calend_general_france_mobile_depuis17$jour,
      col="red") 
 axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
-dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm90_total.png'), width = 1000)
+dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm90_total.png'), width = 1000)
 
 
 
@@ -1524,7 +1524,7 @@ for (departement in departement_different) {
        col="red") 
   axis(4, col = "red", col.axis = "dark red", lwd = 2)
   
-  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm90_fit_',departement,'.png'), width = 1000)
+  dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm90_fit_',departement,'.png'), width = 1000)
   
   
   
@@ -1579,7 +1579,7 @@ for (departement in departement_different) {
        col="red") 
   axis(4, col = "red", col.axis = "dark red", lwd = 2)
   
-  dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm90_total_',departement,'.png'), width = 1000)
+  dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm90_total_',departement,'.png'), width = 1000)
   
   
   }
