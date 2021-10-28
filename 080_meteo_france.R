@@ -1381,7 +1381,7 @@ plot(calend_general_france_17_19$jour,
      ylab="", 
      type="l", 
      col="blue",
-     main= "Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans ")
+     main= "Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans de France Métropolitaine")
 axis(2, col = "blue", col.axis = "blue", lwd = 2)
 
 # pour encadrer le graphique
@@ -1411,19 +1411,8 @@ dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen
 calend_general_france_mobile_depuis17<-calend_general_france_mobile %>% 
   filter(jour>="2017-01-01")
 
-testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_temperature,
-                      estimateur_MortGe90= mod_gam$fitted.values)
-testdata <- testdata[order(testdata$moyenne_mobile_temperature),]
-testdata$numero <- 1:nrow(testdata)
-jointure <- cbind(calend_general_france_mobile_depuis17$moyenne_mobile_temperature, 
-      findInterval(calend_general_france_mobile_depuis17$moyenne_mobile_temperature, testdata$moyenne_mobile_temperature))
-jointure <- data.frame(jointure)
-jointure <- jointure %>% rename(moyenne_mobile_temperature = X1,numero=X2)
-testdata <- testdata %>% select(numero,estimateur_MortGe90)
-jointure <- jointure %>% left_join(testdata)
-
-calend_general_france_mobile_depuis17<-calend_general_france_mobile_depuis17 %>% left_join(jointure)
-  
+prediction<-predict.gam(mod_gam,newdata=calend_general_france_mobile_depuis17)
+calend_general_france_mobile_depuis17$estim_predict_GE90<-prediction
 
 #création des graphiques + 90 ans
 plot(calend_general_france_mobile_depuis17$jour, 
@@ -1435,7 +1424,7 @@ plot(calend_general_france_mobile_depuis17$jour,
      ylab="", 
      type="l", 
      col="blue",
-     main= "Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans ")
+     main= "Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans de France Métropolitaine")
 axis(2, col = "blue", col.axis = "blue", lwd = 2)
 
 
@@ -1450,7 +1439,7 @@ mtext("Estimateur température", side=2, line=2, col="red")
 
 par(new=T)
 plot(calend_general_france_mobile_depuis17$jour, 
-     calend_general_france_mobile_depuis17$estimateur_MortGe90,
+     calend_general_france_mobile_depuis17$estim_predict_GE90,
      pch=16, 
      axes=F, 
      cex=0, 
@@ -1499,7 +1488,7 @@ for (departement in departement_different) {
        ylab="", 
        type="l", 
        col="blue",
-       main= "Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans ")
+       main= paste0("Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans de ",departement))
   axis(2, col = "blue", col.axis = "blue", lwd = 2)
   
   # pour encadrer le graphique
@@ -1532,16 +1521,8 @@ for (departement in departement_different) {
     filter(jour>="2017-01-01")
   
 
-  testdata <- testdata[order(testdata$moyenne_mobile_temperature),]
-  testdata$numero <- 1:nrow(testdata)
-  jointure <- cbind(calend_departement_mobile_depuis17$moyenne_mobile_temperature, 
-                    findInterval(calend_departement_mobile_depuis17$moyenne_mobile_temperature, testdata$moyenne_mobile_temperature))
-  jointure <- data.frame(jointure)
-  jointure <- jointure %>% rename(moyenne_mobile_temperature = X1,numero=X2)
-  testdata <- testdata %>% select(numero,estimateur_MortGe90)
-  jointure <- jointure %>% left_join(testdata)
-  
-  calend_departement_mobile_depuis17<-calend_departement_mobile_depuis17 %>% left_join(jointure)
+  prediction<-predict.gam(mod_gam,newdata=calend_departement_mobile_depuis17)
+  calend_departement_mobile_depuis17$estim_predict_GE90<-prediction
   
   
   #création des graphiques + 90 ans
@@ -1554,7 +1535,7 @@ for (departement in departement_different) {
        ylab="", 
        type="l", 
        col="blue",
-       main= "Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans ")
+       main= paste0("Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans de ",departement))
   axis(2, col = "blue", col.axis = "blue", lwd = 2)
   
   # pour encadrer le graphique
@@ -1567,7 +1548,7 @@ for (departement in departement_different) {
   
   par(new=T)
   plot(calend_departement_mobile_depuis17$jour, 
-       calend_departement_mobile_depuis17$estimateur_MortGe90,
+       calend_departement_mobile_depuis17$estim_predict_GE90,
        pch=16, 
        axes=F, 
        cex=0, 
