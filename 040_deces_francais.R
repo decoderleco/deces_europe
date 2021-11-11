@@ -712,4 +712,4 @@ if (shallDeleteVars) rm(deces_par_jour_tranchedage)
 if (shallDeleteVars) rm(nbDeces_moyen_par_tranchedAge)
 
 
-message("040_deces_francais.R : Terminé")
+message("Terminé 040_deces_francais.R")
