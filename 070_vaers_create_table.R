@@ -407,3 +407,5 @@ vaers_symptoms <- a__original_vaers_symptoms
 #		summarise(nbDeces = n())
 
 if (shallDeleteVars) rm(vaers_symptoms)
+
+message("Terminé 070")
