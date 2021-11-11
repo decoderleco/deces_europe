@@ -268,7 +268,7 @@ om_open_medic_2020 <- om_open_medic_2020 %>%
 
 ################################################################################
 #
-# 2019 : Antibiotiques et Rivotril
+# 2019 : Antibiotiques et Rivotril et Paracétamol
 #
 ################################################################################
 
@@ -283,9 +283,12 @@ om_CLONAZEPAM_2019 <- om_ANTIEPILEPTIQUES_2019 %>%
 om_ANTIBACTERIENS_2019 <- om_open_medic_2019 %>%
 		filter(L_ATC2 == "ANTIBACTERIENS A USAGE SYSTEMIQUE")
 
+om_PARACETAMOL_2019 <- om_open_medic_2019 %>%
+  filter(L_ATC5 == "PARACETAMOL")
+
 ################################################################################
 #
-# 2020 : Antibiotiques et Rivotril
+# 2020 : Antibiotiques et Rivotril et Paracétamol
 #
 ################################################################################
 
@@ -298,6 +301,9 @@ om_CLONAZEPAM_2020 <- om_ANTIEPILEPTIQUES_2020 %>%
 
 om_ANTIBACTERIENS_2020 <- om_open_medic_2020 %>%
 		filter(L_ATC2 == "ANTIBACTERIENS A USAGE SYSTEMIQUE")
+
+om_PARACETAMOL_2020 <- om_open_medic_2020 %>%
+  filter(L_ATC5 == "PARACETAMOL")
 
 ################################################################################
 #
@@ -329,6 +335,18 @@ test19 <- om_ANTIBACTERIENS_2019 %>%
 om_ANTIBACTERIENS <- test20 %>%
 		full_join(test19)
 
+# Synthese de l'evolution (par age)  du doliprane entre 2019 et 2020
+test20 <- om_PARACETAMOL_2020 %>%
+  group_by(classe_age, region) %>%
+  summarise(BOITES_2020=sum(BOITES), BSE_2020=sum(BSE))
+
+test19 <- om_PARACETAMOL_2019 %>%
+  group_by(classe_age, region) %>%
+  summarise(BOITES_2019=sum(BOITES), BSE_2019=sum(BSE))
+
+om_PARACETAMOL <- test20 %>%
+  full_join(test19)
+
 if (shallDeleteVars) rm(test19)
 if (shallDeleteVars) rm(test20)
 
@@ -343,6 +361,10 @@ om_ANTIBACTERIENS <- om_ANTIBACTERIENS %>%
 		#Trier les lignes
 		arrange(classe_age, region)
 
+om_PARACETAMOL <- om_PARACETAMOL %>%
+  mutate (var_boites = (BOITES_2020-BOITES_2019)/BOITES_2019, var_bse=(BSE_2020-BSE_2019)/BSE_2019) %>%
+  #Trier les lignes
+  arrange(classe_age, region)
 
 ################################################################################
 #

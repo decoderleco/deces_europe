@@ -86,13 +86,19 @@ if (exists(varName)) {
 	# Liste des URLs des fichiers de patients décédés
 	
 	urls_listes_deces <- c(
-	  '2021m08'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210913-133306/deces-2021-m08.txt',
-	  '2021m07'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210811-104512/deces-2021-m07.txt',
-	  '2021t2'='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210709-174839/deces-2021-t2.txt',
-	  '2021t1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210409-131502/deces-2021-t1.txt',
+	  '2021t3'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20211012-093424/deces-2021-t3.txt',
+	  '2021t2'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210709-174839/deces-2021-t2.txt',
+	  '2021t1'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210409-131502/deces-2021-t1.txt',
 	  '2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
 	  '2019' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20200113-173945/deces-2019.txt',
 	  '2018' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191205-191652/deces-2018.txt'
+	  #'2017' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192304/deces-2017.txt',
+	  #'2016' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192203/deces-2016.txt',
+	  #'2015' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192119/deces-2015.txt'
+	  #'2014' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192022/deces-2014.txt',
+	  #'2013' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-191938/deces-2013.txt',
+	  #'2012' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-191851/deces-2012.txt',
+	  #'2011' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-191745/deces-2011.txt'
 	)
 	
 	
@@ -516,8 +522,8 @@ deces_par_jour_age <- deces_par_jour_age %>%
 deces_par_jour_age <- deces_par_jour_age %>%
 		mutate(age = age_deces_millesime)
 
-# Ajouter la colonne tranche d'age de 10 ans
-deces_par_jour_age <- a__f_add_tranche_age_de_10_ans(deces_par_jour_age)
+# Ajouter la colonne tranche d'age vax
+deces_par_jour_age <- a__f_add_tranche_age_vax(deces_par_jour_age)
 
 # Réorganiser les colonnes
 deces_par_jour_age <- deces_par_jour_age %>%
@@ -555,8 +561,8 @@ nbDeces_moyen_par_tranchedAge <- deces_par_jour_tranchedage %>%
 						probs = 0.25),
 				dernier_quartile = quantile(nbDeces,
 						probs = 0.75),
-				bsup = moyenne + 2 * variance,
-				binf = moyenne - 2 * variance
+				bsup = moyenne +   variance,
+				binf = moyenne -   variance
 )
 
 
@@ -601,7 +607,19 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
    if (shallDeleteVars) rm(nbDeces_moyen_par_age)
    if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
 											   
-												   
+###################################################################
+# Ajout vaccination
+################################################################
+   
+vaccination <- read.csv2('https://www.data.gouv.fr/fr/datasets/r/54dd5f8d-1e2e-4ccb-8fb8-eac68245befd')
+vaccination <- vaccination %>% rename(tranche_age = clage_vacsi, deces_date_complete=jour) %>% 
+  mutate(deces_date_complete=date(deces_date_complete),tranche_age=as.character(tranche_age)) 
+  
+deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% left_join(vaccination, by=c("tranche_age","deces_date_complete"))
+deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
+  mutate(n_dose1 = ifelse(is.na(n_dose1),0,n_dose1)) %>% 
+  mutate(n_complet = ifelse(is.na(n_complet),0,n_complet))
+
 ################################################################################
 #
 # Graphique des Deces Quotidiens depuis 2018 par Tranche d'age
@@ -635,7 +653,7 @@ for (trancheAge in tranchesAge$tranche_age) {
 			deces_par_jour_a_tracer, 
 			trancheAge)
 }
-
+write.csv2(deces_par_jour_tranchedage,file='C:/Users/xxx/Documents/R/deces_europe/gen/csv/deces_par_jour_tranchedage.csv')
 if (shallDeleteVars) rm(trancheAge)
 if (shallDeleteVars) rm(tranchesAge)
 
@@ -692,5 +710,6 @@ if (shallDeleteVars) rm(deces_par_jour_age)
 if (shallDeleteVars) rm(deces_par_jour_a_tracer)
 if (shallDeleteVars) rm(deces_par_jour_tranchedage)
 if (shallDeleteVars) rm(nbDeces_moyen_par_tranchedAge)
+
 
 message("040_deces_francais.R : Terminé")

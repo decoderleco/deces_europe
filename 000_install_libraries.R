@@ -29,6 +29,9 @@ install.packages("reshape2")
 install.packages("plyr")
 install.packages("tidyr")
 
+#Pour létude de la météo
+install.packages("mgcv")
+
 # Pour la generation de l'article
 install.packages("knitr")
 install.packages("rmarkdown")
