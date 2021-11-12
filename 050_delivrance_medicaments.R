@@ -530,4 +530,4 @@ dev.print(device = png, file = paste0(repertoire, "/Medicam_evol_Rivotril.png"),
 
 if (shallDeleteVars) rm(dataToPlot)
 
-message("Terminé")
+message("Terminé 050")

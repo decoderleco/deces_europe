@@ -509,7 +509,7 @@ plot(essai$numSemaineDepuis2013,
      type="o", 
      col="purple") 	
 
-grippe_lissage <- read.csv("C:/Users/xxx/Documents/R/deces_europe/data/csv/lissage_grippe.csv", sep=";")
+grippe_lissage <- read.csv("data/csv/lissage_grippe.csv", sep=";")
 essai<-essai %>% left_join(grippe_lissage)
 essai<-essai %>% mutate(vaccins_grippe=ifelse(is.na(vaccins_grippe),0,vaccins_grippe))
 

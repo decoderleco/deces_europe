@@ -2104,4 +2104,4 @@ write.table(b__es_deces_et_pop_par_annee_agequinq, "gen/csv/Eurostat_deces_par_a
 
 if (shallDeleteVars) rm(pays_geo_nom_zone)
 
-message("Terminé")
+message("Terminé 010")
