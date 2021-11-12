@@ -451,27 +451,21 @@ a__f_add_tranche_age <- function(tabWithAge) {
 	# conforme à VAC-SI (https://www.data.gouv.fr/fr/datasets/donnees-relatives-aux-personnes-vaccinees-contre-la-covid-19-1/#description)
 	tabWith_tranche_age <- tabWithAge %>%
 			mutate(tranche_age = case_when(
-							age <  5 ~ 4,
-							age >=  5 & age < 10 ~ 9,
-							age >= 10 & age < 15 ~ 14,
-							age >= 15 & age < 20 ~ 19,
-							age >= 20 & age < 25 ~ 24,
-							age >= 25 & age < 30 ~ 29,  
-							age >= 30 & age < 35 ~ 34,  
-							age >= 35 & age < 40 ~ 39,
-							age >= 40 & age < 45 ~ 44,
-							age >= 45 & age < 50 ~ 49,
-							age >= 50 & age < 55 ~ 54,
-							age >= 55 & age < 60 ~ 59,
-							age >= 60 & age < 65 ~ 64,
-							age >= 65 & age < 70 ~ 69,  
-							age >= 70 & age < 75 ~ 74,
-							age >= 75 & age < 80 ~ 79,  
-							age >= 80 & age < 85 ~ 84,  
-							age >= 85 & age < 90 ~ 89,  
-							age >= 90 & age < 95 ~ 94,  
-							age >= 94 & age < 99 ~ 98,  
-							age >= 99 ~ 99
+							age >=  0 & age <= 10 ~ 10,
+							age >  10 & age <= 20 ~ 20,
+							age >  20 & age <= 30 ~ 30,  
+							age >  30 & age <= 40 ~ 40,
+							age >  40 & age <= 50 ~ 50,
+							age >  50 & age <= 55 ~ 55,
+							age >  55 & age <= 60 ~ 60,
+							age >  60 & age <= 65 ~ 65,
+							age >  65 & age <= 70 ~ 70,  
+							age >  70 & age <= 75 ~ 75,
+							age >  75 & age <= 80 ~ 80,  
+							age >  80 & age <= 85 ~ 85,  
+							age >  85 & age <= 90 ~ 90,  
+							age >  90 & age <= 95 ~ 95,  
+							age >  95 ~ 99
 					))
 	
 	# Renvoyer le nouveau tableau quinquenisé
