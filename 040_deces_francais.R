@@ -538,12 +538,13 @@ deces_par_jour_age <- deces_par_jour_age %>%
 deces_par_jour_age <- deces_par_jour_age %>%
 		mutate(age = age_deces_millesime)
 
-# Ajouter la colonne tranche d'age vax
-deces_par_jour_age <- a__f_add_tranche_age_vax(deces_par_jour_age)
+# Ajouter la colonne tranche d'age compatible VAC-SI
+deces_par_jour_age <- a__f_add_tranche_age_vacsi(deces_par_jour_age)
 
-# Réorganiser les colonnes
+# Réorganiser les colonnes et trier
 deces_par_jour_age <- deces_par_jour_age %>%
-		select(age_deces_millesime, tranche_age, deces_date_complete, confinement, everything())
+		select(tranche_age, age_deces_millesime, deces_date_complete, confinement, everything()) %>%
+		arrange(tranche_age, age_deces_millesime)
 
 
 ################################################################################
@@ -624,17 +625,28 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
    if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
 											   
 ###################################################################
-# Ajout vaccination
+# Ajout vaccination (Fichier VAC-SI)
 ################################################################
    
 vaccination <- read.csv2('https://www.data.gouv.fr/fr/datasets/r/54dd5f8d-1e2e-4ccb-8fb8-eac68245befd')
-vaccination <- vaccination %>% rename(tranche_age = clage_vacsi, deces_date_complete=jour) %>% 
-  mutate(deces_date_complete=date(deces_date_complete),tranche_age=as.character(tranche_age)) 
-  
-deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% left_join(vaccination, by=c("tranche_age","deces_date_complete"))
+
+# Export pour Excel
+if (!dir.exists("inst/extdata/world/eu/fr/gouv/vacsi")) dir.create("inst/extdata/world/eu/fr/gouv/vacsi")
+write.table(vaccination, "inst/extdata/world/eu/fr/gouv/vacsi/fr_gouv_vacsi.csv", row.names=TRUE, sep=";", dec=".", na=" ")
+
+vaccination <- vaccination %>% 
+		rename(tranche_age = clage_vacsi, deces_date_complete = jour) %>%
+		mutate(deces_date_complete = date(deces_date_complete)) 
+
+# Ajouter les données de vaccination 
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
-  mutate(n_dose1 = ifelse(is.na(n_dose1),0,n_dose1)) %>% 
-  mutate(n_complet = ifelse(is.na(n_complet),0,n_complet))
+		left_join(vaccination, by=c("tranche_age", "deces_date_complete"))
+
+deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
+		mutate(n_dose1 = ifelse(is.na(n_dose1), 0, n_dose1)) %>%
+		mutate(n_complet = ifelse(is.na(n_complet), 0, n_complet))
+
+write.csv2(deces_par_jour_tranchedage, file='gen/csv/deces_par_jour_tranchedage.csv')
 
 ################################################################################
 #
@@ -642,17 +654,16 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 #
 ################################################################################
 												   
-deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
-		# Remplacer TRUE par FALSE pour filtrer
+data_a_tracer <- deces_par_jour_tranchedage %>%
+		# Remplacer TRUE par FALSE pour filtrer juste sur 2020 et 2021
 		filter(TRUE | 
 						(substring(deces_date_complete,1,4) == "2020" |
 							substring(deces_date_complete,1,4) == "2021")) 
 
 # Graphe de chaque tranche d'âge
 
-
 # Lister les tranches d'age disponibles
-tranchesAge <- deces_par_jour_tranchedage %>%
+tranchesAge <- data_a_tracer %>%
 		ungroup %>%
 		select(tranche_age) %>%
 		distinct()
@@ -662,22 +673,41 @@ for (trancheAge in tranchesAge$tranche_age) {
 	
 	message(paste0("trancheAge = ", trancheAge ))
 	
-	deces_par_jour_a_tracer <- deces_par_jour_tranchedage %>% 
+	deces_par_jour_a_tracer <- data_a_tracer %>% 
 			filter(tranche_age == trancheAge) 
 	
 	a__f_plot_fr_deces_quotidiens_par_tranche_age(
 			deces_par_jour_a_tracer, 
-			trancheAge)
+			sprintf("%02d", trancheAge))
 }
-write.csv2(deces_par_jour_tranchedage,file='gen/csv/deces_par_jour_tranchedage.csv')
+
 if (shallDeleteVars) rm(trancheAge)
 if (shallDeleteVars) rm(tranchesAge)
 
 
 # Graphe de la vue d'ensemble des tranches d'âge
-print(ggplot(data = deces_par_jour_tranchedage,
+
+data_a_tracer <- deces_par_jour_age %>%
+		# Remplacer TRUE par FALSE pour filtrer juste sur 2020 et 2021
+		filter(TRUE | 
+						(substring(deces_date_complete,1,4) == "2020" |
+							substring(deces_date_complete,1,4) == "2021")) 
+
+# Ajouter la colonne tranche d'age
+data_a_tracer <- a__f_add_tranche_age(data_a_tracer)
+
+# Synthetiser par jour et tranche d'age
+data_a_tracer <- data_a_tracer %>% 
+		group_by(tranche_age,
+				 deces_date_complete) %>% 
+		summarise(nbDeces = sum(nbDeces), confinement)
+
+
+print(ggplot(data = data_a_tracer,
 						mapping = aes(x = deces_date_complete,
 								color = confinement)) +
+				
+				facet_wrap(~tranche_age) +
 				
 				#scale_colour_brewer(palette = "Set1") +
 				scale_colour_manual(values = c("red", "black"))+
@@ -693,8 +723,8 @@ print(ggplot(data = deces_par_jour_tranchedage,
 #						linetype = "solid",
 #						size = 1) + 
 				
-				geom_line(mapping = aes(y = moyenne),
-						linetype = "solid") + 
+#				geom_line(mapping = aes(y = moyenne),
+#						linetype = "solid") + 
 				
 #				geom_line(mapping = aes(y = binf),
 #						linetype = "solid") + 
@@ -702,11 +732,9 @@ print(ggplot(data = deces_par_jour_tranchedage,
 #				geom_line(mapping = aes(y = bsup),
 #						linetype = "solid") + 
 				
-				facet_wrap(~tranche_age) +
-				
 				theme(legend.position = "top")+
 				
-				ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(deces_par_jour_tranchedage$deces_date_complete) ,") par Tranche d'age")) +
+				ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(data_a_tracer$deces_date_complete) ,") par Tranche d'age")) +
 				
 				xlab("date de décès") + 
 				ylab("nombre de décès quotidiens")
@@ -726,6 +754,7 @@ if (shallDeleteVars) rm(deces_par_jour_age)
 if (shallDeleteVars) rm(deces_par_jour_a_tracer)
 if (shallDeleteVars) rm(deces_par_jour_tranchedage)
 if (shallDeleteVars) rm(nbDeces_moyen_par_tranchedAge)
+if (shallDeleteVars) rm(data_a_tracer)
 
 
 message("Terminé 040_deces_francais.R")
