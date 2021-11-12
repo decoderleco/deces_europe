@@ -715,13 +715,25 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 			distinct() %>%
 			select(time)
 	maxWeekTime <- maxWeekTime[1, 1]
-	
+
+	# Récupérer le vecteur des confinements
+debut_confinement <- 	es_deces_standard_pays_semaine %>%
+  filter(Response_measure=='StayHomeOrderStart') %>% 
+  select(numSemaineDepuis2013)
+		
+fin_confinement <- 	es_deces_standard_pays_semaine %>%
+  filter(Response_measure=='StayHomeOrderEnd') %>% 
+  select(numSemaineDepuis2013)
+
+Vdebut_confinement <-debut_confinement[['numSemaineDepuis2013']]
+Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
+
 	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
 	     es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge40, 
 		 pch=16, 
 		 cex=0, 
 		 axes=F, 
-		 xlab="week", 
+		 xlab="", 
 		 ylab="", 
 		 ylim=c(0, ylim_max), 
 		 type="o", 
@@ -735,10 +747,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=1)
+	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  0, "2013", cex=1.2)
 	text(78,  0, "2014", cex=1.2)
@@ -850,7 +866,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(min(essai$deces_standardises_si_pop_2020_15_24), max(essai$deces_standardises_si_pop_2020_15_24)), 
 	     type="o", 
@@ -865,10 +881,15 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des 15 - 24 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-	mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=1)
+	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
+	
 	
 	text(26,  min(essai$deces_standardises_si_pop_2020_15_24), "2013", cex=1.2)
 	text(78,  min(essai$deces_standardises_si_pop_2020_15_24), "2014", cex=1.2)
@@ -976,7 +997,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(min(essai$deces_standardises_si_pop_2020_25_49), max(essai$deces_standardises_si_pop_2020_25_49)),
 	     type="o", 
@@ -990,10 +1011,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des 25 - 49 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-	mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=2)
+	mtext("                                                          fin de confinement", side=1, col="green", line=2)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  min(essai$deces_standardises_si_pop_2020_25_49), "2013", cex=1.2)
 	text(78,  min(essai$deces_standardises_si_pop_2020_25_49), "2014", cex=1.2)
@@ -1106,7 +1131,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(min(essai$deces_standardises_si_pop_2020_50_59), max(essai$deces_standardises_si_pop_2020_50_59)),
 	     type="o", 
@@ -1120,11 +1145,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des 50 - 59 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-	mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
-	mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=1)
+	mtext("                                                          fin de confinement", side=1, col="green", line=1)
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  min(essai$deces_standardises_si_pop_2020_50_59), "2013", cex=1.2)
 	text(78,  min(essai$deces_standardises_si_pop_2020_50_59), "2014", cex=1.2)
@@ -1236,7 +1264,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(min(essai$deces_standardises_si_pop_2020_60_69), max(essai$deces_standardises_si_pop_2020_60_69)),
 	     type="o", 
@@ -1250,10 +1278,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des 60 - 69 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-	mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=1)
+	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  min(essai$deces_standardises_si_pop_2020_60_69), "2013", cex=1.2)
 	text(78,  min(essai$deces_standardises_si_pop_2020_60_69), "2014", cex=1.2)
@@ -1365,7 +1397,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(min(essai$deces_standardises_si_pop_2020_70_79), max(essai$deces_standardises_si_pop_2020_70_79)),
 	     type="o", 
@@ -1379,9 +1411,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des 70 - 79 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=1)
+	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  min(essai$deces_standardises_si_pop_2020_70_79), "2013", cex=1.2)
 	text(78,  min(essai$deces_standardises_si_pop_2020_70_79), "2014", cex=1.2)
@@ -1496,7 +1533,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(min(essai$deces_standardises_si_pop_2020_ge80), max(essai$deces_standardises_si_pop_2020_ge80)),	     type="o", 
 	     col="black", 
@@ -1509,9 +1546,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des plus de 80 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=1)
+	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  min(essai$deces_standardises_si_pop_2020_ge80), "2013", cex=1.2)
 	text(78,  min(essai$deces_standardises_si_pop_2020_ge80), "2014", cex=1.2)
@@ -1607,7 +1649,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(0, max(essai$deces_standardises_si_pop_2020)), 
 	     type="o", 
@@ -1622,10 +1664,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes par tranche d'âge", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-	mtext("                                                     Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=1)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=2)
+	mtext("                                                          fin de confinement", side=1, col="green", line=2)
+	mtext("                                                          Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  max(essai$deces_standardises_si_pop_2020), "2013", cex=1.2)
 	text(78,  max(essai$deces_standardises_si_pop_2020), "2014", cex=1.2)
@@ -1773,12 +1819,12 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     ylab="",
 	     type="o", 
 	     col="#3366CC") 
-	mtext("15-24 ans                                                                                                                                                                   ", side=1, col="#000033", line=2)
-	mtext("25-49 ans                                                                                                            ", side=1, col="#000066", line=2)
-	mtext("50-59 ans                                                      ", side=1, col="#000099", line=2)
-	mtext("60-69 ans", side=1, col="#0000CC", line=2)
-	mtext("                                           70-79 ans", side=1, col="#0000FF", line=2)
-	mtext("                                                                                      80+ ans", side=1, col="#3366CC", line=2)
+	mtext("15-24 ans                                                                                                                                                                   ", side=1, col="#000033", line=1)
+	mtext("25-49 ans                                                                                                            ", side=1, col="#000066", line=1)
+	mtext("50-59 ans                                                      ", side=1, col="#000099", line=1)
+	mtext("60-69 ans", side=1, col="#0000CC", line=1)
+	mtext("                                           70-79 ans", side=1, col="#0000FF", line=1)
+	mtext("                                                                                      80+ ans", side=1, col="#3366CC", line=1)
 	
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
