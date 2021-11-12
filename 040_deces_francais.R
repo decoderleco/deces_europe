@@ -653,7 +653,7 @@ for (trancheAge in tranchesAge$tranche_age) {
 			deces_par_jour_a_tracer, 
 			trancheAge)
 }
-write.csv2(deces_par_jour_tranchedage,file='C:/Users/xxx/Documents/R/deces_europe/gen/csv/deces_par_jour_tranchedage.csv')
+write.csv2(deces_par_jour_tranchedage,file='gen/csv/deces_par_jour_tranchedage.csv')
 if (shallDeleteVars) rm(trancheAge)
 if (shallDeleteVars) rm(tranchesAge)
 
@@ -712,4 +712,4 @@ if (shallDeleteVars) rm(deces_par_jour_tranchedage)
 if (shallDeleteVars) rm(nbDeces_moyen_par_tranchedAge)
 
 
-message("040_deces_francais.R : Terminé")
+message("Terminé 040_deces_francais.R")
