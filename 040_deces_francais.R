@@ -646,11 +646,11 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 		mutate(n_dose1 = ifelse(is.na(n_dose1), 0, n_dose1)) %>%
 		mutate(n_complet = ifelse(is.na(n_complet), 0, n_complet))
 
-write.csv2(deces_par_jour_tranchedage, file='gen/csv/deces_par_jour_tranchedage.csv')
+write.csv2(deces_par_jour_tranchedage, file='gen/csv/deces_par_jour_tranchedage_vacsi.csv')
 
 ################################################################################
 #
-# Graphique des Deces Quotidiens depuis 2018 par Tranche d'age
+# Graphique des Deces Quotidiens depuis 2018 par Tranche d'age VAC-SI
 #
 ################################################################################
 												   
@@ -685,23 +685,62 @@ if (shallDeleteVars) rm(trancheAge)
 if (shallDeleteVars) rm(tranchesAge)
 
 
-# Graphe de la vue d'ensemble des tranches d'âge
+################################################################################
+#
+# Graphique Vue d'Ensemble des Deces Quotidiens depuis 2018 par Tranche d'age
+# adaptée au COVID
+#
+################################################################################
 
 data_a_tracer <- deces_par_jour_age %>%
 		# Remplacer TRUE par FALSE pour filtrer juste sur 2020 et 2021
 		filter(TRUE | 
 						(substring(deces_date_complete,1,4) == "2020" |
-							substring(deces_date_complete,1,4) == "2021")) 
+							substring(deces_date_complete,1,4) == "2021"))
 
-# Ajouter la colonne tranche d'age
+# Ne garder que les colonnes de données "pures"
+data_a_tracer <- data_a_tracer %>%
+		ungroup %>%
+		select(deces_date_complete:nbDeces, age)
+
+# Ajouter la colonne tranche d'age (pas les tranches d'âge VAC-SI)
 data_a_tracer <- a__f_add_tranche_age(data_a_tracer)
 
-# Synthetiser par jour et tranche d'age
+# Calculer le nombre de décès pour chaque tranche d'age et chaque jour
 data_a_tracer <- data_a_tracer %>% 
-		group_by(tranche_age,
-				 deces_date_complete) %>% 
-		summarise(nbDeces = sum(nbDeces), confinement)
+		group_by(tranche_age, 
+				deces_date_complete) %>%
+		summarise(nbDeces = sum(nbDeces))
 
+# calculer les données statistiques pour chaque tranche d'age
+nbDeces_moyen_par_tranchedAge <- data_a_tracer %>% 
+		group_by(tranche_age) %>% 
+		summarise(minimum = min(nbDeces),
+				maximum = max(nbDeces),
+				moyenne = mean(nbDeces),
+				ecart95pourcent = 2*sd(nbDeces),
+				premier_quartile = quantile(nbDeces,
+						probs = 0.25),
+				dernier_quartile = quantile(nbDeces,
+						probs = 0.75),
+				bsup = moyenne +   ecart95pourcent,
+				binf = moyenne -   ecart95pourcent
+		)
+
+# Ajouter les données statistiques de chaque tranche d'age
+data_a_tracer <- data_a_tracer %>% 
+		left_join(nbDeces_moyen_par_tranchedAge,
+				, by = c("tranche_age"))
+
+# Ajouter la colonne confinement
+data_a_tracer <- data_a_tracer %>% 
+		mutate(confinement = if_else(
+						(deces_date_complete >= "2020-03-17" & deces_date_complete <= "2020-05-11") |
+								(deces_date_complete >= "2020-10-30" & deces_date_complete <= "2020-12-15"),
+						"confinement",
+						"pas de confinement"))
+
+write.csv2(data_a_tracer, file='gen/csv/deces_par_jour_tranchedage.csv')
 
 print(ggplot(data = data_a_tracer,
 						mapping = aes(x = deces_date_complete,
@@ -712,32 +751,32 @@ print(ggplot(data = data_a_tracer,
 				#scale_colour_brewer(palette = "Set1") +
 				scale_colour_manual(values = c("red", "black"))+
 				
-				scale_linetype_manual(values=c("dotted", "solid")) +
+				#scale_linetype_manual(values=c("dotted", "solid")) +
 				
-				scale_size_manual(values=c(0.1, 1.5)) +
+				#scale_size_manual(values=c(0.1, 1.5)) +
 				
 				geom_line(mapping = aes(y = nbDeces),
-						linetype = "dotted") + 
+						linetype = "solid") + 
 				
 #				geom_line(mapping = aes(y = moyenne_mobile),
 #						linetype = "solid",
 #						size = 1) + 
 				
-#				geom_line(mapping = aes(y = moyenne),
-#						linetype = "solid") + 
+				geom_line(mapping = aes(y = moyenne),
+						linetype = "solid") + 
 				
-#				geom_line(mapping = aes(y = binf),
-#						linetype = "solid") + 
-#				
-#				geom_line(mapping = aes(y = bsup),
-#						linetype = "solid") + 
+				geom_line(mapping = aes(y = binf),
+						linetype = "dotted") + 
+				
+				geom_line(mapping = aes(y = bsup),
+						linetype = "dotted") + 
 				
 				theme(legend.position = "top")+
 				
 				ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(data_a_tracer$deces_date_complete) ,") par Tranche d'age")) +
 				
 				xlab("date de décès") + 
-				ylab("nombre de décès quotidiens")
+				ylab("nombre de décès quotidiens (+ écart à 95%)")
 )
 
 #Nom du fichier png à générer
