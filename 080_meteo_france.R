@@ -1356,6 +1356,7 @@ for (departement in departement_different) {
                                         #### utilisation de GAM ####
                                         ##------------------------##
 
+#Utilisation de GAM pour les plus de 90 ans
 
 mod_gam <- gam(moyenne_mobile_MortGe90 ~ s(moyenne_mobile_temperature, bs="cr"), data=calend_general_france_17_19)
 
@@ -1369,6 +1370,41 @@ testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_
                       estimateur_MortGe90= mod_gam$fitted.values)
 
 calend_general_france_17_19 <- calend_general_france_17_19 %>% left_join(testdata)
+
+#création du graphique de corrélation des plus de 90 ans
+
+plot (calend_general_france_17_19$moyenne_mobile_temperature - 273.15, 
+      calend_general_france_17_19$moyenne_mobile_MortGe90, 
+      pch=21,
+      xlab="Température",
+      ylab="Mortalité",
+      ylim=c(0, max(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
+      cex = 2,
+      lwd = 2,
+      bg = "red",
+      col="blue",
+      main= "Taux de mortalité quotidien des plus de 90 ans de France Métropolitaine 
+      en fonction de la température 5 jours avant")
+
+box() 
+par(new=T)
+plot(calend_general_france_17_19$moyenne_mobile_temperature - 273.15, 
+     calend_general_france_17_19$estimateur_MortGe90,
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=4,  
+     ylim=c(0, max(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
+     ylab="", 
+     type="l", 
+     col="black") 
+
+mtext("                                                                               Source : Data.gouv.fr décès quotidiens et température", side=1, col="black", line=4)
+mtext(paste0("                                                            significativité =",summary(mod_gam)$sp.criterion,"    R² = ",summary(mod_gam)$r.sq), side=1, col="blue", line=2)
+
+
+dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm90_correlation.png'), width = 1000)
 
 
 #création des graphiques + 90 ans
@@ -1452,6 +1488,112 @@ plot(calend_general_france_mobile_depuis17$jour,
 axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
 dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm90_total.png'), width = 1000)
+
+#lancement de GAM pour les 85-89 ans
+
+mod_gam <- gam(moyenne_mobile_Mort85.89 ~ s(moyenne_mobile_temperature, bs="cr"), data=calend_general_france_17_19)
+
+summary(mod_gam)
+
+AIC(mod_gam)
+summary(mod_gam)$sp.criterion
+summary(mod_gam)$r.sq 
+
+testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_temperature,
+                      estimateur_Mort85.89= mod_gam$fitted.values)
+
+calend_general_france_17_19 <- calend_general_france_17_19 %>% left_join(testdata)
+
+#création du graphique de corrélation des 85-89 ans
+
+plot (calend_general_france_17_19$moyenne_mobile_temperature - 273.15, 
+      calend_general_france_17_19$moyenne_mobile_Mort85.89, 
+      pch=21,
+      xlab="Température",
+      ylab="Mortalité",
+      ylim=c(0, max(calend_general_france_17_19$moyenne_mobile_Mort85.89)), 
+      cex = 2,
+      lwd = 2,
+      bg = "red",
+      col="blue",
+      main= "Taux de mortalité quotidien des plus des 85-89 ans de France Métropolitaine 
+      en fonction de la température 5 jours avant")
+
+box() 
+par(new=T)
+plot(calend_general_france_17_19$moyenne_mobile_temperature - 273.15, 
+     calend_general_france_17_19$estimateur_Mort85.89,
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=4,  
+     ylim=c(0, max(calend_general_france_17_19$moyenne_mobile_Mort85.89)), 
+     ylab="", 
+     type="l", 
+     col="black") 
+
+mtext("                                                                               Source : Data.gouv.fr décès quotidiens et température", side=1, col="black", line=4)
+mtext(paste0("                                                            significativité =",summary(mod_gam)$sp.criterion,"    R² = ",summary(mod_gam)$r.sq), side=1, col="blue", line=2)
+
+
+
+dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm85-89_correlation.png'), width = 1000)
+
+
+#lancement de GAM pour les 80-84 ans
+
+mod_gam <- gam(moyenne_mobile_Mort80.84 ~ s(moyenne_mobile_temperature, bs="cr"), data=calend_general_france_17_19)
+
+summary(mod_gam)
+
+AIC(mod_gam)
+summary(mod_gam)$sp.criterion
+summary(mod_gam)$r.sq 
+
+testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_temperature,
+                      estimateur_Mort80.84= mod_gam$fitted.values)
+
+calend_general_france_17_19 <- calend_general_france_17_19 %>% left_join(testdata)
+
+#création du graphique de corrélation des 85-89 ans
+
+plot (calend_general_france_17_19$moyenne_mobile_temperature - 273.15, 
+      calend_general_france_17_19$moyenne_mobile_Mort80.84, 
+      pch=21,
+      xlab="Température",
+      ylab="Mortalité",
+      ylim=c(0, max(calend_general_france_17_19$moyenne_mobile_Mort80.84)), 
+      cex = 2,
+      lwd = 2,
+      bg = "red",
+      col="blue",
+      main= "Taux de mortalité quotidien des plus des 80-84 ans de France Métropolitaine 
+      en fonction de la température 5 jours avant")
+
+box() 
+par(new=T)
+plot(calend_general_france_17_19$moyenne_mobile_temperature - 273.15, 
+     calend_general_france_17_19$estimateur_Mort80.84,
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=4,  
+     ylim=c(0, max(calend_general_france_17_19$moyenne_mobile_Mort80.84)), 
+     ylab="", 
+     type="l", 
+     col="black") 
+
+mtext("                                                                               Source : Data.gouv.fr décès quotidiens et température", side=1, col="black", line=4)
+mtext(paste0("                                                            significativité =",summary(mod_gam)$sp.criterion,"    R² = ",summary(mod_gam)$r.sq), side=1, col="blue", line=2)
+
+
+
+dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm80-84_correlation.png'), width = 1000)
+
+
+
 
 
 
