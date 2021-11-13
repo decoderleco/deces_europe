@@ -785,6 +785,69 @@ pngFileRelPath <- paste0(repertoire, "/Deces_quotidiens_par_tranche_age.png")
 
 dev.print(device = png, file = pngFileRelPath, width = 1000)
 
+################################################################################
+#
+# Histogramme par Décès par Tranche age et années
+#
+################################################################################
+
+data_a_tracer <- deces_par_jour_age %>%
+		# Remplacer TRUE par FALSE pour filtrer juste sur 2020 et 2021
+		filter(TRUE | 
+						(substring(deces_date_complete,1,4) == "2020" |
+							substring(deces_date_complete,1,4) == "2021"))
+
+# Ne garder que les colonnes de données "pures"
+data_a_tracer <- data_a_tracer %>%
+		ungroup %>%
+		select(deces_date_complete:nbDeces, age) %>%
+		mutate(deces_annee = str_sub(deces_date_complete,1,4))
+
+# Ajouter la colonne tranche d'age (pas les tranches d'âge VAC-SI)
+data_a_tracer <- a__f_add_tranche_age(data_a_tracer)
+
+date_max <- max(data_a_tracer$deces_date_complete) 
+
+# Calculer le nombre de décès pour chaque tranche d'age et chaque jour
+data_a_tracer <- data_a_tracer %>% 
+		group_by(tranche_age, 
+				deces_annee) %>%
+		summarise(nbDeces = sum(nbDeces))
+
+write.csv2(data_a_tracer, file='gen/csv/deces_par_tranchedage_et_annee.csv')
+
+print(ggplot(data = data_a_tracer,
+						mapping = aes(x = tranche_age, 
+								y = nbDeces)) +
+				
+				scale_colour_manual(values = c("black"))+
+				
+				geom_col(mapping = aes(fill = deces_annee),
+						# Couleur du trait de contour des barres
+						color="black",
+						# Mettre les colonnes les unes à côté des autres
+						position = position_dodge2()) + 
+				
+				labs(title = "Evolution des décès France par Tranche d'âge",
+					 caption=paste0("Source : fr/gouv/Registre/Deces_Quotidiens (=> ", date_max,")")) +
+				
+				theme(legend.position="top") +
+				
+				# Axe x  
+				xlab("Tranche d'âge") +
+				scale_x_continuous(breaks = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
+				theme(axis.text.x = element_text(angle=45)) +
+				
+				# Axe y  
+				ylab("nombre de décès") +
+				ylim(0, NA)
+)
+
+#Nom du fichier png à générer
+repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quotidiens/Tranche_age"))
+pngFileRelPath <- paste0(repertoire, "/Deces_annuels_par_tranche_age.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
 
 
 if (shallDeleteVars) rm(a__original_fr_gouv_deces_quotidiens)
