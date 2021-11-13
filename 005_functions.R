@@ -545,11 +545,11 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	
 	
 	# Calculer la moyenne mobile sur 7 jours
-	moyenne_mobile <- running_mean(deces_par_jour$nbDeces, tailleFenetreGlissante)
-	ymax <- max(moyenne_mobile)
-	ymin <- min(moyenne_mobile)	
-	moyenne_mobile <- data_frame(moyenne_mobile)
-	moyenne_mobile$numerojour <- 1:nrow(moyenne_mobile) + decalageSemaines
+	deces_moyenne_mobile_courte <- running_mean(deces_par_jour$nbDeces, tailleFenetreGlissante)
+	ymax <- max(deces_moyenne_mobile_courte)
+	ymin <- min(deces_moyenne_mobile_courte)	
+	deces_moyenne_mobile_courte <- data_frame(deces_moyenne_mobile_courte)
+	deces_moyenne_mobile_courte$numerojour <- 1:nrow(deces_moyenne_mobile_courte) + decalageSemaines
 	#	# Ajouter  moyenne binf et bsup
 	deces_par_jour$moyenne <- mean(deces_par_jour$nbDeces)
 	deces_par_jour$binf <-  mean(deces_par_jour$nbDeces) - sd(deces_par_jour$nbDeces)
@@ -558,7 +558,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 # Ajout Moyenne mobile
 	deces_par_jour$numerojour <- 1:nrow(deces_par_jour)
 	deces_par_jour <- deces_par_jour %>% 
-			left_join(moyenne_mobile) 
+			left_join(deces_moyenne_mobile_courte) 
 
 	# Calculer la moyenne mobile vaccination sur 7 jours
 	moyenne_mobile_n_dose1 <- running_mean(deces_par_jour$n_dose1, tailleFenetreGlissante)
@@ -577,15 +577,15 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	  left_join(moyenne_mobile_n_complet) 
 	
 	# Calculer la moyenne mobile vaccination sur 365 jours jours
-	moyenne_mobile_desces_annee <- running_mean(deces_par_jour$nbDeces, 365)
-	moyenne_mobile_desces_annee <- data_frame(moyenne_mobile_desces_annee)
-	moyenne_mobile_desces_annee$numerojour <- 1:nrow(moyenne_mobile_desces_annee) + 364
+	deces_moyenne_mobile_annee <- running_mean(deces_par_jour$nbDeces, 365)
+	deces_moyenne_mobile_annee <- data_frame(deces_moyenne_mobile_annee)
+	deces_moyenne_mobile_annee$numerojour <- 1:nrow(deces_moyenne_mobile_annee) + 364
 	# Ajout Moyenne mobile
 	deces_par_jour <- deces_par_jour %>% 
-	  left_join(moyenne_mobile_desces_annee) 	
+	  left_join(deces_moyenne_mobile_annee) 	
 	
 	plot(deces_par_jour$deces_date_complete, 
-	     deces_par_jour$moyenne_mobile_desces_annee, 
+	     deces_par_jour$deces_moyenne_mobile_annee, 
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
@@ -633,10 +633,10 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     col="green") 
 	
 
-	# Superposer la moyenne mobile
+	# Superposer la moyenne mobile courte des décès toutes causes
 	par(new=T)
 	plot(deces_par_jour$deces_date_complete, 
-	     deces_par_jour$moyenne_mobile, 
+	     deces_par_jour$deces_moyenne_mobile_courte, 
 	     pch=16, 
 	     axes=T, 
 	     cex=0, 
