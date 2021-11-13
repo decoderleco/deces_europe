@@ -594,13 +594,13 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     ylim=c(ymin,ymax),
 	     ylab="", 
 	     type="o", 
-	     col="black", 
-	     main=paste0("Décès quotidiens France et vaccinations des ", nomVar))
+	     col="red", 
+	     main=paste0("Décès quotidiens France et vaccinations des ", nomVar, " ans"))
 	
 	# pour encadrer le graphique
 	box() 
 	
-	mtext("Nombre de décès toutes causes ", side=2, line=3, col="red")
+	mtext("Nombre de décès toutes causes ", side=2, line=3, col="black")
 	mtext("Nombre de vaccinés 1ere dose", side=2, line=2, col="blue")
 	mtext("Nombre de vaccinés 2eme dose", side=2, line=1, col="green")
 	
@@ -645,7 +645,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     #lwd=3, 
 	     ylab="", 
 	     type="o", 
-	     col="red") 
+	     col="black") 
 	
 	# Superposer la moyenne 
 	par(new=T)
