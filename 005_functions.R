@@ -860,6 +860,8 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	
 	essai <- es_deces_standard_pays_semaine 
 	
+	
+	  if(!is.null(min(essai$deces_standardises_si_pop_2020_15_24))){
 	#création du graphiques
 	plot(essai$numSemaineDepuis2013, 
 	     essai$deces_standardises_si_pop_2020_15_24, 
@@ -960,6 +962,8 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     col="purple") 	
 
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
+	  }
+	
 	
 	#
 	# Graphique 2 : Situation des 25- 50 ans
