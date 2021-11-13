@@ -861,7 +861,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	essai <- es_deces_standard_pays_semaine 
 	
 	
-	  if(!is.null(min(essai$deces_standardises_si_pop_2020_15_24))){
+	  if(!is.na(min(essai$deces_standardises_si_pop_2020_15_24))){
 	#création du graphiques
 	plot(essai$numSemaineDepuis2013, 
 	     essai$deces_standardises_si_pop_2020_15_24, 
