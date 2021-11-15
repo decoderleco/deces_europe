@@ -416,29 +416,60 @@ a__f_add_tranche_age_de_10_ans <- function(tabWithAge) {
 ################################################################################
 # Ajouter une colonne tranche_age vaccinale pour correspondre au fichier à partir de la colone age
 ################################################################################
-a__f_add_tranche_age_vax <- function(tabWithAge) {
+a__f_add_tranche_age_vacsi <- function(tabWithAge) {
   
-  # Ajouter une colonne age_quinq avec la tranche d'age
+  # Ajouter une colonne avec la tranche d'age
+  # conforme à VAC-SI (https://www.data.gouv.fr/fr/datasets/donnees-relatives-aux-personnes-vaccinees-contre-la-covid-19-1/#description)
   tabWith_tranche_age <- tabWithAge %>%
     mutate(tranche_age = case_when(
-      age <=  4 ~ "4",
-      age >=  5 & age < 10 ~ "9",
-      age >= 10 & age < 12 ~ "11",
-      age >= 12 & age < 18 ~ "17",
-      age >= 18 & age < 25 ~ "24",
-      age >= 25 & age < 30 ~ "29",  
-      age >= 30 & age < 40 ~ "39",
-      age >= 40 & age < 50 ~ "49",
-      age >= 50 & age < 60 ~ "59",
-      age >= 60 & age < 65 ~ "64",
-      age >= 65 & age < 70 ~ "69",  
-      age >= 70 & age < 75 ~ "74",
-      age >= 75 & age < 80 ~ "79",  
-      age >= 80 ~ "80"
+      age <=  4 ~ 4,
+      age >=  5 & age < 10 ~ 9,
+      age >= 10 & age < 12 ~ 11,
+      age >= 12 & age < 18 ~ 17,
+      age >= 18 & age < 25 ~ 24,
+      age >= 25 & age < 30 ~ 29,  
+      age >= 30 & age < 40 ~ 39,
+      age >= 40 & age < 50 ~ 49,
+      age >= 50 & age < 60 ~ 59,
+	  age >= 60 & age < 65 ~ 64,
+      age >= 65 & age < 70 ~ 69,  
+      age >= 70 & age < 75 ~ 74,
+	  age >= 75 & age < 80 ~ 79,  
+      age >= 80 ~ 80
     ))
   
   # Renvoyer le nouveau tableau quinquenisé
   tabWith_tranche_age
+}
+
+################################################################################
+# Ajouter une colonne tranche_age de 5 en 5
+################################################################################
+a__f_add_tranche_age <- function(tabWithAge) {
+	
+	# Ajouter une colonne avec la tranche d'age
+	# conforme à VAC-SI (https://www.data.gouv.fr/fr/datasets/donnees-relatives-aux-personnes-vaccinees-contre-la-covid-19-1/#description)
+	tabWith_tranche_age <- tabWithAge %>%
+			mutate(tranche_age = case_when(
+							age >=  0 & age <= 10 ~ 10,
+							age >  10 & age <= 20 ~ 20,
+							age >  20 & age <= 30 ~ 30,  
+							age >  30 & age <= 40 ~ 40,
+							age >  40 & age <= 50 ~ 50,
+							age >  50 & age <= 55 ~ 55,
+							age >  55 & age <= 60 ~ 60,
+							age >  60 & age <= 65 ~ 65,
+							age >  65 & age <= 70 ~ 70,  
+							age >  70 & age <= 75 ~ 75,
+							age >  75 & age <= 80 ~ 80,  
+							age >  80 & age <= 85 ~ 85,  
+							age >  85 & age <= 90 ~ 90,  
+							age >  90 & age <= 95 ~ 95,  
+							age >  95 ~ 99
+					))
+	
+	# Renvoyer le nouveau tableau quinquenisé
+	tabWith_tranche_age
 }
 
 ################################################################################
@@ -514,11 +545,11 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	
 	
 	# Calculer la moyenne mobile sur 7 jours
-	moyenne_mobile <- running_mean(deces_par_jour$nbDeces, tailleFenetreGlissante)
-	ymax <- max(moyenne_mobile)
-	ymin <- min(moyenne_mobile)	
-	moyenne_mobile <- data_frame(moyenne_mobile)
-	moyenne_mobile$numerojour <- 1:nrow(moyenne_mobile) + decalageSemaines
+	deces_moyenne_mobile_courte <- running_mean(deces_par_jour$nbDeces, tailleFenetreGlissante)
+	ymax <- max(deces_moyenne_mobile_courte)
+	ymin <- min(deces_moyenne_mobile_courte)	
+	deces_moyenne_mobile_courte <- data_frame(deces_moyenne_mobile_courte)
+	deces_moyenne_mobile_courte$numerojour <- 1:nrow(deces_moyenne_mobile_courte) + decalageSemaines
 	#	# Ajouter  moyenne binf et bsup
 	deces_par_jour$moyenne <- mean(deces_par_jour$nbDeces)
 	deces_par_jour$binf <-  mean(deces_par_jour$nbDeces) - sd(deces_par_jour$nbDeces)
@@ -527,7 +558,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 # Ajout Moyenne mobile
 	deces_par_jour$numerojour <- 1:nrow(deces_par_jour)
 	deces_par_jour <- deces_par_jour %>% 
-			left_join(moyenne_mobile) 
+			left_join(deces_moyenne_mobile_courte) 
 
 	# Calculer la moyenne mobile vaccination sur 7 jours
 	moyenne_mobile_n_dose1 <- running_mean(deces_par_jour$n_dose1, tailleFenetreGlissante)
@@ -546,15 +577,15 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	  left_join(moyenne_mobile_n_complet) 
 	
 	# Calculer la moyenne mobile vaccination sur 365 jours jours
-	moyenne_mobile_desces_annee <- running_mean(deces_par_jour$nbDeces, 365)
-	moyenne_mobile_desces_annee <- data_frame(moyenne_mobile_desces_annee)
-	moyenne_mobile_desces_annee$numerojour <- 1:nrow(moyenne_mobile_desces_annee) + 364
+	deces_moyenne_mobile_annee <- running_mean(deces_par_jour$nbDeces, 365)
+	deces_moyenne_mobile_annee <- data_frame(deces_moyenne_mobile_annee)
+	deces_moyenne_mobile_annee$numerojour <- 1:nrow(deces_moyenne_mobile_annee) + 364
 	# Ajout Moyenne mobile
 	deces_par_jour <- deces_par_jour %>% 
-	  left_join(moyenne_mobile_desces_annee) 	
+	  left_join(deces_moyenne_mobile_annee) 	
 	
 	plot(deces_par_jour$deces_date_complete, 
-	     deces_par_jour$moyenne_mobile_desces_annee, 
+	     deces_par_jour$deces_moyenne_mobile_annee, 
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
@@ -563,13 +594,13 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     ylim=c(ymin,ymax),
 	     ylab="", 
 	     type="o", 
-	     col="black", 
-	     main=paste0("Décès quotidiens France et vaccinations des ", nomVar))
+	     col="red", 
+	     main=paste0("Décès quotidiens France et vaccinations des ", nomVar, " ans"))
 	
 	# pour encadrer le graphique
 	box() 
 	
-	mtext("Nombre de décès toutes causes ", side=2, line=3, col="red")
+	mtext("Nombre de décès toutes causes ", side=2, line=3, col="black")
 	mtext("Nombre de vaccinés 1ere dose", side=2, line=2, col="blue")
 	mtext("Nombre de vaccinés 2eme dose", side=2, line=1, col="green")
 	
@@ -602,10 +633,10 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     col="green") 
 	
 
-	# Superposer la moyenne mobile
+	# Superposer la moyenne mobile courte des décès toutes causes
 	par(new=T)
 	plot(deces_par_jour$deces_date_complete, 
-	     deces_par_jour$moyenne_mobile, 
+	     deces_par_jour$deces_moyenne_mobile_courte, 
 	     pch=16, 
 	     axes=T, 
 	     cex=0, 
@@ -614,7 +645,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     #lwd=3, 
 	     ylab="", 
 	     type="o", 
-	     col="red") 
+	     col="black") 
 	
 	# Superposer la moyenne 
 	par(new=T)

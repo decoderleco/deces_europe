@@ -1,3 +1,10 @@
+################################################################################
+#
+# Analyse du registre des décès quotidiens France depuis la date 
+# K_DEBUT_DATES_DECES_A_ANALYSER (2018)
+#
+################################################################################
+
 library(pyramid)
 library(maptools)
 library(rgdal)
@@ -60,6 +67,11 @@ a__f_nettoyer_partie_date <- function(
 # Preparer les espaces de telechargement de donnees
 #
 ################################################################################
+
+# Date à partir de laquelle on va faire les analyses (il faut la mettre à jour si on rajoute des données antérieures à 2018)
+# Les décès antérieurs à cette date ne seront pas pris en compte
+K_DEBUT_DATES_DECES_A_ANALYSER <- "2018-01-01"
+
 
 
 K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS <- a__f_createDir(file.path(K_DIR_EXT_DATA_FR_GOUV, 'deces'))
@@ -190,15 +202,16 @@ if (exists(varName)) {
 	any(is.na(b__fr_gouv_deces_quotidiens$deces_date_complete))
 	
 	# Afficher le nombre de date de décès antérieures à 2018 (ce qui devrait en principe être 0
-	# puisque l'on n'utilise que les fichiers depuis 2018. Mais il y a des erreurs de saisie
+	# puisque l'on n'utilise que les fichiers depuis 2018. Mais il y a probablement des déclaration 
+	# de décès tardives expliquant des dates de décès pour des années antérieures 
 	# dans certains fichiers du gouvermnement (en particulier le deces-2021-t2.txt)
 	nbErreurSaisie <- b__fr_gouv_deces_quotidiens %>%
-			filter(deces_date_complete < "2018-01-01") %>%
+			filter(deces_date_complete < K_DEBUT_DATES_DECES_A_ANALYSER) %>%
 			summarize(nb = n())
 	message(paste0("Nombre de dates de décès antérieures à 2018 dans les fichiers depuis 2018 (erreurs de saisie ou enregistrement de régularisation ?) : ", nbErreurSaisie))
 	
 	if (shallDeleteVars) rm(nbErreurSaisie)
-	
+
 	################################################################################
 	#
 	# Identifier le département FR en fonction du code lieu
@@ -331,8 +344,11 @@ if (exists(varName)) {
 	# Trier par date de décès pour que ce soit plus facile à lire
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
 			arrange(deces_date_complete)
-			
-	#saveRDS(db_clean, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
+	
+	# Export pour Excel
+	#write.table(b__fr_gouv_deces_quotidiens, "gen/csv/fr_gouv_registre_deces_fr.csv", row.names=TRUE, sep=";", dec=".", na=" ")
+
+	#saveRDS(b__fr_gouv_deces_quotidiens, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
 }
 
 
@@ -347,7 +363,7 @@ deces_dep_jour <- b__fr_gouv_deces_quotidiens %>%
 		group_by(num_departement,
 				deces_date_complete) %>%
 		summarise(nbDeces=n()) %>% 
-		filter(deces_date_complete >= "2018-01-01")
+		filter(deces_date_complete >= K_DEBUT_DATES_DECES_A_ANALYSER)
 
 # calculer la moyenne, le nb min/max et les quartiles des décès par département (depuis 2018)
 deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
@@ -484,7 +500,7 @@ if (shallDeleteVars) rm(deces_dep_jour)
 
 deces_par_jour_age <- b__fr_gouv_deces_quotidiens %>% 
 		# Depuis 2018
-		filter(deces_date_complete >= "2018-01-01") %>%
+		filter(deces_date_complete >= K_DEBUT_DATES_DECES_A_ANALYSER) %>%
 		# Grouper
 		group_by(age_deces_millesime,
 				deces_date_complete) %>% 
@@ -522,12 +538,13 @@ deces_par_jour_age <- deces_par_jour_age %>%
 deces_par_jour_age <- deces_par_jour_age %>%
 		mutate(age = age_deces_millesime)
 
-# Ajouter la colonne tranche d'age vax
-deces_par_jour_age <- a__f_add_tranche_age_vax(deces_par_jour_age)
+# Ajouter la colonne tranche d'age compatible VAC-SI
+deces_par_jour_age <- a__f_add_tranche_age_vacsi(deces_par_jour_age)
 
-# Réorganiser les colonnes
+# Réorganiser les colonnes et trier
 deces_par_jour_age <- deces_par_jour_age %>%
-		select(age_deces_millesime, tranche_age, deces_date_complete, confinement, everything())
+		select(tranche_age, age_deces_millesime, deces_date_complete, confinement, everything()) %>%
+		arrange(tranche_age, age_deces_millesime)
 
 
 ################################################################################
@@ -608,35 +625,45 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
    if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
 											   
 ###################################################################
-# Ajout vaccination
+# Ajout vaccination (Fichier VAC-SI)
 ################################################################
    
 vaccination <- read.csv2('https://www.data.gouv.fr/fr/datasets/r/54dd5f8d-1e2e-4ccb-8fb8-eac68245befd')
-vaccination <- vaccination %>% rename(tranche_age = clage_vacsi, deces_date_complete=jour) %>% 
-  mutate(deces_date_complete=date(deces_date_complete),tranche_age=as.character(tranche_age)) 
-  
-deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% left_join(vaccination, by=c("tranche_age","deces_date_complete"))
+
+# Export pour Excel
+if (!dir.exists("inst/extdata/world/eu/fr/gouv/vacsi")) dir.create("inst/extdata/world/eu/fr/gouv/vacsi")
+write.table(vaccination, "inst/extdata/world/eu/fr/gouv/vacsi/fr_gouv_vacsi.csv", row.names=TRUE, sep=";", dec=".", na=" ")
+
+vaccination <- vaccination %>% 
+		rename(tranche_age = clage_vacsi, deces_date_complete = jour) %>%
+		mutate(deces_date_complete = date(deces_date_complete)) 
+
+# Ajouter les données de vaccination 
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
-  mutate(n_dose1 = ifelse(is.na(n_dose1),0,n_dose1)) %>% 
-  mutate(n_complet = ifelse(is.na(n_complet),0,n_complet))
+		left_join(vaccination, by=c("tranche_age", "deces_date_complete"))
+
+deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
+		mutate(n_dose1 = ifelse(is.na(n_dose1), 0, n_dose1)) %>%
+		mutate(n_complet = ifelse(is.na(n_complet), 0, n_complet))
+
+write.csv2(deces_par_jour_tranchedage, file='gen/csv/deces_par_jour_tranchedage_vacsi.csv')
 
 ################################################################################
 #
-# Graphique des Deces Quotidiens depuis 2018 par Tranche d'age
+# Graphique des Deces Quotidiens depuis 2018 par Tranche d'age VAC-SI
 #
 ################################################################################
 												   
-deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
-		# Remplacer TRUE par FALSE pour filtrer
+data_a_tracer <- deces_par_jour_tranchedage %>%
+		# Remplacer TRUE par FALSE pour filtrer juste sur 2020 et 2021
 		filter(TRUE | 
 						(substring(deces_date_complete,1,4) == "2020" |
 							substring(deces_date_complete,1,4) == "2021")) 
 
 # Graphe de chaque tranche d'âge
 
-
 # Lister les tranches d'age disponibles
-tranchesAge <- deces_par_jour_tranchedage %>%
+tranchesAge <- data_a_tracer %>%
 		ungroup %>%
 		select(tranche_age) %>%
 		distinct()
@@ -646,32 +673,90 @@ for (trancheAge in tranchesAge$tranche_age) {
 	
 	message(paste0("trancheAge = ", trancheAge ))
 	
-	deces_par_jour_a_tracer <- deces_par_jour_tranchedage %>% 
+	deces_par_jour_a_tracer <- data_a_tracer %>% 
 			filter(tranche_age == trancheAge) 
 	
 	a__f_plot_fr_deces_quotidiens_par_tranche_age(
 			deces_par_jour_a_tracer, 
-			trancheAge)
+			sprintf("%02d", trancheAge))
 }
-write.csv2(deces_par_jour_tranchedage,file='gen/csv/deces_par_jour_tranchedage.csv')
+
 if (shallDeleteVars) rm(trancheAge)
 if (shallDeleteVars) rm(tranchesAge)
 
 
-# Graphe de la vue d'ensemble des tranches d'âge
-print(ggplot(data = deces_par_jour_tranchedage,
+################################################################################
+#
+# Graphique Vue d'Ensemble des Deces Quotidiens depuis 2018 par Tranche d'age
+# adaptée au COVID
+#
+################################################################################
+
+data_a_tracer <- deces_par_jour_age %>%
+		# Remplacer TRUE par FALSE pour filtrer juste sur 2020 et 2021
+		filter(TRUE | 
+						(substring(deces_date_complete,1,4) == "2020" |
+							substring(deces_date_complete,1,4) == "2021"))
+
+# Ne garder que les colonnes de données "pures"
+data_a_tracer <- data_a_tracer %>%
+		ungroup %>%
+		select(deces_date_complete:nbDeces, age)
+
+# Ajouter la colonne tranche d'age (pas les tranches d'âge VAC-SI)
+data_a_tracer <- a__f_add_tranche_age(data_a_tracer)
+
+# Calculer le nombre de décès pour chaque tranche d'age et chaque jour
+data_a_tracer <- data_a_tracer %>% 
+		group_by(tranche_age, 
+				deces_date_complete) %>%
+		summarise(nbDeces = sum(nbDeces))
+
+# calculer les données statistiques pour chaque tranche d'age
+nbDeces_moyen_par_tranchedAge <- data_a_tracer %>% 
+		group_by(tranche_age) %>% 
+		summarise(minimum = min(nbDeces),
+				maximum = max(nbDeces),
+				moyenne = mean(nbDeces),
+				ecart95pourcent = 2*sd(nbDeces),
+				premier_quartile = quantile(nbDeces,
+						probs = 0.25),
+				dernier_quartile = quantile(nbDeces,
+						probs = 0.75),
+				bsup = moyenne +   ecart95pourcent,
+				binf = moyenne -   ecart95pourcent
+		)
+
+# Ajouter les données statistiques de chaque tranche d'age
+data_a_tracer <- data_a_tracer %>% 
+		left_join(nbDeces_moyen_par_tranchedAge,
+				, by = c("tranche_age"))
+
+# Ajouter la colonne confinement
+data_a_tracer <- data_a_tracer %>% 
+		mutate(confinement = if_else(
+						(deces_date_complete >= "2020-03-17" & deces_date_complete <= "2020-05-11") |
+								(deces_date_complete >= "2020-10-30" & deces_date_complete <= "2020-12-15"),
+						"confinement",
+						"pas de confinement"))
+
+write.csv2(data_a_tracer, file='gen/csv/deces_par_jour_tranchedage.csv')
+
+print(ggplot(data = data_a_tracer,
 						mapping = aes(x = deces_date_complete,
 								color = confinement)) +
+				
+				facet_wrap(~tranche_age) +
 				
 				#scale_colour_brewer(palette = "Set1") +
 				scale_colour_manual(values = c("red", "black"))+
 				
-				scale_linetype_manual(values=c("dotted", "solid")) +
+				#scale_linetype_manual(values=c("dotted", "solid")) +
 				
-				scale_size_manual(values=c(0.1, 1.5)) +
+				#scale_size_manual(values=c(0.1, 1.5)) +
 				
 				geom_line(mapping = aes(y = nbDeces),
-						linetype = "dotted") + 
+						linetype = "solid") + 
 				
 #				geom_line(mapping = aes(y = moyenne_mobile),
 #						linetype = "solid",
@@ -680,20 +765,18 @@ print(ggplot(data = deces_par_jour_tranchedage,
 				geom_line(mapping = aes(y = moyenne),
 						linetype = "solid") + 
 				
-#				geom_line(mapping = aes(y = binf),
-#						linetype = "solid") + 
-#				
-#				geom_line(mapping = aes(y = bsup),
-#						linetype = "solid") + 
+				geom_line(mapping = aes(y = binf),
+						linetype = "dotted") + 
 				
-				facet_wrap(~tranche_age) +
+				geom_line(mapping = aes(y = bsup),
+						linetype = "dotted") + 
 				
 				theme(legend.position = "top")+
 				
-				ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(deces_par_jour_tranchedage$deces_date_complete) ,") par Tranche d'age")) +
+				ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(data_a_tracer$deces_date_complete) ,") par Tranche d'age")) +
 				
 				xlab("date de décès") + 
-				ylab("nombre de décès quotidiens")
+				ylab("nombre de décès quotidiens (+ écart à 95%)")
 )
 
 #Nom du fichier png à générer
@@ -702,6 +785,69 @@ pngFileRelPath <- paste0(repertoire, "/Deces_quotidiens_par_tranche_age.png")
 
 dev.print(device = png, file = pngFileRelPath, width = 1000)
 
+################################################################################
+#
+# Histogramme par Décès par Tranche age et années
+#
+################################################################################
+
+data_a_tracer <- deces_par_jour_age %>%
+		# Remplacer TRUE par FALSE pour filtrer juste sur 2020 et 2021
+		filter(TRUE | 
+						(substring(deces_date_complete,1,4) == "2020" |
+							substring(deces_date_complete,1,4) == "2021"))
+
+# Ne garder que les colonnes de données "pures"
+data_a_tracer <- data_a_tracer %>%
+		ungroup %>%
+		select(deces_date_complete:nbDeces, age) %>%
+		mutate(deces_annee = str_sub(deces_date_complete,1,4))
+
+# Ajouter la colonne tranche d'age (pas les tranches d'âge VAC-SI)
+data_a_tracer <- a__f_add_tranche_age(data_a_tracer)
+
+date_max <- max(data_a_tracer$deces_date_complete) 
+
+# Calculer le nombre de décès pour chaque tranche d'age et chaque jour
+data_a_tracer <- data_a_tracer %>% 
+		group_by(tranche_age, 
+				deces_annee) %>%
+		summarise(nbDeces = sum(nbDeces))
+
+write.csv2(data_a_tracer, file='gen/csv/deces_par_tranchedage_et_annee.csv')
+
+print(ggplot(data = data_a_tracer,
+						mapping = aes(x = tranche_age, 
+								y = nbDeces)) +
+				
+				scale_colour_manual(values = c("black"))+
+				
+				geom_col(mapping = aes(fill = deces_annee),
+						# Couleur du trait de contour des barres
+						color="black",
+						# Mettre les colonnes les unes à côté des autres
+						position = position_dodge2()) + 
+				
+				labs(title = "Evolution des décès France par Tranche d'âge",
+					 caption=paste0("Source : fr/gouv/Registre/Deces_Quotidiens (=> ", date_max,")")) +
+				
+				theme(legend.position="top") +
+				
+				# Axe x  
+				xlab("Tranche d'âge") +
+				scale_x_continuous(breaks = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
+				theme(axis.text.x = element_text(angle=45)) +
+				
+				# Axe y  
+				ylab("nombre de décès") +
+				ylim(0, NA)
+)
+
+#Nom du fichier png à générer
+repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quotidiens/Tranche_age"))
+pngFileRelPath <- paste0(repertoire, "/Deces_annuels_par_tranche_age.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
 
 
 if (shallDeleteVars) rm(a__original_fr_gouv_deces_quotidiens)
@@ -710,6 +856,7 @@ if (shallDeleteVars) rm(deces_par_jour_age)
 if (shallDeleteVars) rm(deces_par_jour_a_tracer)
 if (shallDeleteVars) rm(deces_par_jour_tranchedage)
 if (shallDeleteVars) rm(nbDeces_moyen_par_tranchedAge)
+if (shallDeleteVars) rm(data_a_tracer)
 
 
 message("Terminé 040_deces_francais.R")
