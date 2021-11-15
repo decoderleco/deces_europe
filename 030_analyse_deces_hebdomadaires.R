@@ -566,9 +566,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_suiss
 #---------------------------------------#
 
 # Aucune donnée pour les moins de 40 ans en Allemagne
-# TODO TW m 2021_11_12 : A remettre un jour lorsque ça ne plantera plus
-### XXX ### a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_allemagne)
-
+a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_allemagne)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_armenie,113)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_autriche)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_belgique)
@@ -597,9 +595,7 @@ a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_suisse)
 #---------------------------------------#
 
 # Aucune donnée pour les moins de 40 ans en Allemagne
-# TODO TW m 2021_11_12 : A remettre un jour lorsque ça ne plantera plus
-### XXX ### a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_allemagne)
-
+a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_allemagne)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_armenie)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_autriche)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_belgique)

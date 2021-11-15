@@ -1857,10 +1857,8 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	  select(time)
 	maxWeekTime <- maxWeekTime[1, 1]
 	
-	es_deces_standard_pays_semaine<-es_deces_standard_pays_semaine %>%
-	  filter(!is.na(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_15_24))
 
-	
+	if(nomPays != 'allemagne'){
 	#
 	# Graphique 1 : Situation des 15_24 ans
 	#
@@ -1894,6 +1892,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	essai <- es_deces_standard_pays_semaine %>%
 			filter(numSemaineDepuis2013>287)
 	
+
 	#création du graphiques
 	plot(essai$numSemaineDepuis2013, 
 	     essai$deces_standardises_si_pop_2020_15_24, 
@@ -2191,12 +2190,12 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	}
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
-	
+	}
 	#
 	# Graphique 3 : Situation des 50- 59 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/50-59/", essai$zone[1], "/")
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/50-59/", es_deces_standard_pays_semaine$zone[1], "/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2362,7 +2361,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Graphique 4 : Situation des 60- 69 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/", essai$zone[1], "/")
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/", es_deces_standard_pays_semaine$zone[1], "/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2528,7 +2527,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Graphique 5 : Situation des 70- 79 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/70-79/", essai$zone[1], "/")
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/70-79/", es_deces_standard_pays_semaine$zone[1], "/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2940,6 +2939,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
            diff_70_79=deces_standardises_si_pop_2020_70_79 - moyennne_deces_standardises_si_pop_2020_70_79,
            diff_ge80=deces_standardises_si_pop_2020_ge80 - moyennne_deces_standardises_si_pop_2020_ge80)
   
+ 
   #
   # Graphique 1 : Situation des 15_24 ans
   #
@@ -2973,6 +2973,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   essai$binf<-mean(essai$diff_15_24)-2*sd(essai$diff_15_24)
   essai$bsup<-mean(essai$diff_15_24)+2*sd(essai$diff_15_24)
   
+  if(nomPays != 'allemagne'){
   #création du graphiques
   plot(essai$numSemaineDepuis2013, 
        essai$diff_15_24, 
@@ -3250,7 +3251,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
          col="dark blue") 	
   }
   dev.print(device = png, file = pngFileRelPath, width = 1000)
-  
+  }
   
   
   #
