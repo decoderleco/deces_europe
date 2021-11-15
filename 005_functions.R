@@ -994,7 +994,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	  left_join(moyenne_mobile_25_49)
 	
 	essai <- es_deces_standard_pays_semaine
-	
+	if(nomPays!='allemagne'){
 	#création du graphiques
 	plot(essai$numSemaineDepuis2013, 
 	     essai$deces_standardises_si_pop_2020_25_49, 
@@ -1096,7 +1096,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	
 	
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
-	
+	}
 	
 	#
 	# Graphique 3 : Situation des 50- 59 ans
@@ -1634,7 +1634,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	#
 	# Graphique 7 : Somme
 	#
-	
+	if(nomPays!='allemagne'){
 	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
 	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
@@ -1831,7 +1831,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	mtext("                                                                                      80+ ans", side=1, col="#3366CC", line=1)
 	
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
-	
+	}
 
 }
 
