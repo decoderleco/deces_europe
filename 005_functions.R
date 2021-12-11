@@ -416,29 +416,60 @@ a__f_add_tranche_age_de_10_ans <- function(tabWithAge) {
 ################################################################################
 # Ajouter une colonne tranche_age vaccinale pour correspondre au fichier à partir de la colone age
 ################################################################################
-a__f_add_tranche_age_vax <- function(tabWithAge) {
+a__f_add_tranche_age_vacsi <- function(tabWithAge) {
   
-  # Ajouter une colonne age_quinq avec la tranche d'age
+  # Ajouter une colonne avec la tranche d'age
+  # conforme à VAC-SI (https://www.data.gouv.fr/fr/datasets/donnees-relatives-aux-personnes-vaccinees-contre-la-covid-19-1/#description)
   tabWith_tranche_age <- tabWithAge %>%
     mutate(tranche_age = case_when(
-      age <=  4 ~ "4",
-      age >=  5 & age < 10 ~ "9",
-      age >= 10 & age < 12 ~ "11",
-      age >= 12 & age < 18 ~ "17",
-      age >= 18 & age < 25 ~ "24",
-      age >= 25 & age < 30 ~ "29",  
-      age >= 30 & age < 40 ~ "39",
-      age >= 40 & age < 50 ~ "49",
-      age >= 50 & age < 60 ~ "59",
-      age >= 60 & age < 65 ~ "64",
-      age >= 65 & age < 70 ~ "69",  
-      age >= 70 & age < 75 ~ "74",
-      age >= 75 & age < 80 ~ "79",  
-      age >= 80 ~ "80"
+      age <=  4 ~ 4,
+      age >=  5 & age < 10 ~ 9,
+      age >= 10 & age < 12 ~ 11,
+      age >= 12 & age < 18 ~ 17,
+      age >= 18 & age < 25 ~ 24,
+      age >= 25 & age < 30 ~ 29,  
+      age >= 30 & age < 40 ~ 39,
+      age >= 40 & age < 50 ~ 49,
+      age >= 50 & age < 60 ~ 59,
+	  age >= 60 & age < 65 ~ 64,
+      age >= 65 & age < 70 ~ 69,  
+      age >= 70 & age < 75 ~ 74,
+	  age >= 75 & age < 80 ~ 79,  
+      age >= 80 ~ 80
     ))
   
   # Renvoyer le nouveau tableau quinquenisé
   tabWith_tranche_age
+}
+
+################################################################################
+# Ajouter une colonne tranche_age de 5 en 5
+################################################################################
+a__f_add_tranche_age <- function(tabWithAge) {
+	
+	# Ajouter une colonne avec la tranche d'age
+	# conforme à VAC-SI (https://www.data.gouv.fr/fr/datasets/donnees-relatives-aux-personnes-vaccinees-contre-la-covid-19-1/#description)
+	tabWith_tranche_age <- tabWithAge %>%
+			mutate(tranche_age = case_when(
+							age >=  0 & age <= 10 ~ 10,
+							age >  10 & age <= 20 ~ 20,
+							age >  20 & age <= 30 ~ 30,  
+							age >  30 & age <= 40 ~ 40,
+							age >  40 & age <= 50 ~ 50,
+							age >  50 & age <= 55 ~ 55,
+							age >  55 & age <= 60 ~ 60,
+							age >  60 & age <= 65 ~ 65,
+							age >  65 & age <= 70 ~ 70,  
+							age >  70 & age <= 75 ~ 75,
+							age >  75 & age <= 80 ~ 80,  
+							age >  80 & age <= 85 ~ 85,  
+							age >  85 & age <= 90 ~ 90,  
+							age >  90 & age <= 95 ~ 95,  
+							age >  95 ~ 99
+					))
+	
+	# Renvoyer le nouveau tableau quinquenisé
+	tabWith_tranche_age
 }
 
 ################################################################################
@@ -514,11 +545,11 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	
 	
 	# Calculer la moyenne mobile sur 7 jours
-	moyenne_mobile <- running_mean(deces_par_jour$nbDeces, tailleFenetreGlissante)
-	ymax <- max(moyenne_mobile)
-	ymin <- min(moyenne_mobile)	
-	moyenne_mobile <- data_frame(moyenne_mobile)
-	moyenne_mobile$numerojour <- 1:nrow(moyenne_mobile) + decalageSemaines
+	deces_moyenne_mobile_courte <- running_mean(deces_par_jour$nbDeces, tailleFenetreGlissante)
+	ymax <- max(deces_moyenne_mobile_courte)
+	ymin <- min(deces_moyenne_mobile_courte)	
+	deces_moyenne_mobile_courte <- data_frame(deces_moyenne_mobile_courte)
+	deces_moyenne_mobile_courte$numerojour <- 1:nrow(deces_moyenne_mobile_courte) + decalageSemaines
 	#	# Ajouter  moyenne binf et bsup
 	deces_par_jour$moyenne <- mean(deces_par_jour$nbDeces)
 	deces_par_jour$binf <-  mean(deces_par_jour$nbDeces) - sd(deces_par_jour$nbDeces)
@@ -527,7 +558,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 # Ajout Moyenne mobile
 	deces_par_jour$numerojour <- 1:nrow(deces_par_jour)
 	deces_par_jour <- deces_par_jour %>% 
-			left_join(moyenne_mobile) 
+			left_join(deces_moyenne_mobile_courte) 
 
 	# Calculer la moyenne mobile vaccination sur 7 jours
 	moyenne_mobile_n_dose1 <- running_mean(deces_par_jour$n_dose1, tailleFenetreGlissante)
@@ -546,15 +577,15 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	  left_join(moyenne_mobile_n_complet) 
 	
 	# Calculer la moyenne mobile vaccination sur 365 jours jours
-	moyenne_mobile_desces_annee <- running_mean(deces_par_jour$nbDeces, 365)
-	moyenne_mobile_desces_annee <- data_frame(moyenne_mobile_desces_annee)
-	moyenne_mobile_desces_annee$numerojour <- 1:nrow(moyenne_mobile_desces_annee) + 364
+	deces_moyenne_mobile_annee <- running_mean(deces_par_jour$nbDeces, 365)
+	deces_moyenne_mobile_annee <- data_frame(deces_moyenne_mobile_annee)
+	deces_moyenne_mobile_annee$numerojour <- 1:nrow(deces_moyenne_mobile_annee) + 364
 	# Ajout Moyenne mobile
 	deces_par_jour <- deces_par_jour %>% 
-	  left_join(moyenne_mobile_desces_annee) 	
+	  left_join(deces_moyenne_mobile_annee) 	
 	
 	plot(deces_par_jour$deces_date_complete, 
-	     deces_par_jour$moyenne_mobile_desces_annee, 
+	     deces_par_jour$deces_moyenne_mobile_annee, 
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
@@ -563,13 +594,13 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     ylim=c(ymin,ymax),
 	     ylab="", 
 	     type="o", 
-	     col="black", 
-	     main=paste0("Décès quotidiens France et vaccinations des ", nomVar))
+	     col="red", 
+	     main=paste0("Décès quotidiens France et vaccinations des ", nomVar, " ans"))
 	
 	# pour encadrer le graphique
 	box() 
 	
-	mtext("Nombre de décès toutes causes ", side=2, line=3, col="red")
+	mtext("Nombre de décès toutes causes ", side=2, line=3, col="black")
 	mtext("Nombre de vaccinés 1ere dose", side=2, line=2, col="blue")
 	mtext("Nombre de vaccinés 2eme dose", side=2, line=1, col="green")
 	
@@ -602,10 +633,10 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     col="green") 
 	
 
-	# Superposer la moyenne mobile
+	# Superposer la moyenne mobile courte des décès toutes causes
 	par(new=T)
 	plot(deces_par_jour$deces_date_complete, 
-	     deces_par_jour$moyenne_mobile, 
+	     deces_par_jour$deces_moyenne_mobile_courte, 
 	     pch=16, 
 	     axes=T, 
 	     cex=0, 
@@ -614,7 +645,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     #lwd=3, 
 	     ylab="", 
 	     type="o", 
-	     col="red") 
+	     col="black") 
 	
 	# Superposer la moyenne 
 	par(new=T)
@@ -715,13 +746,25 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 			distinct() %>%
 			select(time)
 	maxWeekTime <- maxWeekTime[1, 1]
-	
+
+	# Récupérer le vecteur des confinements
+debut_confinement <- 	es_deces_standard_pays_semaine %>%
+  filter(Response_measure=='StayHomeOrderStart') %>% 
+  select(numSemaineDepuis2013)
+		
+fin_confinement <- 	es_deces_standard_pays_semaine %>%
+  filter(Response_measure=='StayHomeOrderEnd') %>% 
+  select(numSemaineDepuis2013)
+
+Vdebut_confinement <-debut_confinement[['numSemaineDepuis2013']]
+Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
+
 	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
 	     es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge40, 
 		 pch=16, 
 		 cex=0, 
 		 axes=F, 
-		 xlab="week", 
+		 xlab="", 
 		 ylab="", 
 		 ylim=c(0, ylim_max), 
 		 type="o", 
@@ -735,10 +778,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=1)
+	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  0, "2013", cex=1.2)
 	text(78,  0, "2014", cex=1.2)
@@ -844,13 +891,15 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	essai <- es_deces_standard_pays_semaine 
 	
+	
+	  if(!is.na(min(essai$deces_standardises_si_pop_2020_15_24))){
 	#création du graphiques
 	plot(essai$numSemaineDepuis2013, 
 	     essai$deces_standardises_si_pop_2020_15_24, 
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(min(essai$deces_standardises_si_pop_2020_15_24), max(essai$deces_standardises_si_pop_2020_15_24)), 
 	     type="o", 
@@ -865,10 +914,15 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des 15 - 24 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-	mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=1)
+	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
+	
 	
 	text(26,  min(essai$deces_standardises_si_pop_2020_15_24), "2013", cex=1.2)
 	text(78,  min(essai$deces_standardises_si_pop_2020_15_24), "2014", cex=1.2)
@@ -939,6 +993,8 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     col="purple") 	
 
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
+	  }
+	
 	
 	#
 	# Graphique 2 : Situation des 25- 50 ans
@@ -969,14 +1025,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	  left_join(moyenne_mobile_25_49)
 	
 	essai <- es_deces_standard_pays_semaine
-	
+	if(nomPays!='allemagne'){
 	#création du graphiques
 	plot(essai$numSemaineDepuis2013, 
 	     essai$deces_standardises_si_pop_2020_25_49, 
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(min(essai$deces_standardises_si_pop_2020_25_49), max(essai$deces_standardises_si_pop_2020_25_49)),
 	     type="o", 
@@ -990,10 +1046,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des 25 - 49 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-	mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=2)
+	mtext("                                                          fin de confinement", side=1, col="green", line=2)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  min(essai$deces_standardises_si_pop_2020_25_49), "2013", cex=1.2)
 	text(78,  min(essai$deces_standardises_si_pop_2020_25_49), "2014", cex=1.2)
@@ -1067,7 +1127,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
-	
+	}
 	
 	#
 	# Graphique 3 : Situation des 50- 59 ans
@@ -1106,7 +1166,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(min(essai$deces_standardises_si_pop_2020_50_59), max(essai$deces_standardises_si_pop_2020_50_59)),
 	     type="o", 
@@ -1120,11 +1180,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des 50 - 59 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-	mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
-	mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=1)
+	mtext("                                                          fin de confinement", side=1, col="green", line=1)
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  min(essai$deces_standardises_si_pop_2020_50_59), "2013", cex=1.2)
 	text(78,  min(essai$deces_standardises_si_pop_2020_50_59), "2014", cex=1.2)
@@ -1236,7 +1299,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(min(essai$deces_standardises_si_pop_2020_60_69), max(essai$deces_standardises_si_pop_2020_60_69)),
 	     type="o", 
@@ -1250,10 +1313,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des 60 - 69 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-	mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=1)
+	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  min(essai$deces_standardises_si_pop_2020_60_69), "2013", cex=1.2)
 	text(78,  min(essai$deces_standardises_si_pop_2020_60_69), "2014", cex=1.2)
@@ -1365,7 +1432,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(min(essai$deces_standardises_si_pop_2020_70_79), max(essai$deces_standardises_si_pop_2020_70_79)),
 	     type="o", 
@@ -1379,9 +1446,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des 70 - 79 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=1)
+	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  min(essai$deces_standardises_si_pop_2020_70_79), "2013", cex=1.2)
 	text(78,  min(essai$deces_standardises_si_pop_2020_70_79), "2014", cex=1.2)
@@ -1496,7 +1568,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(min(essai$deces_standardises_si_pop_2020_ge80), max(essai$deces_standardises_si_pop_2020_ge80)),	     type="o", 
 	     col="black", 
@@ -1509,9 +1581,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes des plus de 80 ans", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
+	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=1)
+	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  min(essai$deces_standardises_si_pop_2020_ge80), "2013", cex=1.2)
 	text(78,  min(essai$deces_standardises_si_pop_2020_ge80), "2014", cex=1.2)
@@ -1588,7 +1665,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	#
 	# Graphique 7 : Somme
 	#
-	
+	if(nomPays!='allemagne'){
 	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
 	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
@@ -1607,7 +1684,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
-	     xlab="week", 
+	     xlab="", 
 	     ylab="", 
 	     ylim=c(0, max(essai$deces_standardises_si_pop_2020)), 
 	     type="o", 
@@ -1622,10 +1699,14 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	mtext("nombre de décès toutes causes par tranche d'âge", side=2, line=3)
 	mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-	mtext("                                                     Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=1)
+	mtext("début de confinement                                                         ", side=1, col="orange", line=2)
+	mtext("                                                          fin de confinement", side=1, col="green", line=2)
+	mtext("                                                          Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
+	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	text(26,  max(essai$deces_standardises_si_pop_2020), "2013", cex=1.2)
 	text(78,  max(essai$deces_standardises_si_pop_2020), "2014", cex=1.2)
@@ -1773,15 +1854,15 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	     ylab="",
 	     type="o", 
 	     col="#3366CC") 
-	mtext("15-24 ans                                                                                                                                                                   ", side=1, col="#000033", line=2)
-	mtext("25-49 ans                                                                                                            ", side=1, col="#000066", line=2)
-	mtext("50-59 ans                                                      ", side=1, col="#000099", line=2)
-	mtext("60-69 ans", side=1, col="#0000CC", line=2)
-	mtext("                                           70-79 ans", side=1, col="#0000FF", line=2)
-	mtext("                                                                                      80+ ans", side=1, col="#3366CC", line=2)
+	mtext("15-24 ans                                                                                                                                                                   ", side=1, col="#000033", line=1)
+	mtext("25-49 ans                                                                                                            ", side=1, col="#000066", line=1)
+	mtext("50-59 ans                                                      ", side=1, col="#000099", line=1)
+	mtext("60-69 ans", side=1, col="#0000CC", line=1)
+	mtext("                                           70-79 ans", side=1, col="#0000FF", line=1)
+	mtext("                                                                                      80+ ans", side=1, col="#3366CC", line=1)
 	
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
-	
+	}
 
 }
 
@@ -1807,10 +1888,8 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	  select(time)
 	maxWeekTime <- maxWeekTime[1, 1]
 	
-	es_deces_standard_pays_semaine<-es_deces_standard_pays_semaine %>%
-	  filter(!is.na(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_15_24))
 
-	
+	if(nomPays != 'allemagne'){
 	#
 	# Graphique 1 : Situation des 15_24 ans
 	#
@@ -1844,6 +1923,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	essai <- es_deces_standard_pays_semaine %>%
 			filter(numSemaineDepuis2013>287)
 	
+
 	#création du graphiques
 	plot(essai$numSemaineDepuis2013, 
 	     essai$deces_standardises_si_pop_2020_15_24, 
@@ -2141,12 +2221,12 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	}
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
-	
+	}
 	#
 	# Graphique 3 : Situation des 50- 59 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/50-59/", essai$zone[1], "/")
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/50-59/", es_deces_standard_pays_semaine$zone[1], "/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2312,7 +2392,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Graphique 4 : Situation des 60- 69 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/", essai$zone[1], "/")
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/", es_deces_standard_pays_semaine$zone[1], "/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2478,7 +2558,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Graphique 5 : Situation des 70- 79 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/70-79/", essai$zone[1], "/")
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/70-79/", es_deces_standard_pays_semaine$zone[1], "/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2890,6 +2970,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
            diff_70_79=deces_standardises_si_pop_2020_70_79 - moyennne_deces_standardises_si_pop_2020_70_79,
            diff_ge80=deces_standardises_si_pop_2020_ge80 - moyennne_deces_standardises_si_pop_2020_ge80)
   
+ 
   #
   # Graphique 1 : Situation des 15_24 ans
   #
@@ -2923,6 +3004,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   essai$binf<-mean(essai$diff_15_24)-2*sd(essai$diff_15_24)
   essai$bsup<-mean(essai$diff_15_24)+2*sd(essai$diff_15_24)
   
+  if(nomPays != 'allemagne'){
   #création du graphiques
   plot(essai$numSemaineDepuis2013, 
        essai$diff_15_24, 
@@ -3200,7 +3282,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
          col="dark blue") 	
   }
   dev.print(device = png, file = pngFileRelPath, width = 1000)
-  
+  }
   
   
   #
