@@ -336,7 +336,7 @@ if (exists(varName)) {
 	# Ceci devrait suffire pour notre pyramide des ages en france (hors COM)
 	
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
-			mutate(num_departement = str_sub(deces_code_lieu, 1, 2))
+			mutate(deces_num_dept = str_sub(deces_code_lieu, 1, 2))
 	
 	# age_deces_millesime = age de la personne au moment de son décès
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
@@ -345,6 +345,10 @@ if (exists(varName)) {
 	# Trier par date de décès pour que ce soit plus facile à lire
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
 			arrange(deces_date_complete)
+	
+	# Réorganiser les colonnes pour que ce soit plus facile à lire
+	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
+			select(nom:sexe, age_deces_millesime, deces_date, deces_date_complete, deces_num_dept, deces_code_lieu, everything())
 	
 	# Export pour Excel
 	#write.table(b__fr_gouv_deces_quotidiens, "gen/csv/fr_gouv_registre_deces_fr.csv", row.names=TRUE, sep=";", dec=".", na=" ")
@@ -361,14 +365,14 @@ if (exists(varName)) {
 
 # Deces par jour et par departement depuis 01/01/2018
 deces_dep_jour <- b__fr_gouv_deces_quotidiens %>%
-		group_by(num_departement,
+		group_by(deces_num_dept,
 				deces_date_complete) %>%
 		summarise(nbDeces=n()) %>% 
 		filter(deces_date_complete >= K_DEBUT_DATES_DECES_A_ANALYSER)
 
 # calculer la moyenne, le nb min/max et les quartiles des décès par département (depuis 2018)
 deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
-		group_by(num_departement) %>% 
+		group_by(deces_num_dept) %>% 
 		summarise(minimum = min(nbDeces),
 				maximum = max(nbDeces),
 				moyenne = mean(nbDeces),
@@ -380,8 +384,8 @@ deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
 # Ajouter la moyenne, le nb min/max et les quartiles des décès par département et trier par département
 deces_dep_jour <- deces_dep_jour %>%
 		left_join(deces_dep_jour_moyenne_min_max_quartiles) %>%
-		arrange(num_departement, deces_date_complete, nbDeces) %>%
-		select(num_departement, minimum:dernier_quartile, deces_date_complete, everything())
+		arrange(deces_num_dept, deces_date_complete, nbDeces) %>%
+		select(deces_num_dept, minimum:dernier_quartile, deces_date_complete, everything())
 
 if (shallDeleteVars) rm(deces_dep_jour_moyenne_min_max_quartiles)
 
@@ -397,7 +401,7 @@ nom_departement <- read.csv("data/csv/departements-region.csv", sep=",", header 
 
 deces_dep_jour <- deces_dep_jour %>%
 		left_join(nom_departement,
-				by=c("num_departement"="num_dep"))
+				by=c("deces_num_dept"="num_dep"))
 
 if (shallDeleteVars) rm(nom_departement)
 
