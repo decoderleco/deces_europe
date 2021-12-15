@@ -1931,6 +1931,26 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	essai <- es_deces_standard_pays_semaine %>%
 			filter(numSemaineDepuis2013>410)
 	
+	# Calcul de surmortalité
+	
+	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>% 
+	  mutate(barre_vax_18_24 = case_when(
+	    Age18_24_dose1 > 0.5*max(Age18_24_dose1, na.rm = TRUE) ~ "barre dépassée",
+	    TRUE ~ "sous la barre"
+	  ))
+	temp <- ungroup(es_deces_standard_pays_semaine) %>% 
+	  select(numSemaineDepuis2013,barre_vax_18_24) %>% 
+	  filter(barre_vax_18_24=="barre dépassée")
+	
+	date_debut = min(temp$numSemaineDepuis2013)
+	date_fin = max(es_deces_standard_pays_semaine$numSemaineDepuis2013)-4
+	
+	temp <-  ungroup(es_deces_standard_pays_semaine) %>% 
+	  select(numSemaineDepuis2013,ecart_moyenne_15_24) %>% 
+	  filter(numSemaineDepuis2013 >= date_debut) %>% 
+	  filter(numSemaineDepuis2013 <= date_fin)
+	
+	ecart_moyenne = sum(temp$ecart_moyenne_15_24)
 
 	#création du graphiques
 	plot(essai$numSemaineDepuis2013, 
@@ -2070,15 +2090,16 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       type="o", 
 	       col="#003366") 
 	  
-	  mtext("première dose                                                                         ", side=1, col="#3399FF", line=2)
-	  mtext("deuxième dose", side=1, col="#0066CC", line=2)
-	  mtext("                                                                                      troisième dose", side=1, col="#003366", line=2)
-	  
+	  mtext("première dose                                                                         ", side=1, col="#3399FF", line=1)
+	  mtext("deuxième dose", side=1, col="#0066CC", line=1)
+	  mtext("                                                                                      troisième dose", side=1, col="#003366", line=1)
+	  mtext(paste0("différence à la mortalité moyenne depuis le début de la campagne vaccinale : ",round(ecart_moyenne,1)), side=1, col="black", line=2)
+	    
 	}
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
 	#
-	# Graphique 2 : Situation des 25- 50 ans
+	# Graphique 2 : Situation des 25- 49 ans
 	#
 
 	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/25-50/", essai$zone[1], "/")
@@ -2108,6 +2129,26 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	essai <- es_deces_standard_pays_semaine %>%
 	  filter(numSemaineDepuis2013>410)
 	
+	# Calcul de surmortalité
+	
+	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>% 
+	  mutate(barre_vax_25_49 = case_when(
+	    Age25_49_dose1 > 0.5*max(Age25_49_dose1, na.rm = TRUE) ~ "barre dépassée",
+	    TRUE ~ "sous la barre"
+	  ))
+	temp <- ungroup(es_deces_standard_pays_semaine) %>% 
+	  select(numSemaineDepuis2013,barre_vax_25_49) %>% 
+	  filter(barre_vax_25_49=="barre dépassée")
+	
+	date_debut = min(temp$numSemaineDepuis2013)
+	date_fin = max(es_deces_standard_pays_semaine$numSemaineDepuis2013)-4
+	
+	temp <-  ungroup(es_deces_standard_pays_semaine) %>% 
+	  select(numSemaineDepuis2013,ecart_moyenne_25_49) %>% 
+	  filter(numSemaineDepuis2013 >= date_debut) %>% 
+	  filter(numSemaineDepuis2013 <= date_fin)
+	
+	ecart_moyenne = sum(temp$ecart_moyenne_25_49)
 	
 	#création du graphiques
 	plot(essai$numSemaineDepuis2013, 
@@ -2248,9 +2289,10 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       type="o", 
 	       col="#003366")  
 	  
-	  mtext("première dose                                                                         ", side=1, col="#3399FF", line=2)
-	  mtext("deuxième dose", side=1, col="#0066CC", line=2)
-	  mtext("                                                                                      troisième dose", side=1, col="#003366", line=2)
+	  mtext("première dose                                                                         ", side=1, col="#3399FF", line=1)
+	  mtext("deuxième dose", side=1, col="#0066CC", line=1)
+	  mtext("                                                                                      troisième dose", side=1, col="#003366", line=1)
+	  mtext(paste0("différence à la mortalité moyenne depuis le début de la campagne vaccinale : ",round(ecart_moyenne,1)), side=1, col="black", line=2)
 	  
 	}
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
@@ -2490,7 +2532,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	mtext("nombre de décès toutes causes des 60 - 69 ans", side=2, line=3)
 	mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
 	mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
-	mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
+	mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=3)
 	
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
