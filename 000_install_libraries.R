@@ -28,6 +28,7 @@ install.packages("reshape2")
 
 install.packages("plyr")
 install.packages("tidyr")
+install.packages("rapport")
 
 #Pour létude de la météo
 install.packages("mgcv")

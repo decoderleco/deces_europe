@@ -619,7 +619,8 @@ vaccination <- vaccination %>% rename(tranche_age = clage_vacsi, deces_date_comp
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% left_join(vaccination, by=c("tranche_age","deces_date_complete"))
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
   mutate(n_dose1 = ifelse(is.na(n_dose1),0,n_dose1)) %>% 
-  mutate(n_complet = ifelse(is.na(n_complet),0,n_complet))
+  mutate(n_complet = ifelse(is.na(n_complet),0,n_complet))%>% 
+  mutate(n_rappel = ifelse(is.na(n_rappel),0,n_rappel))
 
 ################################################################################
 #
