@@ -16,7 +16,7 @@ library("rnaturalearthdata")
 library(readr)
 library(lsr)
 library(igraph)
-library(rapport)
+library(rapportools)
 
 #---------------------------------------#
 ####analyse des donnees hebdomadaires####
@@ -230,6 +230,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_portugal)
 a__f_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_serbie)
 a__f_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_suede)
 a__f_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_suisse)
+
 
 #-------------------------------------------------#
 ####    vaccinations grippe et deces France    ####

@@ -478,7 +478,7 @@ a__f_plot_fr_deces_quotidiens_par_region <- function(region) {
 					
 					theme(legend.position = "top") +
 					
-					ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", max(region$deces_date_complete) ,") par département")) +
+					ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", base::max(region$deces_date_complete) ,") par département")) +
 					
 					xlab("date de décès") + 
 					ylab("nombre de décès (centrés et réduits au quartile)"))
@@ -529,8 +529,8 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	
 	# Calculer la moyenne mobile sur 7 jours
 	moyenne_mobile <- running_mean(deces_par_jour$nbDeces, tailleFenetreGlissante)
-	ymax <- max(moyenne_mobile)
-	ymin <- min(moyenne_mobile)	
+	ymax <- base::max(moyenne_mobile)
+	ymin <- base::min(moyenne_mobile)	
 	moyenne_mobile <- data_frame(moyenne_mobile)
 	moyenne_mobile$numerojour <- 1:nrow(moyenne_mobile) + decalageSemaines
 	#	# Ajouter  moyenne binf et bsup
@@ -750,7 +750,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	# Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
 	maxWeekTime <- es_deces_standard_pays_semaine %>%
 			ungroup %>%
-			filter(numSemaineDepuis2013 == max(numSemaineDepuis2013)) %>%
+			filter(numSemaineDepuis2013 == base::max(numSemaineDepuis2013)) %>%
 			distinct() %>%
 			select(time)
 	maxWeekTime <- maxWeekTime[1, 1]
@@ -900,7 +900,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	essai <- es_deces_standard_pays_semaine 
 	
 	
-	  if(!is.na(min(essai$deces_standardises_si_pop_2020_15_24))){
+	  if(!is.na(base::min(essai$deces_standardises_si_pop_2020_15_24))){
 	#création du graphiques
 	plot(essai$numSemaineDepuis2013, 
 	     essai$deces_standardises_si_pop_2020_15_24, 
@@ -909,7 +909,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     axes=F, 
 	     xlab="", 
 	     ylab="", 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_15_24), max(essai$deces_standardises_si_pop_2020_15_24)), 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)), 
 	     type="o", 
 	     col="black", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -932,15 +932,15 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
 	
-	text(26,  min(essai$deces_standardises_si_pop_2020_15_24), "2013", cex=1.2)
-	text(78,  min(essai$deces_standardises_si_pop_2020_15_24), "2014", cex=1.2)
-	text(130, min(essai$deces_standardises_si_pop_2020_15_24), "2015", cex=1.2)
-	text(183, min(essai$deces_standardises_si_pop_2020_15_24), "2016", cex=1.2)
-	text(235, min(essai$deces_standardises_si_pop_2020_15_24), "2017", cex=1.2)
-	text(287, min(essai$deces_standardises_si_pop_2020_15_24), "2018", cex=1.2)
-	text(339, min(essai$deces_standardises_si_pop_2020_15_24), "2019", cex=1.2)
-	text(391, min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
-	text(440, min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
+	text(26,  base::min(essai$deces_standardises_si_pop_2020_15_24), "2013", cex=1.2)
+	text(78,  base::min(essai$deces_standardises_si_pop_2020_15_24), "2014", cex=1.2)
+	text(130, base::min(essai$deces_standardises_si_pop_2020_15_24), "2015", cex=1.2)
+	text(183, base::min(essai$deces_standardises_si_pop_2020_15_24), "2016", cex=1.2)
+	text(235, base::min(essai$deces_standardises_si_pop_2020_15_24), "2017", cex=1.2)
+	text(287, base::min(essai$deces_standardises_si_pop_2020_15_24), "2018", cex=1.2)
+	text(339, base::min(essai$deces_standardises_si_pop_2020_15_24), "2019", cex=1.2)
+	text(391, base::min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
+	text(440, base::min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
 	
 	# Superposer la moyenne mobile
 	par(new=T)
@@ -951,7 +951,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_15_24), max(essai$deces_standardises_si_pop_2020_15_24)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)),
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -965,7 +965,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_15_24), max(essai$deces_standardises_si_pop_2020_15_24)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)),
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -979,7 +979,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_15_24), max(essai$deces_standardises_si_pop_2020_15_24)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)),
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -994,7 +994,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_15_24), max(essai$deces_standardises_si_pop_2020_15_24)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)),
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -1042,7 +1042,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     axes=F, 
 	     xlab="", 
 	     ylab="", 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_25_49), max(essai$deces_standardises_si_pop_2020_25_49)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
 	     type="o", 
 	     col="black", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -1063,15 +1063,15 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
 	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
-	text(26,  min(essai$deces_standardises_si_pop_2020_25_49), "2013", cex=1.2)
-	text(78,  min(essai$deces_standardises_si_pop_2020_25_49), "2014", cex=1.2)
-	text(130, min(essai$deces_standardises_si_pop_2020_25_49), "2015", cex=1.2)
-	text(183, min(essai$deces_standardises_si_pop_2020_25_49), "2016", cex=1.2)
-	text(235, min(essai$deces_standardises_si_pop_2020_25_49), "2017", cex=1.2)
-	text(287, min(essai$deces_standardises_si_pop_2020_25_49), "2018", cex=1.2)
-	text(339, min(essai$deces_standardises_si_pop_2020_25_49), "2019", cex=1.2)
-	text(391, min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
-	text(440, min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
+	text(26,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2013", cex=1.2)
+	text(78,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2014", cex=1.2)
+	text(130, base::min(essai$deces_standardises_si_pop_2020_25_49), "2015", cex=1.2)
+	text(183, base::min(essai$deces_standardises_si_pop_2020_25_49), "2016", cex=1.2)
+	text(235, base::min(essai$deces_standardises_si_pop_2020_25_49), "2017", cex=1.2)
+	text(287, base::min(essai$deces_standardises_si_pop_2020_25_49), "2018", cex=1.2)
+	text(339, base::min(essai$deces_standardises_si_pop_2020_25_49), "2019", cex=1.2)
+	text(391, base::min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
+	text(440, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -1084,7 +1084,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_25_49), max(essai$deces_standardises_si_pop_2020_25_49)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -1098,7 +1098,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_25_49), max(essai$deces_standardises_si_pop_2020_25_49)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -1112,7 +1112,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_25_49), max(essai$deces_standardises_si_pop_2020_25_49)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -1127,7 +1127,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_25_49), max(essai$deces_standardises_si_pop_2020_25_49)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -1176,7 +1176,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     axes=F, 
 	     xlab="", 
 	     ylab="", 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_50_59), max(essai$deces_standardises_si_pop_2020_50_59)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
 	     type="o", 
 	     col="black", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -1197,15 +1197,15 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
 	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
-	text(26,  min(essai$deces_standardises_si_pop_2020_50_59), "2013", cex=1.2)
-	text(78,  min(essai$deces_standardises_si_pop_2020_50_59), "2014", cex=1.2)
-	text(130, min(essai$deces_standardises_si_pop_2020_50_59), "2015", cex=1.2)
-	text(183, min(essai$deces_standardises_si_pop_2020_50_59), "2016", cex=1.2)
-	text(235, min(essai$deces_standardises_si_pop_2020_50_59), "2017", cex=1.2)
-	text(287, min(essai$deces_standardises_si_pop_2020_50_59), "2018", cex=1.2)
-	text(339, min(essai$deces_standardises_si_pop_2020_50_59), "2019", cex=1.2)
-	text(391, min(essai$deces_standardises_si_pop_2020_50_59), "2020", cex=1.2)
-	text(440, min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
+	text(26,  base::min(essai$deces_standardises_si_pop_2020_50_59), "2013", cex=1.2)
+	text(78,  base::min(essai$deces_standardises_si_pop_2020_50_59), "2014", cex=1.2)
+	text(130, base::min(essai$deces_standardises_si_pop_2020_50_59), "2015", cex=1.2)
+	text(183, base::min(essai$deces_standardises_si_pop_2020_50_59), "2016", cex=1.2)
+	text(235, base::min(essai$deces_standardises_si_pop_2020_50_59), "2017", cex=1.2)
+	text(287, base::min(essai$deces_standardises_si_pop_2020_50_59), "2018", cex=1.2)
+	text(339, base::min(essai$deces_standardises_si_pop_2020_50_59), "2019", cex=1.2)
+	text(391, base::min(essai$deces_standardises_si_pop_2020_50_59), "2020", cex=1.2)
+	text(440, base::min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -1218,7 +1218,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_50_59), max(essai$deces_standardises_si_pop_2020_50_59)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -1232,7 +1232,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_50_59), max(essai$deces_standardises_si_pop_2020_50_59)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -1246,7 +1246,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_50_59), max(essai$deces_standardises_si_pop_2020_50_59)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -1261,7 +1261,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_50_59), max(essai$deces_standardises_si_pop_2020_50_59)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -1309,7 +1309,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     axes=F, 
 	     xlab="", 
 	     ylab="", 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_60_69), max(essai$deces_standardises_si_pop_2020_60_69)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)),
 	     type="o", 
 	     col="black", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -1330,15 +1330,15 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
 	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
-	text(26,  min(essai$deces_standardises_si_pop_2020_60_69), "2013", cex=1.2)
-	text(78,  min(essai$deces_standardises_si_pop_2020_60_69), "2014", cex=1.2)
-	text(130, min(essai$deces_standardises_si_pop_2020_60_69), "2015", cex=1.2)
-	text(183, min(essai$deces_standardises_si_pop_2020_60_69), "2016", cex=1.2)
-	text(235, min(essai$deces_standardises_si_pop_2020_60_69), "2017", cex=1.2)
-	text(287, min(essai$deces_standardises_si_pop_2020_60_69), "2018", cex=1.2)
-	text(339, min(essai$deces_standardises_si_pop_2020_60_69), "2019", cex=1.2)
-	text(391, min(essai$deces_standardises_si_pop_2020_60_69), "2020", cex=1.2)
-	text(440, min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
+	text(26,  base::min(essai$deces_standardises_si_pop_2020_60_69), "2013", cex=1.2)
+	text(78,  base::min(essai$deces_standardises_si_pop_2020_60_69), "2014", cex=1.2)
+	text(130, base::min(essai$deces_standardises_si_pop_2020_60_69), "2015", cex=1.2)
+	text(183, base::min(essai$deces_standardises_si_pop_2020_60_69), "2016", cex=1.2)
+	text(235, base::min(essai$deces_standardises_si_pop_2020_60_69), "2017", cex=1.2)
+	text(287, base::min(essai$deces_standardises_si_pop_2020_60_69), "2018", cex=1.2)
+	text(339, base::min(essai$deces_standardises_si_pop_2020_60_69), "2019", cex=1.2)
+	text(391, base::min(essai$deces_standardises_si_pop_2020_60_69), "2020", cex=1.2)
+	text(440, base::min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -1351,7 +1351,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_60_69), max(essai$deces_standardises_si_pop_2020_60_69)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)),
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -1365,7 +1365,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_60_69), max(essai$deces_standardises_si_pop_2020_60_69)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)),
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -1379,7 +1379,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_60_69), max(essai$deces_standardises_si_pop_2020_60_69)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)),
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -1394,7 +1394,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_60_69), max(essai$deces_standardises_si_pop_2020_60_69)), 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)), 
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -1442,7 +1442,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     axes=F, 
 	     xlab="", 
 	     ylab="", 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_70_79), max(essai$deces_standardises_si_pop_2020_70_79)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
 	     type="o", 
 	     col="black", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -1463,15 +1463,15 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
 	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
-	text(26,  min(essai$deces_standardises_si_pop_2020_70_79), "2013", cex=1.2)
-	text(78,  min(essai$deces_standardises_si_pop_2020_70_79), "2014", cex=1.2)
-	text(130, min(essai$deces_standardises_si_pop_2020_70_79), "2015", cex=1.2)
-	text(183, min(essai$deces_standardises_si_pop_2020_70_79), "2016", cex=1.2)
-	text(235, min(essai$deces_standardises_si_pop_2020_70_79), "2017", cex=1.2)
-	text(287, min(essai$deces_standardises_si_pop_2020_70_79), "2018", cex=1.2)
-	text(339, min(essai$deces_standardises_si_pop_2020_70_79), "2019", cex=1.2)
-	text(391, min(essai$deces_standardises_si_pop_2020_70_79), "2020", cex=1.2)
-	text(440, min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
+	text(26,  base::min(essai$deces_standardises_si_pop_2020_70_79), "2013", cex=1.2)
+	text(78,  base::min(essai$deces_standardises_si_pop_2020_70_79), "2014", cex=1.2)
+	text(130, base::min(essai$deces_standardises_si_pop_2020_70_79), "2015", cex=1.2)
+	text(183, base::min(essai$deces_standardises_si_pop_2020_70_79), "2016", cex=1.2)
+	text(235, base::min(essai$deces_standardises_si_pop_2020_70_79), "2017", cex=1.2)
+	text(287, base::min(essai$deces_standardises_si_pop_2020_70_79), "2018", cex=1.2)
+	text(339, base::min(essai$deces_standardises_si_pop_2020_70_79), "2019", cex=1.2)
+	text(391, base::min(essai$deces_standardises_si_pop_2020_70_79), "2020", cex=1.2)
+	text(440, base::min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -1484,7 +1484,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_70_79), max(essai$deces_standardises_si_pop_2020_70_79)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -1498,7 +1498,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_70_79), max(essai$deces_standardises_si_pop_2020_70_79)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -1512,7 +1512,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_70_79), max(essai$deces_standardises_si_pop_2020_70_79)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -1527,7 +1527,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_70_79), max(essai$deces_standardises_si_pop_2020_70_79)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -1578,7 +1578,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     axes=F, 
 	     xlab="", 
 	     ylab="", 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_ge80), max(essai$deces_standardises_si_pop_2020_ge80)),	     type="o", 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	     type="o", 
 	     col="black", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
 	
@@ -1598,15 +1598,15 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
 	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
-	text(26,  min(essai$deces_standardises_si_pop_2020_ge80), "2013", cex=1.2)
-	text(78,  min(essai$deces_standardises_si_pop_2020_ge80), "2014", cex=1.2)
-	text(130, min(essai$deces_standardises_si_pop_2020_ge80), "2015", cex=1.2)
-	text(183, min(essai$deces_standardises_si_pop_2020_ge80), "2016", cex=1.2)
-	text(235, min(essai$deces_standardises_si_pop_2020_ge80), "2017", cex=1.2)
-	text(287, min(essai$deces_standardises_si_pop_2020_ge80), "2018", cex=1.2)
-	text(339, min(essai$deces_standardises_si_pop_2020_ge80), "2019", cex=1.2)
-	text(391, min(essai$deces_standardises_si_pop_2020_ge80), "2020", cex=1.2)
-	text(440, min(essai$deces_standardises_si_pop_2020_ge80), "2021", cex=1.2)
+	text(26,  base::min(essai$deces_standardises_si_pop_2020_ge80), "2013", cex=1.2)
+	text(78,  base::min(essai$deces_standardises_si_pop_2020_ge80), "2014", cex=1.2)
+	text(130, base::min(essai$deces_standardises_si_pop_2020_ge80), "2015", cex=1.2)
+	text(183, base::min(essai$deces_standardises_si_pop_2020_ge80), "2016", cex=1.2)
+	text(235, base::min(essai$deces_standardises_si_pop_2020_ge80), "2017", cex=1.2)
+	text(287, base::min(essai$deces_standardises_si_pop_2020_ge80), "2018", cex=1.2)
+	text(339, base::min(essai$deces_standardises_si_pop_2020_ge80), "2019", cex=1.2)
+	text(391, base::min(essai$deces_standardises_si_pop_2020_ge80), "2020", cex=1.2)
+	text(440, base::min(essai$deces_standardises_si_pop_2020_ge80), "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -1619,7 +1619,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_ge80), max(essai$deces_standardises_si_pop_2020_ge80)),	 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	 
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -1633,7 +1633,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_ge80), max(essai$deces_standardises_si_pop_2020_ge80)),	 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	 
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -1647,7 +1647,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_ge80), max(essai$deces_standardises_si_pop_2020_ge80)),	 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	 
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -1662,7 +1662,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_ge80), max(essai$deces_standardises_si_pop_2020_ge80)),	 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	 
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -1694,7 +1694,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     axes=F, 
 	     xlab="", 
 	     ylab="", 
-	     ylim=c(0, max(essai$deces_standardises_si_pop_2020)), 
+	     ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)), 
 	     type="o", 
 	     col="#000033", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -1716,15 +1716,15 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
 	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
-	text(26,  max(essai$deces_standardises_si_pop_2020), "2013", cex=1.2)
-	text(78,  max(essai$deces_standardises_si_pop_2020), "2014", cex=1.2)
-	text(130, max(essai$deces_standardises_si_pop_2020), "2015", cex=1.2)
-	text(183, max(essai$deces_standardises_si_pop_2020), "2016", cex=1.2)
-	text(235, max(essai$deces_standardises_si_pop_2020), "2017", cex=1.2)
-	text(287, max(essai$deces_standardises_si_pop_2020), "2018", cex=1.2)
-	text(339, max(essai$deces_standardises_si_pop_2020), "2019", cex=1.2)
-	text(391, max(essai$deces_standardises_si_pop_2020), "2020", cex=1.2)
-	text(440, max(essai$deces_standardises_si_pop_2020), "2021", cex=1.2)
+	text(26,  base::max(essai$deces_standardises_si_pop_2020), "2013", cex=1.2)
+	text(78,  base::max(essai$deces_standardises_si_pop_2020), "2014", cex=1.2)
+	text(130, base::max(essai$deces_standardises_si_pop_2020), "2015", cex=1.2)
+	text(183, base::max(essai$deces_standardises_si_pop_2020), "2016", cex=1.2)
+	text(235, base::max(essai$deces_standardises_si_pop_2020), "2017", cex=1.2)
+	text(287, base::max(essai$deces_standardises_si_pop_2020), "2018", cex=1.2)
+	text(339, base::max(essai$deces_standardises_si_pop_2020), "2019", cex=1.2)
+	text(391, base::max(essai$deces_standardises_si_pop_2020), "2020", cex=1.2)
+	text(440, base::max(essai$deces_standardises_si_pop_2020), "2021", cex=1.2)
 	
 	# Superposer la moyenne mobile
 	par(new=T)
@@ -1735,7 +1735,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(0, max(essai$deces_standardises_si_pop_2020)),
+	     ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -1749,7 +1749,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(0, max(essai$deces_standardises_si_pop_2020)),
+	     ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -1763,7 +1763,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(0, max(essai$deces_standardises_si_pop_2020)),
+	     ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -1778,7 +1778,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(0, max(essai$deces_standardises_si_pop_2020)),
+	     ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -1792,7 +1792,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     axes=F, 
 	     cex=0, 
 	     xlab="", 
-	     ylim=c(0, max(essai$deces_standardises_si_pop_2020)),
+	     ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
 	     ylab="",
 	     type="o", 
 	     col="#000066") 	
@@ -1807,7 +1807,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     axes=F, 
 	     cex=0, 
 	     xlab="", 
-	     ylim=c(0, max(essai$deces_standardises_si_pop_2020)),
+	     ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
 	     ylab="",
 	     type="o", 
 	     col="#000099") 	
@@ -1823,7 +1823,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     axes=F, 
 	     cex=0, 
 	     xlab="", 
-	     ylim=c(0, max(essai$deces_standardises_si_pop_2020)),
+	     ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
 	     ylab="",
 	     type="o", 
 	     col="#0000CC")
@@ -1840,7 +1840,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     axes=F, 
 	     cex=0, 
 	     xlab="", 
-	     ylim=c(0, max(essai$deces_standardises_si_pop_2020)),
+	     ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
 	     ylab="",
 	     type="o", 
 	     col="#0000FF")
@@ -1858,7 +1858,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	     axes=F, 
 	     cex=0, 
 	     xlab="", 
-	     ylim=c(0, max(essai$deces_standardises_si_pop_2020)),
+	     ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
 	     ylab="",
 	     type="o", 
 	     col="#3366CC") 
@@ -1891,7 +1891,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
 	maxWeekTime <- es_deces_standard_pays_semaine %>%
 	  ungroup %>%
-	  filter(numSemaineDepuis2013 == max(numSemaineDepuis2013)) %>%
+	  filter(numSemaineDepuis2013 == base::max(numSemaineDepuis2013)) %>%
 	  distinct() %>%
 	  select(time)
 	maxWeekTime <- maxWeekTime[1, 1]
@@ -1903,7 +1903,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	#
 
 	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/15-24/", es_deces_standard_pays_semaine$zone[1], "/")
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/15-24/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -1935,23 +1935,24 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>% 
 	  mutate(barre_vax_18_24 = case_when(
-	    Age18_24_dose1 > 0.5*max(Age18_24_dose1, na.rm = TRUE) ~ "barre dépassée",
+	    Age18_24_dose1 > 0.5*base::max(Age18_24_dose1, na.rm = TRUE) ~ "barre dépassée",
 	    TRUE ~ "sous la barre"
 	  ))
 	temp <- ungroup(es_deces_standard_pays_semaine) %>% 
 	  select(numSemaineDepuis2013,barre_vax_18_24) %>% 
 	  filter(barre_vax_18_24=="barre dépassée")
 	
-	date_debut = min(temp$numSemaineDepuis2013)
-	date_fin = max(es_deces_standard_pays_semaine$numSemaineDepuis2013)-4
+	date_debut = base::min(temp$numSemaineDepuis2013)
+	date_fin = base::max(es_deces_standard_pays_semaine$numSemaineDepuis2013)-4
 	
 	temp <-  ungroup(es_deces_standard_pays_semaine) %>% 
 	  select(numSemaineDepuis2013,ecart_moyenne_15_24) %>% 
 	  filter(numSemaineDepuis2013 >= date_debut) %>% 
 	  filter(numSemaineDepuis2013 <= date_fin)
-	
 	ecart_moyenne = sum(temp$ecart_moyenne_15_24)
-
+nb_dose2 = sum(es_deces_standard_pays_semaine$Age15_17_dose2)+sum(es_deces_standard_pays_semaine$Age18_24_dose2)
+ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
+	
 	#création du graphiques
 	plot(essai$numSemaineDepuis2013, 
 	     essai$deces_standardises_si_pop_2020_15_24, 
@@ -1961,7 +1962,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     xlab="",
 	     lwd =2,
 	     ylab="", 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_15_24), max(essai$deces_standardises_si_pop_2020_15_24)), 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)), 
 	     type="o", 
 	     col="grey", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -1980,15 +1981,15 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26,  min(essai$deces_standardises_si_pop_2020_15_24), "2013", cex=1.2)
-	text(78,  min(essai$deces_standardises_si_pop_2020_15_24), "2014", cex=1.2)
-	text(130, min(essai$deces_standardises_si_pop_2020_15_24), "2015", cex=1.2)
-	text(183, min(essai$deces_standardises_si_pop_2020_15_24), "2016", cex=1.2)
-	text(235, min(essai$deces_standardises_si_pop_2020_15_24), "2017", cex=1.2)
-	text(287, min(essai$deces_standardises_si_pop_2020_15_24), "2018", cex=1.2)
-	text(339, min(essai$deces_standardises_si_pop_2020_15_24), "2019", cex=1.2)
-	text(391, min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
-	text(440, min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
+	text(26,  base::min(essai$deces_standardises_si_pop_2020_15_24), "2013", cex=1.2)
+	text(78,  base::min(essai$deces_standardises_si_pop_2020_15_24), "2014", cex=1.2)
+	text(130, base::min(essai$deces_standardises_si_pop_2020_15_24), "2015", cex=1.2)
+	text(183, base::min(essai$deces_standardises_si_pop_2020_15_24), "2016", cex=1.2)
+	text(235, base::min(essai$deces_standardises_si_pop_2020_15_24), "2017", cex=1.2)
+	text(287, base::min(essai$deces_standardises_si_pop_2020_15_24), "2018", cex=1.2)
+	text(339, base::min(essai$deces_standardises_si_pop_2020_15_24), "2019", cex=1.2)
+	text(391, base::min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
+	text(440, base::min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
 
 	# Superposer la moyenne mobile
 	par(new=T)
@@ -1999,7 +2000,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_15_24), max(essai$deces_standardises_si_pop_2020_15_24)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)),
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -2013,7 +2014,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_15_24), max(essai$deces_standardises_si_pop_2020_15_24)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)),
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -2027,7 +2028,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_15_24), max(essai$deces_standardises_si_pop_2020_15_24)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)),
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -2042,7 +2043,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_15_24), max(essai$deces_standardises_si_pop_2020_15_24)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)),
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -2058,7 +2059,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="", 
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
+	       ylim=c(0, base::max(base::max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),base::max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
 	       ylab="", 
 	       type="o", 
 	       col="#3399FF") 
@@ -2072,7 +2073,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="",
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
+	       ylim=c(0, base::max(base::max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),base::max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
 	       ylab="", 
 	       type="o", 
 	       col="#0066CC")
@@ -2085,7 +2086,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="",
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
+	       ylim=c(0, base::max(base::max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),base::max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
 	       ylab="", 
 	       type="o", 
 	       col="#003366") 
@@ -2093,7 +2094,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	  mtext("première dose                                                                         ", side=1, col="#3399FF", line=1)
 	  mtext("deuxième dose", side=1, col="#0066CC", line=1)
 	  mtext("                                                                                      troisième dose", side=1, col="#003366", line=1)
-	  mtext(paste0("différence à la mortalité moyenne depuis le début de la campagne vaccinale : ",round(ecart_moyenne,1)), side=1, col="black", line=2)
+	  mtext(paste0("différence de mortalité depuis le début de la campagne vaccinale : ",round(ecart_moyenne,1)," soit ",round(ecart_pour_centmille,1)," pour 100 000 injections"), side=1, col="black", line=2)
 	    
 	}
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
@@ -2102,7 +2103,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Graphique 2 : Situation des 25- 49 ans
 	#
 
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/25-50/", essai$zone[1], "/")
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/25-50/")
 	a__f_createDir(repertoire)
 
 	#Nom du fichier png à générer
@@ -2133,15 +2134,15 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>% 
 	  mutate(barre_vax_25_49 = case_when(
-	    Age25_49_dose1 > 0.5*max(Age25_49_dose1, na.rm = TRUE) ~ "barre dépassée",
+	    Age25_49_dose1 > 0.5*base::max(Age25_49_dose1, na.rm = TRUE) ~ "barre dépassée",
 	    TRUE ~ "sous la barre"
 	  ))
 	temp <- ungroup(es_deces_standard_pays_semaine) %>% 
 	  select(numSemaineDepuis2013,barre_vax_25_49) %>% 
 	  filter(barre_vax_25_49=="barre dépassée")
 	
-	date_debut = min(temp$numSemaineDepuis2013)
-	date_fin = max(es_deces_standard_pays_semaine$numSemaineDepuis2013)-4
+	date_debut = base::min(temp$numSemaineDepuis2013)
+	date_fin = base::max(es_deces_standard_pays_semaine$numSemaineDepuis2013)-4
 	
 	temp <-  ungroup(es_deces_standard_pays_semaine) %>% 
 	  select(numSemaineDepuis2013,ecart_moyenne_25_49) %>% 
@@ -2149,6 +2150,8 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	  filter(numSemaineDepuis2013 <= date_fin)
 	
 	ecart_moyenne = sum(temp$ecart_moyenne_25_49)
+	nb_dose2 = sum(es_deces_standard_pays_semaine$Age25_49)+sum(es_deces_standard_pays_semaine$Age25_49_dose2)
+	ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	
 	#création du graphiques
 	plot(essai$numSemaineDepuis2013, 
@@ -2159,7 +2162,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     lwd=2,
 	     xlab="", 
 	     ylab="", 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_25_49), max(essai$deces_standardises_si_pop_2020_25_49)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
 	     type="o", 
 	     col="grey", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -2177,15 +2180,15 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26,  min(essai$deces_standardises_si_pop_2020_25_49), "2013", cex=1.2)
-	text(78,  min(essai$deces_standardises_si_pop_2020_25_49), "2014", cex=1.2)
-	text(130, min(essai$deces_standardises_si_pop_2020_25_49), "2015", cex=1.2)
-	text(183, min(essai$deces_standardises_si_pop_2020_25_49), "2016", cex=1.2)
-	text(235, min(essai$deces_standardises_si_pop_2020_25_49), "2017", cex=1.2)
-	text(287, min(essai$deces_standardises_si_pop_2020_25_49), "2018", cex=1.2)
-	text(339, min(essai$deces_standardises_si_pop_2020_25_49), "2019", cex=1.2)
-	text(391, min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
-	text(440, min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
+	text(26,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2013", cex=1.2)
+	text(78,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2014", cex=1.2)
+	text(130, base::min(essai$deces_standardises_si_pop_2020_25_49), "2015", cex=1.2)
+	text(183, base::min(essai$deces_standardises_si_pop_2020_25_49), "2016", cex=1.2)
+	text(235, base::min(essai$deces_standardises_si_pop_2020_25_49), "2017", cex=1.2)
+	text(287, base::min(essai$deces_standardises_si_pop_2020_25_49), "2018", cex=1.2)
+	text(339, base::min(essai$deces_standardises_si_pop_2020_25_49), "2019", cex=1.2)
+	text(391, base::min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
+	text(440, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -2198,7 +2201,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_25_49), max(essai$deces_standardises_si_pop_2020_25_49)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -2212,7 +2215,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_25_49), max(essai$deces_standardises_si_pop_2020_25_49)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -2226,7 +2229,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_25_49), max(essai$deces_standardises_si_pop_2020_25_49)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -2241,7 +2244,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_25_49), max(essai$deces_standardises_si_pop_2020_25_49)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -2257,7 +2260,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="",
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age25_49_dose1,na.rm=TRUE),max(essai$Age25_49_dose2,na.rm=TRUE))), 
+	       ylim=c(0, base::max(base::max(essai$Age25_49_dose1,na.rm=TRUE),base::max(essai$Age25_49_dose2,na.rm=TRUE))), 
 	       ylab="", 
 	       type="o", 
 	       col="#3399FF") 
@@ -2271,7 +2274,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="", 
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age25_49_dose1,na.rm=TRUE),max(essai$Age25_49_dose2,na.rm=TRUE))),
+	       ylim=c(0, base::max(base::max(essai$Age25_49_dose1,na.rm=TRUE),base::max(essai$Age25_49_dose2,na.rm=TRUE))),
 	       ylab="", 
 	       type="o", 
 	       col="#0066CC") 
@@ -2284,7 +2287,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="",
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age25_49_dose1,na.rm=TRUE),max(essai$Age25_49_dose2,na.rm=TRUE))),
+	       ylim=c(0, base::max(base::max(essai$Age25_49_dose1,na.rm=TRUE),base::max(essai$Age25_49_dose2,na.rm=TRUE))),
 	       ylab="", 
 	       type="o", 
 	       col="#003366")  
@@ -2292,7 +2295,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	  mtext("première dose                                                                         ", side=1, col="#3399FF", line=1)
 	  mtext("deuxième dose", side=1, col="#0066CC", line=1)
 	  mtext("                                                                                      troisième dose", side=1, col="#003366", line=1)
-	  mtext(paste0("différence à la mortalité moyenne depuis le début de la campagne vaccinale : ",round(ecart_moyenne,1)), side=1, col="black", line=2)
+	  mtext(paste0("différence de mortalité depuis le début de la campagne vaccinale : ",round(ecart_moyenne,1)," soit ",round(ecart_pour_centmille,1)," pour 100 000 injections"), side=1, col="black", line=2)
 	  
 	}
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
@@ -2302,7 +2305,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Graphique 3 : Situation des 50- 59 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/50-59/", es_deces_standard_pays_semaine$zone[1], "/")
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/50-59/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2339,7 +2342,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     xlab="", 
 	     ylab="",
 	     lwd=2,
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_50_59), max(essai$deces_standardises_si_pop_2020_50_59)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
 	     type="o", 
 	     col="grey", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -2357,15 +2360,15 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26,  min(essai$deces_standardises_si_pop_2020_50_59), "2013", cex=1.2)
-	text(78,  min(essai$deces_standardises_si_pop_2020_50_59), "2014", cex=1.2)
-	text(130, min(essai$deces_standardises_si_pop_2020_50_59), "2015", cex=1.2)
-	text(183, min(essai$deces_standardises_si_pop_2020_50_59), "2016", cex=1.2)
-	text(235, min(essai$deces_standardises_si_pop_2020_50_59), "2017", cex=1.2)
-	text(287, min(essai$deces_standardises_si_pop_2020_50_59), "2018", cex=1.2)
-	text(339, min(essai$deces_standardises_si_pop_2020_50_59), "2019", cex=1.2)
-	text(391, min(essai$deces_standardises_si_pop_2020_50_59), "2020", cex=1.2)
-	text(440, min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
+	text(26,  base::min(essai$deces_standardises_si_pop_2020_50_59), "2013", cex=1.2)
+	text(78,  base::min(essai$deces_standardises_si_pop_2020_50_59), "2014", cex=1.2)
+	text(130, base::min(essai$deces_standardises_si_pop_2020_50_59), "2015", cex=1.2)
+	text(183, base::min(essai$deces_standardises_si_pop_2020_50_59), "2016", cex=1.2)
+	text(235, base::min(essai$deces_standardises_si_pop_2020_50_59), "2017", cex=1.2)
+	text(287, base::min(essai$deces_standardises_si_pop_2020_50_59), "2018", cex=1.2)
+	text(339, base::min(essai$deces_standardises_si_pop_2020_50_59), "2019", cex=1.2)
+	text(391, base::min(essai$deces_standardises_si_pop_2020_50_59), "2020", cex=1.2)
+	text(440, base::min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -2378,7 +2381,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_50_59), max(essai$deces_standardises_si_pop_2020_50_59)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -2392,7 +2395,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_50_59), max(essai$deces_standardises_si_pop_2020_50_59)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -2406,7 +2409,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_50_59), max(essai$deces_standardises_si_pop_2020_50_59)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -2421,7 +2424,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_50_59), max(essai$deces_standardises_si_pop_2020_50_59)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -2437,7 +2440,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="",
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age50_59_dose1,na.rm=TRUE),max(essai$Age50_59_dose2,na.rm=TRUE))), 
+	       ylim=c(0, base::max(base::max(essai$Age50_59_dose1,na.rm=TRUE),base::max(essai$Age50_59_dose2,na.rm=TRUE))), 
 	       ylab="", 
 	       type="o", 
 	       col="#3399FF") 
@@ -2451,7 +2454,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="", 
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age50_59_dose1,na.rm=TRUE),max(essai$Age50_59_dose2,na.rm=TRUE))),
+	       ylim=c(0, base::max(base::max(essai$Age50_59_dose1,na.rm=TRUE),base::max(essai$Age50_59_dose2,na.rm=TRUE))),
 	       ylab="", 
 	       type="o", 
 	       col="#0066CC") 
@@ -2464,7 +2467,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="",
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age50_59_dose1,na.rm=TRUE),max(essai$Age50_59_dose2,na.rm=TRUE))),
+	       ylim=c(0, base::max(base::max(essai$Age50_59_dose1,na.rm=TRUE),base::max(essai$Age50_59_dose2,na.rm=TRUE))),
 	       ylab="", 
 	       type="o", 
 	       col="#003366")   
@@ -2482,7 +2485,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Graphique 4 : Situation des 60- 69 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/", es_deces_standard_pays_semaine$zone[1], "/")
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2519,7 +2522,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     xlab="",
 	     lwd = 2,
 	     ylab="", 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_60_69), max(essai$deces_standardises_si_pop_2020_60_69)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)),
 	     type="o", 
 	     col="grey", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -2537,15 +2540,15 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26,  min(essai$deces_standardises_si_pop_2020_60_69), "2013", cex=1.2)
-	text(78,  min(essai$deces_standardises_si_pop_2020_60_69), "2014", cex=1.2)
-	text(130, min(essai$deces_standardises_si_pop_2020_60_69), "2015", cex=1.2)
-	text(183, min(essai$deces_standardises_si_pop_2020_60_69), "2016", cex=1.2)
-	text(235, min(essai$deces_standardises_si_pop_2020_60_69), "2017", cex=1.2)
-	text(287, min(essai$deces_standardises_si_pop_2020_60_69), "2018", cex=1.2)
-	text(339, min(essai$deces_standardises_si_pop_2020_60_69), "2019", cex=1.2)
-	text(391, min(essai$deces_standardises_si_pop_2020_60_69), "2020", cex=1.2)
-	text(440, min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
+	text(26,  base::min(essai$deces_standardises_si_pop_2020_60_69), "2013", cex=1.2)
+	text(78,  base::min(essai$deces_standardises_si_pop_2020_60_69), "2014", cex=1.2)
+	text(130, base::min(essai$deces_standardises_si_pop_2020_60_69), "2015", cex=1.2)
+	text(183, base::min(essai$deces_standardises_si_pop_2020_60_69), "2016", cex=1.2)
+	text(235, base::min(essai$deces_standardises_si_pop_2020_60_69), "2017", cex=1.2)
+	text(287, base::min(essai$deces_standardises_si_pop_2020_60_69), "2018", cex=1.2)
+	text(339, base::min(essai$deces_standardises_si_pop_2020_60_69), "2019", cex=1.2)
+	text(391, base::min(essai$deces_standardises_si_pop_2020_60_69), "2020", cex=1.2)
+	text(440, base::min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -2558,7 +2561,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_60_69), max(essai$deces_standardises_si_pop_2020_60_69)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)),
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -2572,7 +2575,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_60_69), max(essai$deces_standardises_si_pop_2020_60_69)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)),
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -2586,7 +2589,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_60_69), max(essai$deces_standardises_si_pop_2020_60_69)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)),
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -2601,7 +2604,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_60_69), max(essai$deces_standardises_si_pop_2020_60_69)), 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)), 
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -2617,7 +2620,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="",
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age60_69_dose1,na.rm=TRUE),max(essai$Age60_69_dose2,na.rm=TRUE))), 
+	       ylim=c(0, base::max(base::max(essai$Age60_69_dose1,na.rm=TRUE),base::max(essai$Age60_69_dose2,na.rm=TRUE))), 
 	       ylab="", 
 	       type="o", 
 	       col="#3399FF") 
@@ -2631,7 +2634,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="", 
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age60_69_dose1,na.rm=TRUE),max(essai$Age60_69_dose2,na.rm=TRUE))),
+	       ylim=c(0, base::max(base::max(essai$Age60_69_dose1,na.rm=TRUE),base::max(essai$Age60_69_dose2,na.rm=TRUE))),
 	       ylab="", 
 	       type="o", 
 	       col="#0066CC")
@@ -2644,7 +2647,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="",
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age60_69_dose1,na.rm=TRUE),max(essai$Age60_69_dose2,na.rm=TRUE))),
+	       ylim=c(0, base::max(base::max(essai$Age60_69_dose1,na.rm=TRUE),base::max(essai$Age60_69_dose2,na.rm=TRUE))),
 	       ylab="", 
 	       type="o", 
 	       col="#003366")   
@@ -2662,7 +2665,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Graphique 5 : Situation des 70- 79 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/70-79/", es_deces_standard_pays_semaine$zone[1], "/")
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/70-79/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2687,7 +2690,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	  left_join(moyenne_mobile_70_79)
 	
 	essai <- es_deces_standard_pays_semaine %>%
-	  filter(numSemaineDepuis2013>287)
+	  filter(numSemaineDepuis2013>410)
 	
 	
 	#création du graphiques
@@ -2699,7 +2702,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     xlab="", 
 	     lwd=2,
 	     ylab="", 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_70_79), max(essai$deces_standardises_si_pop_2020_70_79)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
 	     type="o", 
 	     col="grey", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -2717,15 +2720,15 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26,  min(essai$deces_standardises_si_pop_2020_70_79), "2013", cex=1.2)
-	text(78,  min(essai$deces_standardises_si_pop_2020_70_79), "2014", cex=1.2)
-	text(130, min(essai$deces_standardises_si_pop_2020_70_79), "2015", cex=1.2)
-	text(183, min(essai$deces_standardises_si_pop_2020_70_79), "2016", cex=1.2)
-	text(235, min(essai$deces_standardises_si_pop_2020_70_79), "2017", cex=1.2)
-	text(287, min(essai$deces_standardises_si_pop_2020_70_79), "2018", cex=1.2)
-	text(339, min(essai$deces_standardises_si_pop_2020_70_79), "2019", cex=1.2)
-	text(391, min(essai$deces_standardises_si_pop_2020_70_79), "2020", cex=1.2)
-	text(440, min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
+	text(26,  base::min(essai$deces_standardises_si_pop_2020_70_79), "2013", cex=1.2)
+	text(78,  base::min(essai$deces_standardises_si_pop_2020_70_79), "2014", cex=1.2)
+	text(130, base::min(essai$deces_standardises_si_pop_2020_70_79), "2015", cex=1.2)
+	text(183, base::min(essai$deces_standardises_si_pop_2020_70_79), "2016", cex=1.2)
+	text(235, base::min(essai$deces_standardises_si_pop_2020_70_79), "2017", cex=1.2)
+	text(287, base::min(essai$deces_standardises_si_pop_2020_70_79), "2018", cex=1.2)
+	text(339, base::min(essai$deces_standardises_si_pop_2020_70_79), "2019", cex=1.2)
+	text(391, base::min(essai$deces_standardises_si_pop_2020_70_79), "2020", cex=1.2)
+	text(440, base::min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -2738,7 +2741,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_70_79), max(essai$deces_standardises_si_pop_2020_70_79)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -2752,7 +2755,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_70_79), max(essai$deces_standardises_si_pop_2020_70_79)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -2766,7 +2769,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_70_79), max(essai$deces_standardises_si_pop_2020_70_79)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -2781,7 +2784,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_70_79), max(essai$deces_standardises_si_pop_2020_70_79)),
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -2797,7 +2800,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="",
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age70_79_dose1,na.rm=TRUE),max(essai$Age70_79_dose2,na.rm=TRUE))), 
+	       ylim=c(0, base::max(base::max(essai$Age70_79_dose1,na.rm=TRUE),base::max(essai$Age70_79_dose2,na.rm=TRUE))), 
 	       ylab="", 
 	       type="o", 
 	       col="#3399FF") 
@@ -2811,7 +2814,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="", 
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age70_79_dose1,na.rm=TRUE),max(essai$Age70_79_dose2,na.rm=TRUE))),
+	       ylim=c(0, base::max(base::max(essai$Age70_79_dose1,na.rm=TRUE),base::max(essai$Age70_79_dose2,na.rm=TRUE))),
 	       ylab="", 
 	       type="o", 
 	       col="#0066CC") 
@@ -2824,7 +2827,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	       cex=0, 
 	       xlab="",
 	       lwd=2,
-	       ylim=c(0, max(max(essai$Age70_79_dose1,na.rm=TRUE),max(essai$Age70_79_dose2,na.rm=TRUE))),
+	       ylim=c(0, base::max(base::max(essai$Age70_79_dose1,na.rm=TRUE),base::max(essai$Age70_79_dose2,na.rm=TRUE))),
 	       ylab="", 
 	       type="o", 
 	       col="#003366")   
@@ -2842,7 +2845,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Graphique 6 : Situation des plus de 80 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/80plus/", essai$zone[1], "/")
+	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/80plus/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2878,7 +2881,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     axes=F, 
 	     xlab="", 
 	     ylab="", 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_ge80), max(essai$deces_standardises_si_pop_2020_ge80)),	     type="o", 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	     type="o", 
 	     col="grey", 
 	     main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
 	
@@ -2895,15 +2898,15 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	# Lignes verticales
 	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
 	
-	text(26,  min(essai$deces_standardises_si_pop_2020_ge80), "2013", cex=1.2)
-	text(78,  min(essai$deces_standardises_si_pop_2020_ge80), "2014", cex=1.2)
-	text(130, min(essai$deces_standardises_si_pop_2020_ge80), "2015", cex=1.2)
-	text(183, min(essai$deces_standardises_si_pop_2020_ge80), "2016", cex=1.2)
-	text(235, min(essai$deces_standardises_si_pop_2020_ge80), "2017", cex=1.2)
-	text(287, min(essai$deces_standardises_si_pop_2020_ge80), "2018", cex=1.2)
-	text(339, min(essai$deces_standardises_si_pop_2020_ge80), "2019", cex=1.2)
-	text(391, min(essai$deces_standardises_si_pop_2020_ge80), "2020", cex=1.2)
-	text(440, min(essai$deces_standardises_si_pop_2020_ge80), "2021", cex=1.2)
+	text(26,  base::min(essai$deces_standardises_si_pop_2020_ge80), "2013", cex=1.2)
+	text(78,  base::min(essai$deces_standardises_si_pop_2020_ge80), "2014", cex=1.2)
+	text(130, base::min(essai$deces_standardises_si_pop_2020_ge80), "2015", cex=1.2)
+	text(183, base::min(essai$deces_standardises_si_pop_2020_ge80), "2016", cex=1.2)
+	text(235, base::min(essai$deces_standardises_si_pop_2020_ge80), "2017", cex=1.2)
+	text(287, base::min(essai$deces_standardises_si_pop_2020_ge80), "2018", cex=1.2)
+	text(339, base::min(essai$deces_standardises_si_pop_2020_ge80), "2019", cex=1.2)
+	text(391, base::min(essai$deces_standardises_si_pop_2020_ge80), "2020", cex=1.2)
+	text(440, base::min(essai$deces_standardises_si_pop_2020_ge80), "2021", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -2916,7 +2919,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=3,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_ge80), max(essai$deces_standardises_si_pop_2020_ge80)),	 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	 
 	     ylab="", 
 	     type="o", 
 	     col="red") 
@@ -2930,7 +2933,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_ge80), max(essai$deces_standardises_si_pop_2020_ge80)),	 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	 
 	     ylab="", 
 	     type="o", 
 	     col="purple") 
@@ -2944,7 +2947,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5,  
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_ge80), max(essai$deces_standardises_si_pop_2020_ge80)),	 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	 
 	     ylab="", 
 	     lty=2, 
 	     type="o", 
@@ -2959,7 +2962,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	     cex=0, 
 	     xlab="", 
 	     lwd=1.5, 
-	     ylim=c(min(essai$deces_standardises_si_pop_2020_ge80), max(essai$deces_standardises_si_pop_2020_ge80)),	 
+	     ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	 
 	     ylab="",
 	     lty=2, 
 	     type="o", 
@@ -2976,7 +2979,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	         cex=0, 
 	         xlab="",
 	         lwd=2,
-	         ylim=c(0, max(max(essai$'Age80+_dose1',na.rm=TRUE),max(essai$'Age80+_dose2',na.rm=TRUE))), 
+	         ylim=c(0, base::max(base::max(essai$'Age80+_dose1',na.rm=TRUE),base::max(essai$'Age80+_dose2',na.rm=TRUE))), 
 	         ylab="", 
 	         type="o", 
 	         col="#3399FF") 
@@ -2994,7 +2997,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	         cex=0, 
 	         xlab="", 
 	         lwd=2,
-	         ylim=c(0, max(max(essai$'Age80+_dose1',na.rm=TRUE),max(essai$'Age80+_dose2',na.rm=TRUE))), 
+	         ylim=c(0, base::max(base::max(essai$'Age80+_dose1',na.rm=TRUE),base::max(essai$'Age80+_dose2',na.rm=TRUE))), 
 	         ylab="", 
 	         type="o", 
 	         col="#0066CC") 
@@ -3007,7 +3010,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	         cex=0, 
 	         xlab="",
 	         lwd=2, 
-	         ylim=c(0, max(max(essai$'Age80+_dose1',na.rm=TRUE),max(essai$'Age80+_dose2',na.rm=TRUE))), 
+	         ylim=c(0, base::max(base::max(essai$'Age80+_dose1',na.rm=TRUE),base::max(essai$'Age80+_dose2',na.rm=TRUE))), 
 	         ylab="", 
 	         type="o", 
 	         col="#003366") 
@@ -3033,7 +3036,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   # Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
   maxWeekTime <- es_deces_standard_pays_semaine %>%
     ungroup %>%
-    filter(numSemaineDepuis2013 == max(numSemaineDepuis2013)) %>%
+    filter(numSemaineDepuis2013 == base::max(numSemaineDepuis2013)) %>%
     distinct() %>%
     select(time)
   maxWeekTime <- maxWeekTime[1, 1]
@@ -3150,7 +3153,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        lwd=2, 
        xlab="week", 
        ylab="", 
-       ylim=c(min(essai$diff_15_24), max(essai$diff_15_24)), 
+       ylim=c(base::min(essai$diff_15_24), base::max(essai$diff_15_24)), 
        type="o", 
        col="grey", 
        main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -3171,8 +3174,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   # Lignes verticales
   abline(v=c(366,419), col="blue", lty=3)
   
-  text(391, min(essai$diff_15_24), "2020", cex=1.2)
-  text(440, min(essai$diff_15_24), "2021", cex=1.2)
+  text(391, base::min(essai$diff_15_24), "2020", cex=1.2)
+  text(440, base::min(essai$diff_15_24), "2021", cex=1.2)
   
   #text(26, 22000, nomPays, cex=1.2)
   
@@ -3185,7 +3188,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=3,  
-       ylim=c(min(essai$diff_15_24), max(essai$diff_15_24)),
+       ylim=c(base::min(essai$diff_15_24), base::max(essai$diff_15_24)),
        ylab="", 
        type="o", 
        col="red") 
@@ -3199,7 +3202,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5,  
-       ylim=c(min(essai$diff_15_24), max(essai$diff_15_24)), 
+       ylim=c(base::min(essai$diff_15_24), base::max(essai$diff_15_24)), 
        ylab="", 
        type="o", 
        col="purple") 
@@ -3213,7 +3216,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5,  
-       ylim=c(min(essai$diff_15_24), max(essai$diff_15_24)), 
+       ylim=c(base::min(essai$diff_15_24), base::max(essai$diff_15_24)), 
        ylab="", 
        lty=2, 
        type="o", 
@@ -3228,7 +3231,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5, 
-       ylim=c(min(essai$diff_15_24), max(essai$diff_15_24)), 
+       ylim=c(base::min(essai$diff_15_24), base::max(essai$diff_15_24)), 
        ylab="",
        lty=2, 
        type="o", 
@@ -3244,7 +3247,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=2,
-       ylim=c(0, max(max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
+       ylim=c(0, base::max(base::max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),base::max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
        ylab="", 
        type="o", 
        col="blue") 
@@ -3258,7 +3261,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=2,
-       ylim=c(0, max(max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
+       ylim=c(0, base::max(base::max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),base::max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
        ylab="", 
        type="o", 
        col="dark blue") 
@@ -3307,7 +3310,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        xlab="week",
        lwd=2, 
        ylab="", 
-       ylim=c(min(essai$diff_25_49), max(essai$diff_25_49)), 
+       ylim=c(base::min(essai$diff_25_49), base::max(essai$diff_25_49)), 
        type="o", 
        col="grey", 
        main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -3328,8 +3331,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   # Lignes verticales
   abline(v=c(366,419), col="blue", lty=3)
   
-  text(391, min(essai$diff_25_49), "2020", cex=1.2)
-  text(440, min(essai$diff_25_49), "2021", cex=1.2)
+  text(391, base::min(essai$diff_25_49), "2020", cex=1.2)
+  text(440, base::min(essai$diff_25_49), "2021", cex=1.2)
   
   # Superposer la moyenne mobile
   par(new=T)
@@ -3340,7 +3343,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=3,  
-       ylim=c(min(essai$diff_25_49), max(essai$diff_25_49)),
+       ylim=c(base::min(essai$diff_25_49), base::max(essai$diff_25_49)),
        ylab="", 
        type="o", 
        col="red") 
@@ -3354,7 +3357,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5,  
-       ylim=c(min(essai$diff_25_49), max(essai$diff_25_49)), 
+       ylim=c(base::min(essai$diff_25_49), base::max(essai$diff_25_49)), 
        ylab="", 
        type="o", 
        col="purple") 
@@ -3368,7 +3371,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5,  
-       ylim=c(min(essai$diff_25_49), max(essai$diff_25_49)), 
+       ylim=c(base::min(essai$diff_25_49), base::max(essai$diff_25_49)), 
        ylab="", 
        lty=2, 
        type="o", 
@@ -3383,7 +3386,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5, 
-       ylim=c(min(essai$diff_25_49), max(essai$diff_25_49)), 
+       ylim=c(base::min(essai$diff_25_49), base::max(essai$diff_25_49)), 
        ylab="",
        lty=2, 
        type="o", 
@@ -3398,7 +3401,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
          cex=0, 
          xlab="", 
          lwd=2,
-         ylim=c(0, max(max(essai$Age25_49_dose1,na.rm=TRUE),max(essai$Age25_49_dose2,na.rm=TRUE))), 
+         ylim=c(0, base::max(base::max(essai$Age25_49_dose1,na.rm=TRUE),base::max(essai$Age25_49_dose2,na.rm=TRUE))), 
          ylab="", 
          type="o", 
          col="blue") 
@@ -3412,7 +3415,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
          cex=0, 
          xlab="", 
          lwd=2,
-         ylim=c(0, max(max(essai$Age25_49_dose1,na.rm=TRUE),max(essai$Age25_49_dose2,na.rm=TRUE))),  
+         ylim=c(0, base::max(base::max(essai$Age25_49_dose1,na.rm=TRUE),base::max(essai$Age25_49_dose2,na.rm=TRUE))),  
          ylab="", 
          type="o", 
          col="dark blue") 	
@@ -3464,7 +3467,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        xlab="week", 
        lwd=2, 
        ylab="", 
-       ylim=c(min(essai$diff_50_59), max(essai$diff_50_59)), 
+       ylim=c(base::min(essai$diff_50_59), base::max(essai$diff_50_59)), 
        type="o", 
        col="grey", 
        main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -3485,8 +3488,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   # Lignes verticales
   abline(v=c(366,419), col="blue", lty=3)
   
-  text(391, min(essai$diff_50_59), "2020", cex=1.2)
-  text(440, min(essai$diff_50_59), "2021", cex=1.2)
+  text(391, base::min(essai$diff_50_59), "2020", cex=1.2)
+  text(440, base::min(essai$diff_50_59), "2021", cex=1.2)
   
   #text(26, 22000, nomPays, cex=1.2)
   
@@ -3499,7 +3502,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=3,  
-       ylim=c(min(essai$diff_50_59), max(essai$diff_50_59)),
+       ylim=c(base::min(essai$diff_50_59), base::max(essai$diff_50_59)),
        ylab="", 
        type="o", 
        col="red") 
@@ -3513,7 +3516,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5,  
-       ylim=c(min(essai$diff_50_59), max(essai$diff_50_59)), 
+       ylim=c(base::min(essai$diff_50_59), base::max(essai$diff_50_59)), 
        ylab="", 
        type="o", 
        col="purple") 
@@ -3527,7 +3530,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5,  
-       ylim=c(min(essai$diff_50_59), max(essai$diff_50_59)), 
+       ylim=c(base::min(essai$diff_50_59), base::max(essai$diff_50_59)), 
        ylab="", 
        lty=2, 
        type="o", 
@@ -3542,7 +3545,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5, 
-       ylim=c(min(essai$diff_50_59), max(essai$diff_50_59)), 
+       ylim=c(base::min(essai$diff_50_59), base::max(essai$diff_50_59)), 
        ylab="",
        lty=2, 
        type="o", 
@@ -3557,7 +3560,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
          cex=0, 
          xlab="", 
          lwd=2,
-         ylim=c(0, max(max(essai$Age50_59_dose1,na.rm=TRUE),max(essai$Age50_59_dose2,na.rm=TRUE))), 
+         ylim=c(0, base::max(base::max(essai$Age50_59_dose1,na.rm=TRUE),base::max(essai$Age50_59_dose2,na.rm=TRUE))), 
          ylab="", 
          type="o", 
          col="blue") 
@@ -3571,7 +3574,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
          cex=0, 
          xlab="", 
          lwd=2,
-         ylim=c(0, max(max(essai$Age50_59_dose1,na.rm=TRUE),max(essai$Age50_59_dose2,na.rm=TRUE))),  
+         ylim=c(0, base::max(base::max(essai$Age50_59_dose1,na.rm=TRUE),base::max(essai$Age50_59_dose2,na.rm=TRUE))),  
          ylab="", 
          type="o", 
          col="dark blue") 
@@ -3583,7 +3586,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   # Graphique 4 : Situation des 60- 69 ans
   #
   
-  repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/", essai$zone[1], "/")
+  repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/")
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
@@ -3620,7 +3623,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        xlab="week", 
        lwd=2, 
        ylab="", 
-       ylim=c(min(essai$diff_60_69), max(essai$diff_60_69)), 
+       ylim=c(base::min(essai$diff_60_69), base::max(essai$diff_60_69)), 
        type="o", 
        col="grey", 
        main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -3641,8 +3644,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   # Lignes verticales
   abline(v=c(366,419), col="blue", lty=3)
   
-  text(391, min(essai$diff_60_69), "2020", cex=1.2)
-  text(440, min(essai$diff_60_69), "2021", cex=1.2)
+  text(391, base::min(essai$diff_60_69), "2020", cex=1.2)
+  text(440, base::min(essai$diff_60_69), "2021", cex=1.2)
   
   #text(26, 22000, nomPays, cex=1.2)
   
@@ -3655,7 +3658,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=3,  
-       ylim=c(min(essai$diff_60_69), max(essai$diff_60_69)),
+       ylim=c(base::min(essai$diff_60_69), base::max(essai$diff_60_69)),
        ylab="", 
        type="o", 
        col="red") 
@@ -3669,7 +3672,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5,  
-       ylim=c(min(essai$diff_60_69), max(essai$diff_60_69)), 
+       ylim=c(base::min(essai$diff_60_69), base::max(essai$diff_60_69)), 
        ylab="", 
        type="o", 
        col="purple") 
@@ -3683,7 +3686,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5,  
-       ylim=c(min(essai$diff_60_69), max(essai$diff_60_69)), 
+       ylim=c(base::min(essai$diff_60_69), base::max(essai$diff_60_69)), 
        ylab="", 
        lty=2, 
        type="o", 
@@ -3698,7 +3701,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5, 
-       ylim=c(min(essai$diff_60_69), max(essai$diff_60_69)), 
+       ylim=c(base::min(essai$diff_60_69), base::max(essai$diff_60_69)), 
        ylab="",
        lty=2, 
        type="o", 
@@ -3714,7 +3717,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
          cex=0, 
          xlab="", 
          lwd=2,
-         ylim=c(0, max(max(essai$Age60_69_dose1,na.rm=TRUE),max(essai$Age60_69_dose2,na.rm=TRUE))), 
+         ylim=c(0, base::max(base::max(essai$Age60_69_dose1,na.rm=TRUE),base::max(essai$Age60_69_dose2,na.rm=TRUE))), 
          ylab="", 
          type="o", 
          col="blue") 
@@ -3728,7 +3731,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
          cex=0, 
          xlab="", 
          lwd=2,
-         ylim=c(0, max(max(essai$Age60_69_dose1,na.rm=TRUE),max(essai$Age60_69_dose2,na.rm=TRUE))),  
+         ylim=c(0, base::max(base::max(essai$Age60_69_dose1,na.rm=TRUE),base::max(essai$Age60_69_dose2,na.rm=TRUE))),  
          ylab="", 
          type="o", 
          col="dark blue") 	
@@ -3777,7 +3780,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        lwd=2, 
        xlab="week", 
        ylab="", 
-       ylim=c(min(essai$diff_70_79), max(essai$diff_70_79)), 
+       ylim=c(base::min(essai$diff_70_79), base::max(essai$diff_70_79)), 
        type="o", 
        col="grey", 
        main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -3798,8 +3801,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   # Lignes verticales
   abline(v=c(366,419), col="blue", lty=3)
   
-  text(391, min(essai$diff_70_79), "2020", cex=1.2)
-  text(440, min(essai$diff_70_79), "2021", cex=1.2)
+  text(391, base::min(essai$diff_70_79), "2020", cex=1.2)
+  text(440, base::min(essai$diff_70_79), "2021", cex=1.2)
   
   #text(26, 22000, nomPays, cex=1.2)
   
@@ -3812,7 +3815,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=3,  
-       ylim=c(min(essai$diff_70_79), max(essai$diff_70_79)),
+       ylim=c(base::min(essai$diff_70_79), base::max(essai$diff_70_79)),
        ylab="", 
        type="o", 
        col="red") 
@@ -3826,7 +3829,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5,  
-       ylim=c(min(essai$diff_70_79), max(essai$diff_70_79)), 
+       ylim=c(base::min(essai$diff_70_79), base::max(essai$diff_70_79)), 
        ylab="", 
        type="o", 
        col="purple") 
@@ -3840,7 +3843,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5,  
-       ylim=c(min(essai$diff_70_79), max(essai$diff_70_79)), 
+       ylim=c(base::min(essai$diff_70_79), base::max(essai$diff_70_79)), 
        ylab="", 
        lty=2, 
        type="o", 
@@ -3855,7 +3858,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5, 
-       ylim=c(min(essai$diff_70_79), max(essai$diff_70_79)), 
+       ylim=c(base::min(essai$diff_70_79), base::max(essai$diff_70_79)), 
        ylab="",
        lty=2, 
        type="o", 
@@ -3871,7 +3874,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
          cex=0, 
          xlab="", 
          lwd=2,
-         ylim=c(0, max(max(essai$Age70_79_dose1,na.rm=TRUE),max(essai$Age70_79_dose2,na.rm=TRUE))), 
+         ylim=c(0, base::max(base::max(essai$Age70_79_dose1,na.rm=TRUE),base::max(essai$Age70_79_dose2,na.rm=TRUE))), 
          ylab="", 
          type="o", 
          col="blue") 
@@ -3885,7 +3888,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
          cex=0, 
          xlab="", 
          lwd=2,
-         ylim=c(0, max(max(essai$Age70_79_dose1,na.rm=TRUE),max(essai$Age70_79_dose2,na.rm=TRUE))),  
+         ylim=c(0, base::max(base::max(essai$Age70_79_dose1,na.rm=TRUE),base::max(essai$Age70_79_dose2,na.rm=TRUE))),  
          ylab="", 
          type="o", 
          col="dark blue") 
@@ -3936,7 +3939,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        xlab="week",
        lwd=2,  
        ylab="", 
-       ylim=c(min(essai$diff_ge80), max(essai$diff_ge80)), 
+       ylim=c(base::min(essai$diff_ge80), base::max(essai$diff_ge80)), 
        type="o", 
        col="grey", 
        main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
@@ -3957,8 +3960,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   # Lignes verticales
   abline(v=c(366,419), col="blue", lty=3)
   
-  text(391, min(essai$diff_ge80), "2020", cex=1.2)
-  text(440, min(essai$diff_ge80), "2021", cex=1.2)
+  text(391, base::min(essai$diff_ge80), "2020", cex=1.2)
+  text(440, base::min(essai$diff_ge80), "2021", cex=1.2)
   
   #text(26, 22000, nomPays, cex=1.2)
   
@@ -3971,7 +3974,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=3,  
-       ylim=c(min(essai$diff_ge80), max(essai$diff_ge80)),
+       ylim=c(base::min(essai$diff_ge80), base::max(essai$diff_ge80)),
        ylab="", 
        type="o", 
        col="red") 
@@ -3985,7 +3988,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5,  
-       ylim=c(min(essai$diff_ge80), max(essai$diff_ge80)), 
+       ylim=c(base::min(essai$diff_ge80), base::max(essai$diff_ge80)), 
        ylab="", 
        type="o", 
        col="purple") 
@@ -3999,7 +4002,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5,  
-       ylim=c(min(essai$diff_ge80), max(essai$diff_ge80)), 
+       ylim=c(base::min(essai$diff_ge80), base::max(essai$diff_ge80)), 
        ylab="", 
        lty=2, 
        type="o", 
@@ -4014,7 +4017,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=1.5, 
-       ylim=c(min(essai$diff_ge80), max(essai$diff_ge80)), 
+       ylim=c(base::min(essai$diff_ge80), base::max(essai$diff_ge80)), 
        ylab="",
        lty=2, 
        type="o", 
@@ -4030,7 +4033,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=2,
-       ylim=c(0, max(max(essai$`Age80+_dose1`,na.rm=TRUE),max(essai$`Age80+_dose2`,na.rm=TRUE))), 
+       ylim=c(0, base::max(base::max(essai$`Age80+_dose1`,na.rm=TRUE),base::max(essai$`Age80+_dose2`,na.rm=TRUE))), 
        ylab="", 
        type="o", 
        col="blue") 
@@ -4044,7 +4047,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
        cex=0, 
        xlab="", 
        lwd=2,
-       ylim=c(0, max(max(essai$`Age80+_dose1`,na.rm=TRUE),max(essai$`Age80+_dose2`,na.rm=TRUE))),  
+       ylim=c(0, base::max(base::max(essai$`Age80+_dose1`,na.rm=TRUE),base::max(essai$`Age80+_dose2`,na.rm=TRUE))),  
        ylab="", 
        type="o", 
        col="dark blue") 
@@ -4219,7 +4222,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
-  pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+  pngFileRelPath <- paste0(repertoire,nomPays, ".png")
   
   # Message
   message(paste0("Creation image (", pngFileRelPath,")"))
@@ -4233,10 +4236,10 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
     xlab("")+
     ylab("deces standardisés des plus de 80 ans") + 
-    geom_text(x=6, y=min(temp2$deces_standardises_si_pop_2020_ge80), label="été")+
-    geom_text(x=18, y=min(temp2$deces_standardises_si_pop_2020_ge80), label="automne")+
-    geom_text(x=31, y=min(temp2$deces_standardises_si_pop_2020_ge80), label="hiver")+
-    geom_text(x=44, y=min(temp2$deces_standardises_si_pop_2020_ge80), label="printemps")
+    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="été")+
+    geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="automne")+
+    geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="hiver")+
+    geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="printemps")
   }else{
     p<-ggplot(temp2) +
       aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_ge80) +
@@ -4246,10 +4249,10 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
       geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
       xlab("")+
       ylab("deces standardisés des plus de 80 ans") + 
-      geom_text(x=6, y=min(temp2$deces_standardises_si_pop_2020_ge80), label="été")+
-      geom_text(x=18, y=min(temp2$deces_standardises_si_pop_2020_ge80), label="automne")+
-      geom_text(x=31, y=min(temp2$deces_standardises_si_pop_2020_ge80), label="hiver")+
-      geom_text(x=44, y=min(temp2$deces_standardises_si_pop_2020_ge80), label="printemps")
+      geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="été")+
+      geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="automne")+
+      geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="hiver")+
+      geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="printemps")
   }
   ggsave(pngFileRelPath, width = 11, height = 8, plot = p)
 
@@ -4263,7 +4266,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
-  pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+  pngFileRelPath <- paste0(repertoire,nomPays, ".png")
   
   # Message
   message(paste0("Creation image (", pngFileRelPath,")"))
@@ -4276,10 +4279,10 @@ if(!is.empty(temp20132014)){
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
     xlab("")+ 
-    geom_text(x=6, y=min(temp2$deces_standardises_si_pop_2020_70_79), label="été")+
-    geom_text(x=18, y=min(temp2$deces_standardises_si_pop_2020_70_79), label="automne")+
-    geom_text(x=31, y=min(temp2$deces_standardises_si_pop_2020_70_79), label="hiver")+
-    geom_text(x=44, y=min(temp2$deces_standardises_si_pop_2020_70_79), label="printemps")+
+    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_70_79), label="été")+
+    geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_70_79), label="automne")+
+    geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_70_79), label="hiver")+
+    geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_70_79), label="printemps")+
     ylab("deces standardisés des 70-79 ans")
 }else{
   p<- ggplot(temp2) +
@@ -4289,10 +4292,10 @@ if(!is.empty(temp20132014)){
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
     xlab("")+ 
-    geom_text(x=6, y=min(temp2$deces_standardises_si_pop_2020_70_79), label="été")+
-    geom_text(x=18, y=min(temp2$deces_standardises_si_pop_2020_70_79), label="automne")+
-    geom_text(x=31, y=min(temp2$deces_standardises_si_pop_2020_70_79), label="hiver")+
-    geom_text(x=44, y=min(temp2$deces_standardises_si_pop_2020_70_79), label="printemps")+
+    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_70_79), label="été")+
+    geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_70_79), label="automne")+
+    geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_70_79), label="hiver")+
+    geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_70_79), label="printemps")+
     ylab("deces standardisés des 70-79 ans")
 }  
  ggsave(pngFileRelPath, width = 11, height = 8, plot = p)	
@@ -4306,7 +4309,7 @@ if(!is.empty(temp20132014)){
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
-  pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+  pngFileRelPath <- paste0(repertoire,nomPays, ".png")
   
   # Message
   message(paste0("Creation image (", pngFileRelPath,")"))
@@ -4319,10 +4322,10 @@ if(!is.empty(temp20132014)){
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
     xlab("")+ 
-    geom_text(x=6, y=min(temp2$deces_standardises_si_pop_2020_60_69), label="été")+
-    geom_text(x=18, y=min(temp2$deces_standardises_si_pop_2020_60_69), label="automne")+
-    geom_text(x=31, y=min(temp2$deces_standardises_si_pop_2020_60_69), label="hiver")+
-    geom_text(x=44, y=min(temp2$deces_standardises_si_pop_2020_60_69), label="printemps")+
+    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_60_69), label="été")+
+    geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_60_69), label="automne")+
+    geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_60_69), label="hiver")+
+    geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_60_69), label="printemps")+
     ylab("deces standardisés des 60-69 ans")
   }else{
     p<- ggplot(temp2) +
@@ -4332,10 +4335,10 @@ if(!is.empty(temp20132014)){
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
       geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
       xlab("")+ 
-      geom_text(x=6, y=min(temp2$deces_standardises_si_pop_2020_60_69), label="été")+
-      geom_text(x=18, y=min(temp2$deces_standardises_si_pop_2020_60_69), label="automne")+
-      geom_text(x=31, y=min(temp2$deces_standardises_si_pop_2020_60_69), label="hiver")+
-      geom_text(x=44, y=min(temp2$deces_standardises_si_pop_2020_60_69), label="printemps")+
+      geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_60_69), label="été")+
+      geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_60_69), label="automne")+
+      geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_60_69), label="hiver")+
+      geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_60_69), label="printemps")+
       ylab("deces standardisés des 60-69 ans")
   }
   
@@ -4350,7 +4353,7 @@ if(!is.empty(temp20132014)){
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
-  pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+  pngFileRelPath <- paste0(repertoire, nomPays, ".png")
   
   # Message
   message(paste0("Creation image (", pngFileRelPath,")"))
@@ -4363,10 +4366,10 @@ p<-  ggplot(temp2) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
     xlab("")+ 
-    geom_text(x=6, y=min(temp2$deces_standardises_si_pop_2020_50_59), label="été")+
-    geom_text(x=18, y=min(temp2$deces_standardises_si_pop_2020_50_59), label="automne")+
-    geom_text(x=31, y=min(temp2$deces_standardises_si_pop_2020_50_59), label="hiver")+
-    geom_text(x=44, y=min(temp2$deces_standardises_si_pop_2020_50_59), label="printemps")+
+    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_50_59), label="été")+
+    geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_50_59), label="automne")+
+    geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_50_59), label="hiver")+
+    geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_50_59), label="printemps")+
     ylab("deces standardisés des 50-59 ans")
   }else{
     p<-  ggplot(temp2) +
@@ -4376,10 +4379,10 @@ p<-  ggplot(temp2) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
       geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
       xlab("")+ 
-      geom_text(x=6, y=min(temp2$deces_standardises_si_pop_2020_50_59), label="été")+
-      geom_text(x=18, y=min(temp2$deces_standardises_si_pop_2020_50_59), label="automne")+
-      geom_text(x=31, y=min(temp2$deces_standardises_si_pop_2020_50_59), label="hiver")+
-      geom_text(x=44, y=min(temp2$deces_standardises_si_pop_2020_50_59), label="printemps")+
+      geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_50_59), label="été")+
+      geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_50_59), label="automne")+
+      geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_50_59), label="hiver")+
+      geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_50_59), label="printemps")+
       ylab("deces standardisés des 50-59 ans")
   }
   
@@ -4394,7 +4397,7 @@ ggsave(pngFileRelPath, width = 11, height = 8, plot = p)
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
-  pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+  pngFileRelPath <- paste0(repertoire, nomPays, ".png")
   
   # Message
   message(paste0("Creation image (", pngFileRelPath,")"))
@@ -4407,10 +4410,10 @@ p<-  ggplot(temp2) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
     xlab("")+ 
-    geom_text(x=6, y=min(temp2$deces_standardises_si_pop_2020_25_49), label="été")+
-    geom_text(x=18, y=min(temp2$deces_standardises_si_pop_2020_25_49), label="automne")+
-    geom_text(x=31, y=min(temp2$deces_standardises_si_pop_2020_25_49), label="hiver")+
-    geom_text(x=44, y=min(temp2$deces_standardises_si_pop_2020_25_49), label="printemps")+
+    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_25_49), label="été")+
+    geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_25_49), label="automne")+
+    geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_25_49), label="hiver")+
+    geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_25_49), label="printemps")+
     ylab("deces standardisés des 25-49 ans")
   }else{
     p<-  ggplot(temp2) +
@@ -4420,15 +4423,59 @@ p<-  ggplot(temp2) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
       geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
       xlab("")+ 
-      geom_text(x=6, y=min(temp2$deces_standardises_si_pop_2020_25_49), label="été")+
-      geom_text(x=18, y=min(temp2$deces_standardises_si_pop_2020_25_49), label="automne")+
-      geom_text(x=31, y=min(temp2$deces_standardises_si_pop_2020_25_49), label="hiver")+
-      geom_text(x=44, y=min(temp2$deces_standardises_si_pop_2020_25_49), label="printemps")+
+      geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_25_49), label="été")+
+      geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_25_49), label="automne")+
+      geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_25_49), label="hiver")+
+      geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_25_49), label="printemps")+
       ylab("deces standardisés des 25-49 ans")
   }
   
 ggsave(pngFileRelPath, width = 11, height = 8, plot = p)	
  
+############################################
+##### Graphique 5 :  15-24 ans #############
+############################################  
+
+
+repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/annee_coupee_ete/15-24/")
+a__f_createDir(repertoire)
+
+#Nom du fichier png à générer
+pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+
+# Message
+message(paste0("Creation image (", pngFileRelPath,")"))
+
+if(!is.empty(temp20132014)){     
+  p<-  ggplot(temp2) +
+    aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_15_24) +
+    geom_smooth(color = '#CCCCCC') +
+    geom_line(aes(color=annee_coupee_ete), size=1.3) +
+    scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+    geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
+    xlab("")+ 
+    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="été")+
+    geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="automne")+
+    geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="hiver")+
+    geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="printemps")+
+    ylab("deces standardisés des 15-24 ans")
+}else{
+  p<-  ggplot(temp2) +
+    aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_15_24) +
+    geom_smooth(color = '#CCCCCC') +
+    geom_line(aes(color=annee_coupee_ete), size=1.3) +
+    scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+    geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
+    xlab("")+ 
+    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_202_15_24), label="été")+
+    geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="automne")+
+    geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="hiver")+
+    geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="printemps")+
+    ylab("deces standardisés des 15-24 ans")
+}
+
+ggsave(pngFileRelPath, width = 11, height = 8, plot = p)	
+
 }
 
 ################################################################################

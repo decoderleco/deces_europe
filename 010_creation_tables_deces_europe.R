@@ -104,7 +104,7 @@ es_pjan_age <- es_pjan %>%
 es_age_max_pop <- es_pjan_age %>%
 		group_by(geo,
 				time) %>%
-		summarise(age_max = max(age))
+		summarise(age_max = base::max(age))
 
 if (shallDeleteVars) rm(es_pjan_age)
 
@@ -163,7 +163,7 @@ es_deces_annuel_age <- b__es_deces_et_pop_par_annee %>%
 es_deces_annuel_age_max <- es_deces_annuel_age %>%
 		group_by(geo,
 				time) %>%
-		summarise(age_max = max(age))
+		summarise(age_max = base::max(age))
 
 if (shallDeleteVars) rm(es_deces_annuel_age)
 
@@ -1800,7 +1800,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
 						surmortalite == "surmortalite" ~ deces_standardises_si_pop_2020 - bsup,
 						TRUE ~ 0)) %>%
 		mutate(part_surmortalite = valeur_surmortalite / deces_standardises_si_pop_2020 * 100) %>%
-		mutate(ecart_moyenne = (deces_standardises_si_pop_2020 - moyenne) / moyenne * 100)
+		mutate(ecart_moyenne_relatif = (deces_standardises_si_pop_2020 - moyenne) / moyenne * 100) %>%
+  mutate(ecart_moyenne = (deces_standardises_si_pop_2020 - moyenne))
 
 #-----#
 #15-24#
@@ -1838,7 +1839,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
     surmortalite_15_24 == "surmortalite" ~ deces_standardises_si_pop_2020_15_24 - bsup_15_24,
     TRUE ~ 0)) %>%
   mutate(part_surmortalite_15_24 = valeur_surmortalite_15_24 / deces_standardises_si_pop_2020_15_24 * 100) %>%
-  mutate(ecart_moyenne_15_24 = (deces_standardises_si_pop_2020_15_24 - moyenne_15_24) / moyenne_15_24 * 100)
+  mutate(ecart_moyenne_15_24_relatif = (deces_standardises_si_pop_2020_15_24 - moyenne_15_24) / moyenne_15_24 * 100)%>%
+  mutate(ecart_moyenne_15_24 = (deces_standardises_si_pop_2020_15_24 - moyenne_15_24))
 
 #-----#
 #25-49#
@@ -1876,7 +1878,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
     surmortalite_25_49 == "surmortalite" ~ deces_standardises_si_pop_2020_25_49 - bsup_25_49,
     TRUE ~ 0)) %>%
   mutate(part_surmortalite_25_49 = valeur_surmortalite_25_49 / deces_standardises_si_pop_2020_25_49 * 100) %>%
-  mutate(ecart_moyenne_25_49 = (deces_standardises_si_pop_2020_25_49 - moyenne_25_49) / moyenne_25_49 * 100)
+  mutate(ecart_moyenne_25_49_relatif = (deces_standardises_si_pop_2020_25_49 - moyenne_25_49) / moyenne_25_49 * 100)%>%
+  mutate(ecart_moyenne_25_49 = (deces_standardises_si_pop_2020_25_49 - moyenne_25_49))
 
 #-----#
 #50-59#
@@ -1914,7 +1917,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
     surmortalite_50_59 == "surmortalite" ~ deces_standardises_si_pop_2020_50_59 - bsup_50_59,
     TRUE ~ 0)) %>%
   mutate(part_surmortalite_50_59 = valeur_surmortalite_50_59 / deces_standardises_si_pop_2020_50_59 * 100) %>%
-  mutate(ecart_moyenne_50_59 = (deces_standardises_si_pop_2020_50_59 - moyenne_50_59) / moyenne_50_59 * 100)
+  mutate(ecart_moyenne_50_59_relatif = (deces_standardises_si_pop_2020_50_59 - moyenne_50_59) / moyenne_50_59 * 100)%>%
+  mutate(ecart_moyenne_50_59 = (deces_standardises_si_pop_2020_50_59 - moyenne_50_59))
 
 #-----#
 #60-69#
@@ -1952,7 +1956,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
     surmortalite_60_69 == "surmortalite" ~ deces_standardises_si_pop_2020_60_69 - bsup_60_69,
     TRUE ~ 0)) %>%
   mutate(part_surmortalite_60_69 = valeur_surmortalite_60_69 / deces_standardises_si_pop_2020_60_69 * 100) %>%
-  mutate(ecart_moyenne_60_69 = (deces_standardises_si_pop_2020_60_69 - moyenne_60_69) / moyenne_60_69 * 100)
+  mutate(ecart_moyenne_60_69_relatif = (deces_standardises_si_pop_2020_60_69 - moyenne_60_69) / moyenne_60_69 * 100)%>%
+  mutate(ecart_moyenne_60_69 = (deces_standardises_si_pop_2020_60_69 - moyenne_60_69))
 
 
 #-----#
@@ -1991,7 +1996,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
     surmortalite_70_79 == "surmortalite" ~ deces_standardises_si_pop_2020_70_79 - bsup_70_79,
     TRUE ~ 0)) %>%
   mutate(part_surmortalite_70_79 = valeur_surmortalite_70_79 / deces_standardises_si_pop_2020_70_79 * 100) %>%
-  mutate(ecart_moyenne_70_79 = (deces_standardises_si_pop_2020_70_79 - moyenne_70_79) / moyenne_70_79 * 100)
+  mutate(ecart_moyenne_70_79_relatif = (deces_standardises_si_pop_2020_70_79 - moyenne_70_79) / moyenne_70_79 * 100)%>%
+  mutate(ecart_moyenne_70_79 = (deces_standardises_si_pop_2020_70_79 - moyenne_70_79))
 
 
 
@@ -2031,7 +2037,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
     surmortalite_ge80 == "surmortalite" ~ deces_standardises_si_pop_2020_ge80 - bsup_ge80,
     TRUE ~ 0)) %>%
   mutate(part_surmortalite_ge80 = valeur_surmortalite_ge80 / deces_standardises_si_pop_2020_ge80 * 100) %>%
-  mutate(ecart_moyenne_ge80 = (deces_standardises_si_pop_2020_ge80 - moyenne_ge80) / moyenne_ge80 * 100)
+  mutate(ecart_moyenne_ge80_relatif = (deces_standardises_si_pop_2020_ge80 - moyenne_ge80) / moyenne_ge80 * 100)%>%
+  mutate(ecart_moyenne_ge80 = (deces_standardises_si_pop_2020_ge80 - moyenne_ge80))
 
 
 # Créer un tableau avec les colonnes "_prec" qui correspondront après le left-join aux valeurs de la semaine précédente
