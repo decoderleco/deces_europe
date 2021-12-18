@@ -76,7 +76,7 @@ es_pjan <- a__original_es_pjan_le2020
 
 # Renommer la colonne "values" en "population" et supprimer la colonne "unit"
 es_pjan <- es_pjan %>%
-		rename(population = values) %>% 
+  dplyr::rename(population = values) %>% 
 		select(-unit)
 
 # Filtrer :
@@ -104,7 +104,7 @@ es_pjan_age <- es_pjan %>%
 es_age_max_pop <- es_pjan_age %>%
 		group_by(geo,
 				time) %>%
-		summarise(age_max = max(age))
+		summarise(age_max = base::max(age))
 
 if (shallDeleteVars) rm(es_pjan_age)
 
@@ -137,7 +137,7 @@ b__es_deces_et_pop_par_annee <- a__original_es_deces_annuel_le2019
 
 # Filtrer age
 b__es_deces_et_pop_par_annee <- b__es_deces_et_pop_par_annee %>%
-		rename(deces=values) %>% 
+  dplyr::rename(deces=values) %>% 
 		select(-unit) %>%
 		filter( sex != "T",
 				age != "TOTAL", 
@@ -163,7 +163,7 @@ es_deces_annuel_age <- b__es_deces_et_pop_par_annee %>%
 es_deces_annuel_age_max <- es_deces_annuel_age %>%
 		group_by(geo,
 				time) %>%
-		summarise(age_max = max(age))
+		summarise(age_max = base::max(age))
 
 if (shallDeleteVars) rm(es_deces_annuel_age)
 
@@ -177,7 +177,7 @@ es_deces_annuel_pb_age_max_deces <- es_deces_annuel_age_max %>%
 		filter(str_sub(geo,1,2)!="EA") %>% 
 		filter(str_sub(geo,1,3)!="EEA") %>% 
 		filter(str_sub(geo,1,3)!="EFT") %>% 
-		rename (age_max_deces=age_max)
+  dplyr::rename (age_max_deces=age_max)
 
 if (shallDeleteVars) rm(es_deces_annuel_age_max)
 
@@ -195,7 +195,7 @@ es_pjan_pb_age_max_pop <- es_age_max_pop %>%
 		filter(str_sub(geo,1,2)!="EA") %>% 
 		filter(str_sub(geo,1,3)!="EEA") %>% 
 		filter(str_sub(geo,1,3)!="EFT")%>% 
-		rename (age_max_pop = age_max)
+  dplyr::rename (age_max_pop = age_max)
 
 if (shallDeleteVars) rm(es_age_max_pop)
 
@@ -394,7 +394,7 @@ if (shallDeleteVars) rm(es_deces_annuel_agequinq_le2019)
 
 es_pjan_quinq_2020 <- es_pjan_quinq %>%
 		filter(time == "2020-01-01") %>%
-		rename(pop2020=population) %>%
+  dplyr::rename(pop2020=population) %>%
 		select(-time)
 
 es_pjan_quinq_2020_ge85 <- es_pjan_quinq_2020 %>%
@@ -471,7 +471,7 @@ if (shallDeleteVars) rm(es_deces_week_2020)
 
 #renommer la colonne age en agequinq, car c'est des tranches de 5 ans
 es_deces_2020_tot_by_agequinq_sex_geo <- es_deces_2020_tot_by_agequinq_sex_geo %>%
-		rename(agequinq = age)
+  dplyr::rename(agequinq = age)
 
 #Memoriser les deces 2020 des plus de 85 ans
 es_deces_2020_tot_ge85 <- es_deces_2020_tot_by_agequinq_sex_geo %>%
@@ -812,7 +812,7 @@ es_deces_week_pays <- es_deces_week %>%
 		summarise(deces=sum(values))
 
 es_deces_week_pays <- es_deces_week_pays %>%
-		rename(agequinq = age)
+  dplyr::rename(agequinq = age)
 
 
 # Deces hebdomadaires France
@@ -863,7 +863,7 @@ numSemainesDepuis2013Complet <- numSemainesDepuis2013Complet %>%
 
 # Compter le nombre de semaines dans chaque année
 nbSemainesParAnneeDepuis2013 <- count(numSemainesDepuis2013Complet, annee) %>%
-		rename(nbSemainesDansAnnee = n)
+  dplyr::rename(nbSemainesDansAnnee = n)
 
 # Forcer 52 semaines en 2021
 nbSemainesParAnneeDepuis2013 <- nbSemainesParAnneeDepuis2013 %>%
@@ -907,13 +907,13 @@ if (shallDeleteVars) rm(es_pjan_quinq_pop_2021_week)
 if (shallDeleteVars) rm(es_pjan_quinq_pop_2022_week)
 
 es_pjan_quinq_pop_week2 <- es_pjan_quinq_pop_week %>%
-		rename(popanneesuivante = population)
+  dplyr::rename(popanneesuivante = population)
 
 es_pjan_quinq_pop_week2 <- es_pjan_quinq_pop_week2 %>%
-		rename(anneesuivante = time)
+  dplyr::rename(anneesuivante = time)
 
 es_pjan_quinq_pop_week <- es_pjan_quinq_pop_week %>%
-		rename(pop = population)
+  dplyr::rename(pop = population)
 
 es_pjan_quinq_pop_week <- es_pjan_quinq_pop_week %>%
 		mutate(anneesuivante = time + years(1))
@@ -1003,7 +1003,7 @@ es_pjan_quinq_pop_2020_totale <- es_pjan_quinq %>%
 		group_by(agequinq, geo, time) %>% 
 		summarise(population=sum(population)) %>%
 		select(-time) %>% 
-		rename(pop2020=population)
+  dplyr::rename(pop2020=population)
 
 #on calcule la population 2020 France 
 es_pjan_quinq_pop_2020_France <- es_pjan_quinq %>%
@@ -1016,7 +1016,7 @@ if (shallDeleteVars) rm(es_pjan_quinq)
 
 es_pjan_quinq_pop_2020_France <- ungroup(es_pjan_quinq_pop_2020_France) %>%
 		select(-time, -geo) %>% 
-		rename(pop20france=population)
+  dplyr::rename(pop20france=population)
 
 #ajout du cas avec les Y_GE85
 es_pjan_quinq_pop_2020_France_85 <- es_pjan_quinq_pop_2020_France %>%
@@ -1449,7 +1449,7 @@ eu_lockdown <- eu_mesures_gouv %>%
 
 # Créer un df avec les n° de semaines depuis 2013, mais avec des en-tête de colonnes time_start et semaine_debut
 numSemaineDepuis2013_for_eu_lockdown_start <- numSemainesDepuis2013 %>%
-		rename (time_start = time, 
+  dplyr::rename (time_start = time, 
 				semaine_debut = numSemaineDepuis2013)
 
 # Joindre la colonne semaine_debut
@@ -1458,7 +1458,7 @@ eu_lockdown <- left_join(eu_lockdown,
 
 # Créer un df avec les n° de semaines depuis 2013, mais avec des en-tête de colonnes time_end et semaine_fin
 numSemaineDepuis2013_for_eu_lockdown_end <- numSemainesDepuis2013 %>%
-		rename (time_end = time,
+  dplyr::rename (time_end = time,
 				semaine_fin = numSemaineDepuis2013)
 
 # Joindre la colonne semaine_fin
@@ -1473,7 +1473,7 @@ eu_lockdown_start <- eu_lockdown %>%
 		select(geo, 
 				Response_measure, 
 				time_start) %>%
-		rename(time = time_start) %>%
+  dplyr::rename(time = time_start) %>%
 		mutate(Response_measure = "StayHomeOrderStart")
 
 # Remettre les dates de fin dans la colonne "time" afin de pouvoir les joindre dans b__es_deces_week_standardises_si_pop_2020_owid_vaccination
@@ -1481,7 +1481,7 @@ eu_lockdown_end <- eu_lockdown %>%
 		select(geo, 
 				Response_measure, 
 				time_end) %>%
-		rename(time = time_end) %>%
+  dplyr::rename(time = time_end) %>%
 		mutate(Response_measure = "StayHomeOrderEnd")
 
 # Concaténer les lignes
@@ -1556,7 +1556,7 @@ a__vaccination_age  <- a__f_downloadIfNeeded(
 
 a__vaccination_age <- a__vaccination_age %>% 
   mutate(time = paste0(str_sub(YearWeekISO,1,4),str_sub(YearWeekISO,6,8))) %>% 
-  mutate(total_dose = FirstDose + SecondDose + UnknownDose)
+  mutate(total_dose = FirstDose + SecondDose + UnknownDose + DoseAdditional1)
 
 vaccination_simple <-dcast(a__vaccination_age,
                            time + Region ~ TargetGroup,
@@ -1577,13 +1577,23 @@ vaccination_dose2 <-dcast(a__vaccination_age,
 
 colnames(vaccination_dose2)[3:19] <- paste(colnames(vaccination_dose2)[3:19], "dose2", sep = "_")
 
+vaccination_dose3 <-dcast(a__vaccination_age,
+                          time + Region ~ TargetGroup,
+                          value.var = "DoseAdditional1",
+                          fun.aggregate = sum)
+
+colnames(vaccination_dose3)[3:19] <- paste(colnames(vaccination_dose3)[3:19], "dose3", sep = "_")
+
 vaccination_simple <-vaccination_simple %>% left_join(vaccination_dose1) %>% 
-  left_join(vaccination_dose2)
+  left_join(vaccination_dose2) %>% 
+  left_join(vaccination_dose3)
 
 if (shallDeleteVars) rm(vaccination_dose2)
 if (shallDeleteVars) rm(vaccination_dose1)
+if (shallDeleteVars) rm(vaccination_dose3)
 
-vaccination_simple <- vaccination_simple %>% rename(geo = Region)
+
+vaccination_simple <- vaccination_simple %>% dplyr::rename(geo = Region)
 
 
 #Ajouter les infos de vaccination de owid aux données de décès EuroStat
@@ -1790,7 +1800,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
 						surmortalite == "surmortalite" ~ deces_standardises_si_pop_2020 - bsup,
 						TRUE ~ 0)) %>%
 		mutate(part_surmortalite = valeur_surmortalite / deces_standardises_si_pop_2020 * 100) %>%
-		mutate(ecart_moyenne = (deces_standardises_si_pop_2020 - moyenne) / moyenne * 100)
+		mutate(ecart_moyenne_relatif = (deces_standardises_si_pop_2020 - moyenne) / moyenne * 100) %>%
+  mutate(ecart_moyenne = (deces_standardises_si_pop_2020 - moyenne))
 
 #-----#
 #15-24#
@@ -1828,7 +1839,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
     surmortalite_15_24 == "surmortalite" ~ deces_standardises_si_pop_2020_15_24 - bsup_15_24,
     TRUE ~ 0)) %>%
   mutate(part_surmortalite_15_24 = valeur_surmortalite_15_24 / deces_standardises_si_pop_2020_15_24 * 100) %>%
-  mutate(ecart_moyenne_15_24 = (deces_standardises_si_pop_2020_15_24 - moyenne_15_24) / moyenne_15_24 * 100)
+  mutate(ecart_moyenne_15_24_relatif = (deces_standardises_si_pop_2020_15_24 - moyenne_15_24) / moyenne_15_24 * 100)%>%
+  mutate(ecart_moyenne_15_24 = (deces_standardises_si_pop_2020_15_24 - moyenne_15_24))
 
 #-----#
 #25-49#
@@ -1866,7 +1878,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
     surmortalite_25_49 == "surmortalite" ~ deces_standardises_si_pop_2020_25_49 - bsup_25_49,
     TRUE ~ 0)) %>%
   mutate(part_surmortalite_25_49 = valeur_surmortalite_25_49 / deces_standardises_si_pop_2020_25_49 * 100) %>%
-  mutate(ecart_moyenne_25_49 = (deces_standardises_si_pop_2020_25_49 - moyenne_25_49) / moyenne_25_49 * 100)
+  mutate(ecart_moyenne_25_49_relatif = (deces_standardises_si_pop_2020_25_49 - moyenne_25_49) / moyenne_25_49 * 100)%>%
+  mutate(ecart_moyenne_25_49 = (deces_standardises_si_pop_2020_25_49 - moyenne_25_49))
 
 #-----#
 #50-59#
@@ -1904,7 +1917,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
     surmortalite_50_59 == "surmortalite" ~ deces_standardises_si_pop_2020_50_59 - bsup_50_59,
     TRUE ~ 0)) %>%
   mutate(part_surmortalite_50_59 = valeur_surmortalite_50_59 / deces_standardises_si_pop_2020_50_59 * 100) %>%
-  mutate(ecart_moyenne_50_59 = (deces_standardises_si_pop_2020_50_59 - moyenne_50_59) / moyenne_50_59 * 100)
+  mutate(ecart_moyenne_50_59_relatif = (deces_standardises_si_pop_2020_50_59 - moyenne_50_59) / moyenne_50_59 * 100)%>%
+  mutate(ecart_moyenne_50_59 = (deces_standardises_si_pop_2020_50_59 - moyenne_50_59))
 
 #-----#
 #60-69#
@@ -1942,7 +1956,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
     surmortalite_60_69 == "surmortalite" ~ deces_standardises_si_pop_2020_60_69 - bsup_60_69,
     TRUE ~ 0)) %>%
   mutate(part_surmortalite_60_69 = valeur_surmortalite_60_69 / deces_standardises_si_pop_2020_60_69 * 100) %>%
-  mutate(ecart_moyenne_60_69 = (deces_standardises_si_pop_2020_60_69 - moyenne_60_69) / moyenne_60_69 * 100)
+  mutate(ecart_moyenne_60_69_relatif = (deces_standardises_si_pop_2020_60_69 - moyenne_60_69) / moyenne_60_69 * 100)%>%
+  mutate(ecart_moyenne_60_69 = (deces_standardises_si_pop_2020_60_69 - moyenne_60_69))
 
 
 #-----#
@@ -1981,7 +1996,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
     surmortalite_70_79 == "surmortalite" ~ deces_standardises_si_pop_2020_70_79 - bsup_70_79,
     TRUE ~ 0)) %>%
   mutate(part_surmortalite_70_79 = valeur_surmortalite_70_79 / deces_standardises_si_pop_2020_70_79 * 100) %>%
-  mutate(ecart_moyenne_70_79 = (deces_standardises_si_pop_2020_70_79 - moyenne_70_79) / moyenne_70_79 * 100)
+  mutate(ecart_moyenne_70_79_relatif = (deces_standardises_si_pop_2020_70_79 - moyenne_70_79) / moyenne_70_79 * 100)%>%
+  mutate(ecart_moyenne_70_79 = (deces_standardises_si_pop_2020_70_79 - moyenne_70_79))
 
 
 
@@ -2021,7 +2037,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
     surmortalite_ge80 == "surmortalite" ~ deces_standardises_si_pop_2020_ge80 - bsup_ge80,
     TRUE ~ 0)) %>%
   mutate(part_surmortalite_ge80 = valeur_surmortalite_ge80 / deces_standardises_si_pop_2020_ge80 * 100) %>%
-  mutate(ecart_moyenne_ge80 = (deces_standardises_si_pop_2020_ge80 - moyenne_ge80) / moyenne_ge80 * 100)
+  mutate(ecart_moyenne_ge80_relatif = (deces_standardises_si_pop_2020_ge80 - moyenne_ge80) / moyenne_ge80 * 100)%>%
+  mutate(ecart_moyenne_ge80 = (deces_standardises_si_pop_2020_ge80 - moyenne_ge80))
 
 
 # Créer un tableau avec les colonnes "_prec" qui correspondront après le left-join aux valeurs de la semaine précédente

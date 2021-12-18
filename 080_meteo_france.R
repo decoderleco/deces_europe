@@ -1356,7 +1356,10 @@ for (departement in departement_different) {
                                         #### utilisation de GAM ####
                                         ##------------------------##
 
-#Utilisation de GAM pour les plus de 90 ans
+
+                              #-----------------------------------------#
+                              #Utilisation de GAM pour les plus de 90 ans
+                              #-----------------------------------------#
 
 mod_gam <- gam(moyenne_mobile_MortGe90 ~ s(moyenne_mobile_temperature, bs="cr"), data=calend_general_france_17_19)
 
@@ -1371,7 +1374,10 @@ testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_
 
 calend_general_france_17_19 <- calend_general_france_17_19 %>% left_join(testdata)
 
-#création du graphique de corrélation des plus de 90 ans
+                              #-------------------------------------------------------#
+                              #création du graphique de corrélation des plus de 90 ans
+                              #-------------------------------------------------------#
+
 
 plot (calend_general_france_17_19$moyenne_mobile_temperature - 273.15, 
       calend_general_france_17_19$moyenne_mobile_MortGe90, 
@@ -1406,8 +1412,10 @@ mtext(paste0("                                                            signif
 
 dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm90_correlation.png'), width = 1000)
 
+                                  #-----------------------------------------------------#
+                                  #création des graphiques de fit sur 2017-2019 + 90 ans
+                                  #-----------------------------------------------------#
 
-#création des graphiques + 90 ans
 plot(calend_general_france_17_19$jour, 
      calend_general_france_17_19$moyenne_mobile_MortGe90, 
      pch=16,
@@ -1447,10 +1455,14 @@ dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm90_fit.png'), w
 calend_general_france_mobile_depuis17<-calend_general_france_mobile %>% 
   filter(jour>="2017-01-01")
 
+#calcul de l'estimateur pour 2020-2021
 prediction<-predict.gam(mod_gam,newdata=calend_general_france_mobile_depuis17)
 calend_general_france_mobile_depuis17$estim_predict_GE90<-prediction
 
-#création des graphiques + 90 ans
+                                #-----------------------------------------------------#
+                                #création du graphique total sur 2017-2021 + 90 ans
+                                #-----------------------------------------------------#
+
 plot(calend_general_france_mobile_depuis17$jour, 
      calend_general_france_mobile_depuis17$moyenne_mobile_MortGe90, 
      pch=16,
@@ -1489,7 +1501,9 @@ axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
 dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm90_total.png'), width = 1000)
 
-#lancement de GAM pour les 85-89 ans
+                                    #-----------------------------------------#
+                                    #  Utilisation de GAM pour les 85-89 ans
+                                    #-----------------------------------------#
 
 mod_gam <- gam(moyenne_mobile_Mort85.89 ~ s(moyenne_mobile_temperature, bs="cr"), data=calend_general_france_17_19)
 
@@ -1504,7 +1518,9 @@ testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_
 
 calend_general_france_17_19 <- calend_general_france_17_19 %>% left_join(testdata)
 
-#création du graphique de corrélation des 85-89 ans
+                            #-------------------------------------------------------#
+                            #création du graphique de corrélation pour les 85-89 ans
+                            #-------------------------------------------------------#
 
 plot (calend_general_france_17_19$moyenne_mobile_temperature - 273.15, 
       calend_general_france_17_19$moyenne_mobile_Mort85.89, 
@@ -1540,8 +1556,55 @@ mtext(paste0("                                                            signif
 
 dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm85-89_correlation.png'), width = 1000)
 
+                                #--------------------------------------------------------------#
+                                #création du graphique total sur 2017-2021 pour les 85-89 ans
+                                #------------------------------------------------------------#
 
-#lancement de GAM pour les 80-84 ans
+#calcul du prédicteur pour 2020-2021
+prediction<-predict.gam(mod_gam,newdata=calend_general_france_mobile_depuis17)
+calend_general_france_mobile_depuis17$estim_predict_85.89<-prediction
+
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$moyenne_mobile_Mort85.89, 
+     pch=16,
+     cex=0, 
+     xlab="date de décès",
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_Mort85.89,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="blue",
+     main= "Taux de mortalité quotidien lissé sur 7 jours des 85-89 ans de France Métropolitaine")
+axis(2, col = "blue", col.axis = "blue", lwd = 2)
+
+
+
+# pour encadrer le graphique
+box() 
+
+mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
+mtext("Estimateur température", side=2, line=2, col="red")
+
+# Superposer l'estimateur
+
+par(new=T)
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$estim_predict_85.89,
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=3,  
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_Mort85.89,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="red") 
+axis(4, col = "red", col.axis = "dark red", lwd = 2)
+
+dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm85.89_total.png'), width = 1000)
+
+                                      #-----------------------------------------#
+                                      # Utilisation de GAM pour les 80-84 ans
+                                      #-----------------------------------------#
 
 mod_gam <- gam(moyenne_mobile_Mort80.84 ~ s(moyenne_mobile_temperature, bs="cr"), data=calend_general_france_17_19)
 
@@ -1556,7 +1619,9 @@ testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_
 
 calend_general_france_17_19 <- calend_general_france_17_19 %>% left_join(testdata)
 
-#création du graphique de corrélation des 85-89 ans
+                                      #-------------------------------------------------------#
+                                      #création du graphique de corrélation pour les 80-84 ans
+                                      #-------------------------------------------------------#
 
 plot (calend_general_france_17_19$moyenne_mobile_temperature - 273.15, 
       calend_general_france_17_19$moyenne_mobile_Mort80.84, 
@@ -1593,11 +1658,313 @@ mtext(paste0("                                                            signif
 dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm80-84_correlation.png'), width = 1000)
 
 
+                                    #--------------------------------------------------------------#
+                                    #création du graphique total sur 2017-2021 pour les 80-84 ans
+                                    #------------------------------------------------------------#
+
+prediction<-predict.gam(mod_gam,newdata=calend_general_france_mobile_depuis17)
+calend_general_france_mobile_depuis17$estim_predict_80.84<-prediction
+
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$moyenne_mobile_Mort80.84, 
+     pch=16,
+     cex=0, 
+     xlab="date de décès",
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_Mort80.84,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="blue",
+     main= "Taux de mortalité quotidien lissé sur 7 jours des 80-84 ans de France Métropolitaine")
+axis(2, col = "blue", col.axis = "blue", lwd = 2)
+
+
+
+# pour encadrer le graphique
+box() 
+
+mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
+mtext("Estimateur température", side=2, line=2, col="red")
+
+# Superposer l'estimateur
+
+par(new=T)
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$estim_predict_80.84,
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=3,  
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_Mort80.84,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="red") 
+axis(4, col = "red", col.axis = "dark red", lwd = 2)
+
+dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm80.84_total.png'), width = 1000)
+
+                              #-----------------------------------------#
+                              #  Utilisation de GAM pour les 75-79 ans
+                              #-----------------------------------------#
+
+mod_gam <- gam(moyenne_mobile_Mort75.79 ~ s(moyenne_mobile_temperature, bs="cr"), data=calend_general_france_17_19)
+
+summary(mod_gam)
+
+AIC(mod_gam)
+summary(mod_gam)$sp.criterion
+summary(mod_gam)$r.sq 
+
+testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_temperature,
+                      estimateur_Mort75.79= mod_gam$fitted.values)
+
+calend_general_france_17_19 <- calend_general_france_17_19 %>% left_join(testdata)
+
+                                #--------------------------------------------------------------#
+                                #création du graphique total sur 2017-2021 pour les 75-79 ans
+                                #------------------------------------------------------------#
+
+#calcul du prédicteur pour 2020-2021
+prediction<-predict.gam(mod_gam,newdata=calend_general_france_mobile_depuis17)
+calend_general_france_mobile_depuis17$estim_predict_75.79<-prediction
+
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$moyenne_mobile_Mort75.79, 
+     pch=16,
+     cex=0, 
+     xlab="date de décès",
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_Mort75.79,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="blue",
+     main= "Taux de mortalité quotidien lissé sur 7 jours des 75-79 ans de France Métropolitaine")
+axis(2, col = "blue", col.axis = "blue", lwd = 2)
+
+
+
+# pour encadrer le graphique
+box() 
+
+mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
+mtext("Estimateur température", side=2, line=2, col="red")
+
+# Superposer l'estimateur
+
+par(new=T)
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$estim_predict_75.79,
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=3,  
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_Mort75.79,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="red") 
+axis(4, col = "red", col.axis = "dark red", lwd = 2)
+
+dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm75.79_total.png'), width = 1000)
+
+
+                                        #-----------------------------------------#
+                                        #  Utilisation de GAM pour les 70-74 ans
+                                        #-----------------------------------------#
+
+mod_gam <- gam(moyenne_mobile_Mort70.74 ~ s(moyenne_mobile_temperature, bs="cr"), data=calend_general_france_17_19)
+
+summary(mod_gam)
+
+AIC(mod_gam)
+summary(mod_gam)$sp.criterion
+summary(mod_gam)$r.sq 
+
+testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_temperature,
+                      estimateur_Mort70.74= mod_gam$fitted.values)
+
+calend_general_france_17_19 <- calend_general_france_17_19 %>% left_join(testdata)
+
+                          #--------------------------------------------------------------#
+                          #création du graphique total sur 2017-2021 pour les 70-74 ans
+                          #------------------------------------------------------------#
+
+#calcul du prédicteur pour 2020-2021
+prediction<-predict.gam(mod_gam,newdata=calend_general_france_mobile_depuis17)
+calend_general_france_mobile_depuis17$estim_predict_70.74<-prediction
+
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$moyenne_mobile_Mort70.74, 
+     pch=16,
+     cex=0, 
+     xlab="date de décès",
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_Mort70.74,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="blue",
+     main= "Taux de mortalité quotidien lissé sur 7 jours des 70-74 ans de France Métropolitaine")
+axis(2, col = "blue", col.axis = "blue", lwd = 2)
+
+
+
+# pour encadrer le graphique
+box() 
+
+mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
+mtext("Estimateur température", side=2, line=2, col="red")
+
+# Superposer l'estimateur
+
+par(new=T)
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$estim_predict_70.74,
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=3,  
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_Mort70.74,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="red") 
+axis(4, col = "red", col.axis = "dark red", lwd = 2)
+
+dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm70.74_total.png'), width = 1000)
+
+
+                                #-----------------------------------------#
+                                #  Utilisation de GAM pour les 65-69 ans
+                                #-----------------------------------------#
+
+mod_gam <- gam(moyenne_mobile_Mort65.69 ~ s(moyenne_mobile_temperature, bs="cr"), data=calend_general_france_17_19)
+
+summary(mod_gam)
+
+AIC(mod_gam)
+summary(mod_gam)$sp.criterion
+summary(mod_gam)$r.sq 
+
+testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_temperature,
+                      estimateur_Mort65.69= mod_gam$fitted.values)
+
+calend_general_france_17_19 <- calend_general_france_17_19 %>% left_join(testdata)
+
+                        #--------------------------------------------------------------#
+                        #création du graphique total sur 2017-2021 pour les 75-79 ans
+                        #------------------------------------------------------------#
+
+#calcul du prédicteur pour 2020-2021
+prediction<-predict.gam(mod_gam,newdata=calend_general_france_mobile_depuis17)
+calend_general_france_mobile_depuis17$estim_predict_65.69<-prediction
+
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$moyenne_mobile_Mort65.69, 
+     pch=16,
+     cex=0, 
+     xlab="date de décès",
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_Mort65.69,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="blue",
+     main= "Taux de mortalité quotidien lissé sur 7 jours des 65-69 ans de France Métropolitaine")
+axis(2, col = "blue", col.axis = "blue", lwd = 2)
+
+
+
+# pour encadrer le graphique
+box() 
+
+mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
+mtext("Estimateur température", side=2, line=2, col="red")
+
+# Superposer l'estimateur
+
+par(new=T)
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$estim_predict_65.69,
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=3,  
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_Mort65.69,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="red") 
+axis(4, col = "red", col.axis = "dark red", lwd = 2)
+
+dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm65.69_total.png'), width = 1000)
+
+
+                            #-----------------------------------------#
+                            #  Utilisation de GAM pour les 60-64 ans
+                            #-----------------------------------------#
+
+mod_gam <- gam(moyenne_mobile_Mort60.64 ~ s(moyenne_mobile_temperature, bs="cr"), data=calend_general_france_17_19)
+
+summary(mod_gam)
+
+AIC(mod_gam)
+summary(mod_gam)$sp.criterion
+summary(mod_gam)$r.sq 
+
+testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_temperature,
+                      estimateur_Mort60.64= mod_gam$fitted.values)
+
+calend_general_france_17_19 <- calend_general_france_17_19 %>% left_join(testdata)
+
+#--------------------------------------------------------------#
+#création du graphique total sur 2017-2021 pour les 60-64 ans
+#------------------------------------------------------------#
+
+#calcul du prédicteur pour 2020-2021
+prediction<-predict.gam(mod_gam,newdata=calend_general_france_mobile_depuis17)
+calend_general_france_mobile_depuis17$estim_predict_60.64<-prediction
+
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$moyenne_mobile_Mort60.64, 
+     pch=16,
+     cex=0, 
+     xlab="date de décès",
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_Mort60.64,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="blue",
+     main= "Taux de mortalité quotidien lissé sur 7 jours des 60-64 ans de France Métropolitaine")
+axis(2, col = "blue", col.axis = "blue", lwd = 2)
+
+
+
+# pour encadrer le graphique
+box() 
+
+mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
+mtext("Estimateur température", side=2, line=2, col="red")
+
+# Superposer l'estimateur
+
+par(new=T)
+plot(calend_general_france_mobile_depuis17$jour, 
+     calend_general_france_mobile_depuis17$estim_predict_60.64,
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=3,  
+     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_Mort60.64,na.rm=TRUE)), 
+     ylab="", 
+     type="l", 
+     col="red") 
+axis(4, col = "red", col.axis = "dark red", lwd = 2)
+
+dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm60.64_total.png'), width = 1000)
 
 
 
 
-#départements GAM
+                                        #------------------------#
+                                        ##### départements GAM####
+                                        #------------------------#
+
 
 calend_general<-calend_general %>% filter(!is.na(pop5.9)) %>% filter(dep!="971"&dep!="972"&dep!="973"&dep!="974"&dep!="976")
 departement_different <- calend_general$dep_name
