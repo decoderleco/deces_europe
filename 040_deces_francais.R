@@ -638,7 +638,7 @@ write.table(vaccination, "inst/extdata/world/eu/fr/gouv/vacsi/fr_gouv_vacsi.csv"
 vaccination <- vaccination %>% 
 		rename(tranche_age = clage_vacsi, deces_date_complete = jour) %>%
 		mutate(deces_date_complete = date(deces_date_complete),
-		tranche_age=as.character(tranche_age) 
+				tranche_age=as.character(tranche_age))
 
 # Ajouter les données de vaccination 
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 

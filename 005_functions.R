@@ -590,10 +590,10 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	deces_par_jour <- deces_par_jour %>% 
 	  left_join(moyenne_mobile_n_complet) 
 	
-	# Calculer la moyenne mobile vaccination sur 365 jours jours
-	deces_moyenne_mobile_annee <- running_mean(deces_par_jour$nbDeces, 365)
+	# Calculer la moyenne mobile vaccination sur 90 jours
+	deces_moyenne_mobile_annee <- running_mean(deces_par_jour$nbDeces, 90)
 	deces_moyenne_mobile_annee <- data_frame(deces_moyenne_mobile_annee)
-	deces_moyenne_mobile_annee$numerojour <- 1:nrow(deces_moyenne_mobile_annee) + 364
+	deces_moyenne_mobile_annee$numerojour <- 1:nrow(deces_moyenne_mobile_annee) + 46
 	# Ajout Moyenne mobile
 	deces_par_jour <- deces_par_jour %>% 
 	  left_join(deces_moyenne_mobile_annee) 
