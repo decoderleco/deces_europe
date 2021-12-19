@@ -250,19 +250,19 @@ if (exists(varName)) {
 	
 	if (shallDeleteVars) rm(list_fichiers)
 	if (shallDeleteVars) rm(url_insee_nomenclatures)
-	if (shallDeleteVars) rm(nomenclatures_insee_zip_path)
+	if (shallDeleteVars) rm(insee_nomenclature_zip_path)
 	if (shallDeleteVars) rm(K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS)
 	
 	
 	# Lire les fichiers
 	
-	fr_insee_communes <- read_csv(file.path(K_DIR_INSEE_GEO, 'communes2020.csv'))
+	fr_insee_communes <- read_csv(file.path(K_DIR_INSEE_GEO, 'communes2020.csv'), show_col_types = FALSE)
 	
-	fr_insee_departements <- read_csv(file.path(K_DIR_INSEE_GEO, 'departement2020.csv'))
+	fr_insee_departements <- read_csv(file.path(K_DIR_INSEE_GEO, 'departement2020.csv'), show_col_types = FALSE)
 	
-	fr_insee_regions <- read_csv(file.path(K_DIR_INSEE_GEO, 'region2020.csv'))
+	fr_insee_regions <- read_csv(file.path(K_DIR_INSEE_GEO, 'region2020.csv'), show_col_types = FALSE)
 	
-	fr_insee_pays <- read_csv(file.path(K_DIR_INSEE_GEO, 'pays2020.csv'))
+	fr_insee_pays <- read_csv(file.path(K_DIR_INSEE_GEO, 'pays2020.csv'), show_col_types = FALSE)
 	
 	# Verifier s'il y a des doublons
 	#any(duplicated(communes$com))
@@ -316,19 +316,19 @@ if (exists(varName)) {
 	sum(is.na(dbp$deces_dep))
 	
 	# Afficher le nombre de deces par code_lieu et pays
-	dbp %>%
-			filter(is.na(deces_dep)) %>% 
-			select(naissance_commune, 
-					deces_code_lieu, 
-					deces_pays) %>%
-			group_by(deces_code_lieu, 
-					deces_pays) %>%
-			summarise(n = n()) %>%
-			arrange(desc(n))
+#	dbp %>%
+#			filter(is.na(deces_dep)) %>% 
+#			select(naissance_commune, 
+#					deces_code_lieu, 
+#					deces_pays) %>%
+#			group_by(deces_code_lieu, 
+#					deces_pays) %>%
+#			summarise(n = n()) %>%
+#			arrange(desc(n))
 	
 	# Afficher les deces à Tahiti
-	dbp %>%
-			filter(deces_code_lieu == '98736')
+#	dbp %>%
+#			filter(deces_code_lieu == '98736')
 	
 	if (shallDeleteVars) rm(dbp)
 	
@@ -642,8 +642,7 @@ write.table(vaccination, "inst/extdata/world/eu/fr/gouv/vacsi/fr_gouv_vacsi.csv"
 
 vaccination <- vaccination %>% 
 		rename(tranche_age = clage_vacsi, deces_date_complete = jour) %>%
-		mutate(deces_date_complete = date(deces_date_complete),
-		       tranche_age=as.character(tranche_age)) 
+		mutate(deces_date_complete = date(deces_date_complete)) 
 
 # Ajouter les données de vaccination 
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
@@ -679,7 +678,7 @@ tranchesAge <- data_a_tracer %>%
 # Tracer les graphiques pour chaque tranche d'age
 for (trancheAge in tranchesAge$tranche_age) {
 	
-	message(paste0("trancheAge = ", trancheAge ))
+	cat(paste0("trancheAge = ", trancheAge, "\n" ))
 	
 	deces_par_jour_a_tracer <- data_a_tracer %>% 
 			filter(tranche_age == trancheAge) 
