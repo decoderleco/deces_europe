@@ -207,9 +207,8 @@ if (exists(varName)) {
 	# puisque l'on n'utilise que les fichiers depuis 2018. Mais il y a probablement des déclaration 
 	# de décès tardives expliquant des dates de décès pour des années antérieures 
 	# dans certains fichiers du gouvermnement (en particulier le deces-2021-t2.txt)
-	nbErreurSaisie <- b__fr_gouv_deces_quotidiens %>%
-			filter(deces_date_complete < K_DEBUT_DATES_DECES_A_ANALYSER) %>%
-			summarize(nb = n())
+	nbErreurSaisie <- count(b__fr_gouv_deces_quotidiens %>%
+			filter(deces_date_complete < K_DEBUT_DATES_DECES_A_ANALYSER))
 	message(paste0("Nombre de dates de décès antérieures à 2018 dans les fichiers depuis 2018 (erreurs de saisie ou enregistrement de régularisation ?) : ", nbErreurSaisie))
 	
 	if (shallDeleteVars) rm(nbErreurSaisie)
@@ -250,19 +249,19 @@ if (exists(varName)) {
 	
 	if (shallDeleteVars) rm(list_fichiers)
 	if (shallDeleteVars) rm(url_insee_nomenclatures)
-	if (shallDeleteVars) rm(nomenclatures_insee_zip_path)
+	if (shallDeleteVars) rm(insee_nomenclature_zip_path)
 	if (shallDeleteVars) rm(K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS)
 	
 	
 	# Lire les fichiers
 	
-	fr_insee_communes <- read_csv(file.path(K_DIR_INSEE_GEO, 'communes2020.csv'))
+	fr_insee_communes <- read_csv(file.path(K_DIR_INSEE_GEO, 'communes2020.csv'), show_col_types = FALSE)
 	
-	fr_insee_departements <- read_csv(file.path(K_DIR_INSEE_GEO, 'departement2020.csv'))
+	fr_insee_departements <- read_csv(file.path(K_DIR_INSEE_GEO, 'departement2020.csv'), show_col_types = FALSE)
 	
-	fr_insee_regions <- read_csv(file.path(K_DIR_INSEE_GEO, 'region2020.csv'))
+	fr_insee_regions <- read_csv(file.path(K_DIR_INSEE_GEO, 'region2020.csv'), show_col_types = FALSE)
 	
-	fr_insee_pays <- read_csv(file.path(K_DIR_INSEE_GEO, 'pays2020.csv'))
+	fr_insee_pays <- read_csv(file.path(K_DIR_INSEE_GEO, 'pays2020.csv'), show_col_types = FALSE)
 	
 	# Verifier s'il y a des doublons
 	#any(duplicated(communes$com))
@@ -316,19 +315,19 @@ if (exists(varName)) {
 	sum(is.na(dbp$deces_dep))
 	
 	# Afficher le nombre de deces par code_lieu et pays
-	dbp %>%
-			filter(is.na(deces_dep)) %>% 
-			select(naissance_commune, 
-					deces_code_lieu, 
-					deces_pays) %>%
-			group_by(deces_code_lieu, 
-					deces_pays) %>%
-			summarise(n = n()) %>%
-			arrange(desc(n))
+#	dbp %>%
+#			filter(is.na(deces_dep)) %>% 
+#			select(naissance_commune, 
+#					deces_code_lieu, 
+#					deces_pays) %>%
+#			group_by(deces_code_lieu, 
+#					deces_pays) %>%
+#			summarise(n = n()) %>%
+#			arrange(desc(n))
 	
 	# Afficher les deces à Tahiti
-	dbp %>%
-			filter(deces_code_lieu == '98736')
+#	dbp %>%
+#			filter(deces_code_lieu == '98736')
 	
 	if (shallDeleteVars) rm(dbp)
 	
@@ -337,7 +336,7 @@ if (exists(varName)) {
 	# Ceci devrait suffire pour notre pyramide des ages en france (hors COM)
 	
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
-			mutate(num_departement = str_sub(deces_code_lieu, 1, 2))
+			mutate(deces_num_dept = str_sub(deces_code_lieu, 1, 2))
 	
 	# age_deces_millesime = age de la personne au moment de son décès
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
@@ -345,7 +344,13 @@ if (exists(varName)) {
 	
 	# Trier par date de décès pour que ce soit plus facile à lire
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
-			arrange(deces_date_complete)
+			arrange(deces_date_complete, 
+					age_deces_millesime,
+					sexe)
+	
+	# Réorganiser les colonnes pour que ce soit plus facile à lire
+	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
+			select(nom:sexe, age_deces_millesime, deces_date, deces_date_complete, deces_num_dept, deces_code_lieu, everything())
 	
 	# Export pour Excel
 	#write.table(b__fr_gouv_deces_quotidiens, "gen/csv/fr_gouv_registre_deces_fr.csv", row.names=TRUE, sep=";", dec=".", na=" ")
@@ -362,14 +367,14 @@ if (exists(varName)) {
 
 # Deces par jour et par departement depuis 01/01/2018
 deces_dep_jour <- b__fr_gouv_deces_quotidiens %>%
-		group_by(num_departement,
+		filter(deces_date_complete >= K_DEBUT_DATES_DECES_A_ANALYSER) %>%
+		group_by(deces_num_dept,
 				deces_date_complete) %>%
-		summarise(nbDeces=n()) %>% 
-		filter(deces_date_complete >= K_DEBUT_DATES_DECES_A_ANALYSER)
+		summarise(nbDeces = n())
 
 # calculer la moyenne, le nb min/max et les quartiles des décès par département (depuis 2018)
 deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
-		group_by(num_departement) %>% 
+		group_by(deces_num_dept) %>% 
 		summarise(minimum = min(nbDeces),
 				maximum = max(nbDeces),
 				moyenne = mean(nbDeces),
@@ -381,8 +386,8 @@ deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
 # Ajouter la moyenne, le nb min/max et les quartiles des décès par département et trier par département
 deces_dep_jour <- deces_dep_jour %>%
 		left_join(deces_dep_jour_moyenne_min_max_quartiles) %>%
-		arrange(num_departement, deces_date_complete, nbDeces) %>%
-		select(num_departement, minimum:dernier_quartile, deces_date_complete, everything())
+		arrange(deces_num_dept, deces_date_complete, nbDeces) %>%
+		select(deces_num_dept, minimum:dernier_quartile, deces_date_complete, everything())
 
 if (shallDeleteVars) rm(deces_dep_jour_moyenne_min_max_quartiles)
 
@@ -398,7 +403,7 @@ nom_departement <- read.csv("data/csv/departements-region.csv", sep=",", header 
 
 deces_dep_jour <- deces_dep_jour %>%
 		left_join(nom_departement,
-				by=c("num_departement"="num_dep"))
+				by=c("deces_num_dept"="num_dep"))
 
 if (shallDeleteVars) rm(nom_departement)
 
@@ -638,8 +643,7 @@ write.table(vaccination, "inst/extdata/world/eu/fr/gouv/vacsi/fr_gouv_vacsi.csv"
 
 vaccination <- vaccination %>% 
 		rename(tranche_age = clage_vacsi, deces_date_complete = jour) %>%
-		mutate(deces_date_complete = date(deces_date_complete),
-				tranche_age=as.character(tranche_age))
+		mutate(deces_date_complete = date(deces_date_complete)) 
 
 # Ajouter les données de vaccination 
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
@@ -647,7 +651,7 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
 		mutate(n_dose1 = ifelse(is.na(n_dose1), 0, n_dose1)) %>%
-		mutate(n_complet = ifelse(is.na(n_complet), 0, n_complet)) %>% 
+		mutate(n_complet = ifelse(is.na(n_complet), 0, n_complet))%>% 
 		mutate(n_rappel = ifelse(is.na(n_rappel),0,n_rappel))
 
 write.csv2(deces_par_jour_tranchedage, file='gen/csv/deces_par_jour_tranchedage_vacsi.csv')
@@ -675,7 +679,7 @@ tranchesAge <- data_a_tracer %>%
 # Tracer les graphiques pour chaque tranche d'age
 for (trancheAge in tranchesAge$tranche_age) {
 	
-	message(paste0("trancheAge = ", trancheAge ))
+	cat(paste0("trancheAge = ", trancheAge, "\n" ))
 	
 	deces_par_jour_a_tracer <- data_a_tracer %>% 
 			filter(tranche_age == trancheAge) 
