@@ -207,9 +207,8 @@ if (exists(varName)) {
 	# puisque l'on n'utilise que les fichiers depuis 2018. Mais il y a probablement des déclaration 
 	# de décès tardives expliquant des dates de décès pour des années antérieures 
 	# dans certains fichiers du gouvermnement (en particulier le deces-2021-t2.txt)
-	nbErreurSaisie <- b__fr_gouv_deces_quotidiens %>%
-			filter(deces_date_complete < K_DEBUT_DATES_DECES_A_ANALYSER) %>%
-			summarize(nb = n())
+	nbErreurSaisie <- count(b__fr_gouv_deces_quotidiens %>%
+			filter(deces_date_complete < K_DEBUT_DATES_DECES_A_ANALYSER))
 	message(paste0("Nombre de dates de décès antérieures à 2018 dans les fichiers depuis 2018 (erreurs de saisie ou enregistrement de régularisation ?) : ", nbErreurSaisie))
 	
 	if (shallDeleteVars) rm(nbErreurSaisie)
@@ -345,7 +344,9 @@ if (exists(varName)) {
 	
 	# Trier par date de décès pour que ce soit plus facile à lire
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
-			arrange(deces_date_complete)
+			arrange(deces_date_complete, 
+					age_deces_millesime,
+					sexe)
 	
 	# Réorganiser les colonnes pour que ce soit plus facile à lire
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
@@ -366,10 +367,10 @@ if (exists(varName)) {
 
 # Deces par jour et par departement depuis 01/01/2018
 deces_dep_jour <- b__fr_gouv_deces_quotidiens %>%
+		filter(deces_date_complete >= K_DEBUT_DATES_DECES_A_ANALYSER) %>%
 		group_by(deces_num_dept,
 				deces_date_complete) %>%
-		summarise(nbDeces=n()) %>% 
-		filter(deces_date_complete >= K_DEBUT_DATES_DECES_A_ANALYSER)
+		summarise(nbDeces = n())
 
 # calculer la moyenne, le nb min/max et les quartiles des décès par département (depuis 2018)
 deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
