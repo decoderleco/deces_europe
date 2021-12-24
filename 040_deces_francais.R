@@ -686,7 +686,7 @@ for (trancheAge in tranchesAge$tranche_age) {
 	
 	a__f_plot_fr_deces_quotidiens_par_tranche_age(
 			deces_par_jour_a_tracer, 
-			sprintf("%02d", trancheAge))
+			trancheAge)
 }
 
 if (shallDeleteVars) rm(trancheAge)
