@@ -532,10 +532,10 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 		tranche_age,
 		tailleFenetreGlissante = 7,
 		decalageSemaines = 6) {
-	
-  if(tranche_age==0){nomVar<-"Tous âges"}
-  if(tranche_age==4){nomVar<-"0-4 ans"}
-  if(tranche_age==9){nomVar<-"5-9 ans"}
+
+  if(tranche_age==0) {nomVar<-"Tous âges"}
+  if(tranche_age==4) {nomVar<-"00-04 ans"}
+  if(tranche_age==9) {nomVar<-"05-09 ans"}
   if(tranche_age==11){nomVar<-"10-11 ans"}
   if(tranche_age==17){nomVar<-"12-17 ans"}
   if(tranche_age==24){nomVar<-"18-24 ans"}
@@ -548,8 +548,6 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
   if(tranche_age==74){nomVar<-"70-74 ans"}
   if(tranche_age==79){nomVar<-"75-79 ans"}
   if(tranche_age==80){nomVar<-"80 ans et +"}
-	
-	nomVar <- tranche_age
 	
 	repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quotidiens/Tranche_age"))
 	
@@ -571,7 +569,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	deces_par_jour$binf <-  mean(deces_par_jour$nbDeces) - sd(deces_par_jour$nbDeces)
 	deces_par_jour$bsup <-  mean(deces_par_jour$nbDeces) + sd(deces_par_jour$nbDeces)
 
-# Ajout Moyenne mobile
+	# Ajout Moyenne mobile
 	deces_par_jour$numerojour <- 1:nrow(deces_par_jour)
 	deces_par_jour <- deces_par_jour %>% 
 			left_join(deces_moyenne_mobile_courte) 
@@ -593,12 +591,12 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	  left_join(moyenne_mobile_n_complet) 
 	
 	# Calculer la moyenne mobile vaccination sur 90 jours
-	deces_moyenne_mobile_annee <- running_mean(deces_par_jour$nbDeces, 90)
-	deces_moyenne_mobile_annee <- data_frame(deces_moyenne_mobile_annee)
-	deces_moyenne_mobile_annee$numerojour <- 1:nrow(deces_moyenne_mobile_annee) + 46
+	deces_moyenne_mobile_3_mois <- running_mean(deces_par_jour$nbDeces, 90)
+	deces_moyenne_mobile_3_mois <- data_frame(deces_moyenne_mobile_3_mois)
+	deces_moyenne_mobile_3_mois$numerojour <- 1:nrow(deces_moyenne_mobile_3_mois) + 46
 	# Ajout Moyenne mobile
 	deces_par_jour <- deces_par_jour %>% 
-	  left_join(deces_moyenne_mobile_annee) 
+	  left_join(deces_moyenne_mobile_3_mois) 
 	
 	# Calculer la moyenne mobile vaccination sur 7 jours
 	moyenne_mobile_n_rappel <- running_mean(deces_par_jour$n_rappel, tailleFenetreGlissante)
@@ -610,8 +608,45 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	
 	deces_par_jour <- deces_par_jour %>% filter(deces_date_complete >"2020-06-01")
 	
+	COULEUR_DECES_MOY_MOBILE_COURTE = "#660000"
+	COULEUR_DECES_MOY_MOBILE_3_MOIS = "#FF0000"
+	COULEUR_VACCIN_DOSE_1 = "#3399FF"
+	COULEUR_VACCIN_DOSE_2 = "#0066CC"
+	COULEUR_VACCIN_DOSE_3 = "#003366"
+	
+	# Moyenne mobile courte des décès toutes causes
 	plot(deces_par_jour$deces_date_complete, 
-	     deces_par_jour$deces_moyenne_mobile_annee, 
+			deces_par_jour$deces_moyenne_mobile_courte, 
+			pch=16, 
+			axes=T, 
+			cex=0, 
+			xlab="",
+			ylim=c(ymin,ymax),
+			lwd=1.5, 
+			ylab="", 
+			type="o", 
+			col=COULEUR_DECES_MOY_MOBILE_COURTE) 
+	axis(2, col = COULEUR_DECES_MOY_MOBILE_COURTE, col.axis = COULEUR_DECES_MOY_MOBILE_COURTE, lwd = 2)
+	
+	# pour encadrer le graphique
+	box() 
+	
+	# Légende de gauche
+	mtext("Nombre de décès toutes causes ", side=PLOT_AXIS_SIDE_LEFT, line=3, col=COULEUR_DECES_MOY_MOBILE_COURTE)
+	mtext("Moyenne mobile à 3 mois du nombre de décès toutes causes ", side=PLOT_AXIS_SIDE_LEFT, line=2, col=COULEUR_DECES_MOY_MOBILE_3_MOIS)
+	
+	# Légende de droite
+	mtext("Nombre de vaccinés 1ere dose                                                                                                                           ", 
+			side=PLOT_AXIS_SIDE_RIGHT, line=2.5, col=COULEUR_VACCIN_DOSE_1)
+	mtext("Nombre de vaccinés 2eme dose", 
+			side=PLOT_AXIS_SIDE_RIGHT, line=2.5, col=COULEUR_VACCIN_DOSE_2)
+	mtext("                                                                                                                                 Nombre de vaccinés 3eme dose", 
+			side=PLOT_AXIS_SIDE_RIGHT, line=2.5, col=COULEUR_VACCIN_DOSE_3)
+
+	# Superposer vaccinés dose 1
+	par(new=T)
+	plot(deces_par_jour$deces_date_complete, 
+	     deces_par_jour$deces_moyenne_mobile_3_mois, 
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
@@ -620,21 +655,10 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     ylim=c(ymin,ymax),
 	     ylab="", 
 	     type="o", 
-	     col="#990000", 
+	     col=COULEUR_DECES_MOY_MOBILE_3_MOIS, 
 	     main=paste0("Décès quotidiens France et vaccinations des ", nomVar, " ans"))
-	axis(2, col = "#990000", col.axis = "#990000", lwd = 2)
-	
-	# pour encadrer le graphique
-	box() 
-	
-	mtext("Nombre de décès toutes causes ", side=2, line=3, col="#990000")
-	mtext("Moyenne mobile à 3 mois du nombre de décès toutes causes ", side=2, line=2, col="#660000")
-	mtext("Nombre de vaccinés 1ere dose                                                                                                                           ", side=1, line=2, col="#3399FF")
-	mtext("Nombre de vaccinés 2eme dose", side=1, line=2, col="#0066CC")
-	mtext("                                                                                                                                 Nombre de vaccinés 3eme dose", side=1, line=2, col="#003366")
-	
 
-	# Superposer vaccinés
+	# Superposer vaccinés dose 1
 	par(new=T)
 	plot(deces_par_jour$deces_date_complete,  
 	     deces_par_jour$moyenne_mobile_n_dose1, 
@@ -645,10 +669,10 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     lwd=2,  
 	     ylab="", 
 	     type="o", 
-	     col="#3399FF") 
-	axis(4, col = "#0066CC", col.axis = "#0066CC", lwd = 2)
+	     col=COULEUR_VACCIN_DOSE_1) 
+	axis(4, col = COULEUR_VACCIN_DOSE_1, col.axis = COULEUR_VACCIN_DOSE_1, lwd = 2)
 	
-	# Superposer vaccinés
+	# Superposer vaccinés dose 2
 	par(new=T)
 	plot(deces_par_jour$deces_date_complete,  
 	     deces_par_jour$moyenne_mobile_n_complet, 
@@ -659,9 +683,9 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     lwd=2,  
 	     ylab="", 
 	     type="o", 
-	     col="#0066CC")
+	     col=COULEUR_VACCIN_DOSE_2)
 	
-	# Superposer vaccinés
+	# Superposer vaccinés dose 3
 	par(new=T)
 	plot(deces_par_jour$deces_date_complete,  
 	     deces_par_jour$moyenne_mobile_n_rappel, 
@@ -672,22 +696,8 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     lwd=2,  
 	     ylab="", 
 	     type="o", 
-	     col="#003366") 
+	     col=COULEUR_VACCIN_DOSE_3) 
 
-	# Superposer la moyenne mobile courte des décès toutes causes
-	par(new=T)
-	plot(deces_par_jour$deces_date_complete, 
-	     deces_par_jour$deces_moyenne_mobile_courte, 
-	     pch=16, 
-	     axes=T, 
-	     cex=0, 
-	     xlab="",
-	     ylim=c(ymin,ymax),
-	     lwd=1.5, 
-	     ylab="", 
-	     type="o", 
-	     col="#660000") 
-	
 	# Superposer la moyenne 
 	par(new=T)
 	plot(deces_par_jour$deces_date_complete, 
@@ -700,7 +710,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     lwd=1.5,  
 	     ylab="", 
 	     type="o", 
-	     col="purple") 
+	     col=COULEUR_DECES_MOY_MOBILE_COURTE) 
 	
 	# Superposer la bsup
 	par(new=T)
@@ -715,7 +725,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     ylim=c(ymin,ymax),
 	     lty=2, 
 	     type="o", 
-	     col="purple") 
+	     col=COULEUR_DECES_MOY_MOBILE_COURTE) 
 	
 	# Superposer la binf
 	par(new=T)
@@ -730,7 +740,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     ylab="",
 	     lty=2, 
 	     type="o", 
-	     col="purple") 
+	     col=COULEUR_DECES_MOY_MOBILE_COURTE) 
 
 
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
