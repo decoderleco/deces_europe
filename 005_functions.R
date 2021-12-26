@@ -4282,7 +4282,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   if(nbLines > 0){
 	  p<-ggplot(temp2) +
 	    aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_ge80) +
-    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
+    	geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
 	    geom_line(aes(color=annee_coupee_ete), size=1.3) +
 	    scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
 	    geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+

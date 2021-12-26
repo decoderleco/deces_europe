@@ -833,6 +833,7 @@ print(ggplot(data = data_a_tracer,
 								y = nbDeces)) +
 				
 				scale_colour_manual(values = c("black"))+
+				scale_fill_brewer(palette = "YlOrRd") +
 				
 				geom_col(mapping = aes(fill = deces_annee),
 						# Couleur du trait de contour des barres
