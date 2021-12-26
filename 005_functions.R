@@ -96,7 +96,7 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 	if (exists(varName)) {
 		# La variable existe déjà dans le Contexte
 		
-		cat(paste0("(", varName, ") existe déjà. On ne re-télécharge pas\n"))
+		message(paste0("(", varName, ") existe déjà. On ne re-télécharge pas"))
 		
 		downloadedDatas <- var
 		
