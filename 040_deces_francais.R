@@ -127,6 +127,8 @@ if (exists(varName)) {
 	#
 	################################################################################
 	
+	cat("Construction de (b__fr_gouv_deces_quotidiens)...\n")
+	
 	# Largeur des champs dans le fichier
 	fields_widths <- c(					# Colonne :
 			nom = 80,					# 80
@@ -356,6 +358,8 @@ if (exists(varName)) {
 	#write.table(b__fr_gouv_deces_quotidiens, "gen/csv/fr_gouv_registre_deces_fr.csv", row.names=TRUE, sep=";", dec=".", na=" ")
 
 	#saveRDS(b__fr_gouv_deces_quotidiens, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
+
+	cat("(b__fr_gouv_deces_quotidiens) a été construite\n")
 }
 
 
