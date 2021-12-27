@@ -194,6 +194,8 @@ if (exists(varName)) {
 	
 			) 
 	
+	if (shallDeleteVars) rm(a__original_fr_gouv_deces_quotidiens)
+	
 	# Afficher quelques verifications sur la base nettoyees
 	sum(is.na(b__fr_gouv_deces_quotidiens$naissance_annee))
 	
@@ -875,9 +877,6 @@ repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quoti
 pngFileRelPath <- paste0(repertoire, "/Deces_annuels_par_tranche_age.png")
 
 dev.print(device = png, file = pngFileRelPath, width = 1000)
-
-
-if (shallDeleteVars) rm(a__original_fr_gouv_deces_quotidiens)
 
 if (shallDeleteVars) rm(deces_par_jour_age)
 if (shallDeleteVars) rm(deces_par_jour_a_tracer)
