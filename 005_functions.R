@@ -443,12 +443,11 @@ a__f_add_tranche_age_vacsi <- function(tabWithAge) {
 }
 
 ################################################################################
-# Ajouter une colonne tranche_age de 5 en 5
+# Ajouter une colonne tranche_age de 10 en 10 puis de 5 en 5 à partir de 55
 ################################################################################
 a__f_add_tranche_age <- function(tabWithAge) {
 	
 	# Ajouter une colonne avec la tranche d'age
-	# conforme à VAC-SI (https://www.data.gouv.fr/fr/datasets/donnees-relatives-aux-personnes-vaccinees-contre-la-covid-19-1/#description)
 	tabWith_tranche_age <- tabWithAge %>%
 			mutate(tranche_age = case_when(
 							age >=  0 & age <= 10 ~ 10,
