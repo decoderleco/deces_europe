@@ -194,6 +194,8 @@ if (exists(varName)) {
 	
 			) 
 	
+	if (shallDeleteVars) rm(a__original_fr_gouv_deces_quotidiens)
+	
 	# Afficher quelques verifications sur la base nettoyees
 	sum(is.na(b__fr_gouv_deces_quotidiens$naissance_annee))
 	
@@ -818,7 +820,17 @@ data_a_tracer <- data_a_tracer %>%
 # Ajouter la colonne tranche d'age (pas les tranches d'âge VAC-SI)
 data_a_tracer <- a__f_add_tranche_age(data_a_tracer)
 
+# Extraire les dates de début/fin en 2021 afin de pouvoir ensuite faire une estimation sur 365 jours pour l'année en cours
+
 date_max <- max(data_a_tracer$deces_date_complete) 
+
+duree <- as.integer(date_max - as.Date("2021-01-01"), units='days')
+
+if (duree > 365) message("Il faut modifier le code car on a changé d'année")
+
+# Coefficient multiplicateur pour avoir une estimation sur 365 jours
+coeffMult <- 365 / duree
+
 
 # Calculer le nombre de décès pour chaque tranche d'age et chaque jour
 data_a_tracer <- data_a_tracer %>% 
@@ -826,11 +838,15 @@ data_a_tracer <- data_a_tracer %>%
 				deces_annee) %>%
 		summarise(nbDeces = sum(nbDeces))
 
+# Multiplier par le coefficient pour avoir une estimation sur 2021 complète
+data_a_tracer <- data_a_tracer %>%
+		mutate(nbDecesEstimes = if_else(deces_annee == 2021, as.integer(nbDeces * coeffMult), nbDeces))
+
 write.csv2(data_a_tracer, file='gen/csv/deces_par_tranchedage_et_annee.csv')
 
 print(ggplot(data = data_a_tracer,
 						mapping = aes(x = tranche_age, 
-								y = nbDeces)) +
+								y = nbDecesEstimes)) +
 				
 				scale_colour_manual(values = c("black"))+
 				scale_fill_brewer(palette = "YlOrRd") +
@@ -852,7 +868,7 @@ print(ggplot(data = data_a_tracer,
 				theme(axis.text.x = element_text(angle=45)) +
 				
 				# Axe y  
-				ylab("nombre de décès") +
+				ylab("Nombre de décès (avec Estimation proportionnelle pour l'année en cours)") +
 				ylim(0, NA)
 )
 
@@ -861,9 +877,6 @@ repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quoti
 pngFileRelPath <- paste0(repertoire, "/Deces_annuels_par_tranche_age.png")
 
 dev.print(device = png, file = pngFileRelPath, width = 1000)
-
-
-if (shallDeleteVars) rm(a__original_fr_gouv_deces_quotidiens)
 
 if (shallDeleteVars) rm(deces_par_jour_age)
 if (shallDeleteVars) rm(deces_par_jour_a_tracer)
