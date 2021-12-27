@@ -27,7 +27,7 @@ library(scales)
 
 # Les données se trouvent ici, mais je n'ai pas réussi à me connecter à cause de problèmes de format : https://assurance-maladie.ameli.fr/etudes-et-donnees/medicaments-type-prescripteur-medicam-2021
 
-message("Charger les données sur le vaccin contre la grippe")
+cat("Charger les données sur le vaccin contre la grippe\n")
 
 # medicam.csv
 # 
@@ -108,7 +108,7 @@ print(ggplot(medicam_vaccins_grippes,
 		theme(axis.text.x = element_text(angle=45))
 )
 
-repertoire <- paste0("gen/images/fr/Medicam")
+repertoire <- paste0(K_DIR_GEN_IMG_FR_AMELIE, "/Medicam")
 a__f_createDir(repertoire)
 
 dev.print(device = png, file = paste0(repertoire, "/Medicam_Vaccins_Grippe_Distribues.png"), width = 1000)
@@ -150,7 +150,7 @@ print(ggplot(medicam_vaccins_grippes_par_annee,
 				theme(axis.text.x = element_text(angle=45))
 )
 
-repertoire <- paste0("gen/images/fr/Medicam")
+repertoire <- paste0(K_DIR_GEN_IMG_FR_AMELIE, "/Medicam")
 a__f_createDir(repertoire)
 
 dev.print(device = png, file = paste0(repertoire, "/Medicam_Vaccins_Grippe_Distribues_par_annee.png"), width = 1000)
@@ -175,7 +175,7 @@ if (shallDeleteVars) rm(medicam_vaccins_grippes_par_annee)
 
 # Ameliorer open_medic_2019
 
-message("Charger les fichiers de délivrance de médicaments par les pharmacies 2019")
+cat("Charger les fichiers de délivrance de médicaments par les pharmacies 2019\n")
 
 a__original_open_medic_2019 <- a__f_loadCsvIfNeeded(var = a__original_open_medic_2019,
 		csvRelFilePath = "data/csv/OPEN_MEDIC_2019.csv", 
@@ -223,7 +223,7 @@ om_open_medic_2019 <- om_open_medic_2019 %>%
 
 # Ameliorer open_medic_2020
 
-message("Charger les fichiers de délivrance de médicaments par les pharmacies 2020")
+cat("Charger les fichiers de délivrance de médicaments par les pharmacies 2020\n")
 
 a__original_open_medic_2020 <- a__f_loadCsvIfNeeded(var = a__original_open_medic_2020,
 		csvRelFilePath = "data/csv/OPEN_MEDIC_2020.csv", 
@@ -314,38 +314,38 @@ om_PARACETAMOL_2020 <- om_open_medic_2020 %>%
 # Synthese de l'evolution (par age) du Rivotril entre 2019 et 2020
 test20 <- om_CLONAZEPAM_2020 %>%
 		group_by(classe_age, region) %>%
-		summarise(BOITES_2020=sum(BOITES), BSE_2020=sum(BSE))
+		summarise(BOITES_2020=sum(BOITES), BSE_2020=sum(BSE), .groups = 'drop')
 
 test19 <- om_CLONAZEPAM_2019 %>%
 		group_by(classe_age, region) %>%
-		summarise(BOITES_2019=sum(BOITES), BSE_2019=sum(BSE))
+		summarise(BOITES_2019=sum(BOITES), BSE_2019=sum(BSE), .groups = 'drop')
 
 om_CLONAZEPAM <- test20 %>%
-		full_join(test19)
+		full_join(test19, by = c("classe_age", "region"))
 
 # Synthese de l'evolution (par age)  des anti-biotiques entre 2019 et 2020
 test20 <- om_ANTIBACTERIENS_2020 %>%
 		group_by(classe_age, region) %>%
-		summarise(BOITES_2020=sum(BOITES), BSE_2020=sum(BSE))
+		summarise(BOITES_2020=sum(BOITES), BSE_2020=sum(BSE), .groups = 'drop')
 
 test19 <- om_ANTIBACTERIENS_2019 %>%
 		group_by(classe_age, region) %>%
-		summarise(BOITES_2019=sum(BOITES), BSE_2019=sum(BSE))
+		summarise(BOITES_2019=sum(BOITES), BSE_2019=sum(BSE), .groups = 'drop')
 
 om_ANTIBACTERIENS <- test20 %>%
-		full_join(test19)
+		full_join(test19, by = c("classe_age", "region"))
 
 # Synthese de l'evolution (par age)  du doliprane entre 2019 et 2020
 test20 <- om_PARACETAMOL_2020 %>%
   group_by(classe_age, region) %>%
-  summarise(BOITES_2020=sum(BOITES), BSE_2020=sum(BSE))
+  summarise(BOITES_2020=sum(BOITES), BSE_2020=sum(BSE), .groups = 'drop')
 
 test19 <- om_PARACETAMOL_2019 %>%
   group_by(classe_age, region) %>%
-  summarise(BOITES_2019=sum(BOITES), BSE_2019=sum(BSE))
+  summarise(BOITES_2019=sum(BOITES), BSE_2019=sum(BSE), .groups = 'drop')
 
 om_PARACETAMOL <- test20 %>%
-  full_join(test19)
+  full_join(test19, by = c("classe_age", "region"))
 
 if (shallDeleteVars) rm(test19)
 if (shallDeleteVars) rm(test20)
@@ -384,7 +384,8 @@ tmp <- tmp %>%
 		group_by(classe_age, 
 				region) %>% 
 		summarise("2019" = sum(BOITES_2019), 
-				"2020" = sum(BOITES_2020))
+				"2020" = sum(BOITES_2020), 
+				.groups = 'drop')
 
 tmp <- tmp %>%
 		pivot_longer(cols = !classe_age:region, 
@@ -403,7 +404,7 @@ dataToPlot <- tmp %>%
 
 if (shallDeleteVars) rm(tmp)
 
-message("Graphique évolution ANTIBIOTIQUES entre 2019 et 2020")
+cat("Graphique évolution ANTIBIOTIQUES entre 2019 et 2020\n")
 
 print(ggplot(data = dataToPlot,
 						mapping = aes(x = annee, 
@@ -441,7 +442,7 @@ print(ggplot(data = dataToPlot,
 				ylim(0, NA)
 )
 
-repertoire <- paste0("gen/images/fr/Medicam")
+repertoire <- paste0(K_DIR_GEN_IMG_FR_AMELIE, "/Medicam")
 a__f_createDir(repertoire)
 
 dev.print(device = png, file = paste0(repertoire, "/Medicam_evol_Antibiotiques.png"), width = 1000)
@@ -465,7 +466,8 @@ tmp <- tmp %>%
 		group_by(classe_age, 
 				region) %>% 
 		summarise("2019" = sum(BOITES_2019), 
-				"2020" = sum(BOITES_2020))
+				"2020" = sum(BOITES_2020), 
+				.groups = 'drop')
 
 tmp <- tmp %>%
 		pivot_longer(cols = !classe_age:region, 
@@ -484,7 +486,7 @@ dataToPlot <- tmp %>%
 
 if (shallDeleteVars) rm(tmp)
 
-message("Graphique évolution RIVOTRIL entre 2019 et 2020")
+cat("Graphique évolution RIVOTRIL entre 2019 et 2020\n")
 
 print(ggplot(data = dataToPlot,
 						mapping = aes(x = annee, 
@@ -523,11 +525,11 @@ print(ggplot(data = dataToPlot,
 				ylim(0, NA)
 )
 
-repertoire <- paste0("gen/images/fr/Medicam")
+repertoire <- paste0(K_DIR_GEN_IMG_FR_AMELIE, "/Medicam")
 a__f_createDir(repertoire)
 
 dev.print(device = png, file = paste0(repertoire, "/Medicam_evol_Rivotril.png"), width = 1000)
 
 if (shallDeleteVars) rm(dataToPlot)
 
-message("Terminé 050")
+cat("Terminé 050\n")

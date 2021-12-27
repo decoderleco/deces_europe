@@ -42,9 +42,14 @@ K_DIR_EXT_DATA_USA <- a__f_createDir(file.path(K_DIR_EXT_DATA_WORLD, 'usa'))
 
 K_DIR_GEN_IMG <- a__f_createDir("gen/images")
 K_DIR_GEN_IMG_WORLD <- a__f_createDir(file.path(K_DIR_GEN_IMG, 'world'))
+
 K_DIR_GEN_IMG_EUROPE <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'eu'))
-K_DIR_GEN_IMG_FRANCE <- a__f_createDir(file.path(K_DIR_GEN_IMG, 'fr'))
+K_DIR_GEN_IMG_EUROSTAT <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROPE, 'Eurostat'))
+
+K_DIR_GEN_IMG_FRANCE <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROPE, 'fr'))
 K_DIR_GEN_IMG_FR_GOUV <- a__f_createDir(file.path(K_DIR_GEN_IMG_FRANCE, 'gouv'))
+K_DIR_GEN_IMG_FR_AMELIE <- a__f_createDir(file.path(K_DIR_GEN_IMG_FRANCE, 'amelie'))
+
 K_DIR_GEN_IMG_USA <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'usa'))
 K_DIR_GEN_IMG_OWID <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'owid'))
 
@@ -481,7 +486,7 @@ a__f_plot_fr_deces_quotidiens_par_region <- function(region) {
 	nomRegion <- deparse(substitute(region))
 	
 	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
-	repertoire <- paste0("gen/images/fr/gouv/Registre/Deces_Quotidiens/Region/")
+	repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_Quotidiens/Region/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -571,7 +576,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	# Ajout Moyenne mobile
 	deces_par_jour$numerojour <- 1:nrow(deces_par_jour)
 	deces_par_jour <- deces_par_jour %>% 
-			left_join(deces_moyenne_mobile_courte) 
+			left_join(deces_moyenne_mobile_courte, by = "numerojour") 
 
 	# Calculer la moyenne mobile vaccination sur 7 jours
 	moyenne_mobile_n_dose1 <- running_mean(deces_par_jour$n_dose1, tailleFenetreGlissante)
@@ -579,7 +584,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	moyenne_mobile_n_dose1$numerojour <- 1:nrow(moyenne_mobile_n_dose1) + decalageSemaines
 	# Ajout Moyenne mobile
 	deces_par_jour <- deces_par_jour %>% 
-	  left_join(moyenne_mobile_n_dose1) 
+	  left_join(moyenne_mobile_n_dose1, by = "numerojour") 
 	
 	# Calculer la moyenne mobile vaccination sur 7 jours
 	moyenne_mobile_n_complet <- running_mean(deces_par_jour$n_complet, tailleFenetreGlissante)
@@ -587,7 +592,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	moyenne_mobile_n_complet$numerojour <- 1:nrow(moyenne_mobile_n_complet) + decalageSemaines
 	# Ajout Moyenne mobile
 	deces_par_jour <- deces_par_jour %>% 
-	  left_join(moyenne_mobile_n_complet) 
+	  left_join(moyenne_mobile_n_complet, by = "numerojour") 
 	
 	# Calculer la moyenne mobile vaccination sur 90 jours
 	deces_moyenne_mobile_3_mois <- running_mean(deces_par_jour$nbDeces, 90)
@@ -595,7 +600,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	deces_moyenne_mobile_3_mois$numerojour <- 1:nrow(deces_moyenne_mobile_3_mois) + 46
 	# Ajout Moyenne mobile
 	deces_par_jour <- deces_par_jour %>% 
-	  left_join(deces_moyenne_mobile_3_mois) 
+	  left_join(deces_moyenne_mobile_3_mois, by = "numerojour") 
 	
 	# Calculer la moyenne mobile vaccination sur 7 jours
 	moyenne_mobile_n_rappel <- running_mean(deces_par_jour$n_rappel, tailleFenetreGlissante)
@@ -603,7 +608,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	moyenne_mobile_n_rappel$numerojour <- 1:nrow(moyenne_mobile_n_rappel) + decalageSemaines
 	# Ajout Moyenne mobile
 	deces_par_jour <- deces_par_jour %>% 
-	  left_join(moyenne_mobile_n_rappel) 
+	  left_join(moyenne_mobile_n_rappel, by = "numerojour") 
 	
 	deces_par_jour <- deces_par_jour %>% filter(deces_date_complete >"2020-06-01")
 	
@@ -761,7 +766,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	nomPays <- str_sub(nomVar, startIndex)
 
 	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
-	repertoire <- a__f_createDir(paste0("gen/images/Eurostat/Deces/Hebdo/Std/Deces_Pays/ge40/", es_deces_standard_pays_semaine$zone[1], "/"))
+	repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/ge40/", es_deces_standard_pays_semaine$zone[1], "/"))
 	
 	#Nom du fichier png à générer
 	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
@@ -784,7 +789,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-			left_join(es_moyenne_mobile)
+			left_join(es_moyenne_mobile, by = "numSemaineDepuis2013")
 	
 	
 	es_deces_standard_pays_semaine$moyenne <- moyenne
@@ -914,7 +919,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	#
 	
 	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays/par_age/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -936,7 +941,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-	  left_join(moyenne_mobile_15_24)
+	  left_join(moyenne_mobile_15_24, by = "numSemaineDepuis2013")
 	
 	
 	essai <- es_deces_standard_pays_semaine 
@@ -1050,7 +1055,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	# Graphique 2 : Situation des 25- 50 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays/par_age/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -1072,7 +1077,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-	  left_join(moyenne_mobile_25_49)
+	  left_join(moyenne_mobile_25_49, by = "numSemaineDepuis2013")
 	
 	essai <- es_deces_standard_pays_semaine
 	if(nomPays!='allemagne'){
@@ -1183,7 +1188,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	# Graphique 3 : Situation des 50- 59 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays/par_age/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -1205,7 +1210,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-	  left_join(moyenne_mobile_50_59)
+	  left_join(moyenne_mobile_50_59, by = "numSemaineDepuis2013")
 	
 	essai <- es_deces_standard_pays_semaine 
 	
@@ -1316,7 +1321,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	# Graphique 4 : Situation des 60- 69 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays/par_age/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -1338,7 +1343,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-	  left_join(moyenne_mobile_60_69)
+	  left_join(moyenne_mobile_60_69, by = "numSemaineDepuis2013")
 	
 	essai <- es_deces_standard_pays_semaine 
 	
@@ -1449,7 +1454,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	# Graphique 5 : Situation des 70- 79 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays/par_age/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -1471,7 +1476,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-	  left_join(moyenne_mobile_70_79)
+	  left_join(moyenne_mobile_70_79, by = "numSemaineDepuis2013")
 	
 	essai <- es_deces_standard_pays_semaine
 	
@@ -1585,7 +1590,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	# Graphique 6 : Situation des plus de 80 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays/par_age/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -1607,7 +1612,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-	  left_join(moyenne_mobile_ge80)
+	  left_join(moyenne_mobile_ge80, by = "numSemaineDepuis2013")
 	
 	essai <- es_deces_standard_pays_semaine
 	
@@ -1717,7 +1722,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	#
 	if(nomPays!='allemagne'){
 	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays/par_age/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -1945,7 +1950,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	#
 
 	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/15-24/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/15-24/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -1967,7 +1972,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-	  left_join(moyenne_mobile_15_24)
+	  left_join(moyenne_mobile_15_24, by = "numSemaineDepuis2013")
 	
 
 	essai <- es_deces_standard_pays_semaine %>%
@@ -2152,7 +2157,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	# Graphique 2 : Situation des 25- 49 ans
 	#
 
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/25-50/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/25-50/")
 	a__f_createDir(repertoire)
 
 	#Nom du fichier png à générer
@@ -2174,7 +2179,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-	  left_join(moyenne_mobile_25_49)
+	  left_join(moyenne_mobile_25_49, by = "numSemaineDepuis2013")
 	
 	essai <- es_deces_standard_pays_semaine %>%
 	  filter(numSemaineDepuis2013>410)
@@ -2354,7 +2359,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	# Graphique 3 : Situation des 50- 59 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/50-59/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/50-59/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2376,7 +2381,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-	  left_join(moyenne_mobile_50_59)
+	  left_join(moyenne_mobile_50_59, by = "numSemaineDepuis2013")
 	
 	essai <- es_deces_standard_pays_semaine %>%
 	  filter(numSemaineDepuis2013>410)
@@ -2534,7 +2539,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	# Graphique 4 : Situation des 60- 69 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2556,7 +2561,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-	  left_join(moyenne_mobile_60_69)
+	  left_join(moyenne_mobile_60_69, by = "numSemaineDepuis2013")
 	
 	essai <- es_deces_standard_pays_semaine %>%
 	  filter(numSemaineDepuis2013>410)
@@ -2714,7 +2719,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	# Graphique 5 : Situation des 70- 79 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/70-79/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/70-79/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2736,7 +2741,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-	  left_join(moyenne_mobile_70_79)
+	  left_join(moyenne_mobile_70_79, by = "numSemaineDepuis2013")
 	
 	essai <- es_deces_standard_pays_semaine %>%
 	  filter(numSemaineDepuis2013>410)
@@ -2894,7 +2899,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	# Graphique 6 : Situation des plus de 80 ans
 	#
 	
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/80plus/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/80plus/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -2916,7 +2921,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	
 	# Ajouter les colonnes de la moyenne mobile 
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-	  left_join(moyenne_mobile_ge80)
+	  left_join(moyenne_mobile_ge80, by = "numSemaineDepuis2013")
 	
 	essai <- es_deces_standard_pays_semaine %>%
 	  filter(numSemaineDepuis2013>410)
@@ -3150,7 +3155,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
               moyennne_deces_standardises_si_pop_2020_70_79=mean(deces_standardises_si_pop_2020_70_79),
               moyennne_deces_standardises_si_pop_2020_ge80=mean(deces_standardises_si_pop_2020_ge80))
   
-  essai<-annees_20_21 %>% left_join(annees_13_19) %>% 
+  essai<-annees_20_21 %>% left_join(annees_13_19, by = "semaine") %>% 
     mutate(diff_15_24=deces_standardises_si_pop_2020_15_24 - moyennne_deces_standardises_si_pop_2020_15_24,
            diff_25_49=deces_standardises_si_pop_2020_25_49 - moyennne_deces_standardises_si_pop_2020_25_49,
            diff_50_59=deces_standardises_si_pop_2020_50_59 - moyennne_deces_standardises_si_pop_2020_50_59,
@@ -3164,7 +3169,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   #
   
   # Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
-  repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/15-24/", es_deces_standard_pays_semaine$zone[1], "/")
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/15-24/", es_deces_standard_pays_semaine$zone[1], "/")
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
@@ -3187,7 +3192,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   
   # Ajouter les colonnes de la moyenne mobile 
   essai <- essai %>%
-    left_join(moyenne_mobile_15_24)
+    left_join(moyenne_mobile_15_24, by = "numSemaineDepuis2013")
   essai$moyenne<-mean(essai$diff_15_24)
   essai$binf<-mean(essai$diff_15_24)-2*sd(essai$diff_15_24)
   essai$bsup<-mean(essai$diff_15_24)+2*sd(essai$diff_15_24)
@@ -3322,7 +3327,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   # Graphique 2 : Situation des 25- 50 ans
   #
   
-  repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/25-50/", essai$zone[1], "/")
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/25-50/", essai$zone[1], "/")
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
@@ -3345,7 +3350,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   
   # Ajouter les colonnes de la moyenne mobile 
   essai <- essai %>%
-    left_join(moyenne_mobile_25_49)
+    left_join(moyenne_mobile_25_49, by = "numSemaineDepuis2013")
   essai$moyenne<-mean(essai$diff_25_49)
   essai$binf<-mean(essai$diff_25_49)-2*sd(essai$diff_25_49)
   essai$bsup<-mean(essai$diff_25_49)+2*sd(essai$diff_25_49)
@@ -3477,7 +3482,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   # Graphique 3 : Situation des 50- 59 ans
   #
   
-  repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/50-59/", essai$zone[1], "/")
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/50-59/", essai$zone[1], "/")
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
@@ -3502,7 +3507,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   
   # Ajouter les colonnes de la moyenne mobile 
   essai <- essai %>%
-    left_join(moyenne_mobile_50_59)
+    left_join(moyenne_mobile_50_59, by = "numSemaineDepuis2013")
   essai$moyenne<-mean(essai$diff_50_59)
   essai$binf<-mean(essai$diff_50_59)-2*sd(essai$diff_50_59)
   essai$bsup<-mean(essai$diff_50_59)+2*sd(essai$diff_50_59)
@@ -3635,7 +3640,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   # Graphique 4 : Situation des 60- 69 ans
   #
   
-  repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/")
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/")
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
@@ -3658,7 +3663,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   
   # Ajouter les colonnes de la moyenne mobile 
   essai <- essai %>%
-    left_join(moyenne_mobile_60_69)
+    left_join(moyenne_mobile_60_69, by = "numSemaineDepuis2013")
   essai$moyenne<-mean(essai$diff_60_69)
   essai$binf<-mean(essai$diff_60_69)-2*sd(essai$diff_60_69)
   essai$bsup<-mean(essai$diff_60_69)+2*sd(essai$diff_60_69)
@@ -3792,7 +3797,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   # Graphique 5 : Situation des 70- 79 ans
   #
   
-  repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/70-79/", essai$zone[1], "/")
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/70-79/", essai$zone[1], "/")
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
@@ -3815,7 +3820,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   
   # Ajouter les colonnes de la moyenne mobile 
   essai <- essai %>%
-    left_join(moyenne_mobile_70_79)
+    left_join(moyenne_mobile_70_79, by = "numSemaineDepuis2013")
   essai$moyenne<-mean(essai$diff_70_79)
   essai$binf<-mean(essai$diff_70_79)-2*sd(essai$diff_70_79)
   essai$bsup<-mean(essai$diff_70_79)+2*sd(essai$diff_70_79)
@@ -3951,7 +3956,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   # Graphique 6 : Situation des plus de 80 ans
   #
   
-  repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/80plus/", essai$zone[1], "/")
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/80plus/", essai$zone[1], "/")
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
@@ -3974,7 +3979,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   
   # Ajouter les colonnes de la moyenne mobile 
   essai <- essai %>%
-    left_join(moyenne_mobile_ge80)
+    left_join(moyenne_mobile_ge80, by = "numSemaineDepuis2013")
   essai$moyenne<-mean(essai$diff_ge80)
   essai$binf<-mean(essai$diff_ge80)-2*sd(essai$diff_ge80)
   essai$bsup<-mean(essai$diff_ge80)+2*sd(essai$diff_ge80)
@@ -4269,7 +4274,9 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   ##### Graphique 1 : plus de 80 ans #########
   ############################################
   
-  repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/annee_coupee_ete/plus80/")
+  K_DIR_GEN_IMG_EUROSTAT_DECES_ANNEE_COUPEE_ETE <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROSTAT, '/Deces/Hebdo/Std/Deces_Annee_coupee_ete'))
+  
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_ANNEE_COUPEE_ETE, "/plus80/")
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
@@ -4313,7 +4320,8 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   ############################################  
   
   
-  repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/annee_coupee_ete/70-79/")
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_ANNEE_COUPEE_ETE, "/70-79/")
+  
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
@@ -4356,7 +4364,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   ############################################  
   
   
-  repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/annee_coupee_ete/60-69/")
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_ANNEE_COUPEE_ETE, "/60-69/")
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
@@ -4402,7 +4410,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   ############################################  
   
   
-  repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/annee_coupee_ete/50-59/")
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_ANNEE_COUPEE_ETE, "/50-59/")
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
@@ -4446,7 +4454,7 @@ ggsave(pngFileRelPath, width = 11, height = 8, plot = p)
   ############################################  
   
   
-  repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/annee_coupee_ete/25-49/")
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_ANNEE_COUPEE_ETE, "/25-49/")
   a__f_createDir(repertoire)
   
   #Nom du fichier png à générer
@@ -4490,7 +4498,7 @@ ggsave(pngFileRelPath, width = 11, height = 8, plot = p)
 ############################################  
 
 
-repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/annee_coupee_ete/15-24/")
+repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_ANNEE_COUPEE_ETE, "/15-24/")
 a__f_createDir(repertoire)
 
 #Nom du fichier png à générer
@@ -4546,7 +4554,7 @@ a__f_plot_es_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_se
 	nomPays <- str_sub(nomVar, startIndex)
 	
 	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
-	repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_vs_Deces_Covid/", es_deces_standard_pays_semaine$zone[1], "/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_vs_Deces_Covid/", es_deces_standard_pays_semaine$zone[1], "/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer

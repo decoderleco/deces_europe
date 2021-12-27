@@ -211,7 +211,7 @@ dataToPlot <- vaers_data %>%
 				) %>%
 		group_by(vax_year, 
 				vax_month) %>% 
-		summarise(nbDeces = n())
+		summarise(nbDeces = n(), .groups = 'drop')
 dataToPlot
 
 print(ggplot(data = dataToPlot,
@@ -251,7 +251,7 @@ dataToPlot <- vaers_data %>%
 				vax_month) %>% 
 		arrange(vax_year, 
 				vax_month) %>% 
-		summarise(nbDeces = n())
+		summarise(nbDeces = n(), .groups = 'drop')
 
 dataToPlot <- dataToPlot %>%
 		ungroup() %>%
@@ -285,7 +285,7 @@ dataToPlot <- vaers_data %>%
 				vax_year >= 2019) %>%
 		group_by(vax_year, 
 				tranche_age) %>% 
-		summarise(nbDeces = n())
+		summarise(nbDeces = n(), .groups = 'drop')
 
 
 print(ggplot(data = dataToPlot,
@@ -327,14 +327,14 @@ dataToPlot <- vaers_data %>%
 		group_by(vax_year,
 				tranche_age,
 				died_delay) %>% 
-		summarise(nbDeces = n()) %>% 
+		summarise(nbDeces = n(), .groups = 'drop') %>% 
 		# Ne garder que les délais de décès supérieurs à 0, les autres étant probablement des erreurs
 		filter(died_delay >= 0,
 				died_delay <= n)
 #dataToPlot
 
 print(ggplot(data = dataToPlot,
-						mapping = aes(x = died_delay,
+						mapping = aes(x = as.numeric(died_delay),
 								y = nbDeces)) +
 				
 				geom_col(mapping = aes(fill = tranche_age),
