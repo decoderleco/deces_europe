@@ -96,7 +96,7 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 	if (exists(varName)) {
 		# La variable existe déjà dans le Contexte
 		
-		cat(paste0("(", varName, ") existe déjà. On ne re-télécharge pas\n"))
+		message(paste0("(", varName, ") existe déjà. On ne re-télécharge pas"))
 		
 		downloadedDatas <- var
 		
@@ -801,11 +801,11 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	# Récupérer le vecteur des confinements
 debut_confinement <- 	es_deces_standard_pays_semaine %>%
   filter(Response_measure=='StayHomeOrderStart') %>% 
-  select(numSemaineDepuis2013)
+  select(geo, numSemaineDepuis2013)
 		
 fin_confinement <- 	es_deces_standard_pays_semaine %>%
   filter(Response_measure=='StayHomeOrderEnd') %>% 
-  select(numSemaineDepuis2013)
+  select(geo, numSemaineDepuis2013)
 
 Vdebut_confinement <-debut_confinement[['numSemaineDepuis2013']]
 Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
@@ -1976,6 +1976,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	
 	# Calcul de surmortalité
 	
+	#TODO TW Il faudrait rajouter quelque chose comme : any(is.na(Age18_24_dose1)) avant le max() pour éviter le warning sur l'Armenie qui n'a que des NA
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>% 
 	  mutate(barre_vax_18_24 = case_when(
 	    Age18_24_dose1 > 0.5*base::max(Age18_24_dose1, na.rm = TRUE) ~ "barre dépassée",
@@ -1986,14 +1987,20 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	  filter(barre_vax_18_24=="barre dépassée")
 	
 	date_debut = base::min(temp$numSemaineDepuis2013)
+	
+	# TODO TW pourquoi -4 ?
 	date_fin = base::max(es_deces_standard_pays_semaine$numSemaineDepuis2013)-4
 	
 	temp <-  ungroup(es_deces_standard_pays_semaine) %>% 
-	  select(numSemaineDepuis2013,ecart_moyenne_15_24) %>% 
+	  select(numSemaineDepuis2013,
+			  ecart_moyenne_15_24) %>% 
 	  filter(numSemaineDepuis2013 >= date_debut) %>% 
 	  filter(numSemaineDepuis2013 <= date_fin)
 	ecart_moyenne = sum(temp$ecart_moyenne_15_24)
-nb_dose2 = sum(es_deces_standard_pays_semaine$Age15_17_dose2)+sum(es_deces_standard_pays_semaine$Age18_24_dose2)
+	
+	nb_dose2 = sum(es_deces_standard_pays_semaine$Age15_17_dose2)+
+			sum(es_deces_standard_pays_semaine$Age18_24_dose2)
+	
 ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	
 	#création du graphiques
@@ -4122,7 +4129,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   
   temp20132014 <- temp %>% 
     filter(annee_coupee_ete =="2013-2014") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4132,7 +4139,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20142015 <- temp %>% 
     filter(annee_coupee_ete =="2014-2015") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4142,7 +4149,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20152016 <- temp %>% 
     filter(annee_coupee_ete =="2015-2016") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4152,7 +4159,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20162017 <- temp %>% 
     filter(annee_coupee_ete =="2016-2017") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4162,7 +4169,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20172018 <- temp %>% 
     filter(annee_coupee_ete =="2017-2018") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4172,7 +4179,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20182019 <- temp %>% 
     filter(annee_coupee_ete =="2018-2019") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4182,7 +4189,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20192020 <- temp %>% 
     filter(annee_coupee_ete =="2019-2020") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,Response_measure,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,Response_measure,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4192,7 +4199,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20202021 <- temp %>% 
     filter(annee_coupee_ete =="2020-2021") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,Response_measure,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,Response_measure,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4202,7 +4209,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20212022 <- temp %>% 
     filter(annee_coupee_ete =="2021-2022") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,Response_measure,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,Response_measure,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4230,7 +4237,9 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   temp20202021$numSemaineAnnee <- 1:nrow(temp20202021)
   temp20212022$numSemaineAnnee <- 1:nrow(temp20212022)
   
-  if(!is.empty(temp20132014)){
+  nbLines <- dim(temp20132014)[1]
+  
+  if(nbLines > 0){
     order(temp20132014$numSemaineDepuis2013)
     temp20132014$numSemaineAnnee <- 1:nrow(temp20132014)
   temp2 <- rbind(temp20132014,temp20142015)}else{
@@ -4270,10 +4279,10 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   # Message
   cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
-  if(!is.empty(temp20132014)){
+  if(nbLines > 0){
 	  p<-ggplot(temp2) +
 	    aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_ge80) +
-	    geom_smooth(color = '#CCCCCC') +
+    	geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
 	    geom_line(aes(color=annee_coupee_ete), size=1.3) +
 	    scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
 	    geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4286,7 +4295,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   }else{
 	p<-ggplot(temp2) +
 	  aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_ge80) +
-	  geom_smooth(color = '#CCCCCC') +
+      geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
 	  geom_line(aes(color=annee_coupee_ete), size=1.3) +
 	  scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
 	  geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4314,10 +4323,10 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   # Message
   cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
-if(!is.empty(temp20132014)){ 
+  if(nbLines > 0){
  p<- ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_70_79) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4330,7 +4339,7 @@ if(!is.empty(temp20132014)){
 }else{
   p<- ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_70_79) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4357,10 +4366,12 @@ if(!is.empty(temp20132014)){
   # Message
   cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
-  if(!is.empty(temp20132014)){ 
+  nbLines <- dim(temp20132014)[1]
+  
+  if(nbLines > 0){
  p<- ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_60_69) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4373,7 +4384,7 @@ if(!is.empty(temp20132014)){
   }else{
     p<- ggplot(temp2) +
       aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_60_69) +
-      geom_smooth(color = '#CCCCCC') +
+      geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
       geom_line(aes(color=annee_coupee_ete), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
       geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4401,10 +4412,10 @@ if(!is.empty(temp20132014)){
   # Message
   cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
-  if(!is.empty(temp20132014)){   
+  if(nbLines > 0){
 p<-  ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_50_59) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4417,7 +4428,7 @@ p<-  ggplot(temp2) +
   }else{
     p<-  ggplot(temp2) +
       aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_50_59) +
-      geom_smooth(color = '#CCCCCC') +
+      geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
       geom_line(aes(color=annee_coupee_ete), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
       geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4445,10 +4456,10 @@ ggsave(pngFileRelPath, width = 11, height = 8, plot = p)
   # Message
   cat(paste0("Creation image (", pngFileRelPath,")\n"))
 
-  if(!is.empty(temp20132014)){     
+  if(nbLines > 0){
 p<-  ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_25_49) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4461,7 +4472,7 @@ p<-  ggplot(temp2) +
   }else{
     p<-  ggplot(temp2) +
       aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_25_49) +
-      geom_smooth(color = '#CCCCCC') +
+      geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
       geom_line(aes(color=annee_coupee_ete), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
       geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4489,10 +4500,10 @@ pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 # Message
 cat(paste0("Creation image (", pngFileRelPath,")\n"))
 
-if(!is.empty(temp20132014)){     
+if(nbLines > 0){
   p<-  ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_15_24) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4505,12 +4516,12 @@ if(!is.empty(temp20132014)){
 }else{
   p<-  ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_15_24) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
     xlab("")+ 
-    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_202_15_24), label="été")+
+    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="été")+
     geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="automne")+
     geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="hiver")+
     geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="printemps")+
