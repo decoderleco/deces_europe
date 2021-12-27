@@ -151,7 +151,7 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 		if (nchar(UrlOrEuroStatNameToDownload) > 0) {
 			# Il y a une URL
 		
-			message(paste0("Télécharger (", UrlOrEuroStatNameToDownload, ")"))
+			cat(paste0("Télécharger (", UrlOrEuroStatNameToDownload, ")\n"))
 		
 		
 			if (sourceType == K_SOURCE_TYPE_EUROSTAT)  {
@@ -200,7 +200,7 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 				# Sauvegarder les données téléchargées au format RDS
 				#
 				
-				message(paste0("Sauvegarde de (", UrlOrEuroStatNameToDownload,") dans (", fileRelPath, ")"))
+				cat(paste0("Sauvegarde de (", UrlOrEuroStatNameToDownload,") dans (", fileRelPath, ")\n"))
 				
 				saveRDS(downloadedDatas, file = fileRelPath)
 				
@@ -416,29 +416,59 @@ a__f_add_tranche_age_de_10_ans <- function(tabWithAge) {
 ################################################################################
 # Ajouter une colonne tranche_age vaccinale pour correspondre au fichier à partir de la colone age
 ################################################################################
-a__f_add_tranche_age_vax <- function(tabWithAge) {
+a__f_add_tranche_age_vacsi <- function(tabWithAge) {
   
-  # Ajouter une colonne age_quinq avec la tranche d'age
+  # Ajouter une colonne avec la tranche d'age
+  # conforme à VAC-SI (https://www.data.gouv.fr/fr/datasets/donnees-relatives-aux-personnes-vaccinees-contre-la-covid-19-1/#description)
   tabWith_tranche_age <- tabWithAge %>%
     mutate(tranche_age = case_when(
-      age <=  4 ~ "4",
-      age >=  5 & age < 10 ~ "9",
-      age >= 10 & age < 12 ~ "11",
-      age >= 12 & age < 18 ~ "17",
-      age >= 18 & age < 25 ~ "24",
-      age >= 25 & age < 30 ~ "29",  
-      age >= 30 & age < 40 ~ "39",
-      age >= 40 & age < 50 ~ "49",
-      age >= 50 & age < 60 ~ "59",
-      age >= 60 & age < 65 ~ "64",
-      age >= 65 & age < 70 ~ "69",  
-      age >= 70 & age < 75 ~ "74",
-      age >= 75 & age < 80 ~ "79",  
-      age >= 80 ~ "80"
+      age <=  4 ~ 4,
+      age >=  5 & age < 10 ~ 9,
+      age >= 10 & age < 12 ~ 11,
+      age >= 12 & age < 18 ~ 17,
+      age >= 18 & age < 25 ~ 24,
+      age >= 25 & age < 30 ~ 29,  
+      age >= 30 & age < 40 ~ 39,
+      age >= 40 & age < 50 ~ 49,
+      age >= 50 & age < 60 ~ 59,
+	  age >= 60 & age < 65 ~ 64,
+      age >= 65 & age < 70 ~ 69,  
+      age >= 70 & age < 75 ~ 74,
+	  age >= 75 & age < 80 ~ 79,  
+      age >= 80 ~ 80
     ))
   
   # Renvoyer le nouveau tableau quinquenisé
   tabWith_tranche_age
+}
+
+################################################################################
+# Ajouter une colonne tranche_age de 10 en 10 puis de 5 en 5 à partir de 55
+################################################################################
+a__f_add_tranche_age <- function(tabWithAge) {
+	
+	# Ajouter une colonne avec la tranche d'age
+	tabWith_tranche_age <- tabWithAge %>%
+			mutate(tranche_age = case_when(
+							age >=  0 & age <= 10 ~ 10,
+							age >  10 & age <= 20 ~ 20,
+							age >  20 & age <= 30 ~ 30,  
+							age >  30 & age <= 40 ~ 40,
+							age >  40 & age <= 50 ~ 50,
+							age >  50 & age <= 55 ~ 55,
+							age >  55 & age <= 60 ~ 60,
+							age >  60 & age <= 65 ~ 65,
+							age >  65 & age <= 70 ~ 70,  
+							age >  70 & age <= 75 ~ 75,
+							age >  75 & age <= 80 ~ 80,  
+							age >  80 & age <= 85 ~ 85,  
+							age >  85 & age <= 90 ~ 90,  
+							age >  90 & age <= 95 ~ 95,  
+							age >  95 ~ 99
+					))
+	
+	# Renvoyer le nouveau tableau quinquenisé
+	tabWith_tranche_age
 }
 
 ################################################################################
@@ -458,7 +488,7 @@ a__f_plot_fr_deces_quotidiens_par_region <- function(region) {
 	pngFileRelPath <- paste0(repertoire, nomRegion, ".png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# ATTENTION : Du fait que l'on est dans une fonction (ou un for), il faut impérativement
 	#             mettre un print() !!!
@@ -501,10 +531,10 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 		tranche_age,
 		tailleFenetreGlissante = 7,
 		decalageSemaines = 6) {
-	
-  if(tranche_age==0){nomVar<-"Tous âges"}
-  if(tranche_age==4){nomVar<-"0-4 ans"}
-  if(tranche_age==9){nomVar<-"5-9 ans"}
+
+  if(tranche_age==0) {nomVar<-"Tous âges"}
+  if(tranche_age==4) {nomVar<-"00-04 ans"}
+  if(tranche_age==9) {nomVar<-"05-09 ans"}
   if(tranche_age==11){nomVar<-"10-11 ans"}
   if(tranche_age==17){nomVar<-"12-17 ans"}
   if(tranche_age==24){nomVar<-"18-24 ans"}
@@ -524,24 +554,24 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	pngFileRelPath <- paste0(repertoire, "/Deces_quotidiens_tranche_age_", nomVar, ".png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	
 	# Calculer la moyenne mobile sur 7 jours
-	moyenne_mobile <- running_mean(deces_par_jour$nbDeces, tailleFenetreGlissante)
-	ymax <- base::max(moyenne_mobile)
-	ymin <- base::min(moyenne_mobile)	
-	moyenne_mobile <- data_frame(moyenne_mobile)
-	moyenne_mobile$numerojour <- 1:nrow(moyenne_mobile) + decalageSemaines
+	deces_moyenne_mobile_courte <- running_mean(deces_par_jour$nbDeces, tailleFenetreGlissante)
+	ymax <- base::max(deces_moyenne_mobile_courte)
+	ymin <- base::min(deces_moyenne_mobile_courte)	
+	deces_moyenne_mobile_courte <- data_frame(deces_moyenne_mobile_courte)
+	deces_moyenne_mobile_courte$numerojour <- 1:nrow(deces_moyenne_mobile_courte) + decalageSemaines
 	#	# Ajouter  moyenne binf et bsup
 	deces_par_jour$moyenne <- mean(deces_par_jour$nbDeces)
 	deces_par_jour$binf <-  mean(deces_par_jour$nbDeces) - sd(deces_par_jour$nbDeces)
 	deces_par_jour$bsup <-  mean(deces_par_jour$nbDeces) + sd(deces_par_jour$nbDeces)
 
-# Ajout Moyenne mobile
+	# Ajout Moyenne mobile
 	deces_par_jour$numerojour <- 1:nrow(deces_par_jour)
 	deces_par_jour <- deces_par_jour %>% 
-			left_join(moyenne_mobile) 
+			left_join(deces_moyenne_mobile_courte) 
 
 	# Calculer la moyenne mobile vaccination sur 7 jours
 	moyenne_mobile_n_dose1 <- running_mean(deces_par_jour$n_dose1, tailleFenetreGlissante)
@@ -559,13 +589,13 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	deces_par_jour <- deces_par_jour %>% 
 	  left_join(moyenne_mobile_n_complet) 
 	
-	# Calculer la moyenne mobile vaccination sur 365 jours jours
-	moyenne_mobile_desces_annee <- running_mean(deces_par_jour$nbDeces, 90)
-	moyenne_mobile_desces_annee <- data_frame(moyenne_mobile_desces_annee)
-	moyenne_mobile_desces_annee$numerojour <- 1:nrow(moyenne_mobile_desces_annee) + 46
+	# Calculer la moyenne mobile vaccination sur 90 jours
+	deces_moyenne_mobile_3_mois <- running_mean(deces_par_jour$nbDeces, 90)
+	deces_moyenne_mobile_3_mois <- data_frame(deces_moyenne_mobile_3_mois)
+	deces_moyenne_mobile_3_mois$numerojour <- 1:nrow(deces_moyenne_mobile_3_mois) + 46
 	# Ajout Moyenne mobile
 	deces_par_jour <- deces_par_jour %>% 
-	  left_join(moyenne_mobile_desces_annee) 
+	  left_join(deces_moyenne_mobile_3_mois) 
 	
 	# Calculer la moyenne mobile vaccination sur 7 jours
 	moyenne_mobile_n_rappel <- running_mean(deces_par_jour$n_rappel, tailleFenetreGlissante)
@@ -577,8 +607,45 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	
 	deces_par_jour <- deces_par_jour %>% filter(deces_date_complete >"2020-06-01")
 	
+	COULEUR_DECES_MOY_MOBILE_COURTE = "#660000"
+	COULEUR_DECES_MOY_MOBILE_3_MOIS = "#FF0000"
+	COULEUR_VACCIN_DOSE_1 = "#3399FF"
+	COULEUR_VACCIN_DOSE_2 = "#0066CC"
+	COULEUR_VACCIN_DOSE_3 = "#003366"
+	
+	# Moyenne mobile courte des décès toutes causes
 	plot(deces_par_jour$deces_date_complete, 
-	     deces_par_jour$moyenne_mobile_desces_annee, 
+			deces_par_jour$deces_moyenne_mobile_courte, 
+			pch=16, 
+			axes=T, 
+			cex=0, 
+			xlab="",
+			ylim=c(ymin,ymax),
+			lwd=1.5, 
+			ylab="", 
+			type="o", 
+			col=COULEUR_DECES_MOY_MOBILE_COURTE) 
+	axis(2, col = COULEUR_DECES_MOY_MOBILE_COURTE, col.axis = COULEUR_DECES_MOY_MOBILE_COURTE, lwd = 2)
+	
+	# pour encadrer le graphique
+	box() 
+	
+	# Légende de gauche
+	mtext("Nombre de décès toutes causes ", side=PLOT_AXIS_SIDE_LEFT, line=3, col=COULEUR_DECES_MOY_MOBILE_COURTE)
+	mtext("Moyenne mobile à 3 mois du nombre de décès toutes causes ", side=PLOT_AXIS_SIDE_LEFT, line=2, col=COULEUR_DECES_MOY_MOBILE_3_MOIS)
+	
+	# Légende de droite
+	mtext("Nombre de vaccinés 1ere dose                                                                                                                           ", 
+			side=PLOT_AXIS_SIDE_RIGHT, line=2.5, col=COULEUR_VACCIN_DOSE_1)
+	mtext("Nombre de vaccinés 2eme dose", 
+			side=PLOT_AXIS_SIDE_RIGHT, line=2.5, col=COULEUR_VACCIN_DOSE_2)
+	mtext("                                                                                                                                 Nombre de vaccinés 3eme dose", 
+			side=PLOT_AXIS_SIDE_RIGHT, line=2.5, col=COULEUR_VACCIN_DOSE_3)
+
+	# Superposer vaccinés dose 1
+	par(new=T)
+	plot(deces_par_jour$deces_date_complete, 
+	     deces_par_jour$deces_moyenne_mobile_3_mois, 
 	     pch=16, 
 	     cex=0, 
 	     axes=F, 
@@ -587,21 +654,10 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     ylim=c(ymin,ymax),
 	     ylab="", 
 	     type="o", 
-	     col="#990000", 
-	     main=paste0("Décès quotidiens France et vaccinations des ", nomVar))
-	axis(2, col = "#990000", col.axis = "#990000", lwd = 2)
-	
-	# pour encadrer le graphique
-	box() 
-	
-	mtext("Nombre de décès toutes causes ", side=2, line=3, col="#990000")
-	mtext("Moyenne mobile à 3 mois du nombre de décès toutes causes ", side=2, line=2, col="#660000")
-	mtext("Nombre de vaccinés 1ere dose                                                                                                                           ", side=1, line=2, col="#3399FF")
-	mtext("Nombre de vaccinés 2eme dose", side=1, line=2, col="#0066CC")
-	mtext("                                                                                                                                 Nombre de vaccinés 3eme dose", side=1, line=2, col="#003366")
-	
+	     col=COULEUR_DECES_MOY_MOBILE_3_MOIS, 
+	     main=paste0("Décès quotidiens France et vaccinations des ", nomVar, " ans"))
 
-	# Superposer vaccinés
+	# Superposer vaccinés dose 1
 	par(new=T)
 	plot(deces_par_jour$deces_date_complete,  
 	     deces_par_jour$moyenne_mobile_n_dose1, 
@@ -612,10 +668,10 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     lwd=2,  
 	     ylab="", 
 	     type="o", 
-	     col="#3399FF") 
-	axis(4, col = "#0066CC", col.axis = "#0066CC", lwd = 2)
+	     col=COULEUR_VACCIN_DOSE_1) 
+	axis(4, col = COULEUR_VACCIN_DOSE_1, col.axis = COULEUR_VACCIN_DOSE_1, lwd = 2)
 	
-	# Superposer vaccinés
+	# Superposer vaccinés dose 2
 	par(new=T)
 	plot(deces_par_jour$deces_date_complete,  
 	     deces_par_jour$moyenne_mobile_n_complet, 
@@ -626,9 +682,9 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     lwd=2,  
 	     ylab="", 
 	     type="o", 
-	     col="#0066CC")
+	     col=COULEUR_VACCIN_DOSE_2)
 	
-	# Superposer vaccinés
+	# Superposer vaccinés dose 3
 	par(new=T)
 	plot(deces_par_jour$deces_date_complete,  
 	     deces_par_jour$moyenne_mobile_n_rappel, 
@@ -639,22 +695,8 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     lwd=2,  
 	     ylab="", 
 	     type="o", 
-	     col="#003366") 
+	     col=COULEUR_VACCIN_DOSE_3) 
 
-	# Superposer la moyenne mobile
-	par(new=T)
-	plot(deces_par_jour$deces_date_complete, 
-	     deces_par_jour$moyenne_mobile, 
-	     pch=16, 
-	     axes=T, 
-	     cex=0, 
-	     xlab="",
-	     ylim=c(ymin,ymax),
-	     lwd=1.5, 
-	     ylab="", 
-	     type="o", 
-	     col="#660000") 
-	
 	# Superposer la moyenne 
 	par(new=T)
 	plot(deces_par_jour$deces_date_complete, 
@@ -667,7 +709,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     lwd=1.5,  
 	     ylab="", 
 	     type="o", 
-	     col="purple") 
+	     col=COULEUR_DECES_MOY_MOBILE_COURTE) 
 	
 	# Superposer la bsup
 	par(new=T)
@@ -682,7 +724,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     ylim=c(ymin,ymax),
 	     lty=2, 
 	     type="o", 
-	     col="purple") 
+	     col=COULEUR_DECES_MOY_MOBILE_COURTE) 
 	
 	# Superposer la binf
 	par(new=T)
@@ -697,7 +739,7 @@ a__f_plot_fr_deces_quotidiens_par_tranche_age <- function(
 	     ylab="",
 	     lty=2, 
 	     type="o", 
-	     col="purple") 
+	     col=COULEUR_DECES_MOY_MOBILE_COURTE) 
 
 
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
@@ -725,7 +767,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	
 	# Moyenne mobile sur 52 semaines
@@ -758,11 +800,11 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	# Récupérer le vecteur des confinements
 debut_confinement <- 	es_deces_standard_pays_semaine %>%
   filter(Response_measure=='StayHomeOrderStart') %>% 
-  select(numSemaineDepuis2013)
+  select(geo, numSemaineDepuis2013)
 		
 fin_confinement <- 	es_deces_standard_pays_semaine %>%
   filter(Response_measure=='StayHomeOrderEnd') %>% 
-  select(numSemaineDepuis2013)
+  select(geo, numSemaineDepuis2013)
 
 Vdebut_confinement <-debut_confinement[['numSemaineDepuis2013']]
 Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
@@ -879,7 +921,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	pngFileRelPath <- paste0(repertoire, nomPays, "_15-24.png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# Moyenne mobile sur 8 semaines, des 15-24 ans
 	
@@ -1015,7 +1057,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	pngFileRelPath <- paste0(repertoire, nomPays, "_25-49.png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# Moyenne mobile sur 8 semaines, des 25-50 ans
 	
@@ -1148,7 +1190,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	pngFileRelPath <- paste0(repertoire, nomPays, "_50-59.png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# Moyenne mobile sur 8 semaines, des 50-59 ans
 	
@@ -1281,7 +1323,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	pngFileRelPath <- paste0(repertoire, nomPays, "_60-69.png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# Moyenne mobile sur 8 semaines, des 60-69 ans
 	
@@ -1414,7 +1456,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	pngFileRelPath <- paste0(repertoire, nomPays, "_70-79.png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# Moyenne mobile sur 8 semaines, des 70-79 ans
 	
@@ -1550,7 +1592,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	pngFileRelPath <- paste0(repertoire, nomPays, "_80plus.png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# Moyenne mobile sur 8 semaines, des 80-89 ans
 	
@@ -1682,7 +1724,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	pngFileRelPath <- paste0(repertoire, nomPays, "_total.png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 		essai <- es_deces_standard_pays_semaine 
 	
@@ -1910,7 +1952,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# Moyenne mobile sur 8 semaines, des 15-24 ans
 
@@ -1933,6 +1975,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	
 	# Calcul de surmortalité
 	
+	#TODO TW Il faudrait rajouter quelque chose comme : any(is.na(Age18_24_dose1)) avant le max() pour éviter le warning sur l'Armenie qui n'a que des NA
 	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>% 
 	  mutate(barre_vax_18_24 = case_when(
 	    Age18_24_dose1 > 0.5*base::max(Age18_24_dose1, na.rm = TRUE) ~ "barre dépassée",
@@ -1943,14 +1986,20 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	  filter(barre_vax_18_24=="barre dépassée")
 	
 	date_debut = base::min(temp$numSemaineDepuis2013)
+	
+	# TODO TW pourquoi -4 ?
 	date_fin = base::max(es_deces_standard_pays_semaine$numSemaineDepuis2013)-4
 	
 	temp <-  ungroup(es_deces_standard_pays_semaine) %>% 
-	  select(numSemaineDepuis2013,ecart_moyenne_15_24) %>% 
+	  select(numSemaineDepuis2013,
+			  ecart_moyenne_15_24) %>% 
 	  filter(numSemaineDepuis2013 >= date_debut) %>% 
 	  filter(numSemaineDepuis2013 <= date_fin)
 	ecart_moyenne = sum(temp$ecart_moyenne_15_24)
-nb_dose2 = sum(es_deces_standard_pays_semaine$Age15_17_dose2)+sum(es_deces_standard_pays_semaine$Age18_24_dose2)
+	
+	nb_dose2 = sum(es_deces_standard_pays_semaine$Age15_17_dose2)+
+			sum(es_deces_standard_pays_semaine$Age18_24_dose2)
+	
 ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	
 	#création du graphiques
@@ -2110,7 +2159,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# Moyenne mobile sur 8 semaines, des 25-50 ans
 	
@@ -2312,7 +2361,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# Moyenne mobile sur 8 semaines, des 50-59 ans
 	
@@ -2492,7 +2541,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# Moyenne mobile sur 8 semaines, des 60-69 ans
 	
@@ -2672,7 +2721,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# Moyenne mobile sur 8 semaines, des 70-79 ans
 	
@@ -2852,7 +2901,7 @@ ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
 	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# Moyenne mobile sur 8 semaines, des 80-89 ans
 	
@@ -3122,7 +3171,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
   
   # Message
-  message(paste0("Creation image (", pngFileRelPath,")"))
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
   # Moyenne mobile sur 8 semaines, des 15-24 ans
   
@@ -3280,7 +3329,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
   
   # Message
-  message(paste0("Creation image (", pngFileRelPath,")"))
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
   # Moyenne mobile sur 8 semaines, des 25-49 ans
   
@@ -3435,7 +3484,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
   
   # Message
-  message(paste0("Creation image (", pngFileRelPath,")"))
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
   # Moyenne mobile sur 8 semaines, des 50-59 ans
   
@@ -3593,7 +3642,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
   
   # Message
-  message(paste0("Creation image (", pngFileRelPath,")"))
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
   # Moyenne mobile sur 8 semaines, des 60-69 ans
   
@@ -3750,7 +3799,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
   
   # Message
-  message(paste0("Creation image (", pngFileRelPath,")"))
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
   # Moyenne mobile sur 8 semaines, des 70-79 ans
   
@@ -3909,7 +3958,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
   
   # Message
-  message(paste0("Creation image (", pngFileRelPath,")"))
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
   # Moyenne mobile sur 8 semaines, des 80-89 ans
   
@@ -4079,7 +4128,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   
   temp20132014 <- temp %>% 
     filter(annee_coupee_ete =="2013-2014") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4089,7 +4138,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20142015 <- temp %>% 
     filter(annee_coupee_ete =="2014-2015") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4099,7 +4148,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20152016 <- temp %>% 
     filter(annee_coupee_ete =="2015-2016") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4109,7 +4158,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20162017 <- temp %>% 
     filter(annee_coupee_ete =="2016-2017") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4119,7 +4168,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20172018 <- temp %>% 
     filter(annee_coupee_ete =="2017-2018") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4129,7 +4178,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20182019 <- temp %>% 
     filter(annee_coupee_ete =="2018-2019") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4139,7 +4188,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20192020 <- temp %>% 
     filter(annee_coupee_ete =="2019-2020") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,Response_measure,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,Response_measure,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4149,7 +4198,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20202021 <- temp %>% 
     filter(annee_coupee_ete =="2020-2021") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,Response_measure,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,Response_measure,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4159,7 +4208,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
     )
   temp20212022 <- temp %>% 
     filter(annee_coupee_ete =="2021-2022") %>% 
-    select(annee_coupee_ete,numSemaineDepuis2013,Response_measure,deces_standardises_si_pop_2020,
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,Response_measure,deces_standardises_si_pop_2020,
            deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
            deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
            deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80,
@@ -4187,7 +4236,9 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   temp20202021$numSemaineAnnee <- 1:nrow(temp20202021)
   temp20212022$numSemaineAnnee <- 1:nrow(temp20212022)
   
-  if(!is.empty(temp20132014)){
+  nbLines <- dim(temp20132014)[1]
+  
+  if(nbLines > 0){
     order(temp20132014$numSemaineDepuis2013)
     temp20132014$numSemaineAnnee <- 1:nrow(temp20132014)
   temp2 <- rbind(temp20132014,temp20142015)}else{
@@ -4225,34 +4276,34 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   pngFileRelPath <- paste0(repertoire,nomPays, ".png")
   
   # Message
-  message(paste0("Creation image (", pngFileRelPath,")"))
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
-  if(!is.empty(temp20132014)){
-  p<-ggplot(temp2) +
-    aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_ge80) +
-    geom_smooth(color = '#CCCCCC') +
-    geom_line(aes(color=annee_coupee_ete), size=1.3) +
-    scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
-    geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
-    xlab("")+
-    ylab("deces standardisés des plus de 80 ans") + 
-    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="été")+
-    geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="automne")+
-    geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="hiver")+
-    geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="printemps")
+  if(nbLines > 0){
+	  p<-ggplot(temp2) +
+	    aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_ge80) +
+    	geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
+	    geom_line(aes(color=annee_coupee_ete), size=1.3) +
+	    scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+	    geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
+	    xlab("")+
+	    ylab("deces standardisés des plus de 80 ans") + 
+	    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="été")+
+	    geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="automne")+
+	    geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="hiver")+
+	    geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="printemps")
   }else{
-    p<-ggplot(temp2) +
-      aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_ge80) +
-      geom_smooth(color = '#CCCCCC') +
-      geom_line(aes(color=annee_coupee_ete), size=1.3) +
-      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
-      geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
-      xlab("")+
-      ylab("deces standardisés des plus de 80 ans") + 
-      geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="été")+
-      geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="automne")+
-      geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="hiver")+
-      geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="printemps")
+	p<-ggplot(temp2) +
+	  aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_ge80) +
+      geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
+	  geom_line(aes(color=annee_coupee_ete), size=1.3) +
+	  scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+	  geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
+	  xlab("")+
+	  ylab("deces standardisés des plus de 80 ans") + 
+	  geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="été")+
+	  geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="automne")+
+	  geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="hiver")+
+	  geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_ge80), label="printemps")
   }
   ggsave(pngFileRelPath, width = 11, height = 8, plot = p)
 
@@ -4269,12 +4320,12 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   pngFileRelPath <- paste0(repertoire,nomPays, ".png")
   
   # Message
-  message(paste0("Creation image (", pngFileRelPath,")"))
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
-if(!is.empty(temp20132014)){ 
+  if(nbLines > 0){
  p<- ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_70_79) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4287,7 +4338,7 @@ if(!is.empty(temp20132014)){
 }else{
   p<- ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_70_79) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4312,12 +4363,14 @@ if(!is.empty(temp20132014)){
   pngFileRelPath <- paste0(repertoire,nomPays, ".png")
   
   # Message
-  message(paste0("Creation image (", pngFileRelPath,")"))
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
-  if(!is.empty(temp20132014)){ 
+  nbLines <- dim(temp20132014)[1]
+  
+  if(nbLines > 0){
  p<- ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_60_69) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4330,7 +4383,7 @@ if(!is.empty(temp20132014)){
   }else{
     p<- ggplot(temp2) +
       aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_60_69) +
-      geom_smooth(color = '#CCCCCC') +
+      geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
       geom_line(aes(color=annee_coupee_ete), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
       geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4356,12 +4409,12 @@ if(!is.empty(temp20132014)){
   pngFileRelPath <- paste0(repertoire, nomPays, ".png")
   
   # Message
-  message(paste0("Creation image (", pngFileRelPath,")"))
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
   
-  if(!is.empty(temp20132014)){   
+  if(nbLines > 0){
 p<-  ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_50_59) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4374,7 +4427,7 @@ p<-  ggplot(temp2) +
   }else{
     p<-  ggplot(temp2) +
       aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_50_59) +
-      geom_smooth(color = '#CCCCCC') +
+      geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
       geom_line(aes(color=annee_coupee_ete), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
       geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4400,12 +4453,12 @@ ggsave(pngFileRelPath, width = 11, height = 8, plot = p)
   pngFileRelPath <- paste0(repertoire, nomPays, ".png")
   
   # Message
-  message(paste0("Creation image (", pngFileRelPath,")"))
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
 
-  if(!is.empty(temp20132014)){     
+  if(nbLines > 0){
 p<-  ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_25_49) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4418,7 +4471,7 @@ p<-  ggplot(temp2) +
   }else{
     p<-  ggplot(temp2) +
       aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_25_49) +
-      geom_smooth(color = '#CCCCCC') +
+      geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
       geom_line(aes(color=annee_coupee_ete), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
       geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4444,12 +4497,12 @@ a__f_createDir(repertoire)
 pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 
 # Message
-message(paste0("Creation image (", pngFileRelPath,")"))
+cat(paste0("Creation image (", pngFileRelPath,")\n"))
 
-if(!is.empty(temp20132014)){     
+if(nbLines > 0){
   p<-  ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_15_24) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -4462,12 +4515,12 @@ if(!is.empty(temp20132014)){
 }else{
   p<-  ggplot(temp2) +
     aes(x = numSemaineAnnee, y = deces_standardises_si_pop_2020_15_24) +
-    geom_smooth(color = '#CCCCCC') +
+    geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
     geom_line(aes(color=annee_coupee_ete), size=1.3) +
     scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
     geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
     xlab("")+ 
-    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_202_15_24), label="été")+
+    geom_text(x=6, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="été")+
     geom_text(x=18, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="automne")+
     geom_text(x=31, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="hiver")+
     geom_text(x=44, y=base::min(temp2$deces_standardises_si_pop_2020_15_24), label="printemps")+
@@ -4500,7 +4553,7 @@ a__f_plot_es_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_se
 	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	
 	essai <- es_deces_standard_pays_semaine %>%
@@ -4600,7 +4653,7 @@ a__f_plot_generic <- function(df) {
 	pngFileRelPath <- paste0(repertoire, nomDf, ".png")
 	
 	# Message
-	message(paste0("Creation image (", pngFileRelPath,")"))
+	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
 	# ATTENTION : Du fait que l'on est dans une fonction (ou un for), il faut impérativement
 	#             mettre un print() !!!
