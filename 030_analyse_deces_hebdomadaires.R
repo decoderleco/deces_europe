@@ -149,7 +149,7 @@ es_moyenne_mobile <- data_frame(es_moyenne_mobile)
 es_moyenne_mobile$numSemaineDepuis2013 <- 1:nrow(es_moyenne_mobile) + 51
 
 es_deces_standard_pays_semaine_france <- es_deces_standard_pays_semaine_france %>%
-		left_join(es_moyenne_mobile)
+		left_join(es_moyenne_mobile, by = "numSemaineDepuis2013")
 
 
 es_deces_standard_pays_semaine_france$moyenne <- es_moyenne
@@ -198,7 +198,7 @@ plot(es_deces_standard_pays_semaine_portugal$numSemaineDepuis2013,
 
 text(26, 25000, "PORTUGAL", cex=1.2, col="green")
 
-repertoire <- paste0("gen/images/Eurostat/Deces/Hebdo/Std/Deces_FR_SU_PO")
+repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_FR_SU_PO")
 a__f_createDir(repertoire)
 
 dev.print(device = png, file = paste0(repertoire, "/Deces_Hebdo_france_suede_portugal.png"), width = 1000)
@@ -236,10 +236,13 @@ a__f_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_suisse)
 ####    vaccinations grippe et deces France    ####
 #-------------------------------------------------#
 
+repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT, "/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin")
+a__f_createDir(repertoire)
+
+pngFileRelPath <- paste0(repertoire, "/France_vaccins_grippe_covid.png")
 
 # Message
-pngFileRelPath <- "gen/images/Eurostat/Deces/Hebdo/Std/owid/Deces_Pays/France_vaccins.png"
-message(paste0("Creation image (", pngFileRelPath,")"))
+cat(paste0("Creation image (", pngFileRelPath,")\n"))
 
 # Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
 maxWeekTime <- es_deces_standard_pays_semaine_france %>%
@@ -262,7 +265,7 @@ moyenne_mobile$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile) + 5
 
 # Ajouter les colonnes de la moyenne mobile 
 es_deces_standard_pays_semaine_france <- es_deces_standard_pays_semaine_france %>%
-		left_join(moyenne_mobile)
+		left_join(moyenne_mobile, by = "numSemaineDepuis2013")
 
 es_deces_standard_pays_semaine_france$moyenne_ge60 <- mean(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020_ge60)
 es_deces_standard_pays_semaine_france$binf_ge60 <- mean(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020_ge60) - 2*sd(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020_ge60)
@@ -357,7 +360,7 @@ plot(essai$numSemaineDepuis2013,
 		col="purple") 	
 
 grippe_lissage <- read.csv("data/csv/lissage_grippe.csv", sep=";")
-essai<-essai %>% left_join(grippe_lissage)
+essai<-essai %>% left_join(grippe_lissage, by = "numSemaineDepuis2013")
 essai<-essai %>% mutate(vaccins_grippe=ifelse(is.na(vaccins_grippe),0,vaccins_grippe))
 
 # Superposer la vaccination 
