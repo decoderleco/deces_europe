@@ -376,7 +376,7 @@ deces_dep_jour <- b__fr_gouv_deces_quotidiens %>%
 		filter(deces_date_complete >= K_DEBUT_DATES_DECES_A_ANALYSER) %>%
 		group_by(deces_num_dept,
 				deces_date_complete) %>%
-		summarise(nbDeces = n())
+		summarise(nbDeces = n(), .groups = 'drop')
 
 # calculer la moyenne, le nb min/max et les quartiles des décès par département (depuis 2018)
 deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
@@ -391,7 +391,7 @@ deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
 
 # Ajouter la moyenne, le nb min/max et les quartiles des décès par département et trier par département
 deces_dep_jour <- deces_dep_jour %>%
-		left_join(deces_dep_jour_moyenne_min_max_quartiles) %>%
+		left_join(deces_dep_jour_moyenne_min_max_quartiles, by = "deces_num_dept") %>%
 		arrange(deces_num_dept, deces_date_complete, nbDeces) %>%
 		select(deces_num_dept, minimum:dernier_quartile, deces_date_complete, everything())
 
@@ -518,7 +518,7 @@ deces_par_jour_age <- b__fr_gouv_deces_quotidiens %>%
 		group_by(age_deces_millesime,
 				deces_date_complete) %>% 
 		# Compter le nombre de décès pour chaque jour et chaque age
-		summarise(nbDeces = n())
+		summarise(nbDeces = n(), .groups = 'drop')
 
 # Pour chaque age de deces, calculer les min, max, moyenne...
 nbDeces_moyen_par_age <- deces_par_jour_age %>% 
@@ -533,7 +533,7 @@ nbDeces_moyen_par_age <- deces_par_jour_age %>%
 
 # Ajouter les colonnes min, max, moyenne... de nombre de décès pour chaque age
 deces_par_jour_age <- deces_par_jour_age %>% 
-		left_join(nbDeces_moyen_par_age)
+		left_join(nbDeces_moyen_par_age, by = "age_deces_millesime")
 
 # Ajouter la colonne avec le calcul du nombre de deces_centre_reduit (centrés et réduits au quartile)
 deces_par_jour_age <- deces_par_jour_age %>% 
@@ -570,7 +570,7 @@ deces_par_jour_age <- deces_par_jour_age %>%
 deces_par_jour_tranchedage <- deces_par_jour_age %>% 
 		group_by(tranche_age,
 				deces_date_complete) %>% 
-		summarise(nbDeces = sum(nbDeces))
+		summarise(nbDeces = sum(nbDeces), .groups = 'drop')
 
 # Ajouter la colonne confinement
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
@@ -598,7 +598,7 @@ nbDeces_moyen_par_tranchedAge <- deces_par_jour_tranchedage %>%
 
 # Ajouter la moyenne, min, max
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
-		left_join(nbDeces_moyen_par_tranchedAge)
+		left_join(nbDeces_moyen_par_tranchedAge, by = "tranche_age")
 
 # Ajouter la colonne deces_centre_reduit
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
@@ -685,7 +685,7 @@ tranchesAge <- data_a_tracer %>%
 # Tracer les graphiques pour chaque tranche d'age
 for (trancheAge in tranchesAge$tranche_age) {
 	
-	cat(paste0("trancheAge = ", trancheAge, "\n" ))
+	#cat(paste0("trancheAge = ", trancheAge, "\n" ))
 	
 	deces_par_jour_a_tracer <- data_a_tracer %>% 
 			filter(tranche_age == trancheAge) 
@@ -724,7 +724,7 @@ data_a_tracer <- a__f_add_tranche_age(data_a_tracer)
 data_a_tracer <- data_a_tracer %>% 
 		group_by(tranche_age, 
 				deces_date_complete) %>%
-		summarise(nbDeces = sum(nbDeces))
+		summarise(nbDeces = sum(nbDeces), .groups = 'drop')
 
 # calculer les données statistiques pour chaque tranche d'age
 nbDeces_moyen_par_tranchedAge <- data_a_tracer %>% 
@@ -836,7 +836,7 @@ coeffMult <- 365 / duree
 data_a_tracer <- data_a_tracer %>% 
 		group_by(tranche_age, 
 				deces_annee) %>%
-		summarise(nbDeces = sum(nbDeces))
+		summarise(nbDeces = sum(nbDeces), .groups = 'drop')
 
 # Multiplier par le coefficient pour avoir une estimation sur 2021 complète
 data_a_tracer <- data_a_tracer %>%
