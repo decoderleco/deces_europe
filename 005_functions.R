@@ -783,8 +783,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	moyenne <- mean(es_moyenne_mobile)
 	
 	# TODO Renommer la variable
-	es_moyenne_mobile <- data_frame(moyenne_mobile = es_moyenne_mobile)
+	es_moyenne_mobile <- data_frame(moyenne_mobile_si_pop_2020 = es_moyenne_mobile)
 	
+	# Créer la colonne numSemaineDepuis2013
 	es_moyenne_mobile$numSemaineDepuis2013 <- 1:nrow(es_moyenne_mobile) + decalageSemaines
 	
 	# Ajouter les colonnes de la moyenne mobile 
@@ -857,7 +858,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	# Superposer la moyenne mobile
 	par(new=T)
 	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
-		 es_deces_standard_pays_semaine$moyenne_mobile, 
+		 es_deces_standard_pays_semaine$moyenne_mobile_si_pop_2020, 
 		 pch=16, 
 		 axes=F, 
 		 cex=0, 
@@ -1776,7 +1777,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	# Superposer la moyenne mobile
 	par(new=T)
 	plot(essai$numSemaineDepuis2013, 
-	     essai$moyenne_mobile, 
+	     essai$moyenne_mobile_si_pop_2020, 
 	     pch=16, 
 	     axes=F, 
 	     cex=0, 
