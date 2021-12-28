@@ -83,7 +83,7 @@ print(ggplot(deces_complet_annuel_analysable2000) +
 )
 
 
-repertoire <- paste0("gen/images/Eurostat/Deces/Annuel/Evol")
+repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Annuel/Evol")
 a__f_createDir(repertoire)
 
 dev.print(device = png, file = paste0(repertoire, "/Eurostat_Deces_2000_2020_zone_tot.png"), width = 1000)
@@ -350,7 +350,7 @@ pyramids(Left=hommes_femmes2020$part_hommes, Llab="Hommes",
 		Center = hommes_femmes2020$agequinq, Laxis=c(0, 2, 4, 6, 8, 10),
 		main="Pyramide des âges \n des pays européens 2020", Ldens=5, Rdens=10, Lcol="blue", Rcol = "red")
 
-repertoire <- paste0("gen/images/Eurostat/Pyramides")
+repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Pyramides")
 a__f_createDir(repertoire)
 
 dev.print(device = png, file = paste0(repertoire, "/Eurostat_Pyramide_europe_2020.png"), width = 600)
@@ -599,7 +599,7 @@ p <- ggplot(data=worldmap) +
 
 plot(p)
 
-repertoire <- paste0("gen/images/Eurostat/Deces/Annuel/Cartes")
+repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Annuel/Cartes")
 a__f_createDir(repertoire)
 
 ggsave(paste0(repertoire, "/Eurostat_Deces_Annee_Maximum.png"), plot=p, width = 11, height = 8)
