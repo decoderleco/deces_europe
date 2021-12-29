@@ -23,7 +23,6 @@ library("rnaturalearthdata")
 library(readr)
 library(lsr)
 library(igraph)
-library(readr)
 library(dplyr)
 
 
@@ -376,13 +375,13 @@ deces_dep_jour <- b__fr_gouv_deces_quotidiens %>%
 		filter(deces_date_complete >= K_DEBUT_DATES_DECES_A_ANALYSER) %>%
 		group_by(deces_num_dept,
 				deces_date_complete) %>%
-		summarise(nbDeces = n(), .groups = 'drop')
+		dplyr::summarise(nbDeces = dplyr::n(), .groups = 'drop')
 
 # calculer la moyenne, le nb min/max et les quartiles des décès par département (depuis 2018)
 deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
 		group_by(deces_num_dept) %>% 
-		summarise(minimum = min(nbDeces),
-				maximum = max(nbDeces),
+		summarise(minimum = base::min(nbDeces),
+				maximum = base::max(nbDeces),
 				moyenne = mean(nbDeces),
 				premier_quartile = quantile(nbDeces,
 						probs = 0.25),
@@ -399,7 +398,7 @@ if (shallDeleteVars) rm(deces_dep_jour_moyenne_min_max_quartiles)
 
 # Ajouter la colonne deces_centre_reduit
 deces_dep_jour <- deces_dep_jour %>%
-		mutate(deces_centre_reduit = (nbDeces - moyenne) / max(dernier_quartile - moyenne,
+		mutate(deces_centre_reduit = (nbDeces - moyenne) / base::max(dernier_quartile - moyenne,
 						                                       moyenne - premier_quartile))
 
 # Ajouter le nom des départements
@@ -518,13 +517,13 @@ deces_par_jour_age <- b__fr_gouv_deces_quotidiens %>%
 		group_by(age_deces_millesime,
 				deces_date_complete) %>% 
 		# Compter le nombre de décès pour chaque jour et chaque age
-		summarise(nbDeces = n(), .groups = 'drop')
+		summarise(nbDeces = dplyr::n(), .groups = 'drop')
 
 # Pour chaque age de deces, calculer les min, max, moyenne...
 nbDeces_moyen_par_age <- deces_par_jour_age %>% 
 		group_by(age_deces_millesime) %>% 
-		summarise(minimum = min(nbDeces),
-				maximum = max(nbDeces),
+		summarise(minimum = base::min(nbDeces),
+				maximum = base::max(nbDeces),
 				moyenne = mean(nbDeces),
 				premier_quartile = quantile(nbDeces,
 						probs = 0.25),
@@ -537,7 +536,7 @@ deces_par_jour_age <- deces_par_jour_age %>%
 
 # Ajouter la colonne avec le calcul du nombre de deces_centre_reduit (centrés et réduits au quartile)
 deces_par_jour_age <- deces_par_jour_age %>% 
-		mutate(deces_centre_reduit = (nbDeces - moyenne) / max(dernier_quartile - moyenne,
+		mutate(deces_centre_reduit = (nbDeces - moyenne) / base::max(dernier_quartile - moyenne,
 				                                               moyenne - premier_quartile))
 # Ajouter la colonne confinement
 deces_par_jour_age <- deces_par_jour_age %>% 
@@ -583,8 +582,8 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 #ajout centre 
 nbDeces_moyen_par_tranchedAge <- deces_par_jour_tranchedage %>% 
 		group_by(tranche_age) %>% 
-		summarise(minimum = min(nbDeces),
-				maximum = max(nbDeces),
+		summarise(minimum = base::min(nbDeces),
+				maximum = base::max(nbDeces),
 				moyenne = mean(nbDeces),
 				variance = sd(nbDeces),
 				premier_quartile = quantile(nbDeces,
@@ -602,7 +601,7 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 
 # Ajouter la colonne deces_centre_reduit
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
-		mutate(deces_tranchedage_centre_reduit = (nbDeces - moyenne) / max(dernier_quartile - moyenne,
+		mutate(deces_tranchedage_centre_reduit = (nbDeces - moyenne) / base::max(dernier_quartile - moyenne,
 				                                                           moyenne - premier_quartile))
 
 ################################################################################
@@ -648,7 +647,7 @@ if (!dir.exists("inst/extdata/world/eu/fr/gouv/vacsi")) dir.create("inst/extdata
 write.table(vaccination, "inst/extdata/world/eu/fr/gouv/vacsi/fr_gouv_vacsi.csv", row.names=TRUE, sep=";", dec=".", na=" ")
 
 vaccination <- vaccination %>% 
-		rename(tranche_age = clage_vacsi, deces_date_complete = jour) %>%
+		dplyr::rename(tranche_age = clage_vacsi, deces_date_complete = jour) %>%
 		mutate(deces_date_complete = date(deces_date_complete)) 
 
 # Ajouter les données de vaccination 
@@ -729,8 +728,8 @@ data_a_tracer <- data_a_tracer %>%
 # calculer les données statistiques pour chaque tranche d'age
 nbDeces_moyen_par_tranchedAge <- data_a_tracer %>% 
 		group_by(tranche_age) %>% 
-		summarise(minimum = min(nbDeces),
-				maximum = max(nbDeces),
+		summarise(minimum = base::min(nbDeces),
+				maximum = base::max(nbDeces),
 				moyenne = mean(nbDeces),
 				ecart95pourcent = 2*sd(nbDeces),
 				premier_quartile = quantile(nbDeces,
@@ -744,7 +743,7 @@ nbDeces_moyen_par_tranchedAge <- data_a_tracer %>%
 # Ajouter les données statistiques de chaque tranche d'age
 data_a_tracer <- data_a_tracer %>% 
 		left_join(nbDeces_moyen_par_tranchedAge,
-				, by = c("tranche_age"))
+				by = c("tranche_age"))
 
 # Ajouter la colonne confinement
 data_a_tracer <- data_a_tracer %>% 
@@ -822,7 +821,7 @@ data_a_tracer <- a__f_add_tranche_age(data_a_tracer)
 
 # Extraire les dates de début/fin en 2021 afin de pouvoir ensuite faire une estimation sur 365 jours pour l'année en cours
 
-date_max <- max(data_a_tracer$deces_date_complete) 
+date_max <- base::max(data_a_tracer$deces_date_complete) 
 
 duree <- as.integer(date_max - as.Date("2021-01-01"), units='days')
 
