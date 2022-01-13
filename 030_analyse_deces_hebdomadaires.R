@@ -231,6 +231,33 @@ a__f_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_serbie)
 a__f_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_suede)
 a__f_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_suisse)
 
+#--------------------------#
+####     cumul          ####
+#--------------------------#
+
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_allemagne)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_armenie)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_autriche)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_belgique)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_chypre)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_croatie)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_danmark)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_espagne)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_estonie)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_finlande)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_france)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_grece)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_hongrie)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_islande)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_italie)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_malte)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_norvege)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_paysbas)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_pologne)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_portugal)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_serbie)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_suede)
+a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_suisse)
 
 #-------------------------------------------------#
 ####    vaccinations grippe et deces France    ####
