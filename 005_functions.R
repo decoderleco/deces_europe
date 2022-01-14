@@ -4595,11 +4595,13 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
   
   if(nbLines > 0){
     p<-ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des plus de 80 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       aes(x =semaine, y = cum_deces_ge80) +
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
       xlab("")+
-      ylab("deces standardisés des plus de 80 ans")+
+      ylab("Deces standardisés des plus de 80 ans")+
       geom_text(x=2, y=0, label="janvier")+
       geom_text(x=10, y=0, label="mars")+
       geom_text(x=19, y=0, label="mai")+
@@ -4608,6 +4610,8 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
       geom_text(x=46, y=0, label="novembre")
   }else{
     p<-ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des plus de 80 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       aes(x = semaine, y = cum_deces_ge80) +
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
@@ -4639,6 +4643,8 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
   
   if(nbLines > 0){
     p<- ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 70-79 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       aes(x = semaine, y = cum_deces_70_79) +
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
@@ -4652,6 +4658,8 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
       ylab("deces standardisés des 70-79 ans")
   }else{
     p<- ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 70-79 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       aes(x = semaine, y = cum_deces_70_79) +
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
@@ -4682,6 +4690,8 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
   
   if(nbLines > 0){
     p<- ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 60-69 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       aes(x = semaine, y = cum_deces_60_69) +
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
@@ -4695,6 +4705,8 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
       ylab("deces standardisés des 60-69 ans")
   }else{
     p<- ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 60-69 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       aes(x = semaine, y = cum_deces_60_69) +
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
@@ -4726,6 +4738,8 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
   
   if(nbLines > 0){
     p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 50-59 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       aes(x = semaine, y = cum_deces_50_59) +
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
@@ -4739,6 +4753,8 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
       ylab("deces standardisés des 50-59 ans")
   }else{
     p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 50-59 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       aes(x = semaine, y = cum_deces_50_59) +
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
@@ -4770,6 +4786,8 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
   
   if(nbLines > 0){
     p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 25-49 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       aes(x = semaine, y = cum_deces_25_49) +
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
@@ -4783,6 +4801,8 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
       ylab("deces standardisés des 25-49 ans")
   }else{
     p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 25-49 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       aes(x = semaine, y = cum_deces_25_49) +
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
@@ -4814,6 +4834,8 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
   
   if(nbLines > 0){
     p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 15-24 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       aes(x = semaine, y = cum_deces_15_24) +
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
@@ -4828,6 +4850,8 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
   }else{
     p<-  ggplot(temp) +
       aes(x = semaine, y = cum_deces_15_24) +
+      ggtitle(paste0("Décès standardisés cumulés des 15-24 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
       xlab("")+ 
@@ -4859,6 +4883,8 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
   
   if(nbLines > 0){
     p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       aes(x = semaine, y = cum_deces_tot) +
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
@@ -4872,6 +4898,8 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
       ylab("deces standardisés total")
   }else{
     p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
       aes(x = semaine, y = cum_deces_tot) +
       geom_line(aes(color=annee), size=1.3) +
       scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
