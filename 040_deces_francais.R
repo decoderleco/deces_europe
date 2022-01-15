@@ -215,6 +215,10 @@ if (exists(varName)) {
 			filter(deces_date_complete < K_DEBUT_DATES_DECES_A_ANALYSER))
 	message(paste0("Nombre de dates de décès antérieures à 2018 dans les fichiers depuis 2018 (erreurs de saisie ou enregistrement de régularisation ?) : ", nbErreurSaisie))
 	
+	#calculer le nombre de jours entre la naissance et le décès
+	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>% 
+	  mutate(nb_jour_vecu = difftime(deces_date_complete, naissance_date_complete, units = "days"))
+	
 	if (shallDeleteVars) rm(nbErreurSaisie)
 
 	################################################################################
@@ -616,26 +620,95 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 		   filter(age_deces_millesime == 0)
    
    print(ggplot(data = deces_par_jour_age_des_0an,
-						   mapping = aes(x = deces_date_complete,
-								   colour = confinement)) +
-				   
-				   geom_line(aes(y = nbDeces)) +
-				   
-				   scale_colour_manual(values=c("red","black"))+
-				   
-				   facet_wrap(~paste(age_deces_millesime, "ans"))+
+						   mapping = aes(x = deces_date_complete,y = nbDeces)) +
+           geom_smooth() +
+				   geom_point() +
 				   
 				   theme(legend.position = "top") +
 				   
-				   ggtitle("Décès quotidiens par age") +
+				   ggtitle("Décès quotidiens des 0 an") +
 				   
 				   xlab("date de décès") + 
-				   # TODO M 2021_07_18 : Ce n'est pas le nombre de décès centrés réduits, mais le nbDeces
-				   ylab("nombre de décès (centrés et réduits au quartile)")
+				   ylab("nombre de décès")
+   )
+   if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
+   
+   ###############################################################################
+   #
+   # Deces par jour et par age depuis 2018 des 1 mois
+   #
+   ################################################################################
+   
+   # Deces des 1 mois
+   deces_des_30jours<- b__fr_gouv_deces_quotidiens %>% 
+     filter(nb_jour_vecu <= 30) %>% 
+     filter(deces_annee_complete >=2018)
+   
+   deces_par_jour_age_des_30jours <- deces_des_30jours %>% 
+     # Grouper
+     group_by(deces_date_complete) %>% 
+     # Compter le nombre de décès pour chaque jour et chaque age
+     summarise(nbDeces = dplyr::n(), .groups = 'drop')  
+   
+   print(ggplot(data = deces_par_jour_age_des_30jours,
+                mapping = aes(x = deces_date_complete,y = nbDeces)) +
+           geom_smooth() +
+           geom_point() +
+           
+           theme(legend.position = "top") +
+           
+           ggtitle("Décès quotidiens des moins de 30 jours") +
+           
+           xlab("date de décès") + 
+           ylab("nombre de décès ")
+   )
+   
+   if (shallDeleteVars) rm(deces_des_30jours)
+   if (shallDeleteVars) rm(deces_par_jour_age_des_30jours)
+   
+   ###############################################################################
+   #
+   # Deces par jour et par age depuis 2018 des 1 semaine
+   #
+   ################################################################################
+   
+   # Deces des 1 semaine
+   deces_des_7jours<- b__fr_gouv_deces_quotidiens %>% 
+     filter(nb_jour_vecu <= 7) %>% 
+     filter(deces_annee_complete >=2018) %>% 
+     mutate(naissance_semaine = isoweek(naissance_date_complete))%>% 
+     mutate(deces_semaine = isoweek(deces_date_complete)) %>% 
+     mutate(deces_annee_semaine = case_when(
+       deces_semaine == 1 & deces_mois_complete == 12 ~ paste0(deces_annee_complete+1,'-01'),
+       deces_semaine == 52 & deces_mois_complete == 1 ~ paste0(deces_annee_complete-1,'-52'),
+       deces_semaine == 53 & deces_mois_complete == 1 ~ paste0(deces_annee_complete-1,'-53'),
+       deces_semaine < 10 ~ paste0(deces_annee_complete,'-0',deces_semaine),
+       TRUE ~ paste0(deces_annee_complete,'-',deces_semaine)))
+     
+
+   deces_par_semaine_age_des_7jours <- deces_des_7jours %>% 
+     # Grouper
+     group_by(deces_annee_semaine) %>% 
+     # Compter le nombre de décès pour chaque jour et chaque age
+     summarise(nbDeces = dplyr::n(), .groups = 'drop')  
+   
+   deces_par_semaine_age_des_7jours$numero <- as.numeric(rownames(deces_par_semaine_age_des_7jours))
+   
+   print(ggplot(data = deces_par_semaine_age_des_7jours,
+                mapping = aes(x = numero,y = nbDeces)) +
+           geom_smooth() +
+           geom_point() +
+           
+           theme(legend.position = "top") +
+           
+           ggtitle("Décès hebdomadaires des moins de 7 jours") +
+           
+           xlab("date de décès") + 
+           ylab("nombre de décès ")
    )
    
    if (shallDeleteVars) rm(nbDeces_moyen_par_age)
-   if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
+
 											   
 ###################################################################
 # Ajout vaccination (Fichier VAC-SI)
