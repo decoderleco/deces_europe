@@ -23,7 +23,6 @@ library("rnaturalearthdata")
 library(readr)
 library(lsr)
 library(igraph)
-library(readr)
 library(dplyr)
 
 
@@ -98,6 +97,7 @@ if (exists(varName)) {
 	# Liste des URLs des fichiers de patients décédés
 	
 	urls_listes_deces <- c(
+	  '2021m12' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220106-161749/deces-2021-m12.txt',
 	  '2021m11' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20211215-093836/deces-2021-m11.txt',
 	  '2021m10' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20211118-093353/deces-2021-m10.txt',
 	  '2021t3'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20211012-093424/deces-2021-t3.txt',
@@ -214,6 +214,10 @@ if (exists(varName)) {
 	nbErreurSaisie <- count(b__fr_gouv_deces_quotidiens %>%
 			filter(deces_date_complete < K_DEBUT_DATES_DECES_A_ANALYSER))
 	message(paste0("Nombre de dates de décès antérieures à 2018 dans les fichiers depuis 2018 (erreurs de saisie ou enregistrement de régularisation ?) : ", nbErreurSaisie))
+	
+	#calculer le nombre de jours entre la naissance et le décès
+	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>% 
+	  mutate(nb_jour_vecu = difftime(deces_date_complete, naissance_date_complete, units = "days"))
 	
 	if (shallDeleteVars) rm(nbErreurSaisie)
 
@@ -376,13 +380,13 @@ deces_dep_jour <- b__fr_gouv_deces_quotidiens %>%
 		filter(deces_date_complete >= K_DEBUT_DATES_DECES_A_ANALYSER) %>%
 		group_by(deces_num_dept,
 				deces_date_complete) %>%
-		summarise(nbDeces = n(), .groups = 'drop')
+		dplyr::summarise(nbDeces = dplyr::n(), .groups = 'drop')
 
 # calculer la moyenne, le nb min/max et les quartiles des décès par département (depuis 2018)
 deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
 		group_by(deces_num_dept) %>% 
-		summarise(minimum = min(nbDeces),
-				maximum = max(nbDeces),
+		summarise(minimum = base::min(nbDeces),
+				maximum = base::max(nbDeces),
 				moyenne = mean(nbDeces),
 				premier_quartile = quantile(nbDeces,
 						probs = 0.25),
@@ -399,7 +403,7 @@ if (shallDeleteVars) rm(deces_dep_jour_moyenne_min_max_quartiles)
 
 # Ajouter la colonne deces_centre_reduit
 deces_dep_jour <- deces_dep_jour %>%
-		mutate(deces_centre_reduit = (nbDeces - moyenne) / max(dernier_quartile - moyenne,
+		mutate(deces_centre_reduit = (nbDeces - moyenne) / base::max(dernier_quartile - moyenne,
 						                                       moyenne - premier_quartile))
 
 # Ajouter le nom des départements
@@ -518,13 +522,13 @@ deces_par_jour_age <- b__fr_gouv_deces_quotidiens %>%
 		group_by(age_deces_millesime,
 				deces_date_complete) %>% 
 		# Compter le nombre de décès pour chaque jour et chaque age
-		summarise(nbDeces = n(), .groups = 'drop')
+		summarise(nbDeces = dplyr::n(), .groups = 'drop')
 
 # Pour chaque age de deces, calculer les min, max, moyenne...
 nbDeces_moyen_par_age <- deces_par_jour_age %>% 
 		group_by(age_deces_millesime) %>% 
-		summarise(minimum = min(nbDeces),
-				maximum = max(nbDeces),
+		summarise(minimum = base::min(nbDeces),
+				maximum = base::max(nbDeces),
 				moyenne = mean(nbDeces),
 				premier_quartile = quantile(nbDeces,
 						probs = 0.25),
@@ -537,7 +541,7 @@ deces_par_jour_age <- deces_par_jour_age %>%
 
 # Ajouter la colonne avec le calcul du nombre de deces_centre_reduit (centrés et réduits au quartile)
 deces_par_jour_age <- deces_par_jour_age %>% 
-		mutate(deces_centre_reduit = (nbDeces - moyenne) / max(dernier_quartile - moyenne,
+		mutate(deces_centre_reduit = (nbDeces - moyenne) / base::max(dernier_quartile - moyenne,
 				                                               moyenne - premier_quartile))
 # Ajouter la colonne confinement
 deces_par_jour_age <- deces_par_jour_age %>% 
@@ -583,8 +587,8 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 #ajout centre 
 nbDeces_moyen_par_tranchedAge <- deces_par_jour_tranchedage %>% 
 		group_by(tranche_age) %>% 
-		summarise(minimum = min(nbDeces),
-				maximum = max(nbDeces),
+		summarise(minimum = base::min(nbDeces),
+				maximum = base::max(nbDeces),
 				moyenne = mean(nbDeces),
 				variance = sd(nbDeces),
 				premier_quartile = quantile(nbDeces,
@@ -602,7 +606,7 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 
 # Ajouter la colonne deces_centre_reduit
 deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>% 
-		mutate(deces_tranchedage_centre_reduit = (nbDeces - moyenne) / max(dernier_quartile - moyenne,
+		mutate(deces_tranchedage_centre_reduit = (nbDeces - moyenne) / base::max(dernier_quartile - moyenne,
 				                                                           moyenne - premier_quartile))
 
 ################################################################################
@@ -616,26 +620,95 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 		   filter(age_deces_millesime == 0)
    
    print(ggplot(data = deces_par_jour_age_des_0an,
-						   mapping = aes(x = deces_date_complete,
-								   colour = confinement)) +
-				   
-				   geom_line(aes(y = nbDeces)) +
-				   
-				   scale_colour_manual(values=c("red","black"))+
-				   
-				   facet_wrap(~paste(age_deces_millesime, "ans"))+
+						   mapping = aes(x = deces_date_complete,y = nbDeces)) +
+           geom_smooth() +
+				   geom_point() +
 				   
 				   theme(legend.position = "top") +
 				   
-				   ggtitle("Décès quotidiens par age") +
+				   ggtitle("Décès quotidiens des 0 an") +
 				   
 				   xlab("date de décès") + 
-				   # TODO M 2021_07_18 : Ce n'est pas le nombre de décès centrés réduits, mais le nbDeces
-				   ylab("nombre de décès (centrés et réduits au quartile)")
+				   ylab("nombre de décès")
+   )
+   if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
+   
+   ###############################################################################
+   #
+   # Deces par jour et par age depuis 2018 des 1 mois
+   #
+   ################################################################################
+   
+   # Deces des 1 mois
+   deces_des_30jours<- b__fr_gouv_deces_quotidiens %>% 
+     filter(nb_jour_vecu <= 30) %>% 
+     filter(deces_annee_complete >=2018)
+   
+   deces_par_jour_age_des_30jours <- deces_des_30jours %>% 
+     # Grouper
+     group_by(deces_date_complete) %>% 
+     # Compter le nombre de décès pour chaque jour et chaque age
+     summarise(nbDeces = dplyr::n(), .groups = 'drop')  
+   
+   print(ggplot(data = deces_par_jour_age_des_30jours,
+                mapping = aes(x = deces_date_complete,y = nbDeces)) +
+           geom_smooth() +
+           geom_point() +
+           
+           theme(legend.position = "top") +
+           
+           ggtitle("Décès quotidiens des moins de 30 jours") +
+           
+           xlab("date de décès") + 
+           ylab("nombre de décès ")
+   )
+   
+   if (shallDeleteVars) rm(deces_des_30jours)
+   if (shallDeleteVars) rm(deces_par_jour_age_des_30jours)
+   
+   ###############################################################################
+   #
+   # Deces par jour et par age depuis 2018 des 1 semaine
+   #
+   ################################################################################
+   
+   # Deces des 1 semaine
+   deces_des_7jours<- b__fr_gouv_deces_quotidiens %>% 
+     filter(nb_jour_vecu <= 7) %>% 
+     filter(deces_annee_complete >=2018) %>% 
+     mutate(naissance_semaine = isoweek(naissance_date_complete))%>% 
+     mutate(deces_semaine = isoweek(deces_date_complete)) %>% 
+     mutate(deces_annee_semaine = case_when(
+       deces_semaine == 1 & deces_mois_complete == 12 ~ paste0(deces_annee_complete+1,'-01'),
+       deces_semaine == 52 & deces_mois_complete == 1 ~ paste0(deces_annee_complete-1,'-52'),
+       deces_semaine == 53 & deces_mois_complete == 1 ~ paste0(deces_annee_complete-1,'-53'),
+       deces_semaine < 10 ~ paste0(deces_annee_complete,'-0',deces_semaine),
+       TRUE ~ paste0(deces_annee_complete,'-',deces_semaine)))
+     
+
+   deces_par_semaine_age_des_7jours <- deces_des_7jours %>% 
+     # Grouper
+     group_by(deces_annee_semaine) %>% 
+     # Compter le nombre de décès pour chaque jour et chaque age
+     summarise(nbDeces = dplyr::n(), .groups = 'drop')  
+   
+   deces_par_semaine_age_des_7jours$numero <- as.numeric(rownames(deces_par_semaine_age_des_7jours))
+   
+   print(ggplot(data = deces_par_semaine_age_des_7jours,
+                mapping = aes(x = numero,y = nbDeces)) +
+           geom_smooth() +
+           geom_point() +
+           
+           theme(legend.position = "top") +
+           
+           ggtitle("Décès hebdomadaires des moins de 7 jours") +
+           
+           xlab("date de décès") + 
+           ylab("nombre de décès ")
    )
    
    if (shallDeleteVars) rm(nbDeces_moyen_par_age)
-   if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
+
 											   
 ###################################################################
 # Ajout vaccination (Fichier VAC-SI)
@@ -648,7 +721,7 @@ if (!dir.exists("inst/extdata/world/eu/fr/gouv/vacsi")) dir.create("inst/extdata
 write.table(vaccination, "inst/extdata/world/eu/fr/gouv/vacsi/fr_gouv_vacsi.csv", row.names=TRUE, sep=";", dec=".", na=" ")
 
 vaccination <- vaccination %>% 
-		rename(tranche_age = clage_vacsi, deces_date_complete = jour) %>%
+		dplyr::rename(tranche_age = clage_vacsi, deces_date_complete = jour) %>%
 		mutate(deces_date_complete = date(deces_date_complete)) 
 
 # Ajouter les données de vaccination 
@@ -729,8 +802,8 @@ data_a_tracer <- data_a_tracer %>%
 # calculer les données statistiques pour chaque tranche d'age
 nbDeces_moyen_par_tranchedAge <- data_a_tracer %>% 
 		group_by(tranche_age) %>% 
-		summarise(minimum = min(nbDeces),
-				maximum = max(nbDeces),
+		summarise(minimum = base::min(nbDeces),
+				maximum = base::max(nbDeces),
 				moyenne = mean(nbDeces),
 				ecart95pourcent = 2*sd(nbDeces),
 				premier_quartile = quantile(nbDeces,
@@ -744,7 +817,7 @@ nbDeces_moyen_par_tranchedAge <- data_a_tracer %>%
 # Ajouter les données statistiques de chaque tranche d'age
 data_a_tracer <- data_a_tracer %>% 
 		left_join(nbDeces_moyen_par_tranchedAge,
-				, by = c("tranche_age"))
+				by = c("tranche_age"))
 
 # Ajouter la colonne confinement
 data_a_tracer <- data_a_tracer %>% 
@@ -822,7 +895,7 @@ data_a_tracer <- a__f_add_tranche_age(data_a_tracer)
 
 # Extraire les dates de début/fin en 2021 afin de pouvoir ensuite faire une estimation sur 365 jours pour l'année en cours
 
-date_max <- max(data_a_tracer$deces_date_complete) 
+date_max <- base::max(data_a_tracer$deces_date_complete) 
 
 duree <- as.integer(date_max - as.Date("2021-01-01"), units='days')
 

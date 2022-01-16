@@ -783,8 +783,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	moyenne <- mean(es_moyenne_mobile)
 	
 	# TODO Renommer la variable
-	es_moyenne_mobile <- data_frame(moyenne_mobile = es_moyenne_mobile)
+	es_moyenne_mobile <- data_frame(moyenne_mobile_si_pop_2020 = es_moyenne_mobile)
 	
+	# Créer la colonne numSemaineDepuis2013
 	es_moyenne_mobile$numSemaineDepuis2013 <- 1:nrow(es_moyenne_mobile) + decalageSemaines
 	
 	# Ajouter les colonnes de la moyenne mobile 
@@ -857,7 +858,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	# Superposer la moyenne mobile
 	par(new=T)
 	plot(es_deces_standard_pays_semaine$numSemaineDepuis2013, 
-		 es_deces_standard_pays_semaine$moyenne_mobile, 
+		 es_deces_standard_pays_semaine$moyenne_mobile_si_pop_2020, 
 		 pch=16, 
 		 axes=F, 
 		 cex=0, 
@@ -1776,7 +1777,7 @@ Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	# Superposer la moyenne mobile
 	par(new=T)
 	plot(essai$numSemaineDepuis2013, 
-	     essai$moyenne_mobile, 
+	     essai$moyenne_mobile_si_pop_2020, 
 	     pch=16, 
 	     axes=F, 
 	     cex=0, 
@@ -4538,6 +4539,384 @@ if(nbLines > 0){
 ggsave(pngFileRelPath, width = 11, height = 8, plot = p)	
 
 }
+
+
+################################################################################
+# Generer le graphique et le png associé : Deces cumulés par année et tranche d'âge
+################################################################################
+
+a__f_plot_es_deces_hebdo_std_cumul <- function(es_deces_standard_pays_semaine) {
+  
+  
+  temp <-es_deces_standard_pays_semaine %>% 
+    select(geo, time,numSemaineDepuis2013,deces_standardises_si_pop_2020,
+           deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
+           deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
+           deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80) %>% 
+    mutate(annee =str_sub(time,1,4), semaine = as.numeric(str_sub(time,6,8)))
+    
+  
+  temp <- ungroup(temp)
+  order(temp$time)
+  
+  temp$cum_deces_tot <- as.numeric(unlist(tapply(temp$deces_standardises_si_pop_2020, temp$annee, cumsum)))
+  temp$cum_deces_15_24 <- as.numeric(unlist(tapply(temp$deces_standardises_si_pop_2020_15_24, temp$annee, cumsum)))
+  temp$cum_deces_25_49 <- as.numeric(unlist(tapply(temp$deces_standardises_si_pop_2020_25_49, temp$annee, cumsum)))
+  temp$cum_deces_50_59 <- as.numeric(unlist(tapply(temp$deces_standardises_si_pop_2020_50_59, temp$annee, cumsum)))
+  temp$cum_deces_60_69 <- as.numeric(unlist(tapply(temp$deces_standardises_si_pop_2020_60_69, temp$annee, cumsum)))
+  temp$cum_deces_70_79 <- as.numeric(unlist(tapply(temp$deces_standardises_si_pop_2020_70_79, temp$annee, cumsum)))
+  temp$cum_deces_ge80 <- as.numeric(unlist(tapply(temp$deces_standardises_si_pop_2020_ge80, temp$annee, cumsum)))
+  
+  temp2 <- temp %>% filter(annee=='2013')
+  nbLines <- dim(temp2)[1]
+  
+  # deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+  # qui a étépassé dans le parametre region
+  nomVar <- deparse(substitute(es_deces_standard_pays_semaine))
+  
+  # Recuperer le nom du pays qui est après "es_deces_standard_pays_semaine_"
+  startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
+  nomPays <- str_sub(nomVar, startIndex)
+  
+  ############################################
+  ##### Graphique 1 : plus de 80 ans #########
+  ############################################
+  
+  K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROSTAT, '/Deces/Hebdo/Std/deces_cumul'))
+  
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL, "/plus80/")
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire,nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  if(nbLines > 0){
+    p<-ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des plus de 80 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      aes(x =semaine, y = cum_deces_ge80) +
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+
+      ylab("Deces standardisés des plus de 80 ans")+
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")
+  }else{
+    p<-ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des plus de 80 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      aes(x = semaine, y = cum_deces_ge80) +
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+
+      ylab("deces standardisés des plus de 80 ans")+
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")
+  }
+  ggsave(pngFileRelPath, width = 11, height = 8, plot = p)
+  
+  ############################################
+  ##### Graphique 2 :  70-79 ans #############
+  ############################################  
+  
+  
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL, "/70-79/")
+  
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire,nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  if(nbLines > 0){
+    p<- ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 70-79 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      aes(x = semaine, y = cum_deces_70_79) +
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+ 
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")+
+      ylab("deces standardisés des 70-79 ans")
+  }else{
+    p<- ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 70-79 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      aes(x = semaine, y = cum_deces_70_79) +
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+ 
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")+
+      ylab("deces standardisés des 70-79 ans")
+  }  
+  ggsave(pngFileRelPath, width = 11, height = 8, plot = p)	
+  
+  ############################################
+  ##### Graphique 3 :  60-69 ans #############
+  ############################################  
+  
+  
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL, "/60-69/")
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire,nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  if(nbLines > 0){
+    p<- ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 60-69 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      aes(x = semaine, y = cum_deces_60_69) +
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+ 
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")+
+      ylab("deces standardisés des 60-69 ans")
+  }else{
+    p<- ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 60-69 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      aes(x = semaine, y = cum_deces_60_69) +
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+ 
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")+
+      ylab("deces standardisés des 60-69 ans")
+  }
+  
+  ggsave(pngFileRelPath, width = 11, height = 8, plot = p)	
+  
+  ############################################
+  ##### Graphique 4 :  50-59 ans #############
+  ############################################  
+  
+  
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL, "/50-59/")
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  if(nbLines > 0){
+    p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 50-59 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      aes(x = semaine, y = cum_deces_50_59) +
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+ 
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")+
+      ylab("deces standardisés des 50-59 ans")
+  }else{
+    p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 50-59 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      aes(x = semaine, y = cum_deces_50_59) +
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+ 
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")+
+      ylab("deces standardisés des 50-59 ans")
+  }
+  
+  ggsave(pngFileRelPath, width = 11, height = 8, plot = p)
+  
+  ############################################
+  ##### Graphique 5 :  25-49 ans #############
+  ############################################  
+  
+  
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL, "/25-49/")
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  if(nbLines > 0){
+    p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 25-49 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      aes(x = semaine, y = cum_deces_25_49) +
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+ 
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")+
+      ylab("deces standardisés des 25-49 ans")
+  }else{
+    p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 25-49 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      aes(x = semaine, y = cum_deces_25_49) +
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+ 
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")+
+      ylab("deces standardisés des 25-49 ans")
+  }
+  
+  ggsave(pngFileRelPath, width = 11, height = 8, plot = p)	
+  
+  ############################################
+  ##### Graphique 6 :  15-24 ans #############
+  ############################################  
+  
+  
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL, "/15-24/")
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  if(nbLines > 0){
+    p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés des 15-24 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      aes(x = semaine, y = cum_deces_15_24) +
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+ 
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")+
+      ylab("deces standardisés des 15-24 ans")
+  }else{
+    p<-  ggplot(temp) +
+      aes(x = semaine, y = cum_deces_15_24) +
+      ggtitle(paste0("Décès standardisés cumulés des 15-24 ans \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+ 
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")+
+      ylab("deces standardisés des 15-24 ans")
+  }
+  
+  ggsave(pngFileRelPath, width = 11, height = 8, plot = p)	
+  
+  
+  ############################################
+  ##### Graphique 7 :  total     #############
+  ############################################  
+  
+  
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL, "/total/")
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  if(nbLines > 0){
+    p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      aes(x = semaine, y = cum_deces_tot) +
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+ 
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")+
+      ylab("deces standardisés total")
+  }else{
+    p<-  ggplot(temp) +
+      ggtitle(paste0("Décès standardisés cumulés \n",str_to_title(nomPays)))+
+      theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+      aes(x = semaine, y = cum_deces_tot) +
+      geom_line(aes(color=annee), size=1.3) +
+      scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))+
+      xlab("")+ 
+      geom_text(x=2, y=0, label="janvier")+
+      geom_text(x=10, y=0, label="mars")+
+      geom_text(x=19, y=0, label="mai")+
+      geom_text(x=28, y=0, label="juillet")+
+      geom_text(x=37, y=0, label="septembre")+
+      geom_text(x=46, y=0, label="novembre")+
+      ylab("deces standardisés total")
+  }
+  
+  ggsave(pngFileRelPath, width = 11, height = 8, plot = p)	
+  
+} 
+
 
 ################################################################################
 # Generer le graphique et le png associé : Deces vs Deces COVID
