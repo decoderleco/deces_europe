@@ -620,17 +620,27 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 		   filter(age_deces_millesime == 0)
    
    print(ggplot(data = deces_par_jour_age_des_0an,
-						   mapping = aes(x = deces_date_complete,y = nbDeces)) +
+			    mapping = aes(x = deces_date_complete, y = nbDeces)) +
            geom_smooth() +
-				   geom_point() +
+		   geom_point() +
 				   
-				   theme(legend.position = "top") +
-				   
-				   ggtitle("Décès quotidiens des 0 an") +
-				   
-				   xlab("date de décès") + 
-				   ylab("nombre de décès")
+		   theme(legend.position = "top") +
+		   
+		   ggtitle("Décès quotidiens des 0 an") +
+		   
+		   xlab("date de décès") + 
+		   ylab("nombre de décès")
    )
+
+   #Nom du fichier png à générer
+
+   repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_Quotidiens/Tranche_age")
+   a__f_createDir(repertoire)
+   pngFileRelPath <- paste0(repertoire, "/deces_par_jour_age_des_0an", ".png")
+   
+   dev.print(device = png, file = pngFileRelPath, width = 1000)
+   
+   
    if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
    
    ###############################################################################
@@ -662,6 +672,15 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
            xlab("date de décès") + 
            ylab("nombre de décès ")
    )
+
+   #Nom du fichier png à générer
+   
+   repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_Quotidiens/Tranche_age")
+   a__f_createDir(repertoire)
+   pngFileRelPath <- paste0(repertoire, "/deces_par_jour_age_des_30jours", ".png")
+   
+   dev.print(device = png, file = pngFileRelPath, width = 1000)
+   
    
    if (shallDeleteVars) rm(deces_des_30jours)
    if (shallDeleteVars) rm(deces_par_jour_age_des_30jours)
@@ -706,6 +725,14 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
            xlab("date de décès") + 
            ylab("nombre de décès ")
    )
+   
+   #Nom du fichier png à générer
+   
+   repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_Quotidiens/Tranche_age")
+   a__f_createDir(repertoire)
+   pngFileRelPath <- paste0(repertoire, "/deces_par_semaine_age_des_7jours", ".png")
+   
+   dev.print(device = png, file = pngFileRelPath, width = 1000)
    
    if (shallDeleteVars) rm(nbDeces_moyen_par_age)
 
