@@ -173,7 +173,7 @@ es_annne_deces_maximum <- data.frame(es_annne_deces_maximum)
 es_annne_deces_maximum$geo <- rownames(es_annne_deces_maximum)
 
 es_annne_deces_maximum <- es_annne_deces_maximum %>%
-		rename(deces=es_annne_deces_maximum)
+		dplyr::rename(deces = es_annne_deces_maximum)
 
 es_annne_deces_maximum <- es_annne_deces_maximum %>%
 		left_join(b__es_deces_et_pop_par_annee)
@@ -418,7 +418,7 @@ if (shallDeleteVars) rm(pjanquinq2000)
 
 deces_complet_annuel_france <- ungroup(b__es_deces_et_pop_par_annee) %>%
 		filter(geo == "FR") %>%
-		rename(annee=time)
+		dplyr::rename(annee=time)
 
 barplot_deces_france <- ggplot(data=deces_complet_annuel_france, aes(x=annee, y=deces)) +
 		geom_bar(stat="identity", fill="steelblue")+
