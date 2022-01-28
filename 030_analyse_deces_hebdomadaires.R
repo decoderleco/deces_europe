@@ -17,6 +17,8 @@ library(readr)
 library(lsr)
 library(igraph)
 library(rapportools)
+library(broom)
+library(purrr)
 
 #---------------------------------------#
 ####analyse des donnees hebdomadaires####
