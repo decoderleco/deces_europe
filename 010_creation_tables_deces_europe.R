@@ -1108,7 +1108,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- es_taux_mortalite_
 		group_by(geo, time) %>% 
 		summarise(deces_tot=sum(deces), 
 				deces_standardises_si_pop_2020 = sum(deces_standardises_si_pop_2020), 
-				deces_standardises_si_pop_FR_2020 = sum(deces_standardises_si_pop_FR_2020))
+				deces_standardises_si_pop_FR_2020 = sum(deces_standardises_si_pop_FR_2020),
+				pop_week=sum(pop_week))
 
 # Ajouter la colonne avec le numéro de semaine depuis 2013
 
@@ -1135,7 +1136,8 @@ es_deces_week_standardises_si_pop_2020_lt15 <- es_taux_mortalite_week_lt15 %>%
   summarise(
     deces_tot_moins15=sum(deces), 
     deces_standardises_si_pop_2020_lt15=sum(deces_standardises_si_pop_2020), 
-    deces_standardises_si_pop_FR_2020_lt15=sum(deces_standardises_si_pop_FR_2020))
+    deces_standardises_si_pop_FR_2020_lt15=sum(deces_standardises_si_pop_FR_2020),
+    pop_week_lt15=sum(pop_week))
 
 es_deces_week_standardises_si_pop_2020_lt15 <- es_deces_week_standardises_si_pop_2020_lt15 %>%
   left_join(numSemainesDepuis2013)
@@ -1150,7 +1152,8 @@ es_deces_week_standardises_si_pop_2020_15_24 <- es_taux_mortalite_week_15_24 %>%
   summarise(
     deces_tot_15_24=sum(deces), 
     deces_standardises_si_pop_2020_15_24=sum(deces_standardises_si_pop_2020), 
-    deces_standardises_si_pop_FR_2020_15_24=sum(deces_standardises_si_pop_FR_2020))
+    deces_standardises_si_pop_FR_2020_15_24=sum(deces_standardises_si_pop_FR_2020),
+    pop_week_15_24=sum(pop_week))
 
 es_deces_week_standardises_si_pop_2020_15_24 <- es_deces_week_standardises_si_pop_2020_15_24 %>%
   left_join(numSemainesDepuis2013)
@@ -1165,7 +1168,8 @@ es_deces_week_standardises_si_pop_2020_15_40 <- es_taux_mortalite_week_15_40 %>%
   summarise(
     deces_tot_15_40=sum(deces), 
     deces_standardises_si_pop_2020_15_40=sum(deces_standardises_si_pop_2020), 
-    deces_standardises_si_pop_FR_2020_15_40=sum(deces_standardises_si_pop_FR_2020))
+    deces_standardises_si_pop_FR_2020_15_40=sum(deces_standardises_si_pop_FR_2020),
+    pop_week_15_40=sum(pop_week))
 
 es_deces_week_standardises_si_pop_2020_15_40 <- es_deces_week_standardises_si_pop_2020_15_40 %>%
   left_join(numSemainesDepuis2013)
@@ -1180,7 +1184,8 @@ es_deces_week_standardises_si_pop_2020_25_49 <- es_taux_mortalite_week_25_49 %>%
   summarise(
     deces_tot_25_49=sum(deces), 
     deces_standardises_si_pop_2020_25_49=sum(deces_standardises_si_pop_2020), 
-    deces_standardises_si_pop_FR_2020_25_49=sum(deces_standardises_si_pop_FR_2020))
+    deces_standardises_si_pop_FR_2020_25_49=sum(deces_standardises_si_pop_FR_2020),
+    pop_week_25_49=sum(pop_week))
 
 es_deces_week_standardises_si_pop_2020_25_49 <- es_deces_week_standardises_si_pop_2020_25_49 %>%
   left_join(numSemainesDepuis2013)
@@ -1195,7 +1200,8 @@ es_deces_week_standardises_si_pop_2020_ge40 <- es_taux_mortalite_week_ge40 %>%
 		group_by(geo, time) %>% 
 		summarise(deces_tot_plus_40 = sum(deces), 
 				deces_standardises_si_pop_2020_ge40 = sum(deces_standardises_si_pop_2020), 
-				deces_standardises_si_pop_FR_2020_ge40 = sum(deces_standardises_si_pop_FR_2020))
+				deces_standardises_si_pop_FR_2020_ge40 = sum(deces_standardises_si_pop_FR_2020),
+				pop_week_ge40=sum(pop_week))
 
 es_deces_week_standardises_si_pop_2020_ge40 <- es_deces_week_standardises_si_pop_2020_ge40 %>%
 		left_join(numSemainesDepuis2013)
@@ -1209,7 +1215,8 @@ es_deces_week_standardises_si_pop_2020_40_50 <- es_taux_mortalite_week_40_50 %>%
   summarise(
     deces_tot_40_50=sum(deces), 
     deces_standardises_si_pop_2020_40_50=sum(deces_standardises_si_pop_2020), 
-    deces_standardises_si_pop_FR_2020_40_50=sum(deces_standardises_si_pop_FR_2020))
+    deces_standardises_si_pop_FR_2020_40_50=sum(deces_standardises_si_pop_FR_2020),
+    pop_week_40_50=sum(pop_week))
 
 es_deces_week_standardises_si_pop_2020_40_50 <- es_deces_week_standardises_si_pop_2020_40_50 %>%
   left_join(numSemainesDepuis2013)
@@ -1223,7 +1230,8 @@ es_deces_week_standardises_si_pop_2020_40_60 <- es_taux_mortalite_week_40_60 %>%
   summarise(
     deces_tot_40_60=sum(deces), 
     deces_standardises_si_pop_2020_40_60=sum(deces_standardises_si_pop_2020), 
-    deces_standardises_si_pop_FR_2020_40_60=sum(deces_standardises_si_pop_FR_2020))
+    deces_standardises_si_pop_FR_2020_40_60=sum(deces_standardises_si_pop_FR_2020),
+    pop_week_40_60=sum(pop_week))
 
 es_deces_week_standardises_si_pop_2020_40_60 <- es_deces_week_standardises_si_pop_2020_40_60 %>%
   left_join(numSemainesDepuis2013)
@@ -1238,7 +1246,8 @@ es_deces_week_standardises_si_pop_2020_50_59 <- es_taux_mortalite_week_50_59 %>%
   summarise(
     deces_tot_50_59=sum(deces), 
     deces_standardises_si_pop_2020_50_59=sum(deces_standardises_si_pop_2020), 
-    deces_standardises_si_pop_FR_2020_50_59=sum(deces_standardises_si_pop_FR_2020))
+    deces_standardises_si_pop_FR_2020_50_59=sum(deces_standardises_si_pop_FR_2020),
+    pop_week_50_59=sum(pop_week))
 
 es_deces_week_standardises_si_pop_2020_50_59 <- es_deces_week_standardises_si_pop_2020_50_59 %>%
   left_join(numSemainesDepuis2013)
@@ -1253,7 +1262,8 @@ es_deces_week_standardises_si_pop_2020_60_69 <- es_taux_mortalite_week_60_69 %>%
   summarise(
     deces_tot_60_69=sum(deces), 
     deces_standardises_si_pop_2020_60_69=sum(deces_standardises_si_pop_2020), 
-    deces_standardises_si_pop_FR_2020_60_69=sum(deces_standardises_si_pop_FR_2020))
+    deces_standardises_si_pop_FR_2020_60_69=sum(deces_standardises_si_pop_FR_2020),
+    pop_week_60_69=sum(pop_week))
 
 es_deces_week_standardises_si_pop_2020_60_69 <- es_deces_week_standardises_si_pop_2020_60_69 %>%
   left_join(numSemainesDepuis2013)
@@ -1268,7 +1278,8 @@ es_deces_week_standardises_si_pop_2020_65_69 <- es_taux_mortalite_week_65_69 %>%
   summarise(
     deces_tot_65_69=sum(deces), 
     deces_standardises_si_pop_2020_65_69=sum(deces_standardises_si_pop_2020), 
-    deces_standardises_si_pop_FR_2020_65_69=sum(deces_standardises_si_pop_FR_2020))
+    deces_standardises_si_pop_FR_2020_65_69=sum(deces_standardises_si_pop_FR_2020),
+    pop_week_65_69=sum(pop_week))
 
 es_deces_week_standardises_si_pop_2020_65_69 <- es_deces_week_standardises_si_pop_2020_65_69 %>%
   left_join(numSemainesDepuis2013)
@@ -1283,7 +1294,8 @@ es_deces_week_standardises_si_pop_2020_ge60 <- es_taux_mortalite_week_ge60 %>%
 		summarise(
 				deces_tot_plus_60 = sum(deces), 
 				deces_standardises_si_pop_2020_ge60 = sum(deces_standardises_si_pop_2020), 
-				deces_standardises_si_pop_FR_2020_ge60 = sum(deces_standardises_si_pop_FR_2020))
+				deces_standardises_si_pop_FR_2020_ge60 = sum(deces_standardises_si_pop_FR_2020),
+				pop_week_ge60=sum(pop_week))
 
 es_deces_week_standardises_si_pop_2020_ge60 <- es_deces_week_standardises_si_pop_2020_ge60 %>%
 		left_join(numSemainesDepuis2013)
@@ -1298,7 +1310,8 @@ es_deces_week_standardises_si_pop_2020_70_79 <- es_taux_mortalite_week_70_79 %>%
   summarise(
     deces_tot_70_79 = sum(deces), 
     deces_standardises_si_pop_2020_70_79 = sum(deces_standardises_si_pop_2020), 
-    deces_standardises_si_pop_FR_2020_70_79 = sum(deces_standardises_si_pop_FR_2020))
+    deces_standardises_si_pop_FR_2020_70_79 = sum(deces_standardises_si_pop_FR_2020),
+    pop_week_70_79=sum(pop_week))
 
 es_deces_week_standardises_si_pop_2020_70_79 <- es_deces_week_standardises_si_pop_2020_70_79 %>%
   left_join(numSemainesDepuis2013)
@@ -1314,7 +1327,8 @@ es_deces_week_standardises_si_pop_2020_ge80 <- es_taux_mortalite_week_ge80 %>%
   summarise(
     deces_tot_plus_80 = sum(deces), 
     deces_standardises_si_pop_2020_ge80 = sum(deces_standardises_si_pop_2020), 
-    deces_standardises_si_pop_FR_2020_ge80 = sum(deces_standardises_si_pop_FR_2020))
+    deces_standardises_si_pop_FR_2020_ge80 = sum(deces_standardises_si_pop_FR_2020),
+    pop_week_ge80=sum(pop_week))
 
 es_deces_week_standardises_si_pop_2020_ge80 <- es_deces_week_standardises_si_pop_2020_ge80 %>%
   left_join(numSemainesDepuis2013)
@@ -1380,7 +1394,7 @@ if (shallDeleteVars) rm(es_deces_week_standardises_si_pop_2020_25_49)
 
 a__original_eu_mesures  <- a__f_downloadIfNeeded(
 		sourceType = K_SOURCE_TYPE_CSV, 
-		UrlOrEuroStatNameToDownload = "https://www.ecdc.europa.eu/sites/default/files/documents/response_graphs_data_2021-04-15.csv",
+		UrlOrEuroStatNameToDownload = "https://www.ecdc.europa.eu/sites/default/files/documents/response_graphs_data_2022-01-27.csv",
 		repertoire = file.path(K_DIR_EXT_DATA_EUROPE,"ecdc"),
 		var = a__original_eu_mesures)
 
@@ -1495,35 +1509,47 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(b__es_de
 # Forcer le type de mesure gouvernementale en fonction des semaines
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
 		mutate(Response_measure = case_when(
-						geo == "AT" & numSemaineDepuis2013>377 & numSemaineDepuis2013<383 ~ "StayHome",
-						geo=="AT" & numSemaineDepuis2013 == 376 ~ "StayHomeGen",
-						geo == "BE" & numSemaineDepuis2013>377 & numSemaineDepuis2013<384 ~ "StayHome",
-						geo == "CH" & numSemaineDepuis2013>416 & numSemaineDepuis2013<422 ~ "StayHomeGen",
-						geo == "CY" & numSemaineDepuis2013>378 & numSemaineDepuis2013<383 ~ "StayHome",
-						geo == "CZ" & numSemaineDepuis2013>377 & numSemaineDepuis2013<382 ~ "StayHome",
-						geo == "DE" & numSemaineDepuis2013>376 & numSemaineDepuis2013<385 ~ "StayHomeGen",
-						geo == "EE" & numSemaineDepuis2013>375 & numSemaineDepuis2013<386 ~ "StayHomeGen",
-						geo == "EL" & numSemaineDepuis2013>375 & numSemaineDepuis2013<378 ~ "StayHomeGen",
-						geo=="EL" & numSemaineDepuis2013 == 378 ~ "StayHomeOrderStart",
-						geo == "EL" & numSemaineDepuis2013>378 & numSemaineDepuis2013<384 ~ "StayHome",
-						geo=="ES" & numSemaineDepuis2013 == 376 ~ "StayHomeOrderStart",
-						geo == "ES" & numSemaineDepuis2013>376 & numSemaineDepuis2013<383 ~ "StayHome",
-						geo == "FR" & numSemaineDepuis2013>377 & numSemaineDepuis2013<385 ~ "StayHome",
-						geo=="HU" & numSemaineDepuis2013 == 378 ~ "StayHomeGen",
-						geo == "HU" & numSemaineDepuis2013>378 & numSemaineDepuis2013<386 ~ "StayHome",
-						geo == "IT" & numSemaineDepuis2013>376 & numSemaineDepuis2013<384 ~ "StayHome",
-						geo == "IT" & numSemaineDepuis2013>408 & numSemaineDepuis2013<411 ~ "StayHomeGen",
-						geo == "LV" & numSemaineDepuis2013>376 & numSemaineDepuis2013<386 ~ "StayHomeGen",
-						geo == "LU" & numSemaineDepuis2013>377 & numSemaineDepuis2013<381 ~ "StayHome",
-						geo == "LI" & numSemaineDepuis2013>376 & numSemaineDepuis2013<391 ~ "StayHomeGen",
-						geo == "LI" & numSemaineDepuis2013>409 & numSemaineDepuis2013<417 ~ "StayHomeGen",
-						geo == "NL" & numSemaineDepuis2013>376 & numSemaineDepuis2013<385 ~ "StayHomeGen",
-						geo == "NL" & numSemaineDepuis2013>415 & numSemaineDepuis2013<422 ~ "StayHomeGen",
-						geo == "NO" & numSemaineDepuis2013>410 & numSemaineDepuis2013<419 ~ "StayHomeGen",
-						geo == "PL" & numSemaineDepuis2013>378 & numSemaineDepuis2013<381 ~ "StayHome",
-						geo == "PL" & numSemaineDepuis2013>380 & numSemaineDepuis2013<385 ~ "StayHomeGen",
-						geo == "PT" & numSemaineDepuis2013>376 & numSemaineDepuis2013<384 ~ "StayHomeGen",
-						geo == "SI" & numSemaineDepuis2013>377 & numSemaineDepuis2013<384 ~ "StayHome",
+						geo == "AT" & numSemaineDepuis2013 >  377 & numSemaineDepuis2013<383 ~ "StayHome",
+						geo == "AT" & numSemaineDepuis2013 == 376 ~ "StayHomeGen",
+						geo == "BE" & numSemaineDepuis2013 >  377 & numSemaineDepuis2013<384 ~ "StayHome",
+						geo == "CH" & numSemaineDepuis2013 >  416 & numSemaineDepuis2013<422 ~ "StayHomeGen",
+						geo == "CY" & numSemaineDepuis2013 == 378  ~ "StayHomeOrderStart",
+						geo == "CY" & numSemaineDepuis2013 >  378 & numSemaineDepuis2013<382 ~ "StayHome",
+						geo == "CY" & numSemaineDepuis2013 == 382  ~ "StayHomeOrderEnd",
+						geo == "CY" & numSemaineDepuis2013 == 420  ~ "StayHomeOrderStart",
+						geo == "CY" & numSemaineDepuis2013 == 436  ~ "StayHomeOrderEnd",
+						geo == "CZ" & numSemaineDepuis2013 == 378  ~ "StayHomeOrderStart",
+						geo == "CZ" & numSemaineDepuis2013 >  378 & numSemaineDepuis2013<381 ~ "StayHome",
+						geo == "CZ" & numSemaineDepuis2013 == 381  ~ "StayHomeOrderEnd",
+						geo == "DE" & numSemaineDepuis2013 >  376 & numSemaineDepuis2013<385 ~ "StayHomeGen",
+						geo == "EE" & numSemaineDepuis2013 >  375 & numSemaineDepuis2013<386 ~ "StayHomeGen",
+						geo == "EL" & numSemaineDepuis2013 >  375 & numSemaineDepuis2013<378 ~ "StayHomeGen",
+						geo == "EL" & numSemaineDepuis2013 == 378 ~ "StayHomeOrderStart",
+						geo == "EL" & numSemaineDepuis2013 >  378 & numSemaineDepuis2013<384 ~ "StayHome",
+						geo == "ES" & numSemaineDepuis2013 == 376 ~ "StayHomeOrderStart",
+						geo == "ES" & numSemaineDepuis2013 >  376 & numSemaineDepuis2013<383 ~ "StayHome",
+						geo == "FR" & numSemaineDepuis2013 >  377 & numSemaineDepuis2013<385 ~ "StayHome",
+						geo == "HU" & numSemaineDepuis2013 == 378 ~ "StayHomeOrderStart",
+						geo == "HU" & numSemaineDepuis2013 >  378 & numSemaineDepuis2013<386 ~ "StayHome",
+						geo == "HU" & numSemaineDepuis2013 == 386 ~ "StayHomeOrderEnd",
+						geo == "IT" & numSemaineDepuis2013 >  376 & numSemaineDepuis2013<384 ~ "StayHome",
+						geo == "IT" & numSemaineDepuis2013 >  408 & numSemaineDepuis2013<411 ~ "StayHomeGen",
+						geo == "LV" & numSemaineDepuis2013 >  376 & numSemaineDepuis2013<386 ~ "StayHomeGen",
+						geo == "LU" & numSemaineDepuis2013 >  377 & numSemaineDepuis2013<381 ~ "StayHome",
+						geo == "LI" & numSemaineDepuis2013 >  376 & numSemaineDepuis2013<391 ~ "StayHomeGen",
+						geo == "LI" & numSemaineDepuis2013 >  409 & numSemaineDepuis2013<417 ~ "StayHomeGen",
+						geo == "NL" & numSemaineDepuis2013 >  376 & numSemaineDepuis2013<385 ~ "StayHomeGen",
+						geo == "NL" & numSemaineDepuis2013 >  415 & numSemaineDepuis2013<422 ~ "StayHomeGen",
+						geo == "NO" & numSemaineDepuis2013 >  410 & numSemaineDepuis2013<419 ~ "StayHomeGen",
+						geo == "PL" & numSemaineDepuis2013 >  378 & numSemaineDepuis2013<381 ~ "StayHome",
+						geo == "PL" & numSemaineDepuis2013 >  380 & numSemaineDepuis2013<384 ~ "StayHomeGen",
+						geo == "PL" & numSemaineDepuis2013 == 384 ~ "StayHomeOrderEnd",
+						geo == "PT" & numSemaineDepuis2013 >  377 & numSemaineDepuis2013<383 ~ "StayHomeGen",
+						geo == "PT" & numSemaineDepuis2013 == 377 ~ "StayHomeOrderStart",
+						geo == "PT" & numSemaineDepuis2013 == 383 ~ "StayHomeOrderEnd",
+						geo == "PT" & numSemaineDepuis2013 == 420 ~ "StayHomeOrderStart",
+						geo == "PT" & numSemaineDepuis2013 == 435 ~ "StayHomeOrderEnd",
+						geo == "SI" & numSemaineDepuis2013 >  377 & numSemaineDepuis2013<383 ~ "StayHome",
 						TRUE ~ Response_measure))
 
 # Reorganiser les colonnes

@@ -20,6 +20,7 @@ library(rapportools)
 library(broom)
 library(purrr)
 library(tidyr)
+library("gridExtra")
 
 #---------------------------------------#
 ####analyse des donnees hebdomadaires####
@@ -631,6 +632,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_grec
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_hongrie)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_islande)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_italie)
+a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_luxembourg)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_malte)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_norvege)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_paysbas)
