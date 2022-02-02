@@ -1717,6 +1717,456 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- left_join(b__es_de
 
 if (shallDeleteVars) rm(owid_covid_Europe_geo_week)
 
+################################################################################
+#
+# Recuperation des donnees ined sur les décès Covid par âge
+#
+################################################################################
+
+b__ined_covid_data <- read.csv("inst/extdata/world/ined/Cum_deaths_by_age_sex.csv") %>% 
+  filter(age_group != "Total unknown")%>%
+  filter(!((country_code=="FRA"& death_reference_date_type =="report")|(country_code=="NLD"& death_reference_date_type =="report"))) %>% 
+  mutate(geo = case_when(country_code == "AUT"~"AT",
+                         country_code == "DNK"~"DK",
+                         country_code == "PRT"~"PT",
+                         country_code == "SWE"~"SE",
+                         TRUE~substr(country_code, 1, 2)),
+         death_reference_date = as.Date(death_reference_date),
+         week=isoweek(death_reference_date),
+        year = isoyear(death_reference_date),
+        time = case_when(week<10 ~ paste0(year,"W0",week),
+                         TRUE~paste0(year,"W",week))) %>% 
+  select(geo,time,age_group,cum_death_both,year,week) %>% 
+  mutate(cum_death_both = case_when(is.na(cum_death_both)~as.integer(0),
+                                    TRUE~cum_death_both))
+
+
+b__ined_covid_data_group<-b__ined_covid_data %>% 
+  filter(geo %in% c("AT","BE","DK","FR","ES","DE","IT","NE","NO","PT","RO","SE","CH")) %>% 
+  group_by(geo,time,age_group) %>% 
+  summarise(cum_death_both=base::max(cum_death_both),year=mean(year),week=mean(week))
+
+#décumuler les données
+
+b__ined_covid_data_group_prec<-b__ined_covid_data_group %>% 
+  mutate(time = case_when(week<9 ~ paste0(year,"W0",week+1),
+                          week<52 ~ paste0(year,"W",week+1),
+                          week==52 & year==2020 ~ "2020W53",
+                          week==52 & year==2021 ~ "2022W01",
+                          week==53 ~ paste0(year+1,"W01"),
+                       TRUE~paste0(year,"W",week)),
+         cum_death_both_prec = cum_death_both) %>% 
+  select(-cum_death_both,-year,-week)
+
+b__ined_covid_data_group <- b__ined_covid_data_group %>% left_join(b__ined_covid_data_group_prec) %>% 
+  mutate(new_death = case_when(is.na(cum_death_both_prec) ~ cum_death_both,
+                               TRUE~cum_death_both-cum_death_both_prec))
+#créer les fichiers par tranche d'âge
+
+#0-4 ans
+b__ined_covid_data_group_0_4 <- b__ined_covid_data_group %>% 
+  filter(age_group == "0-4") %>% 
+  mutate(deces_covid_0_4 = case_when(is.na(new_death) ~ as.integer(0),
+                                     TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_0_4)
+
+#0-9 ans
+b__ined_covid_data_group_0_9 <- b__ined_covid_data_group %>% 
+  filter(age_group == "0-9") %>% 
+  mutate(deces_covid_0_9 = case_when(is.na(new_death) ~ as.integer(0),
+                                     TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_0_9)
+
+#0-24 ans
+b__ined_covid_data_group_0_24 <- b__ined_covid_data_group %>% 
+  filter(age_group == "0-24") %>% 
+  mutate(deces_covid_0_24 = case_when(is.na(new_death) ~ as.integer(0),
+                                      TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_0_24)
+
+#5-14 ans
+b__ined_covid_data_group_5_14 <- b__ined_covid_data_group %>% 
+  filter(age_group == "5-14") %>% 
+  mutate(deces_covid_5_14 = case_when(is.na(new_death) ~ as.integer(0),
+                                      TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_5_14)
+
+#10-19 ans
+b__ined_covid_data_group_10_19 <- b__ined_covid_data_group %>% 
+  filter(age_group == "10-19") %>% 
+  mutate(deces_covid_10_19 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_10_19)
+
+#15-24 ans
+b__ined_covid_data_group_15_24 <- b__ined_covid_data_group %>% 
+  filter(age_group == "15-24") %>% 
+  mutate(deces_covid_15_24 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_15_24)
+
+#20-29 ans
+b__ined_covid_data_group_20_29 <- b__ined_covid_data_group %>% 
+  filter(age_group == "20-29") %>% 
+  mutate(deces_covid_20_29 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_20_29)
+
+#25-34 ans
+b__ined_covid_data_group_25_34 <- b__ined_covid_data_group %>% 
+  filter(age_group == "25-34") %>% 
+  mutate(deces_covid_25_34 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_25_34)
+
+#25-44 ans
+b__ined_covid_data_group_25_44 <- b__ined_covid_data_group %>% 
+  filter(age_group == "25-44") %>% 
+  mutate(deces_covid_25_44 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_25_44)
+
+#30-39 ans
+b__ined_covid_data_group_30_39 <- b__ined_covid_data_group %>% 
+  filter(age_group == "30-39") %>% 
+  mutate(deces_covid_30_39 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_30_39)
+
+#35-44 ans
+b__ined_covid_data_group_35_44 <- b__ined_covid_data_group %>% 
+  filter(age_group == "35-44") %>% 
+  mutate(deces_covid_35_44 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_35_44)
+
+#40-49 ans
+b__ined_covid_data_group_40_49 <- b__ined_covid_data_group %>% 
+  filter(age_group == "40-49") %>% 
+  mutate(deces_covid_40_49 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_40_49)
+
+#45-54 ans
+b__ined_covid_data_group_45_54 <- b__ined_covid_data_group %>% 
+  filter(age_group == "45-54") %>% 
+  mutate(deces_covid_45_54 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_45_54)
+
+#45-64 ans
+b__ined_covid_data_group_45_64 <- b__ined_covid_data_group %>% 
+  filter(age_group == "45-64") %>% 
+  mutate(deces_covid_45_64 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_45_64)
+
+#50-59 ans
+b__ined_covid_data_group_50_59 <- b__ined_covid_data_group %>% 
+  filter(age_group == "50-59") %>% 
+  mutate(deces_covid_50_59 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_50_59)
+
+#55-64 ans
+b__ined_covid_data_group_55_64 <- b__ined_covid_data_group %>% 
+  filter(age_group == "55-64") %>% 
+  mutate(deces_covid_55_64 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_55_64)
+
+#60-69 ans
+b__ined_covid_data_group_60_69 <- b__ined_covid_data_group %>% 
+  filter(age_group == "60-69") %>% 
+  mutate(deces_covid_60_69 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_60_69)
+
+#65-74 ans
+b__ined_covid_data_group_65_74 <- b__ined_covid_data_group %>% 
+  filter(age_group == "65-74") %>% 
+  mutate(deces_covid_65_74 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_65_74)
+
+#70-74 ans
+b__ined_covid_data_group_70_74 <- b__ined_covid_data_group %>% 
+  filter(age_group == "70-74") %>% 
+  mutate(deces_covid_70_74 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_70_74)
+
+#70-79 ans
+b__ined_covid_data_group_70_79 <- b__ined_covid_data_group %>% 
+  filter(age_group == "70-79") %>% 
+  mutate(deces_covid_70_79 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_70_79)
+
+#75-79 ans
+b__ined_covid_data_group_75_79 <- b__ined_covid_data_group %>% 
+  filter(age_group == "75-79") %>% 
+  mutate(deces_covid_75_79 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_75_79)
+
+#75-84 ans
+b__ined_covid_data_group_75_84 <- b__ined_covid_data_group %>% 
+  filter(age_group == "75-84") %>% 
+  mutate(deces_covid_75_84 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_75_84)
+
+#80-84 ans
+b__ined_covid_data_group_80_84 <- b__ined_covid_data_group %>% 
+  filter(age_group == "80-84") %>% 
+  mutate(deces_covid_80_84 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_80_84)
+
+#80-89 ans
+b__ined_covid_data_group_80_89 <- b__ined_covid_data_group %>% 
+  filter(age_group == "80-89") %>% 
+  mutate(deces_covid_80_89 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_80_89)
+
+#85-89 ans
+b__ined_covid_data_group_85_89 <- b__ined_covid_data_group %>% 
+  filter(age_group == "85-89") %>% 
+  mutate(deces_covid_85_89 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_85_89)
+
+#85-94 ans
+b__ined_covid_data_group_85_94 <- b__ined_covid_data_group %>% 
+  filter(age_group == "85-94") %>% 
+  mutate(deces_covid_85_94 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_85_94)
+
+#90-99 ans
+b__ined_covid_data_group_90_99 <- b__ined_covid_data_group %>% 
+  filter(age_group == "90-99") %>% 
+  mutate(deces_covid_90_99 = case_when(is.na(new_death) ~ as.integer(0),
+                                       TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_90_99)
+
+#<40 ans
+b__ined_covid_data_group_moins40 <- b__ined_covid_data_group %>% 
+  filter(age_group == "<40") %>% 
+  mutate(deces_covid_moins40 = case_when(is.na(new_death) ~ as.integer(0),
+                                         TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_moins40)
+
+#<50 ans
+b__ined_covid_data_group_moins50 <- b__ined_covid_data_group %>% 
+  filter(age_group == "<50") %>% 
+  mutate(deces_covid_moins50 = case_when(is.na(new_death) ~ as.integer(0),
+                                         TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_moins50)
+
+#<60 ans
+b__ined_covid_data_group_moins60 <- b__ined_covid_data_group %>% 
+  filter(age_group == "<60") %>% 
+  mutate(deces_covid_moins60 = case_when(is.na(new_death) ~ as.integer(0),
+                                         TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_moins60)
+
+#<70 ans
+b__ined_covid_data_group_moins70 <- b__ined_covid_data_group %>% 
+  filter(age_group == "<70") %>% 
+  mutate(deces_covid_moins70 = case_when(is.na(new_death) ~ as.integer(0),
+                                         TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_moins70)
+
+#80+ ans
+b__ined_covid_data_group_80plus <- b__ined_covid_data_group %>% 
+  filter(age_group == "80+") %>% 
+  mutate(deces_covid_80plus = case_when(is.na(new_death) ~ as.integer(0),
+                                        TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_80plus)
+
+#85+ ans
+b__ined_covid_data_group_85plus <- b__ined_covid_data_group %>% 
+  filter(age_group == "85+") %>% 
+  mutate(deces_covid_85plus = case_when(is.na(new_death) ~ as.integer(0),
+                                        TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_85plus)
+
+#90+ ans
+b__ined_covid_data_group_90plus <- b__ined_covid_data_group %>% 
+  filter(age_group == "90+") %>% 
+  mutate(deces_covid_90plus = case_when(is.na(new_death) ~ as.integer(0),
+                                        TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_90plus)
+
+#95+ ans
+b__ined_covid_data_group_95plus <- b__ined_covid_data_group %>% 
+  filter(age_group == "95+") %>% 
+  mutate(deces_covid_95plus = case_when(is.na(new_death) ~ as.integer(0),
+                                        TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_95plus)
+
+
+#100+ ans
+b__ined_covid_data_group_100plus <- b__ined_covid_data_group %>% 
+  filter(age_group == "100+") %>% 
+  mutate(deces_covid_100plus = case_when(is.na(new_death) ~ as.integer(0),
+                                        TRUE~new_death)) %>% 
+  select(geo,time,deces_covid_100plus)
+
+b__ined_covid_data_regroupe <- b__ined_covid_data_group_0_24 %>% 
+  full_join(b__ined_covid_data_group_0_4) %>% 
+  full_join(b__ined_covid_data_group_0_9) %>% 
+  full_join(b__ined_covid_data_group_10_19) %>% 
+  full_join(b__ined_covid_data_group_15_24) %>% 
+  full_join(b__ined_covid_data_group_20_29) %>% 
+  full_join(b__ined_covid_data_group_25_34) %>% 
+  full_join(b__ined_covid_data_group_25_44) %>% 
+  full_join(b__ined_covid_data_group_30_39) %>% 
+  full_join(b__ined_covid_data_group_35_44) %>% 
+  full_join(b__ined_covid_data_group_40_49) %>% 
+  full_join(b__ined_covid_data_group_45_54) %>% 
+  full_join(b__ined_covid_data_group_45_64) %>% 
+  full_join(b__ined_covid_data_group_5_14) %>% 
+  full_join(b__ined_covid_data_group_50_59) %>% 
+  full_join(b__ined_covid_data_group_55_64) %>% 
+  full_join(b__ined_covid_data_group_60_69) %>%
+  full_join(b__ined_covid_data_group_65_74) %>% 
+  full_join(b__ined_covid_data_group_70_74) %>% 
+  full_join(b__ined_covid_data_group_70_79) %>% 
+  full_join(b__ined_covid_data_group_75_79) %>% 
+  full_join(b__ined_covid_data_group_75_84) %>% 
+  full_join(b__ined_covid_data_group_80_84) %>% 
+  full_join(b__ined_covid_data_group_80_89) %>%
+  full_join(b__ined_covid_data_group_90_99) %>% 
+  full_join(b__ined_covid_data_group_80plus) %>% 
+  full_join(b__ined_covid_data_group_85_89) %>% 
+  full_join(b__ined_covid_data_group_85_94) %>%
+  full_join(b__ined_covid_data_group_80plus) %>% 
+  full_join(b__ined_covid_data_group_85plus) %>% 
+  full_join(b__ined_covid_data_group_90plus) %>% 
+  full_join(b__ined_covid_data_group_95plus) %>%
+  full_join(b__ined_covid_data_group_100plus) %>% 
+  full_join(b__ined_covid_data_group_moins40) %>% 
+  full_join(b__ined_covid_data_group_moins50) %>% 
+  full_join(b__ined_covid_data_group_moins60) %>% 
+  full_join(b__ined_covid_data_group_moins70)
+  
+b__ined_covid_data_regroupe <- b__ined_covid_data_regroupe %>% 
+  mutate(deces_covid_moins60 = case_when(geo=="DK"& time=="2020W14" ~ as.integer(4),
+                                         geo=="DK"& time=="2020W15" ~ as.integer(3),
+                                         geo=="DK"& !is.na(deces_covid_50_59) ~ deces_covid_0_9 + deces_covid_10_19 + deces_covid_20_29+deces_covid_30_39+deces_covid_40_49+deces_covid_50_59,
+                                         TRUE ~ deces_covid_moins60))%>% 
+  mutate(deces_covid_60_69 = case_when(geo=="DK"& time=="2020W14" ~ as.integer(20),
+                                       geo=="DK"& time=="2020W15" ~ as.integer(13),
+                                         TRUE ~ deces_covid_60_69)) %>% 
+  select(-deces_covid_moins70)
+
+b__ined_covid_data_regroupe <- b__ined_covid_data_regroupe %>% 
+  mutate(deces_covid_moins60 = case_when(geo=="DE"& time=="2020W14" ~ as.integer(47),
+                                        geo=="DE"& time=="2020W18" ~ as.integer(42),
+                                        geo=="DE"& time=="2020W39"~as.integer(7),
+                                        geo=="DE"& !is.na(deces_covid_50_59) ~ deces_covid_0_9 + deces_covid_10_19 + deces_covid_20_29+deces_covid_30_39+deces_covid_40_49+deces_covid_50_59,
+                                         TRUE ~ deces_covid_moins60)) %>% 
+  mutate(deces_covid_60_69 = case_when(geo=="DE"& time=="2020W39" ~ as.integer(4),
+                                       TRUE ~ deces_covid_60_69)) %>% 
+  mutate(deces_covid_70_79 = case_when(geo=="DE"& time=="2020W39" ~ as.integer(12),
+                                       TRUE ~ deces_covid_70_79)) %>% 
+  mutate(deces_covid_80_89 = case_when(geo=="DE"& time=="2020W39" ~ as.integer(17),
+                                       TRUE ~ deces_covid_80_89)) %>%
+  mutate(deces_covid_90_99 = case_when(geo=="DE"& time=="2020W39" ~ as.integer(7),
+                                       TRUE ~ deces_covid_90_99)) %>%
+  mutate(deces_covid_100plus = case_when(geo=="DE"& time=="2020W39" ~ as.integer(0),
+                                       TRUE ~ deces_covid_100plus)) %>% 
+  mutate(deces_covid_100plus = case_when(geo=="DE"& time=="2020W18" ~ as.integer(0),
+                                         TRUE ~ deces_covid_100plus)) %>%
+  mutate(deces_covid_90_99 = case_when(geo=="DE"& time=="2020W18" ~ as.integer(236),
+                                         TRUE ~ deces_covid_90_99)) %>% 
+  mutate(deces_covid_90plus = case_when(geo=="DE"& time=="2020W49" ~ as.integer(557),
+                                       TRUE ~ deces_covid_90plus)) %>% 
+  mutate(deces_covid_80plus = case_when(geo=="DE"&!is.na(deces_covid_100plus) ~ deces_covid_100plus + deces_covid_90_99+deces_covid_80_89,
+                                        TRUE ~ deces_covid_80plus))
+  
+b__ined_covid_data_regroupe <- b__ined_covid_data_regroupe %>% 
+  mutate(deces_covid_80plus = case_when(geo %in% c("NL","IT","DK")~deces_covid_80_89+deces_covid_90plus,
+                                        TRUE~deces_covid_80plus)) %>% 
+  mutate(deces_covid_85plus = case_when(geo %in% c("FR")~deces_covid_85_94+deces_covid_95plus,
+                                        TRUE~deces_covid_85plus))
+
+b__ined_covid_data_regroupe <- b__ined_covid_data_regroupe %>% 
+  mutate(deces_covid_0_9 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
+                                     geo=="PT"& time=="2020W48" ~ as.integer(0),
+                                        TRUE~deces_covid_0_9)) %>% 
+  mutate(deces_covid_10_19 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
+                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+                                     TRUE~deces_covid_10_19)) %>%
+  mutate(deces_covid_20_29 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
+                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+                                       TRUE~deces_covid_20_29)) %>% 
+  mutate(deces_covid_30_39 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
+                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+                                       TRUE~deces_covid_30_39)) %>% 
+  mutate(deces_covid_40_49 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
+                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+                                       TRUE~deces_covid_40_49)) %>% 
+  mutate(deces_covid_50_59 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
+                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+                                       TRUE~deces_covid_50_59)) %>% 
+  mutate(deces_covid_60_69 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
+                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+                                       TRUE~deces_covid_60_69)) %>% 
+  mutate(deces_covid_70_79 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
+                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+                                       TRUE~deces_covid_70_79)) %>% 
+  mutate(deces_covid_80plus = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
+                                        geo=="PT"& time=="2020W48" ~ as.integer(0),
+                                       TRUE~deces_covid_80plus)) 
+
+rm(b__ined_covid_data_group_0_24)
+rm(b__ined_covid_data_group_0_4)
+rm(b__ined_covid_data_group_0_9)
+rm(b__ined_covid_data_group_10_19)
+rm(b__ined_covid_data_group_15_24)
+rm(b__ined_covid_data_group_20_29)
+rm(b__ined_covid_data_group_25_34)
+rm(b__ined_covid_data_group_25_44)
+rm(b__ined_covid_data_group_30_39)
+rm(b__ined_covid_data_group_35_44)
+rm(b__ined_covid_data_group_40_49)
+rm(b__ined_covid_data_group_45_54)
+rm(b__ined_covid_data_group_45_64)
+rm(b__ined_covid_data_group_5_14)
+rm(b__ined_covid_data_group_50_59)
+rm(b__ined_covid_data_group_55_64)
+rm(b__ined_covid_data_group_60_69)
+rm(b__ined_covid_data_group_65_74)
+rm(b__ined_covid_data_group_70_74)
+rm(b__ined_covid_data_group_70_79)
+rm(b__ined_covid_data_group_75_79)
+rm(b__ined_covid_data_group_75_84)
+rm(b__ined_covid_data_group_80_84)
+rm(b__ined_covid_data_group_80_89)
+rm(b__ined_covid_data_group_90_99)
+rm(b__ined_covid_data_group_80plus)
+rm(b__ined_covid_data_group_85_89)
+rm(b__ined_covid_data_group_85_94)
+rm(b__ined_covid_data_group_85plus)
+rm(b__ined_covid_data_group_90plus)
+rm(b__ined_covid_data_group_95plus)
+rm(b__ined_covid_data_group_100plus)
+rm(b__ined_covid_data_group_moins40)
+rm(b__ined_covid_data_group_moins50)
+rm(b__ined_covid_data_group_moins60)
+rm(b__ined_covid_data_group_moins70)
+rm(b__ined_covid_data)
+rm(b__ined_covid_data_group)
+rm(b__ined_covid_data_group_prec)
+
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <-b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
+  left_join(b__ined_covid_data_regroupe)
+
 #-----------------------------------------------#
 #### Ajout du nom des pays et zone est-ouest ####
 #-----------------------------------------------#
@@ -2105,17 +2555,290 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
 				new_cases_var = new_cases - new_cases_prec,
 				new_vaccinations_var = new_vaccinations - new_vaccinations_prec)
 
+################################################################################
+#
+# Insertion d'une régression linéaire des décès hebdomadaires basée sur 2013-2018
+#
+################################################################################
+
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
+  mutate(semaine = str_sub(time,6,8),
+         annee= as.numeric(str_sub(time,1,4)))
+
+
+annees_13_18 <- ungroup(b__es_deces_week_standardises_si_pop_2020_owid_vaccination) %>% 
+  filter(!(str_sub(time,1,4)=="2020"|str_sub(time,1,4)=="2021"|str_sub(time,1,4)=="2019"))%>% 
+  select(semaine,annee,geo,
+         deces_tot_15_24,
+         deces_tot_25_49,
+         deces_tot_50_59,
+         deces_tot_60_69,
+         deces_tot_70_79,
+         deces_tot_plus_80)
+
+donnees_semaine_pays<-b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
+  select(semaine, annee ,geo) 
+
+
+donnees_semaine_pays_hors_allemagne <- donnees_semaine_pays %>% filter(geo!="DE")
+
+#faire la régression linéaire de chaque semaine pour tous les âges
+
+
+#15-24 ans
+  
+  res15_24<- annees_13_18 %>%
+    group_by(semaine,geo) %>%
+    nest() %>%
+    inner_join(donnees_semaine_pays_hors_allemagne %>% group_by(semaine,geo) %>% nest(),
+               by = c("semaine","geo")) %>%
+    mutate(model = data.x %>% map(~lm(deces_tot_15_24 ~ annee, data=.)),
+           predit_15_24 = map2(model, data.y, predict)) %>% 
+    select(-data.x, -model) %>%
+    unnest() 
+
+
+#25-49 ans
+
+res25_49<- annees_13_18 %>%
+  group_by(semaine,geo) %>%
+  nest() %>%
+  inner_join(donnees_semaine_pays %>% group_by(semaine,geo) %>% nest(),
+             by = c("semaine","geo")) %>%
+  mutate(model = data.x %>% map(~lm(deces_tot_25_49 ~ annee, data=.)),
+         predit_25_49 = map2(model, data.y, predict)) %>% 
+  select(-data.x, -model) %>%
+  unnest() 
+
+#50_59 ans
+
+res50_59<- annees_13_18 %>%
+  group_by(semaine,geo) %>%
+  nest() %>%
+  inner_join(donnees_semaine_pays %>% group_by(semaine,geo) %>% nest(),
+             by = c("semaine","geo")) %>%
+  mutate(model = data.x %>% map(~lm(deces_tot_50_59 ~ annee, data=.)),
+         predit_50_59 = map2(model, data.y, predict)) %>% 
+  select(-data.x, -model) %>%
+  unnest() 
+
+#60_69 ans
+
+res60_69<- annees_13_18 %>%
+  group_by(semaine,geo) %>%
+  nest() %>%
+  inner_join(donnees_semaine_pays %>% group_by(semaine,geo) %>% nest(),
+             by = c("semaine","geo")) %>%
+  mutate(model = data.x %>% map(~lm(deces_tot_60_69 ~ annee, data=.)),
+         predit_60_69 = map2(model, data.y, predict)) %>% 
+  select(-data.x, -model) %>%
+  unnest()  
+
+#70_79 ans
+
+res70_79<- annees_13_18 %>%
+  group_by(semaine,geo) %>%
+  nest() %>%
+  inner_join(donnees_semaine_pays %>% group_by(semaine,geo) %>% nest(),
+             by = c("semaine","geo")) %>%
+  mutate(model = data.x %>% map(~lm(deces_tot_70_79 ~ annee, data=.)),
+         predit_70_79 = map2(model, data.y, predict)) %>% 
+  select(-data.x, -model) %>%
+  unnest()   
+
+#plus_80 ans
+
+resplus_80<- annees_13_18 %>%
+  group_by(semaine,geo) %>%
+  nest() %>%
+  inner_join(donnees_semaine_pays %>% group_by(semaine,geo) %>% nest(),
+             by = c("semaine","geo")) %>%
+  mutate(model = data.x %>% map(~lm(deces_tot_plus_80 ~ annee, data=.)),
+         predit_plus_80 = map2(model, data.y, predict)) %>% 
+  select(-data.x, -model) %>%
+  unnest()  
+
+#jointure
+
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination<-b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
+    left_join(res15_24, by = c("semaine","annee","geo")) %>% 
+    left_join(res25_49, by = c("semaine","annee","geo")) %>% 
+    left_join(res50_59, by = c("semaine","annee","geo")) %>% 
+    left_join(res60_69, by = c("semaine","annee","geo")) %>% 
+    left_join(res70_79, by = c("semaine","annee","geo")) %>% 
+    left_join(resplus_80, by = c("semaine","annee","geo")) %>% 
+    mutate(diff_deces_tot_predit_15_24=deces_tot_15_24 - predit_15_24,
+           diff_deces_tot_predit_25_49=deces_tot_25_49 - predit_25_49,
+           diff_deces_tot_predit_50_59=deces_tot_50_59 - predit_50_59,
+           diff_deces_tot_predit_60_69=deces_tot_60_69 - predit_60_69,
+           diff_deces_tot_predit_70_79=deces_tot_70_79 - predit_70_79,
+           diff_deces_tot_predit_ge80=deces_tot_plus_80 - predit_plus_80) %>% 
+    mutate(pos_diff_deces_tot_predit_15_24=(diff_deces_tot_predit_15_24>0),
+           pos_diff_deces_tot_predit_25_49=(diff_deces_tot_predit_25_49>0),
+           pos_diff_deces_tot_predit_50_59=(diff_deces_tot_predit_50_59>0),
+           pos_diff_deces_tot_predit_60_69=(diff_deces_tot_predit_60_69>0),
+           pos_diff_deces_tot_predit_70_79=(diff_deces_tot_predit_70_79>0),
+           pos_diff_deces_tot_predit_plus_80=(diff_deces_tot_predit_ge80>0))
+
+
+#Faire la régression sur les décès standards
+
+annees_13_18 <- ungroup(b__es_deces_week_standardises_si_pop_2020_owid_vaccination) %>% 
+  filter(!(str_sub(time,1,4)=="2020"|str_sub(time,1,4)=="2021"|str_sub(time,1,4)=="2019"))%>% 
+  select(semaine,annee,geo,
+         deces_standardises_si_pop_2020_15_24,
+         deces_standardises_si_pop_2020_25_49,
+         deces_standardises_si_pop_2020_50_59,
+         deces_standardises_si_pop_2020_60_69,
+         deces_standardises_si_pop_2020_70_79,
+         deces_standardises_si_pop_2020_ge80)
 
 
 
+donnees_semaine_pays<-b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
+  select(semaine, annee ,geo) 
 
 
+donnees_semaine_pays_hors_allemagne <- donnees_semaine_pays %>% filter(geo!="DE")
+
+#faire la régression linéaire de chaque semaine pour tous les âges
+
+
+#15-24 ans
+
+res15_24<- annees_13_18 %>%
+  group_by(semaine,geo) %>%
+  nest() %>%
+  inner_join(donnees_semaine_pays_hors_allemagne %>% group_by(semaine,geo) %>% nest(),
+             by = c("semaine","geo")) %>%
+  mutate(model = data.x %>% map(~lm(deces_standardises_si_pop_2020_15_24 ~ annee, data=.)),
+         predit_stand_15_24 = map2(model, data.y, predict)) %>% 
+  select(-data.x, -model) %>%
+  unnest() 
+
+
+#25-49 ans
+
+res25_49<- annees_13_18 %>%
+  group_by(semaine,geo) %>%
+  nest() %>%
+  inner_join(donnees_semaine_pays %>% group_by(semaine,geo) %>% nest(),
+             by = c("semaine","geo")) %>%
+  mutate(model = data.x %>% map(~lm(deces_standardises_si_pop_2020_25_49 ~ annee, data=.)),
+         predit_stand_25_49 = map2(model, data.y, predict)) %>% 
+  select(-data.x, -model) %>%
+  unnest() 
+
+#50_59 ans
+
+res50_59<- annees_13_18 %>%
+  group_by(semaine,geo) %>%
+  nest() %>%
+  inner_join(donnees_semaine_pays %>% group_by(semaine,geo) %>% nest(),
+             by = c("semaine","geo")) %>%
+  mutate(model = data.x %>% map(~lm(deces_standardises_si_pop_2020_50_59 ~ annee, data=.)),
+         predit_stand_50_59 = map2(model, data.y, predict)) %>% 
+  select(-data.x, -model) %>%
+  unnest() 
+
+#60_69 ans
+
+res60_69<- annees_13_18 %>%
+  group_by(semaine,geo) %>%
+  nest() %>%
+  inner_join(donnees_semaine_pays %>% group_by(semaine,geo) %>% nest(),
+             by = c("semaine","geo")) %>%
+  mutate(model = data.x %>% map(~lm(deces_standardises_si_pop_2020_60_69 ~ annee, data=.)),
+         predit_stand_60_69 = map2(model, data.y, predict)) %>% 
+  select(-data.x, -model) %>%
+  unnest()  
+
+#70_79 ans
+
+res70_79<- annees_13_18 %>%
+  group_by(semaine,geo) %>%
+  nest() %>%
+  inner_join(donnees_semaine_pays %>% group_by(semaine,geo) %>% nest(),
+             by = c("semaine","geo")) %>%
+  mutate(model = data.x %>% map(~lm(deces_standardises_si_pop_2020_70_79 ~ annee, data=.)),
+         predit_stand_70_79 = map2(model, data.y, predict)) %>% 
+  select(-data.x, -model) %>%
+  unnest()   
+
+#plus_80 ans
+
+resplus_80<- annees_13_18 %>%
+  group_by(semaine,geo) %>%
+  nest() %>%
+  inner_join(donnees_semaine_pays %>% group_by(semaine,geo) %>% nest(),
+             by = c("semaine","geo")) %>%
+  mutate(model = data.x %>% map(~lm(deces_standardises_si_pop_2020_ge80 ~ annee, data=.)),
+         predit_stand_plus_80 = map2(model, data.y, predict)) %>% 
+  select(-data.x, -model) %>%
+  unnest()  
+
+#jointure
+
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination<-b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
+  left_join(res15_24, by = c("semaine","annee","geo")) %>% 
+  left_join(res25_49, by = c("semaine","annee","geo")) %>% 
+  left_join(res50_59, by = c("semaine","annee","geo")) %>% 
+  left_join(res60_69, by = c("semaine","annee","geo")) %>% 
+  left_join(res70_79, by = c("semaine","annee","geo")) %>% 
+  left_join(resplus_80, by = c("semaine","annee","geo")) %>% 
+  mutate(diff_deces_tot_predit_stand_15_24=deces_standardises_si_pop_2020_15_24 - predit_stand_15_24,
+         diff_deces_tot_predit_stand_25_49=deces_standardises_si_pop_2020_25_49 - predit_stand_25_49,
+         diff_deces_tot_predit_stand_50_59=deces_standardises_si_pop_2020_50_59 - predit_stand_50_59,
+         diff_deces_tot_predit_stand_60_69=deces_standardises_si_pop_2020_60_69 - predit_stand_60_69,
+         diff_deces_tot_predit_stand_70_79=deces_standardises_si_pop_2020_70_79 - predit_stand_70_79,
+         diff_deces_tot_predit_stand_ge80=deces_standardises_si_pop_2020_ge80 - predit_stand_plus_80) %>% 
+  mutate(pos_diff_deces_tot_predit_stand_15_24=(diff_deces_tot_predit_stand_15_24>0),
+         pos_diff_deces_tot_predit_stand_25_49=(diff_deces_tot_predit_stand_25_49>0),
+         pos_diff_deces_tot_predit_stand_50_59=(diff_deces_tot_predit_stand_50_59>0),
+         pos_diff_deces_tot_predit_stand_60_69=(diff_deces_tot_predit_stand_60_69>0),
+         pos_diff_deces_tot_predit_stand_70_79=(diff_deces_tot_predit_stand_70_79>0),
+         pos_diff_deces_tot_predit_stand_plus_80=(diff_deces_tot_predit_stand_ge80>0))
+
+rm(res15_24)
+rm(res25_49)
+rm(res50_59)
+rm(res60_69)
+rm(res70_79)
+rm(resplus_80)
+rm(annees_13_18)
 
 ################################################################################
 #
 # Sauvegarde des Tables finales
 #
 ################################################################################
+
+#
+#Table Patrick
+#
+
+patrick <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
+  select(geo,location,time,numSemaineDepuis2013,Response_measure,deces_tot,deces_standardises_si_pop_2020,
+         deces_tot_15_24,deces_standardises_si_pop_2020_15_24,deces_tot_25_49,deces_standardises_si_pop_2020_25_49,
+         deces_tot_50_59,deces_standardises_si_pop_2020_50_59,deces_tot_60_69,deces_standardises_si_pop_2020_60_69,
+         deces_tot_70_79,deces_standardises_si_pop_2020_70_79,deces_tot_plus_80,deces_standardises_si_pop_2020_ge80,
+         predit_15_24,predit_25_49,predit_50_59,predit_60_69,predit_70_79,predit_plus_80,
+         predit_stand_15_24,predit_stand_25_49,predit_stand_50_59,predit_60_69,predit_70_79,predit_stand_plus_80,
+         `Age<18_dose1`,Age0_4_dose1,Age10_14_dose1,Age15_17_dose1,Age18_24_dose1,Age25_49_dose1,Age5_9_dose1,
+         Age50_59_dose1,Age60_69_dose1,Age70_79_dose1,`Age80+_dose1`,
+         `Age<18_dose2`,Age0_4_dose2,Age10_14_dose2,Age15_17_dose2,Age18_24_dose2,Age25_49_dose2,Age5_9_dose2,
+         Age50_59_dose2,Age60_69_dose2,Age70_79_dose2,`Age80+_dose2`,
+         `Age<18_dose3`,Age0_4_dose3,Age10_14_dose3,Age15_17_dose3,Age18_24_dose3,Age25_49_dose3,Age5_9_dose3,
+         Age50_59_dose3,Age60_69_dose3,Age70_79_dose3,`Age80+_dose3`,
+         deces_covid_0_4,deces_covid_0_9,deces_covid_0_24,deces_covid_10_19,deces_covid_15_24,deces_covid_20_29,
+         deces_covid_25_34,deces_covid_25_44,deces_covid_30_39,deces_covid_35_44,deces_covid_40_49,deces_covid_45_54,
+         deces_covid_45_64,deces_covid_50_59,deces_covid_55_64,deces_covid_5_14,deces_covid_60_69,deces_covid_65_74,
+         deces_covid_70_74,deces_covid_70_79,deces_covid_75_79,deces_covid_80plus,deces_covid_75_84,deces_covid_85plus,
+         deces_covid_moins40,deces_covid_moins50,deces_covid_moins60,
+         pop_week,pop_week_15_24,pop_week_25_49,pop_week_50_59,pop_week_60_69,pop_week_70_79,pop_week_ge80)
+
+saveRDS(patrick, file="gen/rds/patrick.RDS")
+
 
 #
 # Deces standardisés par pays, par semaine + confinements + vaccinations
