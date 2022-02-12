@@ -193,6 +193,10 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 						destfile = fileRelPath, 
 						quiet = FALSE)
 				
+				cat("\n")
+				
+				cat(paste0("Fichier (", fileRelPath, ") téléchargé.\n\n"))
+				
 			} else {
 				
 				message(paste0("ATTENTION : Fichier (", fileRelPath, ") de type inconnu. On ne peut pas le re-charger dans (", varName, ")."))
