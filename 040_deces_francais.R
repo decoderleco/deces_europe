@@ -97,9 +97,8 @@ if (exists(varName)) {
 	# Liste des URLs des fichiers de patients décédés
 	
 	urls_listes_deces <- c(
-	  '2021m12' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220106-161749/deces-2021-m12.txt',
-	  '2021m11' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20211215-093836/deces-2021-m11.txt',
-	  '2021m10' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20211118-093353/deces-2021-m10.txt',
+	  '2022m01' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220210-111900/deces-2022-m01.txt',
+	  '2021t4'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220112-114310/deces-2021-t4.txt',
 	  '2021t3'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20211012-093424/deces-2021-t3.txt',
 	  '2021t2'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210709-174839/deces-2021-t2.txt',
 	  '2021t1'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210409-131502/deces-2021-t1.txt',
@@ -917,6 +916,11 @@ data_a_tracer <- data_a_tracer %>%
 		select(deces_date_complete:nbDeces, age) %>%
 		mutate(deces_annee = str_sub(deces_date_complete,1,4))
 
+# Ajouter une colonne avec le n° de période correspondante (depuis 2018-01-01)
+data_a_tracer <- data_a_tracer %>%
+		mutate(deces_period = a__f_get_period(deces_date_complete, 3, as.Date("2018-01-01")))
+
+
 # Ajouter la colonne tranche d'age (pas les tranches d'âge VAC-SI)
 data_a_tracer <- a__f_add_tranche_age(data_a_tracer)
 
@@ -935,40 +939,47 @@ coeffMult <- 365 / duree
 # Calculer le nombre de décès pour chaque tranche d'age et chaque jour
 data_a_tracer <- data_a_tracer %>% 
 		group_by(tranche_age, 
-				deces_annee) %>%
+				deces_period) %>%
 		summarise(nbDeces = sum(nbDeces), .groups = 'drop')
 
 # Multiplier par le coefficient pour avoir une estimation sur 2021 complète
-data_a_tracer <- data_a_tracer %>%
-		mutate(nbDecesEstimes = if_else(deces_annee == 2021, as.integer(nbDeces * coeffMult), nbDeces))
+#data_a_tracer <- data_a_tracer %>%
+#		mutate(nbDecesEstimes = if_else(deces_annee == 2021, as.integer(nbDeces * coeffMult), nbDeces))
 
 write.csv2(data_a_tracer, file='gen/csv/deces_par_tranchedage_et_annee.csv')
 
 print(ggplot(data = data_a_tracer,
-						mapping = aes(x = tranche_age, 
-								y = nbDecesEstimes)) +
+				mapping = aes(x = deces_period, 
+								y = nbDeces)) +
+				
+				facet_wrap(~tranche_age, ncol = 1, scales = "free_y") +
+				
+				geom_point() +
+				geom_line() +
+				
+#				geom_col(
+#						#mapping = aes(fill = "b"),
+#						# Couleur du trait de contour des barres
+#						color="black",
+#						fill = "yellow",
+#						# Mettre les colonnes les unes à côté des autres
+#						position = position_dodge2()) + 
 				
 				scale_colour_manual(values = c("black"))+
 				scale_fill_brewer(palette = "YlOrRd") +
 				
-				geom_col(mapping = aes(fill = deces_annee),
-						# Couleur du trait de contour des barres
-						color="black",
-						# Mettre les colonnes les unes à côté des autres
-						position = position_dodge2()) + 
-				
-				labs(title = "Evolution des décès France par Tranche d'âge",
+				labs(title = "Evolution des décès France par Tranche d'âge et par Trimestre depuis 01/01/2018",
 					 caption=paste0("Source : fr/gouv/Registre/Deces_Quotidiens (=> ", date_max,")")) +
 				
 				theme(legend.position="top") +
 				
 				# Axe x  
 				xlab("Tranche d'âge") +
-				scale_x_continuous(breaks = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
+				#scale_x_continuous(breaks = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
 				theme(axis.text.x = element_text(angle=45)) +
 				
 				# Axe y  
-				ylab("Nombre de décès (avec Estimation proportionnelle pour l'année en cours)") +
+				ylab("Nombre de décès") +
 				ylim(0, NA)
 )
 
