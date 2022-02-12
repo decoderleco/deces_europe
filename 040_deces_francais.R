@@ -98,10 +98,7 @@ if (exists(varName)) {
 	
 	urls_listes_deces <- c(
 	  '2022m01' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220210-111900/deces-2022-m01.txt',
-	  '2021t4'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220112-114310/deces-2021-t4.txt',
-	  '2021t3'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20211012-093424/deces-2021-t3.txt',
-	  '2021t2'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210709-174839/deces-2021-t2.txt',
-	  '2021t1'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210409-131502/deces-2021-t1.txt',
+	  '2021' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220112-114131/deces-2021.txt',
 	  '2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
 	  '2019' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20200113-173945/deces-2019.txt',
 	  '2018' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191205-191652/deces-2018.txt'
