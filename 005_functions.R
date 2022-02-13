@@ -3174,7 +3174,42 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
            Age50_59_dose3,
            Age60_69_dose3,
            Age70_79_dose3,
-           `Age80+_dose3`)
+           `Age80+_dose3`,
+           deces_covid_0_24, 
+           deces_covid_0_4,
+           deces_covid_0_9,
+           deces_covid_10_19,
+           deces_covid_15_24,
+           deces_covid_20_29,
+           deces_covid_25_34,
+           deces_covid_25_44,
+           deces_covid_30_39,
+           deces_covid_35_44,
+           deces_covid_40_49,
+           deces_covid_45_54,
+           deces_covid_45_64,
+           deces_covid_5_14,
+           deces_covid_50_59,
+           deces_covid_55_64,
+           deces_covid_60_69,
+           deces_covid_65_74,
+           deces_covid_70_74,
+           deces_covid_70_79,
+           deces_covid_75_79,
+           deces_covid_75_84,
+           deces_covid_80_84,
+           deces_covid_80_89,
+           deces_covid_90_99,
+           deces_covid_80plus,
+           deces_covid_85_89,
+           deces_covid_85_94,
+           deces_covid_85plus,
+           deces_covid_90plus,
+           deces_covid_95plus,
+           deces_covid_100plus,
+           deces_covid_moins40,
+           deces_covid_moins50,
+           deces_covid_moins60)
   
   annees_13_18 <- ungroup(es_deces_standard_pays_semaine) %>% 
     filter(!(str_sub(time,1,4)=="2020"|str_sub(time,1,4)=="2021"|str_sub(time,1,4)=="2019"))%>% 
@@ -3404,6 +3439,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   courbes_vaccins<-ggplot(essai_court)+
     geom_line(aes(x=numSemaineDepuis2013,y=Age15_17_dose1+Age18_24_dose1),col="#0066CC")+
     geom_line(aes(x=numSemaineDepuis2013,y=Age15_17_dose2+Age18_24_dose2),col="#003399")+
+    geom_line(aes(x=numSemaineDepuis2013,y=Age15_17_dose3+Age18_24_dose3),col="#000033")+
     geom_vline(xintercept = c(366, 419))+
     geom_text(x=339, y=0, label="2019")+
     geom_text(x=391, y=0, label="2020")+
@@ -3434,7 +3470,13 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
               Age18_24_dose1 = sum(Age18_24_dose1),
               Age15_17_dose2 = sum(Age15_17_dose2),
               Age18_24_dose2 = sum(Age18_24_dose2),
-              pop_week_15_24 = mean(pop_week_15_24)) %>% 
+              Age15_17_dose3 = sum(Age15_17_dose3),
+              Age18_24_dose3 = sum(Age18_24_dose3),
+              pop_week_15_24 = mean(pop_week_15_24),
+              deces_covid_0_24 = sum(deces_covid_0_24),
+              deces_covid_10_19 = sum(deces_covid_10_19),
+              deces_covid_20_29 = sum(deces_covid_20_29),
+              deces_covid_15_24 = sum(deces_covid_15_24)) %>% 
     mutate(pos15_24=(diff_15_24>0),
            cumul_15_24_dose1=cumsum(Age15_17_dose1+Age18_24_dose1),
            cumul_15_24_dose2=cumsum(Age15_17_dose1+Age18_24_dose2),
@@ -3449,7 +3491,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     geom_text(x=194, y=base::min(essai_nouv$diff_15_24), label="2020")+
     geom_text(x=220, y=base::min(essai_nouv$diff_15_24), label="2021")+
     xlab("annee")+
-    ylab("Différence entre décès constatés \n et décès attendus")+
+    ylab("Différence décès constatés \n décès attendus")+
     theme(legend.position = "none")+
     annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
              ymin = base::min(essai_nouv$diff_15_24), 
@@ -3464,6 +3506,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   courbes_vaccins<-ggplot(essai_nouv)+
     geom_line(aes(x=groupe_semaine,y=(Age15_17_dose1+Age18_24_dose1)/pop_week_15_24),col="#0066CC")+
     geom_line(aes(x=groupe_semaine,y=(Age15_17_dose2+Age18_24_dose2)/pop_week_15_24),col="#003399")+
+    geom_line(aes(x=groupe_semaine,y=(Age15_17_dose3+Age18_24_dose3)/pop_week_15_24),col="#000033")+
     geom_vline(xintercept = c(182, 208))+
     geom_text(x=168, y=0, label="2019")+
     geom_text(x=194, y=0, label="2020")+
@@ -3484,9 +3527,83 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
                label=paste0(floor(base::max(essai_nouv$part_atteinte_15_24_dose1)*100)," % des 15-24 ans \n  a reçu une dose"),
                color="#9900CC")
   
+  if(nomPays %in% c('france','belgique')){
+  histo_deces_covid<-ggplot(essai_nouv)+
+    geom_col(aes(x=groupe_semaine,y=deces_covid_0_24))+
+    geom_smooth(aes(x=groupe_semaine,y=deces_covid_0_24),span = 0.2, se=FALSE)+
+    geom_vline(xintercept = c(182, 208))+
+    geom_text(x=168, y=base::min(essai_nouv$deces_covid_0_24), label="2019")+
+    geom_text(x=194, y=base::min(essai_nouv$deces_covid_0_24), label="2020")+
+    geom_text(x=220, y=base::min(essai_nouv$deces_covid_0_24), label="2021")+
+    xlab("annee")+
+    ylab("Décès Covid \n des 0-24 ans")+
+    theme(legend.position = "none")+
+    annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+             ymin = base::min(essai_nouv$deces_covid_0_24), 
+             ymax = base::max(essai_nouv$deces_covid_0_24),
+             alpha = .2, fill = "orange")+
+    annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+             ymin = base::min(essai_nouv$deces_covid_0_24), 
+             ymax = base::max(essai_nouv$deces_covid_0_24),
+             alpha = .2, fill = "orange")
+  
   a<-grid.arrange(histo_deces, courbes_vaccins,
                   ncol=1, nrow=2)
   
+  }else{if(nomPays %in% c('autriche')){
+    histo_deces_covid<-ggplot(essai_nouv)+
+      geom_col(aes(x=groupe_semaine,y=deces_covid_15_24))+
+      geom_smooth(aes(x=groupe_semaine,y=deces_covid_15_24),span = 0.2, se=FALSE)+
+      geom_vline(xintercept = c(182, 208))+
+      geom_text(x=168, y=base::min(essai_nouv$deces_covid_15_24), label="2019")+
+      geom_text(x=194, y=base::min(essai_nouv$deces_covid_15_24), label="2020")+
+      geom_text(x=220, y=base::min(essai_nouv$deces_covid_15_24), label="2021")+
+      xlab("annee")+
+      ylab("Décès Covid \n des 15-24 ans")+
+      theme(legend.position = "none")+
+      annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_15_24), 
+               ymax = base::max(essai_nouv$deces_covid_15_24),
+               alpha = .2, fill = "orange")+
+      annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_15_24), 
+               ymax = base::max(essai_nouv$deces_covid_15_24),
+               alpha = .2, fill = "orange")
+    
+    a<-grid.arrange(histo_deces, courbes_vaccins,
+                    ncol=1, nrow=2)
+    
+  }else{if(nomPays %in% c('espagne','portugal','roumanie','italie','allemagne')){
+    histo_deces_covid<-ggplot(essai_nouv)+
+      geom_col(aes(x=groupe_semaine,y=deces_covid_10_19+deces_covid_20_29))+
+      geom_smooth(aes(x=groupe_semaine,y=deces_covid_10_19+deces_covid_20_29),span = 0.2, se=FALSE)+
+      geom_vline(xintercept = c(182, 208))+
+      geom_text(x=168, y=base::min(essai_nouv$deces_covid_10_19+essai_nouv$deces_covid_20_29), label="2019")+
+      geom_text(x=194, y=base::min(essai_nouv$deces_covid_10_19+essai_nouv$deces_covid_20_29), label="2020")+
+      geom_text(x=220, y=base::min(essai_nouv$deces_covid_10_19+essai_nouv$deces_covid_20_29), label="2021")+
+      xlab("annee")+
+      ylab("Décès Covid \n des 10-29 ans")+
+      theme(legend.position = "none")+
+      annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_10_19+essai_nouv$deces_covid_20_29), 
+               ymax = base::max(essai_nouv$deces_covid_10_19+essai_nouv$deces_covid_20_29),
+               alpha = .2, fill = "orange")+
+      annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_10_19+essai_nouv$deces_covid_20_29), 
+               ymax = base::max(essai_nouv$deces_covid_10_19+essai_nouv$deces_covid_20_29),
+               alpha = .2, fill = "orange")
+    
+    a<-grid.arrange(histo_deces, courbes_vaccins,
+                    ncol=1, nrow=2)
+    
+  }else{
+    
+    a<-grid.arrange(histo_deces, courbes_vaccins,
+                   ncol=1, nrow=2)
+    
+    }
+  }
+}
   pngFileRelPath <- paste0(repertoire,"difference_4_semaines_15_24_", nomPays, ".png")
   
   ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
@@ -3669,8 +3786,18 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     summarise(diff_25_49 = sum(diff_25_49),
               Age25_49_dose1 = sum(Age25_49_dose1),
               Age25_49_dose2 = sum(Age25_49_dose2),
-              pop_week_25_49 = mean(pop_week_25_49)) %>% 
-    mutate(pos25_49=(diff_25_49>0))
+              Age25_49_dose3 = sum(Age25_49_dose3),
+              pop_week_25_49 = mean(pop_week_25_49),
+              deces_covid_25_34 = sum(deces_covid_25_34),
+              deces_covid_35_44 = sum(deces_covid_35_44),
+              deces_covid_25_44 = sum(deces_covid_25_44),
+              deces_covid_30_39 = sum(deces_covid_30_39),
+              deces_covid_40_49 = sum(deces_covid_40_49),
+              deces_covid_moins50 = sum(deces_covid_moins50)) %>% 
+    mutate(pos25_49=(diff_25_49>0),
+           cumul_25_49_dose1=cumsum(Age25_49_dose1),
+           cumul_25_49_dose2=cumsum(Age25_49_dose2),
+           part_atteinte_25_49_dose1=cumul_25_49_dose1/pop_week_25_49)
   
   
   if(nomPays != 'allemagne'){
@@ -3696,27 +3823,6 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
                alpha = .2, fill = "orange")+
       ggtitle(paste0("Ecart des décès hebdomadaires des 25-49 ans par rapport à l'attendu ",str_to_title(nomPays)))
     
-    courbes_vaccins<-ggplot(essai_nouv)+
-      geom_line(aes(x=groupe_semaine,y=Age25_49_dose1/pop_week_25_49),col="#0066CC")+
-      geom_line(aes(x=groupe_semaine,y=Age25_49_dose2/pop_week_25_49),col="#003399")+
-      geom_vline(xintercept = c(182, 208))+
-      geom_text(x=168, y=0, label="2019")+
-      geom_text(x=194, y=0, label="2020")+
-      geom_text(x=220, y=0, label="2021")+
-      xlab("annee")+
-      ylab("Part d'injections \n dans la population")+ 
-      theme(legend.position = "none")+
-      annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
-               ymin = base::min(essai_nouv$Age25_49_dose1/essai_nouv$pop_week_25_49,na.rm=TRUE), 
-               ymax = base::max(essai_nouv$Age25_49_dose1/essai_nouv$pop_week_25_49,na.rm=TRUE),
-               alpha = .2, fill = "orange")+
-      annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
-               ymin = base::min(essai_nouv$Age25_49_dose1/essai_nouv$pop_week_25_49,na.rm=TRUE), 
-               ymax = base::max(essai_nouv$Age25_49_dose1/essai_nouv$pop_week_25_49,na.rm=TRUE),
-               alpha = .2, fill = "orange")
-    
-    a<-grid.arrange(histo_deces, courbes_vaccins,
-                    ncol=1, nrow=2)
   }else{
     histo_deces<-ggplot(essai_nouv)+
       geom_col(aes(x=groupe_semaine,y=diff_25_49,fill=pos25_49))+
@@ -3738,10 +3844,12 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
                ymax = base::max(essai_nouv$diff_25_49),
                alpha = .2, fill = "orange")+
       ggtitle(paste0("Ecart des décès hebdomadaires des 40-49 ans par rapport à l'attendu ",str_to_title(nomPays)))
-    
+  }
+  
     courbes_vaccins<-ggplot(essai_nouv)+
       geom_line(aes(x=groupe_semaine,y=Age25_49_dose1/pop_week_25_49),col="#0066CC")+
       geom_line(aes(x=groupe_semaine,y=Age25_49_dose2/pop_week_25_49),col="#003399")+
+      geom_line(aes(x=groupe_semaine,y=Age25_49_dose3/pop_week_25_49),col="#000033")+
       geom_vline(xintercept = c(182, 208))+
       geom_text(x=168, y=0, label="2019")+
       geom_text(x=194, y=0, label="2020")+
@@ -3750,18 +3858,100 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       ylab("Part d'injections \n dans la population")+ 
       theme(legend.position = "none")+
       annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
-               ymin = base::min(essai_nouv$Age25_49_dose1/essai_nouv$pop_week_25_49,na.rm=TRUE), 
-               ymax = base::max(essai_nouv$Age25_49_dose1/essai_nouv$pop_week_25_49,na.rm=TRUE),
+               ymin = 0, 
+               ymax = 0.2,
                alpha = .2, fill = "orange")+
       annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
-               ymin = base::min(essai_nouv$Age25_49_dose1/essai_nouv$pop_week_25_49,na.rm=TRUE), 
-               ymax = base::max(essai_nouv$Age25_49_dose1/essai_nouv$pop_week_25_49,na.rm=TRUE),
-               alpha = .2, fill = "orange")
+               ymin = 0, 
+               ymax = 0.2,
+               alpha = .2, fill = "orange")+
+      annotate(geom="text", x=230, 
+               y=0.18, 
+               label=paste0(floor(base::max(essai_nouv$part_atteinte_25_49_dose1)*100)," % des 25-49 ans \n  a reçu une dose"),
+               color="#9900CC")
     
     a<-grid.arrange(histo_deces, courbes_vaccins,
                   ncol=1, nrow=2)
    
-  }
+  
+    if(nomPays %in% c('france','autriche')){
+      histo_deces_covid<-ggplot(essai_nouv)+
+        geom_col(aes(x=groupe_semaine,y=deces_covid_25_34+deces_covid_35_44))+
+        geom_smooth(aes(x=groupe_semaine,y=deces_covid_25_34+deces_covid_35_44),span = 0.2, se=FALSE)+
+        geom_vline(xintercept = c(182, 208))+
+        geom_text(x=168, y=base::min(essai_nouv$deces_covid_25_34+essai_nouv$deces_covid_35_44), label="2019")+
+        geom_text(x=194, y=base::min(essai_nouv$deces_covid_25_34+essai_nouv$deces_covid_35_44), label="2020")+
+        geom_text(x=220, y=base::min(essai_nouv$deces_covid_25_34+essai_nouv$deces_covid_35_44), label="2021")+
+        xlab("annee")+
+        ylab("Décès Covid \n des 25-44 ans")+
+        theme(legend.position = "none")+
+        annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+                 ymin = base::min(essai_nouv$deces_covid_25_34+essai_nouv$deces_covid_35_44), 
+                 ymax = base::max(essai_nouv$deces_covid_25_34+essai_nouv$deces_covid_35_44),
+                 alpha = .2, fill = "orange")+
+        annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+                 ymin = base::min(essai_nouv$deces_covid_25_34+essai_nouv$deces_covid_35_44), 
+                 ymax = base::max(essai_nouv$deces_covid_25_34+essai_nouv$deces_covid_35_44),
+                 alpha = .2, fill = "orange")
+      
+      a<-grid.arrange(histo_deces, courbes_vaccins,
+                      ncol=1, nrow=2)
+      
+    }else{if(nomPays %in% c('allemagne','italie','roumanie','espagne','portugal')){
+      histo_deces_covid<-ggplot(essai_nouv)+
+        geom_col(aes(x=groupe_semaine,y=deces_covid_30_39+deces_covid_40_49))+
+        geom_smooth(aes(x=groupe_semaine,y=deces_covid_30_39+deces_covid_40_49),span = 0.2, se=FALSE)+
+        geom_vline(xintercept = c(182, 208))+
+        geom_text(x=168, y=base::min(essai_nouv$deces_covid_30_39+essai_nouv$deces_covid_40_49), label="2019")+
+        geom_text(x=194, y=base::min(essai_nouv$deces_covid_30_39+essai_nouv$deces_covid_40_49), label="2020")+
+        geom_text(x=220, y=base::min(essai_nouv$deces_covid_30_39+essai_nouv$deces_covid_40_49), label="2021")+
+        xlab("annee")+
+        ylab("Décès Covid \n des 30-49 ans")+
+        theme(legend.position = "none")+
+        annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+                 ymin = base::min(essai_nouv$deces_covid_30_39+essai_nouv$deces_covid_40_49), 
+                 ymax = base::max(essai_nouv$deces_covid_30_39+essai_nouv$deces_covid_40_49),
+                 alpha = .2, fill = "orange")+
+        annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+                 ymin = base::min(essai_nouv$deces_covid_30_39+essai_nouv$deces_covid_40_49), 
+                 ymax = base::max(essai_nouv$deces_covid_30_39+essai_nouv$deces_covid_40_49),
+                 alpha = .2, fill = "orange")
+      
+      a<-grid.arrange(histo_deces, courbes_vaccins,
+                      ncol=1, nrow=2)
+      
+    }else{if(nomPays %in% c('belgique')){
+      histo_deces_covid<-ggplot(essai_nouv)+
+        geom_col(aes(x=groupe_semaine,y=deces_covid_25_44))+
+        geom_smooth(aes(x=groupe_semaine,y=deces_covid_25_44),span = 0.2, se=FALSE)+
+        geom_vline(xintercept = c(182, 208))+
+        geom_text(x=168, y=base::min(essai_nouv$deces_covid_25_44), label="2019")+
+        geom_text(x=194, y=base::min(essai_nouv$deces_covid_25_44), label="2020")+
+        geom_text(x=220, y=base::min(essai_nouv$deces_covid_25_44), label="2021")+
+        xlab("annee")+
+        ylab("Décès Covid \n des 25-44 ans")+
+        theme(legend.position = "none")+
+        annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+                 ymin = base::min(essai_nouv$deces_covid_25_44), 
+                 ymax = base::max(essai_nouv$deces_covid_25_44),
+                 alpha = .2, fill = "orange")+
+        annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+                 ymin = base::min(essai_nouv$deces_covid_25_44), 
+                 ymax = base::max(essai_nouv$deces_covid_25_44),
+                 alpha = .2, fill = "orange")
+      
+      a<-grid.arrange(histo_deces, courbes_vaccins,
+                      ncol=1, nrow=2)
+      
+    }else{
+      
+      a<-grid.arrange(histo_deces, courbes_vaccins,
+                      ncol=1, nrow=2)
+      
+    }
+    }
+    }  
+    
   
   pngFileRelPath <- paste0(repertoire,"difference_4_semaines_25_49_", nomPays, ".png")
   ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
@@ -3867,8 +4057,16 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     summarise(diff_50_59= sum(diff_50_59),
               Age50_59_dose1 = sum(Age50_59_dose1),
               Age50_59_dose2 = sum(Age50_59_dose2),
-              pop_week_50_59 = mean(pop_week_50_59)) %>% 
-    mutate(pos50_59=(diff_50_59>0))
+              Age50_59_dose3 = sum(Age50_59_dose3),
+              pop_week_50_59 = mean(pop_week_50_59),
+              deces_covid_50_59 = sum(deces_covid_50_59),
+              deces_covid_55_64 = sum(deces_covid_55_64),
+              deces_covid_45_64 = sum(deces_covid_45_64)
+    ) %>% 
+    mutate(pos50_59=(diff_50_59>0),
+           cumul_50_59_dose1=cumsum(Age50_59_dose1),
+           cumul_50_59_dose2=cumsum(Age50_59_dose2),
+           part_atteinte_50_59_dose1=cumul_50_59_dose1/pop_week_50_59)
   
     
     histo_deces<-ggplot(essai_nouv)+
@@ -3895,6 +4093,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     courbes_vaccins<-ggplot(essai_nouv)+
       geom_line(aes(x=groupe_semaine,y=Age50_59_dose1/pop_week_50_59),col="#0066CC")+
       geom_line(aes(x=groupe_semaine,y=Age50_59_dose2/pop_week_50_59),col="#003399")+
+      geom_line(aes(x=groupe_semaine,y=Age50_59_dose3/pop_week_50_59),col="#000033")+
       geom_vline(xintercept = c(182, 208))+
       geom_text(x=168, y=0, label="2019")+
       geom_text(x=194, y=0, label="2020")+
@@ -3903,17 +4102,96 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       ylab("Part d'injections \n dans la population")+ 
       theme(legend.position = "none")+
       annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
-               ymin = base::min(essai_nouv$Age50_59_dose1/essai_nouv$pop_week_50_59,na.rm=TRUE), 
-               ymax = base::max(essai_nouv$Age50_59_dose1/essai_nouv$pop_week_50_59,na.rm=TRUE),
+               ymin = 0, 
+               ymax = 0.2,
                alpha = .2, fill = "orange")+
       annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
-               ymin = base::min(essai_nouv$Age50_59_dose1/essai_nouv$pop_week_50_59,na.rm=TRUE), 
-               ymax = base::max(essai_nouv$Age50_59_dose1/essai_nouv$pop_week_50_59,na.rm=TRUE),
-               alpha = .2, fill = "orange")
+               ymin = 0, 
+               ymax = 0.2,
+               alpha = .2, fill = "orange")+
+      annotate(geom="text", x=230, 
+               y=0.18, 
+               label=paste0(floor(base::max(essai_nouv$part_atteinte_50_59_dose1)*100)," % des 50-59 ans \n  a reçu une dose"),
+               color="#9900CC")
     
-    a<-grid.arrange(histo_deces, courbes_vaccins,
-                    ncol=1, nrow=2)
-  
+    if(nomPays %in% c('france','autriche')){
+      histo_deces_covid<-ggplot(essai_nouv)+
+        geom_col(aes(x=groupe_semaine,y=deces_covid_55_64))+
+        geom_smooth(aes(x=groupe_semaine,y=deces_covid_55_64),span = 0.2, se=FALSE)+
+        geom_vline(xintercept = c(182, 208))+
+        geom_text(x=168, y=base::min(essai_nouv$deces_covid_55_64), label="2019")+
+        geom_text(x=194, y=base::min(essai_nouv$deces_covid_55_64), label="2020")+
+        geom_text(x=220, y=base::min(essai_nouv$deces_covid_55_64), label="2021")+
+        xlab("annee")+
+        ylab("Décès Covid \n des 55-64 ans")+
+        theme(legend.position = "none")+
+        annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+                 ymin = base::min(essai_nouv$deces_covid_55_64), 
+                 ymax = base::max(essai_nouv$deces_covid_55_64),
+                 alpha = .2, fill = "orange")+
+        annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+                 ymin = base::min(essai_nouv$deces_covid_55_64), 
+                 ymax = base::max(essai_nouv$deces_covid_55_64),
+                 alpha = .2, fill = "orange")
+      
+      a<-grid.arrange(histo_deces, courbes_vaccins,
+                      ncol=1, nrow=2)
+      
+    }else{if(nomPays %in% c('roumanie','allemagne','paysbas','italie','espagne','portugal')){
+      histo_deces_covid<-ggplot(essai_nouv)+
+        geom_col(aes(x=groupe_semaine,y=deces_covid_50_59))+
+        geom_smooth(aes(x=groupe_semaine,y=deces_covid_50_59),span = 0.2, se=FALSE)+
+        geom_vline(xintercept = c(182, 208))+
+        geom_text(x=168, y=base::min(essai_nouv$deces_covid_50_59), label="2019")+
+        geom_text(x=194, y=base::min(essai_nouv$deces_covid_50_59), label="2020")+
+        geom_text(x=220, y=base::min(essai_nouv$deces_covid_50_59), label="2021")+
+        xlab("annee")+
+        ylab("Décès Covid \n des 50-59 ans")+
+        theme(legend.position = "none")+
+        annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+                 ymin = base::min(essai_nouv$deces_covid_50_59), 
+                 ymax = base::max(essai_nouv$deces_covid_50_59),
+                 alpha = .2, fill = "orange")+
+        annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+                 ymin = base::min(essai_nouv$deces_covid_50_59), 
+                 ymax = base::max(essai_nouv$deces_covid_50_59),
+                 alpha = .2, fill = "orange")
+      
+      a<-grid.arrange(histo_deces, courbes_vaccins,
+                      ncol=1, nrow=2)
+      
+    }else{if(nomPays %in% c('belgique')){
+      histo_deces_covid<-ggplot(essai_nouv)+
+        geom_col(aes(x=groupe_semaine,y=deces_covid_45_64))+
+        geom_smooth(aes(x=groupe_semaine,y=deces_covid_45_64),span = 0.2, se=FALSE)+
+        geom_vline(xintercept = c(182, 208))+
+        geom_text(x=168, y=base::min(essai_nouv$deces_covid_45_64), label="2019")+
+        geom_text(x=194, y=base::min(essai_nouv$deces_covid_45_64), label="2020")+
+        geom_text(x=220, y=base::min(essai_nouv$deces_covid_45_64), label="2021")+
+        xlab("annee")+
+        ylab("Décès Covid \n des 45-64 ans")+
+        theme(legend.position = "none")+
+        annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+                 ymin = base::min(essai_nouv$deces_covid_45_64), 
+                 ymax = base::max(essai_nouv$deces_covid_45_64),
+                 alpha = .2, fill = "orange")+
+        annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+                 ymin = base::min(essai_nouv$deces_covid_45_64), 
+                 ymax = base::max(essai_nouv$deces_covid_45_64),
+                 alpha = .2, fill = "orange")
+      
+      a<-grid.arrange(histo_deces, courbes_vaccins,
+                      ncol=1, nrow=2)
+      
+    }else{
+      
+      a<-grid.arrange(histo_deces, courbes_vaccins,
+                      ncol=1, nrow=2)
+      
+    }
+    }
+    }
+    
   pngFileRelPath <- paste0(repertoire,"difference_4_semaines_50_59_", nomPays, ".png")
   ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
   
@@ -4018,8 +4296,15 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     summarise(diff_60_69= sum(diff_60_69),
               Age60_69_dose1 = sum(Age60_69_dose1),
               Age60_69_dose2 = sum(Age60_69_dose2),
-              pop_week_60_69 = mean(pop_week_60_69)) %>% 
-    mutate(pos60_69=(diff_60_69>0))
+              Age60_69_dose3 = sum(Age60_69_dose3),
+              pop_week_60_69 = mean(pop_week_60_69),
+              deces_covid_60_69 = sum(deces_covid_60_69),
+              deces_covid_65_74 = sum(deces_covid_65_74)
+              ) %>% 
+    mutate(pos60_69=(diff_60_69>0),
+           cumul_60_69_dose1=cumsum(Age60_69_dose1),
+           cumul_60_69_dose2=cumsum(Age60_69_dose2),
+           part_atteinte_60_69_dose1=cumul_60_69_dose1/pop_week_60_69)
   
   
   histo_deces<-ggplot(essai_nouv)+
@@ -4046,6 +4331,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   courbes_vaccins<-ggplot(essai_nouv)+
     geom_line(aes(x=groupe_semaine,y=Age60_69_dose1/pop_week_60_69),col="#0066CC")+
     geom_line(aes(x=groupe_semaine,y=Age60_69_dose2/pop_week_60_69),col="#003399")+
+    geom_line(aes(x=groupe_semaine,y=Age60_69_dose3/pop_week_60_69),col="#000033")+
     geom_vline(xintercept = c(182, 208))+
     geom_text(x=168, y=0, label="2019")+
     geom_text(x=164, y=0, label="2020")+
@@ -4054,17 +4340,70 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     ylab("Part d'injections \n dans la population")+ 
     theme(legend.position = "none")+
     annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
-             ymin = base::min(essai_nouv$Age60_69_dose1/essai_nouv$pop_week_60_69,na.rm=TRUE), 
-             ymax = base::max(essai_nouv$Age60_69_dose1/essai_nouv$pop_week_60_69,na.rm=TRUE),
+             ymin = 0, 
+             ymax = 0.2,
              alpha = .2, fill = "orange")+
     annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
-             ymin = base::min(essai_nouv$Age60_69_dose1/essai_nouv$pop_week_60_69,na.rm=TRUE), 
-             ymax = base::max(essai_nouv$Age60_69_dose1/essai_nouv$pop_week_60_69,na.rm=TRUE),
-             alpha = .2, fill = "orange")
+             ymin = 0, 
+             ymax = 0.2,
+             alpha = .2, fill = "orange")+
+    annotate(geom="text", x=230, 
+             y=0.18, 
+             label=paste0(floor(base::max(essai_nouv$part_atteinte_60_69_dose1)*100)," % des 60-69 ans \n  a reçu une dose"),
+             color="#9900CC")
   
-  a<-grid.arrange(histo_deces, courbes_vaccins,
-                  ncol=1, nrow=2)
-  
+  if(nomPays %in% c('france','belgique','autriche')){
+    histo_deces_covid<-ggplot(essai_nouv)+
+      geom_col(aes(x=groupe_semaine,y=deces_covid_65_74))+
+      geom_smooth(aes(x=groupe_semaine,y=deces_covid_65_74),span = 0.2, se=FALSE)+
+      geom_vline(xintercept = c(182, 208))+
+      geom_text(x=168, y=base::min(essai_nouv$deces_covid_65_74), label="2019")+
+      geom_text(x=194, y=base::min(essai_nouv$deces_covid_65_74), label="2020")+
+      geom_text(x=220, y=base::min(essai_nouv$deces_covid_65_74), label="2021")+
+      xlab("annee")+
+      ylab("Décès Covid \n des 65-74 ans")+
+      theme(legend.position = "none")+
+      annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_65_74), 
+               ymax = base::max(essai_nouv$deces_covid_65_74),
+               alpha = .2, fill = "orange")+
+      annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_65_74), 
+               ymax = base::max(essai_nouv$deces_covid_65_74),
+               alpha = .2, fill = "orange")
+    
+    a<-grid.arrange(histo_deces, courbes_vaccins,
+                    ncol=1, nrow=2)
+    
+  }else{if(nomPays %in% c('danmark','roumanie','allemagne','paysbas','italie','espagne','portugal')){
+    histo_deces_covid<-ggplot(essai_nouv)+
+      geom_col(aes(x=groupe_semaine,y=deces_covid_60_69))+
+      geom_smooth(aes(x=groupe_semaine,y=deces_covid_60_69),span = 0.2, se=FALSE)+
+      geom_vline(xintercept = c(182, 208))+
+      geom_text(x=168, y=base::min(essai_nouv$deces_covid_60_69), label="2019")+
+      geom_text(x=194, y=base::min(essai_nouv$deces_covid_60_69), label="2020")+
+      geom_text(x=220, y=base::min(essai_nouv$deces_covid_60_69), label="2021")+
+      xlab("annee")+
+      ylab("Décès Covid \n des 60-69 ans")+
+      theme(legend.position = "none")+
+      annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_60_69), 
+               ymax = base::max(essai_nouv$deces_covid_60_69),
+               alpha = .2, fill = "orange")+
+      annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_60_69), 
+               ymax = base::max(essai_nouv$deces_covid_60_69),
+               alpha = .2, fill = "orange")
+    
+    a<-grid.arrange(histo_deces, courbes_vaccins,
+                    ncol=1, nrow=2)
+  }else{
+    
+    a<-grid.arrange(histo_deces, courbes_vaccins,
+                    ncol=1, nrow=2)
+    
+  }
+  }
   pngFileRelPath <- paste0(repertoire,"difference_4_semaines_60_69_", nomPays, ".png")
   ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
   
@@ -4169,8 +4508,14 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     summarise(diff_70_79= sum(diff_70_79),
               Age70_79_dose1 = sum(Age70_79_dose1),
               Age70_79_dose2 = sum(Age70_79_dose2),
-              pop_week_70_79 = mean(pop_week_70_79)) %>% 
-    mutate(pos70_79=(diff_70_79>0))
+              Age70_79_dose3 = sum(Age70_79_dose3),
+              pop_week_70_79 = mean(pop_week_70_79),
+              deces_covid_70_79 = sum(deces_covid_70_79),
+              deces_covid_75_84 = sum(deces_covid_75_84)) %>% 
+    mutate(pos70_79=(diff_70_79>0),
+           cumul_70_79_dose1=cumsum(Age70_79_dose1),
+           cumul_70_79_dose2=cumsum(Age70_79_dose2),
+           part_atteinte_70_79_dose1=cumul_70_79_dose1/pop_week_70_79)
   
   
   histo_deces<-ggplot(essai_nouv)+
@@ -4197,6 +4542,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   courbes_vaccins<-ggplot(essai_nouv)+
     geom_line(aes(x=groupe_semaine,y=Age70_79_dose1/pop_week_70_79),col="#0066CC")+
     geom_line(aes(x=groupe_semaine,y=Age70_79_dose2/pop_week_70_79),col="#003399")+
+    geom_line(aes(x=groupe_semaine,y=Age70_79_dose3/pop_week_70_79),col="#000033")+
     geom_vline(xintercept = c(182, 208))+
     geom_text(x=168, y=0, label="2019")+
     geom_text(x=194, y=0, label="2020")+
@@ -4205,16 +4551,71 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     ylab("Part d'injections \n dans la population")+ 
     theme(legend.position = "none")+
     annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
-             ymin = base::min(essai_nouv$Age70_79_dose1/essai_nouv$pop_week_70_79,na.rm=TRUE), 
-             ymax = base::max(essai_nouv$Age70_79_dose1/essai_nouv$pop_week_70_79,na.rm=TRUE),
+             ymin = 0, 
+             ymax = 0.2,
              alpha = .2, fill = "orange")+
     annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
-             ymin = base::min(essai_nouv$Age70_79_dose1/essai_nouv$pop_week_70_79,na.rm=TRUE), 
-             ymax = base::max(essai_nouv$Age70_79_dose1/essai_nouv$pop_week_70_79,na.rm=TRUE),
-             alpha = .2, fill = "orange")
+             ymin = 0, 
+             ymax = 0.2,
+             alpha = .2, fill = "orange")+
+    annotate(geom="text", x=230, 
+             y=0.18, 
+             label=paste0(floor(base::max(essai_nouv$part_atteinte_70_79_dose1)*100)," % des 70-79 ans \n  a reçu une dose"),
+             color="#9900CC")
   
-  a<-grid.arrange(histo_deces, courbes_vaccins,
-                  ncol=1, nrow=2)
+  if(nomPays %in% c('france','belgique','autriche')){
+    histo_deces_covid<-ggplot(essai_nouv)+
+      geom_col(aes(x=groupe_semaine,y=deces_covid_75_84))+
+      geom_smooth(aes(x=groupe_semaine,y=deces_covid_75_84),span = 0.2, se=FALSE)+
+      geom_vline(xintercept = c(182, 208))+
+      geom_text(x=168, y=base::min(essai_nouv$deces_covid_75_84), label="2019")+
+      geom_text(x=194, y=base::min(essai_nouv$deces_covid_75_84), label="2020")+
+      geom_text(x=220, y=base::min(essai_nouv$deces_covid_75_84), label="2021")+
+      xlab("annee")+
+      ylab("Décès Covid \n des 65-74 ans")+
+      theme(legend.position = "none")+
+      annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_75_84), 
+               ymax = base::max(essai_nouv$deces_covid_75_84),
+               alpha = .2, fill = "orange")+
+      annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_75_84), 
+               ymax = base::max(essai_nouv$deces_covid_75_84),
+               alpha = .2, fill = "orange")
+    
+    a<-grid.arrange(histo_deces, courbes_vaccins,
+                    ncol=1, nrow=2)
+    
+  }else{if(nomPays %in% c('danmark','roumanie','allemagne','paysbas','italie','espagne','portugal')){
+    histo_deces_covid<-ggplot(essai_nouv)+
+      geom_col(aes(x=groupe_semaine,y=deces_covid_70_79))+
+      geom_smooth(aes(x=groupe_semaine,y=deces_covid_70_79),span = 0.2, se=FALSE)+
+      geom_vline(xintercept = c(182, 208))+
+      geom_text(x=168, y=base::min(essai_nouv$deces_covid_70_79), label="2019")+
+      geom_text(x=194, y=base::min(essai_nouv$deces_covid_70_79), label="2020")+
+      geom_text(x=220, y=base::min(essai_nouv$deces_covid_70_79), label="2021")+
+      xlab("annee")+
+      ylab("Décès Covid \n des 70-79 ans")+
+      theme(legend.position = "none")+
+      annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_70_79), 
+               ymax = base::max(essai_nouv$deces_covid_70_79),
+               alpha = .2, fill = "orange")+
+      annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_70_79), 
+               ymax = base::max(essai_nouv$deces_covid_70_79),
+               alpha = .2, fill = "orange")
+    
+    a<-grid.arrange(histo_deces, courbes_vaccins,
+                    ncol=1, nrow=2)
+    
+  }else{
+    
+    a<-grid.arrange(histo_deces, courbes_vaccins,
+                    ncol=1, nrow=2)
+    
+  }
+  }
   
   pngFileRelPath <- paste0(repertoire,"difference_4_semaines_70_79_", nomPays, ".png")
   ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
@@ -4318,8 +4719,16 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     summarise(diff_ge80= sum(diff_ge80),
               `Age80+_dose1` = sum(`Age80+_dose1`),
               `Age80+_dose2` = sum(`Age80+_dose2`),
-              pop_week_ge80 = mean(pop_week_ge80)) %>% 
-    mutate(posge80=(diff_ge80>0))
+              `Age80+_dose3` = sum(`Age80+_dose3`),
+              pop_week_ge80 = mean(pop_week_ge80),
+              deces_covid_80plus = sum(deces_covid_80plus),
+              deces_covid_85plus = sum(deces_covid_85plus),
+              deces_covid_95plus = sum(deces_covid_95plus),
+              deces_covid_85_94 = sum(deces_covid_85_94)) %>% 
+    mutate(posge80=(diff_ge80>0),
+           cumul_ge80_dose1=cumsum(`Age80+_dose1`),
+           cumul_ge80_dose2=cumsum(`Age80+_dose2`),
+           part_atteinte_ge80_dose1=cumul_ge80_dose1/pop_week_ge80)
   
   
   histo_deces<-ggplot(essai_nouv)+
@@ -4328,7 +4737,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     geom_smooth(aes(x=groupe_semaine,y=diff_ge80),span = 0.2, se=FALSE)+
     geom_vline(xintercept = c(182, 208))+
     geom_text(x=168, y=base::min(essai_nouv$diff_ge80), label="2019")+
-    geom_text(x=164, y=base::min(essai_nouv$diff_ge80), label="2020")+
+    geom_text(x=194, y=base::min(essai_nouv$diff_ge80), label="2020")+
     geom_text(x=220, y=base::min(essai_nouv$diff_ge80), label="2021")+
     xlab("annee")+
     ylab("Différence entre décès constatés \n et décès attendus")+
@@ -4346,6 +4755,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   courbes_vaccins<-ggplot(essai_nouv)+
     geom_line(aes(x=groupe_semaine,y=`Age80+_dose1`/pop_week_ge80),col="#0066CC")+
     geom_line(aes(x=groupe_semaine,y=`Age80+_dose2`/pop_week_ge80),col="#003399")+
+    geom_line(aes(x=groupe_semaine,y=`Age80+_dose3`/pop_week_ge80),col="#000033")+
     geom_vline(xintercept = c(182, 208))+
     geom_text(x=168, y=0, label="2019")+
     geom_text(x=194, y=0, label="2020")+
@@ -4354,17 +4764,72 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     ylab("Part d'injections \n dans la population")+ 
     theme(legend.position = "none")+
     annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
-             ymin = base::min(essai_nouv$`Age80+_dose1`/essai_nouv$pop_week_ge80,na.rm=TRUE), 
-             ymax = base::max(essai_nouv$`Age80+_dose1`/essai_nouv$pop_week_ge80,na.rm=TRUE),
+             ymin = 0, 
+             ymax = 0.2,
              alpha = .2, fill = "orange")+
     annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
-             ymin = base::min(essai_nouv$`Age80+_dose1`/essai_nouv$pop_week_ge80,na.rm=TRUE), 
-             ymax = base::max(essai_nouv$`Age80+_dose1`/essai_nouv$pop_week_ge80,na.rm=TRUE),
-             alpha = .2, fill = "orange")
+             ymin = 0, 
+             ymax = 0.2,
+             alpha = .2, fill = "orange")+
+    annotate(geom="text", x=230, 
+             y=0.18, 
+             label=paste0(floor(base::max(essai_nouv$part_atteinte_ge80_dose1)*100)," % des plus de 80 ans \n  a reçu une dose"),
+             color="#9900CC")
   
-  a<-grid.arrange(histo_deces, courbes_vaccins,
-                  ncol=1, nrow=2)
+  if(nomPays %in% c('belgique','autriche','france')){
+    histo_deces_covid<-ggplot(essai_nouv)+
+      geom_col(aes(x=groupe_semaine,y=deces_covid_85plus))+
+      geom_smooth(aes(x=groupe_semaine,y=deces_covid_85plus),span = 0.2, se=FALSE)+
+      geom_vline(xintercept = c(182, 208))+
+      geom_text(x=168, y=base::min(essai_nouv$deces_covid_85plus), label="2019")+
+      geom_text(x=194, y=base::min(essai_nouv$deces_covid_85plus), label="2020")+
+      geom_text(x=220, y=base::min(essai_nouv$deces_covid_85plus), label="2021")+
+      xlab("annee")+
+      ylab("Décès Covid \n des plus de 85 ans")+
+      theme(legend.position = "none")+
+      annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_85plus), 
+               ymax = base::max(essai_nouv$deces_covid_85plus),
+               alpha = .2, fill = "orange")+
+      annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_85plus), 
+               ymax = base::max(essai_nouv$deces_covid_85plus),
+               alpha = .2, fill = "orange")
+    
+    a<-grid.arrange(histo_deces, courbes_vaccins,
+                    ncol=1, nrow=2)
+    
+  }else{if(nomPays %in% c('danmark','roumanie','allemagne','paysbas','italie','espagne','portugal')){
+    histo_deces_covid<-ggplot(essai_nouv)+
+      geom_col(aes(x=groupe_semaine,y=deces_covid_80plus))+
+      geom_smooth(aes(x=groupe_semaine,y=deces_covid_80plus),span = 0.2, se=FALSE)+
+      geom_vline(xintercept = c(182, 208))+
+      geom_text(x=168, y=base::min(essai_nouv$deces_covid_80plus), label="2019")+
+      geom_text(x=194, y=base::min(essai_nouv$deces_covid_80plus), label="2020")+
+      geom_text(x=220, y=base::min(essai_nouv$deces_covid_80plus), label="2021")+
+      xlab("annee")+
+      ylab("Décès Covid \n des plus de 80 ans")+
+      theme(legend.position = "none")+
+      annotate("rect", xmin = floor(premier_conf_start/2), xmax = floor(premier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_80plus), 
+               ymax = base::max(essai_nouv$deces_covid_80plus),
+               alpha = .2, fill = "orange")+
+      annotate("rect", xmin = floor(dernier_conf_start/2), xmax = floor(dernier_conf_end/2), 
+               ymin = base::min(essai_nouv$deces_covid_80plus), 
+               ymax = base::max(essai_nouv$deces_covid_80plus),
+               alpha = .2, fill = "orange")
+    
+    a<-grid.arrange(histo_deces, courbes_vaccins,
+                    ncol=1, nrow=2)
+    
+  }else{
+    
+    a<-grid.arrange(histo_deces, courbes_vaccins,
+                    ncol=1, nrow=2)
+    
   
+  }
+  }
   pngFileRelPath <- paste0(repertoire,"difference_2_semaines_plus_80_", nomPays, ".png")
   ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
   
