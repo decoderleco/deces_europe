@@ -97,12 +97,8 @@ if (exists(varName)) {
 	# Liste des URLs des fichiers de patients décédés
 	
 	urls_listes_deces <- c(
-	  '2021m12' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220106-161749/deces-2021-m12.txt',
-	  '2021m11' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20211215-093836/deces-2021-m11.txt',
-	  '2021m10' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20211118-093353/deces-2021-m10.txt',
-	  '2021t3'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20211012-093424/deces-2021-t3.txt',
-	  '2021t2'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210709-174839/deces-2021-t2.txt',
-	  '2021t1'= 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210409-131502/deces-2021-t1.txt',
+	  '2022m01' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220210-111900/deces-2022-m01.txt',
+	  '2021' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220112-114131/deces-2021.txt',
 	  '2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
 	  '2019' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20200113-173945/deces-2019.txt',
 	  '2018' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191205-191652/deces-2018.txt'
@@ -620,17 +616,27 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 		   filter(age_deces_millesime == 0)
    
    print(ggplot(data = deces_par_jour_age_des_0an,
-						   mapping = aes(x = deces_date_complete,y = nbDeces)) +
+			    mapping = aes(x = deces_date_complete, y = nbDeces)) +
            geom_smooth() +
-				   geom_point() +
+		   geom_point() +
 				   
-				   theme(legend.position = "top") +
-				   
-				   ggtitle("Décès quotidiens des 0 an") +
-				   
-				   xlab("date de décès") + 
-				   ylab("nombre de décès")
+		   theme(legend.position = "top") +
+		   
+		   ggtitle("Décès quotidiens des 0 an") +
+		   
+		   xlab("date de décès") + 
+		   ylab("nombre de décès")
    )
+
+   #Nom du fichier png à générer
+
+   repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_Quotidiens/Tranche_age")
+   a__f_createDir(repertoire)
+   pngFileRelPath <- paste0(repertoire, "/deces_par_jour_age_des_0an", ".png")
+   
+   dev.print(device = png, file = pngFileRelPath, width = 1000)
+   
+   
    if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
    
    ###############################################################################
@@ -662,6 +668,15 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
            xlab("date de décès") + 
            ylab("nombre de décès ")
    )
+
+   #Nom du fichier png à générer
+   
+   repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_Quotidiens/Tranche_age")
+   a__f_createDir(repertoire)
+   pngFileRelPath <- paste0(repertoire, "/deces_par_jour_age_des_30jours", ".png")
+   
+   dev.print(device = png, file = pngFileRelPath, width = 1000)
+   
    
    if (shallDeleteVars) rm(deces_des_30jours)
    if (shallDeleteVars) rm(deces_par_jour_age_des_30jours)
@@ -706,6 +721,14 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
            xlab("date de décès") + 
            ylab("nombre de décès ")
    )
+   
+   #Nom du fichier png à générer
+   
+   repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_Quotidiens/Tranche_age")
+   a__f_createDir(repertoire)
+   pngFileRelPath <- paste0(repertoire, "/deces_par_semaine_age_des_7jours", ".png")
+   
+   dev.print(device = png, file = pngFileRelPath, width = 1000)
    
    if (shallDeleteVars) rm(nbDeces_moyen_par_age)
 
@@ -890,6 +913,11 @@ data_a_tracer <- data_a_tracer %>%
 		select(deces_date_complete:nbDeces, age) %>%
 		mutate(deces_annee = str_sub(deces_date_complete,1,4))
 
+# Ajouter une colonne avec le n° de période correspondante (depuis 2018-01-01)
+data_a_tracer <- data_a_tracer %>%
+		mutate(deces_period = a__f_get_period(deces_date_complete, 3, as.Date("2018-01-01")))
+
+
 # Ajouter la colonne tranche d'age (pas les tranches d'âge VAC-SI)
 data_a_tracer <- a__f_add_tranche_age(data_a_tracer)
 
@@ -908,40 +936,47 @@ coeffMult <- 365 / duree
 # Calculer le nombre de décès pour chaque tranche d'age et chaque jour
 data_a_tracer <- data_a_tracer %>% 
 		group_by(tranche_age, 
-				deces_annee) %>%
+				deces_period) %>%
 		summarise(nbDeces = sum(nbDeces), .groups = 'drop')
 
 # Multiplier par le coefficient pour avoir une estimation sur 2021 complète
-data_a_tracer <- data_a_tracer %>%
-		mutate(nbDecesEstimes = if_else(deces_annee == 2021, as.integer(nbDeces * coeffMult), nbDeces))
+#data_a_tracer <- data_a_tracer %>%
+#		mutate(nbDecesEstimes = if_else(deces_annee == 2021, as.integer(nbDeces * coeffMult), nbDeces))
 
 write.csv2(data_a_tracer, file='gen/csv/deces_par_tranchedage_et_annee.csv')
 
 print(ggplot(data = data_a_tracer,
-						mapping = aes(x = tranche_age, 
-								y = nbDecesEstimes)) +
+				mapping = aes(x = deces_period, 
+								y = nbDeces)) +
+				
+				facet_wrap(~tranche_age, ncol = 1, scales = "free_y") +
+				
+				geom_point() +
+				geom_line() +
+				
+#				geom_col(
+#						#mapping = aes(fill = "b"),
+#						# Couleur du trait de contour des barres
+#						color="black",
+#						fill = "yellow",
+#						# Mettre les colonnes les unes à côté des autres
+#						position = position_dodge2()) + 
 				
 				scale_colour_manual(values = c("black"))+
 				scale_fill_brewer(palette = "YlOrRd") +
 				
-				geom_col(mapping = aes(fill = deces_annee),
-						# Couleur du trait de contour des barres
-						color="black",
-						# Mettre les colonnes les unes à côté des autres
-						position = position_dodge2()) + 
-				
-				labs(title = "Evolution des décès France par Tranche d'âge",
+				labs(title = "Evolution des décès France par Tranche d'âge et par Trimestre depuis 01/01/2018",
 					 caption=paste0("Source : fr/gouv/Registre/Deces_Quotidiens (=> ", date_max,")")) +
 				
 				theme(legend.position="top") +
 				
 				# Axe x  
 				xlab("Tranche d'âge") +
-				scale_x_continuous(breaks = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
+				#scale_x_continuous(breaks = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
 				theme(axis.text.x = element_text(angle=45)) +
 				
 				# Axe y  
-				ylab("Nombre de décès (avec Estimation proportionnelle pour l'année en cours)") +
+				ylab("Nombre de décès") +
 				ylim(0, NA)
 )
 

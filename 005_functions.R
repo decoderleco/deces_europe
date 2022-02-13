@@ -193,6 +193,10 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 						destfile = fileRelPath, 
 						quiet = FALSE)
 				
+				cat("\n")
+				
+				cat(paste0("Fichier (", fileRelPath, ") téléchargé.\n\n"))
+				
 			} else {
 				
 				message(paste0("ATTENTION : Fichier (", fileRelPath, ") de type inconnu. On ne peut pas le re-charger dans (", varName, ")."))
@@ -448,6 +452,22 @@ a__f_add_tranche_age_vacsi <- function(tabWithAge) {
 }
 
 ################################################################################
+# Calculer la période à laquelle se rattache une date
+################################################################################
+a__f_get_period <- function(deces_date, nb_months_by_period, start_date) {
+	
+	nb_days_by_period <- nb_months_by_period*365/12
+	message(nb_days_by_period)
+	
+	nb_days = deces_date - start_date
+	
+	message(nb_days)
+	
+	# Calculer le n° de la période
+	period_nb <- as.integer(nb_days / nb_days_by_period) + 1
+}
+
+################################################################################
 # Ajouter une colonne tranche_age de 10 en 10 puis de 5 en 5 à partir de 55
 ################################################################################
 a__f_add_tranche_age <- function(tabWithAge) {
@@ -460,16 +480,23 @@ a__f_add_tranche_age <- function(tabWithAge) {
 							age >  20 & age <= 30 ~ 30,  
 							age >  30 & age <= 40 ~ 40,
 							age >  40 & age <= 50 ~ 50,
-							age >  50 & age <= 55 ~ 55,
-							age >  55 & age <= 60 ~ 60,
-							age >  60 & age <= 65 ~ 65,
-							age >  65 & age <= 70 ~ 70,  
-							age >  70 & age <= 75 ~ 75,
-							age >  75 & age <= 80 ~ 80,  
-							age >  80 & age <= 85 ~ 85,  
-							age >  85 & age <= 90 ~ 90,  
-							age >  90 & age <= 95 ~ 95,  
-							age >  95 ~ 99
+							
+							age >  50 & age <= 60 ~ 60,
+							age >  60 & age <= 70 ~ 70,
+							age >  70 & age <= 80 ~ 80,
+							age >  80 & age <= 90 ~ 90,  
+							
+#							age >  50 & age <= 55 ~ 55,
+#							age >  55 & age <= 60 ~ 60,
+#							age >  60 & age <= 65 ~ 65,
+#							age >  65 & age <= 70 ~ 70,  
+#							age >  70 & age <= 75 ~ 75,
+#							age >  75 & age <= 80 ~ 80,  
+#							age >  80 & age <= 85 ~ 85,  
+#							age >  85 & age <= 90 ~ 90,  
+#							age >  90 & age <= 95 ~ 95,  
+							
+							age >  90 ~ 99
 					))
 	
 	# Renvoyer le nouveau tableau quinquenisé
