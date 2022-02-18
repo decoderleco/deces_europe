@@ -1,5 +1,6 @@
 library(maptools)
 library(rgdal)
+library(tidyr)
 library(maps)
 library(eurostat)
 library(dplyr)
@@ -15,6 +16,7 @@ library("rnaturalearthdata")
 library(readr)
 library(lsr)
 library(reshape2)
+library(purrr)
 
 
 ################################################################################
@@ -2567,7 +2569,7 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
 
 
 annees_13_18 <- ungroup(b__es_deces_week_standardises_si_pop_2020_owid_vaccination) %>% 
-  filter(!(str_sub(time,1,4)=="2020"|str_sub(time,1,4)=="2021"|str_sub(time,1,4)=="2019"))%>% 
+  filter(!(str_sub(time,1,4)=="2020"|str_sub(time,1,4)=="2021"|str_sub(time,1,4)=="2019"))%>%
   select(semaine,annee,geo,
          deces_tot_15_24,
          deces_tot_25_49,
@@ -2684,7 +2686,8 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination<-b__es_deces_week_sta
 #Faire la régression sur les décès standards
 
 annees_13_18 <- ungroup(b__es_deces_week_standardises_si_pop_2020_owid_vaccination) %>% 
-  filter(!(str_sub(time,1,4)=="2020"|str_sub(time,1,4)=="2021"|str_sub(time,1,4)=="2019"))%>% 
+  filter(!(str_sub(time,1,4)=="2020"|str_sub(time,1,4)=="2021"|str_sub(time,1,4)=="2019"))%>%
+  filter(geo!="UK") %>% 
   select(semaine,annee,geo,
          deces_standardises_si_pop_2020_15_24,
          deces_standardises_si_pop_2020_25_49,
@@ -2807,6 +2810,49 @@ rm(res70_79)
 rm(resplus_80)
 rm(annees_13_18)
 
+#Calculer les z-scores
+
+#Calculer la variance du modèle
+
+sigma<- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
+  select (diff_deces_tot_predit_15_24,
+          diff_deces_tot_predit_25_49,
+          diff_deces_tot_predit_50_59,
+          diff_deces_tot_predit_60_69,
+          diff_deces_tot_predit_70_79,
+          diff_deces_tot_predit_ge80,
+          geo, semaine) %>%
+  mutate(carre15_24 = diff_deces_tot_predit_15_24*diff_deces_tot_predit_15_24,
+         carre25_49 = diff_deces_tot_predit_25_49*diff_deces_tot_predit_25_49,
+         carre50_59 = diff_deces_tot_predit_50_59*diff_deces_tot_predit_50_59,
+         carre60_69 = diff_deces_tot_predit_60_69*diff_deces_tot_predit_60_69,
+         carre70_79 = diff_deces_tot_predit_70_79*diff_deces_tot_predit_70_79,
+         carrege80 = diff_deces_tot_predit_ge80*diff_deces_tot_predit_ge80)
+
+sigma <- sigma %>% group_by(geo,semaine) %>% 
+  summarise(sigma15_24=sum(carre15_24)/6,
+            sigma25_49=sum(carre25_49)/6,
+            sigma50_59=sum(carre50_59)/6,
+            sigma60_69=sum(carre60_69)/6,
+            sigma70_79=sum(carre70_79)/6,
+            sigmage80=sum(carrege80)/6)
+
+#jointure
+  
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
+  left_join(sigma)
+
+#calcul des z-scores
+
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
+  mutate(z_score_15_24 = diff_deces_tot_predit_15_24/sigma15_24,
+         z_score_25_49 = diff_deces_tot_predit_15_24/sigma25_49,
+         z_score_50_59 = diff_deces_tot_predit_15_24/sigma50_59,
+         z_score_60_69 = diff_deces_tot_predit_15_24/sigma60_69,
+         z_score_70_79 = diff_deces_tot_predit_15_24/sigma70_79,
+         z_score_ge80 = diff_deces_tot_predit_15_24/sigmage80)
+
+
 ################################################################################
 #
 # Sauvegarde des Tables finales
@@ -2823,7 +2869,7 @@ patrick <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
          deces_tot_50_59,deces_standardises_si_pop_2020_50_59,deces_tot_60_69,deces_standardises_si_pop_2020_60_69,
          deces_tot_70_79,deces_standardises_si_pop_2020_70_79,deces_tot_plus_80,deces_standardises_si_pop_2020_ge80,
          predit_15_24,predit_25_49,predit_50_59,predit_60_69,predit_70_79,predit_plus_80,
-         predit_stand_15_24,predit_stand_25_49,predit_stand_50_59,predit_60_69,predit_70_79,predit_stand_plus_80,
+         predit_stand_15_24,predit_stand_25_49,predit_stand_50_59,predit_stand_60_69,predit_stand_70_79,predit_stand_plus_80,
          `Age<18_dose1`,Age0_4_dose1,Age10_14_dose1,Age15_17_dose1,Age18_24_dose1,Age25_49_dose1,Age5_9_dose1,
          Age50_59_dose1,Age60_69_dose1,Age70_79_dose1,`Age80+_dose1`,
          `Age<18_dose2`,Age0_4_dose2,Age10_14_dose2,Age15_17_dose2,Age18_24_dose2,Age25_49_dose2,Age5_9_dose2,
@@ -2835,7 +2881,8 @@ patrick <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
          deces_covid_45_64,deces_covid_50_59,deces_covid_55_64,deces_covid_5_14,deces_covid_60_69,deces_covid_65_74,
          deces_covid_70_74,deces_covid_70_79,deces_covid_75_79,deces_covid_80plus,deces_covid_75_84,deces_covid_85plus,
          deces_covid_moins40,deces_covid_moins50,deces_covid_moins60,
-         pop_week,pop_week_15_24,pop_week_25_49,pop_week_50_59,pop_week_60_69,pop_week_70_79,pop_week_ge80)
+         pop_week,pop_week_15_24,pop_week_25_49,pop_week_50_59,pop_week_60_69,pop_week_70_79,pop_week_ge80,
+         z_score_15_24,z_score_25_49,z_score_50_59,z_score_60_69,z_score_70_79,z_score_ge80)
 
 saveRDS(patrick, file="gen/rds/patrick.RDS")
 
