@@ -971,20 +971,26 @@ write.csv2(data_a_tracer, file='gen/csv/deces_par_tranchedage_et_annee.csv')
 # Tracer le graphique
 print(ggplot(data = data_a_tracer,
 				mapping = aes(x = date_debut_periode, 
-								y = nbDeces)) +
+								y = nbDeces,
+								color =as.factor(tranche_age))) +
 				
-				facet_wrap(~tranche_age, ncol = 1, scales = "free_y") +
+				facet_wrap(~ tranche_age, ncol = 1, scales = "free_y") +
 				
 				geom_point() +
 				geom_line() +
+
+				scale_color_viridis_d(option = "turbo") +
+				#scale_colour_manual(values = c("black", "red"))+
 				
-				scale_colour_manual(values = c("black"))+
 				scale_fill_brewer(palette = "YlOrRd") +
 				
 				labs(title = "Evolution des décès France par Tranche d'âge et par Trimestre depuis 01/01/2018",
 					 caption=paste0("Source : fr/gouv/Registre/Deces_Quotidiens (=> ", date_max,")")) +
 				
-				theme(legend.position="top") +
+				theme_bw() +
+				
+				# Masquer la légende car elle est redondante avec le titre des Facets
+				theme(legend.position="none") +
 				
 				# Axe x  
 				xlab("Tranche d'âge") +
