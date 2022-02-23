@@ -953,7 +953,7 @@ data_a_tracer <- data_a_tracer %>%
 
 # Calculer la date de début des périodes
 data_a_tracer <- data_a_tracer %>% 
-		mutate(date_debut_periode = date_min + (deces_period - 1) * nb_months_by_period * 365 / 12)
+		mutate(date_debut_periode = date_min + deces_period * nb_months_by_period * 365 / 12)
 
 # Supprimer la dernière période si "aujoud'hui" en fait partie car alors elle est tronquée 
 # (sauf si on génère la courbe juste le dernier jour de la période)
@@ -993,7 +993,7 @@ print(ggplot(data = data_a_tracer,
 				theme(legend.position="none") +
 				
 				# Axe x  
-				xlab("Tranche d'âge") +
+				xlab("Tranche d'age") +
 				#scale_x_continuous(breaks = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
 				theme(axis.text.x = element_text(angle=45)) +
 				
