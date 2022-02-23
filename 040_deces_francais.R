@@ -346,6 +346,25 @@ if (exists(varName)) {
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
 			mutate(age_deces_millesime = deces_annee_complete - naissance_annee_complete)
 	
+	# Afficher le nombre de lignes ayant une date de décès erronée (i.e. supérieure à aujourd'hui)
+	nb_erreurs <- b__fr_gouv_deces_quotidiens %>%
+			filter(deces_date_complete > now()) %>%
+			count()
+	
+	if (nb_erreurs > 0) {
+		# Il y a des erreurs dans certaines lignes sur les dates de décès
+	
+		message(paste0("Il y a (", nb_erreurs, ") lignes avec une date de décès erronée. On les supprime"))
+		
+		# Ne garder que les dates de décès valides
+		b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
+				filter(deces_date_complete <= now())
+	} else {
+		# Pas d'erreur dans certaines lignes sur les dates de décès
+	
+		# RAF
+	}
+	
 	# Trier par date de décès pour que ce soit plus facile à lire
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
 			arrange(deces_date_complete, 
@@ -913,25 +932,18 @@ data_a_tracer <- data_a_tracer %>%
 		select(deces_date_complete:nbDeces, age) %>%
 		mutate(deces_annee = str_sub(deces_date_complete,1,4))
 
+date_min <- as.Date("2018-01-01")
+
+# Nombre de mois par période (mettre 1 ou 3 par exemple)
+nb_months_by_period = 1
+
 # Ajouter une colonne avec le n° de période correspondante (depuis 2018-01-01)
 data_a_tracer <- data_a_tracer %>%
-		mutate(deces_period = a__f_get_period(deces_date_complete, 3, as.Date("2018-01-01")))
+		mutate(deces_period = a__f_get_period(deces_date_complete, nb_months_by_period, date_min))
 
 
 # Ajouter la colonne tranche d'age (pas les tranches d'âge VAC-SI)
 data_a_tracer <- a__f_add_tranche_age(data_a_tracer)
-
-# Extraire les dates de début/fin en 2021 afin de pouvoir ensuite faire une estimation sur 365 jours pour l'année en cours
-
-date_max <- base::max(data_a_tracer$deces_date_complete) 
-
-duree <- as.integer(date_max - as.Date("2021-01-01"), units='days')
-
-if (duree > 365) message("Il faut modifier le code car on a changé d'année")
-
-# Coefficient multiplicateur pour avoir une estimation sur 365 jours
-coeffMult <- 365 / duree
-
 
 # Calculer le nombre de décès pour chaque tranche d'age et chaque jour
 data_a_tracer <- data_a_tracer %>% 
@@ -939,28 +951,32 @@ data_a_tracer <- data_a_tracer %>%
 				deces_period) %>%
 		summarise(nbDeces = sum(nbDeces), .groups = 'drop')
 
-# Multiplier par le coefficient pour avoir une estimation sur 2021 complète
-#data_a_tracer <- data_a_tracer %>%
-#		mutate(nbDecesEstimes = if_else(deces_annee == 2021, as.integer(nbDeces * coeffMult), nbDeces))
+# Calculer la date de début des périodes
+data_a_tracer <- data_a_tracer %>% 
+		mutate(date_debut_periode = date_min + (deces_period - 1) * nb_months_by_period * 365 / 12)
 
+# Supprimer la dernière période si "aujoud'hui" en fait partie car alors elle est tronquée 
+# (sauf si on génère la courbe juste le dernier jour de la période)
+
+# Calculer la période correspondant à aujourd'hui
+today_period <- a__f_get_period(today(), nb_months_by_period, date_min)
+
+# Filtrer pour ne conserver que les périodes antérieures à la période d'aujourd'hui
+data_a_tracer <- data_a_tracer %>%
+		filter(deces_period < today_period)
+
+# Sauvegarder le CSV
 write.csv2(data_a_tracer, file='gen/csv/deces_par_tranchedage_et_annee.csv')
 
+# Tracer le graphique
 print(ggplot(data = data_a_tracer,
-				mapping = aes(x = deces_period, 
+				mapping = aes(x = date_debut_periode, 
 								y = nbDeces)) +
 				
 				facet_wrap(~tranche_age, ncol = 1, scales = "free_y") +
 				
 				geom_point() +
 				geom_line() +
-				
-#				geom_col(
-#						#mapping = aes(fill = "b"),
-#						# Couleur du trait de contour des barres
-#						color="black",
-#						fill = "yellow",
-#						# Mettre les colonnes les unes à côté des autres
-#						position = position_dodge2()) + 
 				
 				scale_colour_manual(values = c("black"))+
 				scale_fill_brewer(palette = "YlOrRd") +
@@ -976,8 +992,10 @@ print(ggplot(data = data_a_tracer,
 				theme(axis.text.x = element_text(angle=45)) +
 				
 				# Axe y  
-				ylab("Nombre de décès") +
-				ylim(0, NA)
+				ylab("Nombre de décès")
+## +
+## # Forcer l'échelle Y à partir de 0
+##                 ylim(0, NA)
 )
 
 #Nom du fichier png à générer
