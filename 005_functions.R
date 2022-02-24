@@ -3,6 +3,9 @@
 # Author: JeanGarf
 ###############################################################################
 
+Sys.setlocale("LC_ALL", "French")
+options(encoding = "UTF-8")
+
 library(stringr)
 
 # Refaire les downloads, même si on l'a déjà fait précédemment et que l'on a 
