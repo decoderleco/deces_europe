@@ -3,6 +3,9 @@
 # Author: JeanGarf
 ###############################################################################
 
+Sys.setlocale("LC_ALL", "French")
+options(encoding = "UTF-8")
+
 library(stringr)
 
 shallDeleteVars = TRUE
