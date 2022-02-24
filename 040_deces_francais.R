@@ -993,7 +993,7 @@ print(ggplot(data = data_a_tracer,
 				theme(legend.position="none") +
 				
 				# Axe x  
-				xlab("Tranche d'age") +
+				xlab("Tranche d'âge") +
 				#scale_x_continuous(breaks = c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
 				theme(axis.text.x = element_text(angle=45)) +
 				
