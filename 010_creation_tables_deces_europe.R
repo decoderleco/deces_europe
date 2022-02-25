@@ -1725,7 +1725,7 @@ if (shallDeleteVars) rm(owid_covid_Europe_geo_week)
 #
 ################################################################################
 
-b__ined_covid_data <- read.csv("inst/extdata/world/ined/Cum_deaths_by_age_sex.csv") %>% 
+b__ined_covid_data <- read.csv("data/csv/Cum_deaths_by_age_sex.csv") %>% 
   filter(age_group != "Total unknown")%>%
   filter(!((country_code=="FRA"& death_reference_date_type =="report")|(country_code=="NLD"& death_reference_date_type =="report"))) %>% 
   mutate(geo = case_when(country_code == "AUT"~"AT",
