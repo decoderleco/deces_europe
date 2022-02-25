@@ -5,6 +5,13 @@
 
 library(stringr)
 
+# Refaire les downloads, même si on l'a déjà fait précédemment et que l'on a 
+# déjà les données en mémoire et/ou les fichiers sur disque.
+# (Utile pour être sûr de forcer une mise à jour totale)
+shallForceDownload = FALSE
+
+# Supprimer les variables temporaires lorsqu'elle ne sont plus utiles, pour libérer
+# de la mémoire et rendre le GlobalEnv plus lisible
 shallDeleteVars = TRUE
 
 PLOT_AXIS_SIDE_BELOW <- 1
@@ -54,6 +61,54 @@ K_DIR_GEN_IMG_USA <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'usa'))
 K_DIR_GEN_IMG_OWID <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'owid'))
 
 ################################################################################
+# Charge un fichier CSV ou RDS et met les données dans la variable varName 
+#
+#' 
+#' @param fileRelPath			: Nom du fichier de sauvegarde associé
+#' @param sep 
+#' @return 						: Données récupérées
+#' 
+#' @author JeanGarf
+#' @export
+################################################################################
+loadLocalFile <- function(fileRelPath, sep) {
+	
+	ext = str_sub(fileRelPath, -3)
+	
+	#
+	# Déterminer l'extension du fichier
+	#
+	
+	if ((ext == "RDS") || (ext == "rds"))  {
+		# Fichier de type RDS
+		
+		# Charger le fichier RDS
+		downloadedDatas <- readRDS(file = fileRelPath)
+		
+	} else if ((ext == "CSV") || (ext == "csv")) {
+		# Fichier de type CSV
+		
+		# Charger le fichier CSV local (crée un data frame)
+		downloadedDatas <- read.csv(file = fileRelPath, 
+				sep = sep)
+		
+	} else if ((ext == "zip") || (ext == "ZIP")) {
+		# Fichier de type zip
+		
+		# RAF pour un zip
+		
+	} else if ((ext == "txt") || (ext == "TXT")) {
+		# Fichier de type txt
+		
+		# RAF pour un zip
+		
+	} else {
+		
+		message(paste0("ATTENTION : Fichier (", fileRelPath, ") de type inconnu. On ne peut pas le charger"))
+	}
+}
+
+################################################################################
 # Télécharger ou charge un fichier EuroStat, CSV ou zip 
 # si la variable et/ou le fichier associé n'existe pas déjà
 #
@@ -69,162 +124,155 @@ K_DIR_GEN_IMG_OWID <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'owid'))
 #' @export
 ################################################################################
 a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV, 
-                                  UrlOrEuroStatNameToDownload = "",
-                                  fileRelPath = "", 
-                                  repertoire = "",
-                                  varName = "",
-                                  var, 
-                                  sep = ";") {
-  
-  if (varName == "") {
-    
-    # deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
-    # qui a étépassé dans le parametre region
-    varName <- deparse(substitute(var))
-  }
-  
-  if (fileRelPath == "") {
-    # le path du fichier local n'est pas indiqué
-    
-    # Créer le répertoire
-    a__f_createDir(repertoire)
-    
-    # Créer le path du fichier RDS de sauvegarde
-    fileRelPath = paste0(file.path(repertoire, varName), ".RDS")
-    
-  } else {
-    # le path du fichier local est indiqué
-    
-    # RAF
-  }
-  
-  if (exists(varName)) {
-    # La variable existe déjà dans le Contexte
-    
-    message(paste0("(", varName, ") existe déjà. On ne re-télécharge pas"))
-    
-    downloadedDatas <- var
-    
-    #saveRDS(downloadedDatas, file = fileRelPath)
-    
-  } else if (file.exists(fileRelPath)) {
-    # La variable n'existe pas, mais le fichier existe sur disque
-    
-    message(paste0("Fichier (", fileRelPath, ") présent. On re-charge le fichier dans (", varName, "), sans le re-télécharger."))
-    
-    ext = str_sub(fileRelPath, -3)
-    
-    #
-    # Déterminer l'extension du fichier
-    #
-    
-    if ((ext == "RDS") || (ext == "rds"))  {
-      # Fichier de type RDS
-      
-      # Charger le fichier RDS
-      downloadedDatas <- readRDS(file = fileRelPath)
-      
-    } else if ((ext == "CSV") || (ext == "csv")) {
-      # Fichier de type CSV
-      
-      # Charger le fichier CSV local (crée un data frame)
-      downloadedDatas <- read.csv(file = fileRelPath, 
-                                  sep = sep)
-      
-    } else if ((ext == "zip") || (ext == "ZIP")) {
-      # Fichier de type zip
-      
-      # RAF pour un zip
-      
-    } else if ((ext == "txt") || (ext == "TXT")) {
-      # Fichier de type txt
-      
-      # RAF pour un zip
-      
-    } else {
-      
-      message(paste0("ATTENTION : Fichier (", fileRelPath, ") de type inconnu. On ne peut pas le re-charger dans (", varName, ")."))
-    }
-    
-  } else {
-    # Ni la variable, ni le fichier n'existent
-    
-    #
-    # Re-télécharger
-    #
-    
-    if (nchar(UrlOrEuroStatNameToDownload) > 0) {
-      # Il y a une URL
-      
-      cat(paste0("Télécharger (", UrlOrEuroStatNameToDownload, ")\n"))
-      
-      
-      if (sourceType == K_SOURCE_TYPE_EUROSTAT)  {
-        # Source de type EuroStat
-        
-        # Télécharger depuis EuroStat
-        downloadedDatas <- get_eurostat(UrlOrEuroStatNameToDownload) 
-        
-        
-        if (!is.null(downloadedDatas)) {
-          # On a réussi à télécharger une donnée
-          
-          downloadedDatas <- downloadedDatas %>%
-            # Reordonner les colonnes
-            select(geo, sex, age, time, everything()) %>%
-            # Trier les lignes selon les colonnes
-            arrange(geo, sex, age, time)
-          
-        } else {
-          
-          # RAF
-        }
-        
-      } else if (sourceType == K_SOURCE_TYPE_CSV) {
-        # Source de type CSV
-        
-        # Charger le fichier CSV depuis son URL (crée un Tibble)
-        downloadedDatas <- read_csv(file = UrlOrEuroStatNameToDownload)
-        
-      } else if (sourceType == K_SOURCE_TYPE_CURL) {
-        
-        # Télécharger avec CURL (sans le mettre dans une variable)
-        curl::curl_download(url = UrlOrEuroStatNameToDownload, 
-                            destfile = fileRelPath, 
-                            quiet = FALSE)
-        
-        cat("\n")
-        
-        cat(paste0("Fichier (", fileRelPath, ") téléchargé.\n\n"))
-        
-      } else {
-        
-        message(paste0("ATTENTION : Fichier (", fileRelPath, ") de type inconnu. On ne peut pas le re-charger dans (", varName, ")."))
-      }
-      
-      if (sourceType != K_SOURCE_TYPE_CURL) {
-        # la variable contenant les données existe
-        
-        #
-        # Sauvegarder les données téléchargées au format RDS
-        #
-        
-        cat(paste0("Sauvegarde de (", UrlOrEuroStatNameToDownload,") dans (", fileRelPath, ")\n"))
-        
-        saveRDS(downloadedDatas, file = fileRelPath)
-        
-        downloadedDatas
-        
-      } else {
-        
-      }
-      
-    } else {
-      # l'URL est vide
-      
-    }
-  }
-  
+		UrlOrEuroStatNameToDownload = "",
+		fileRelPath = "", 
+		repertoire = "",
+		varName = "",
+		var, 
+		sep = ";") {
+	
+	downloadedDatas <- NULL;
+	
+	if (varName == "") {
+		
+		# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+		# qui a étépassé dans le parametre region
+		varName <- deparse(substitute(var))
+	}
+	
+	if (fileRelPath == "") {
+		# le path du fichier local n'est pas indiqué
+		
+		# Créer le répertoire
+		a__f_createDir(repertoire)
+		
+		# Créer le path du fichier RDS de sauvegarde
+		fileRelPath = paste0(file.path(repertoire, varName), ".RDS")
+		
+	} else {
+		# le path du fichier local est indiqué
+		
+		# RAF
+	}
+	
+	# Par défaut, on n'a pas encore téléchargé
+	downloaded = FALSE
+	
+	if (!shallForceDownload && exists(varName)) {
+		# La variable existe déjà dans le Contexte
+		
+		message(paste0("(", varName, ") existe déjà. On ne re-télécharge pas"))
+		
+		downloadedDatas <- var
+		
+		downloaded = TRUE		
+	} 
+	
+	if (!downloaded && !shallForceDownload && file.exists(fileRelPath)) {
+		# La variable n'existe pas, mais le fichier existe sur disque et on ne doit pas forcer le re-téléchargement
+		
+		message(paste0("Fichier (", fileRelPath, ") présent. On re-charge le fichier dans (", varName, "), sans le re-télécharger."))
+		
+		downloadedDatas <- loadLocalFile(fileRelPath = fileRelPath, sep = sep)
+		
+		downloaded = TRUE
+	}
+	
+	if (!downloaded) {
+		# Toujours pas encore téléchargé 
+		
+		#
+		# Re-télécharger
+		#
+		
+		if (nchar(UrlOrEuroStatNameToDownload) > 0) {
+			# Il y a une URL
+		
+			cat(paste0("Télécharger (", UrlOrEuroStatNameToDownload, ")\n"))
+		
+		
+			if (sourceType == K_SOURCE_TYPE_EUROSTAT)  {
+				# Source de type EuroStat
+				
+				# Télécharger depuis EuroStat
+				downloadedDatas <- get_eurostat(UrlOrEuroStatNameToDownload) 
+				
+				if (!is.null(downloadedDatas)) {
+					# On a réussi à télécharger une donnée
+				
+					downloadedDatas <- downloadedDatas %>%
+						# Reordonner les colonnes
+						select(geo, sex, age, time, everything()) %>%
+						# Trier les lignes selon les colonnes
+						arrange(geo, sex, age, time)
+				
+					downloaded = TRUE
+					
+				} else {
+					
+					# RAF
+				}
+				
+			} else if (sourceType == K_SOURCE_TYPE_CSV) {
+				# Source de type CSV
+				
+				# Charger le fichier CSV depuis son URL (crée un Tibble)
+				downloadedDatas <- read_csv(file = UrlOrEuroStatNameToDownload)
+				
+				downloaded = TRUE
+				
+			} else if (sourceType == K_SOURCE_TYPE_CURL) {
+				
+				# Télécharger avec CURL (sans le mettre dans une variable)
+				curl::curl_download(url = UrlOrEuroStatNameToDownload, 
+						destfile = fileRelPath, 
+						quiet = FALSE)
+				
+				downloaded = TRUE
+				
+				cat("\n")
+				
+				cat(paste0("Fichier (", fileRelPath, ") téléchargé.\n\n"))
+				
+			} else {
+				
+				message(paste0("ATTENTION : Fichier (", fileRelPath, ") de type inconnu. On ne peut pas le re-charger dans (", varName, ")."))
+			}
+			
+			if (sourceType != K_SOURCE_TYPE_CURL) {
+				# la variable contenant les données existe
+				
+				#
+				# Sauvegarder les données téléchargées au format RDS
+				#
+				
+				cat(paste0("Sauvegarde de (", UrlOrEuroStatNameToDownload,") dans (", fileRelPath, ")\n"))
+				
+				saveRDS(downloadedDatas, file = fileRelPath)
+				
+			} else {
+				
+			}
+			
+		} else {
+			# l'URL est vide
+			
+		}
+	}
+	
+	if (!downloaded && file.exists(fileRelPath)) {
+		# Toujours pas téléchargé mais le fichier existe sur disque
+		
+		message(paste0("Fichier (", fileRelPath, ") présent. On re-charge le fichier dans (", varName, "), sans le re-télécharger."))
+		
+		downloadedDatas <- loadLocalFile(fileRelPath = fileRelPath, sep = sep)
+		
+		downloaded = TRUE
+	}
+	
+	# Données chargées à renvoyer
+	downloadedDatas
+
 }
 
 ################################################################################
