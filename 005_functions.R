@@ -3570,7 +3570,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   #créer les tables à comparer et notamment la moyenne 2013-2019
   essai <- ungroup(es_deces_standard_pays_semaine) %>% 
     mutate(semaine = str_sub(time,6,8) , annee = as.numeric(str_sub(time,1,4)))%>% 
-    select(zone,numSemaineDepuis2013,semaine,annee,time,
+    select(numSemaineDepuis2013,semaine,annee,
            deces_tot_15_24,
            deces_tot_25_49,
            deces_tot_50_59,
@@ -3617,41 +3617,6 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
            Age60_69_dose3,
            Age70_79_dose3,
            `Age80+_dose3`,
-           deces_covid_0_24, 
-           deces_covid_0_4,
-           deces_covid_0_9,
-           deces_covid_10_19,
-           deces_covid_15_24,
-           deces_covid_20_29,
-           deces_covid_25_34,
-           deces_covid_25_44,
-           deces_covid_30_39,
-           deces_covid_35_44,
-           deces_covid_40_49,
-           deces_covid_45_54,
-           deces_covid_45_64,
-           deces_covid_5_14,
-           deces_covid_50_59,
-           deces_covid_55_64,
-           deces_covid_60_69,
-           deces_covid_65_74,
-           deces_covid_70_74,
-           deces_covid_70_79,
-           deces_covid_75_79,
-           deces_covid_75_84,
-           deces_covid_80_84,
-           deces_covid_80_89,
-           deces_covid_90_99,
-           deces_covid_80plus,
-           deces_covid_85_89,
-           deces_covid_85_94,
-           deces_covid_85plus,
-           deces_covid_90plus,
-           deces_covid_95plus,
-           deces_covid_100plus,
-           deces_covid_moins40,
-           deces_covid_moins50,
-           deces_covid_moins60,
            diff_deces_tot_predit_15_24,
            diff_deces_tot_predit_25_49,
            diff_deces_tot_predit_50_59,
@@ -3731,7 +3696,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
                     'espagne','estonie','finlande','france','grece','hongrie',
                     'islande','italie','luxembourg','malte','norvege',
-                    'pologne','portugal','suede')){  
+                    'pologne','portugal','suede','europe','synchro')){  
     
     essai <- essai %>% 
       mutate(barre_vax_15_24 = case_when(
@@ -3800,154 +3765,162 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     #Calculer la surmortalité depuis le début de la vaccination pour toutes les tranches d'âge
     
     #15-24
-    temp <-  essai %>% 
+    surmort_15_24_2021 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_15_24) %>% 
+             diff_15_24,semaine,predit_15_24) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_15_24) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021)
     
-    surmortalite_15_24_2021 = sum(temp$diff_15_24)
+    surmortalite_15_24_2021 = sum(surmort_15_24_2021$diff_15_24)
+    part_surmortalite_15_24_2021 = surmortalite_15_24_2021/sum(surmort_15_24_2021$predit_15_24)*100
     
-    temp <-  essai %>% 
+    surmort_15_24_2020 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_15_24) %>% 
+             diff_15_24,semaine) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_15_24-53) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021-53)
     
-    surmortalite_15_24_2020 = sum(temp$diff_15_24)
+    surmortalite_15_24_2020 = sum(surmort_15_24_2020$diff_15_24)
     
-    temp <-  essai %>% 
+    surmort_15_24_2019 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_15_24) %>% 
+             diff_15_24,semaine) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_15_24-106) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021-106)
     
-    surmortalite_15_24_2019= sum(temp$diff_15_24)
+    surmortalite_15_24_2019= sum(surmort_15_24_2019$diff_15_24)
     
-    #25-49
-    temp <-  essai %>% 
+   #25-49
+    surmort_25_49_2021 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_25_49) %>% 
+             diff_25_49,semaine,predit_25_49) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_25_49) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021)
     
-    surmortalite_25_49_2021 = sum(temp$diff_25_49)
-    
-    temp <-  essai %>% 
+    surmortalite_25_49_2021 = sum(surmort_25_49_2021$diff_25_49)
+
+    part_surmortalite_25_49_2021 = surmortalite_25_49_2021/sum(surmort_25_49_2021$predit_25_49)*100
+
+  
+    surmort_25_49_2020 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_25_49) %>% 
+             diff_25_49,semaine) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_25_49-53) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021-53)
     
-    surmortalite_25_49_2020 = sum(temp$diff_25_49)
+    surmortalite_25_49_2020 = sum(surmort_25_49_2020$diff_25_49)
     
-    temp <-  essai %>% 
+    surmort_25_49_2019 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_25_49) %>% 
+             diff_25_49,semaine) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_25_49-106) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021-106)
     
-    surmortalite_25_49_2019 = sum(temp$diff_25_49)
+    surmortalite_25_49_2019 = sum(surmort_25_49_2019$diff_25_49)
     
     #50-59
-    temp <-  essai %>% 
+    surmort_50_59_2021 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_50_59) %>% 
+             diff_50_59,semaine,predit_50_59) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_50_59) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021)
     
-    surmortalite_50_59_2021 = sum(temp$diff_50_59)
+    surmortalite_50_59_2021 = sum(surmort_50_59_2021$diff_50_59)
+    part_surmortalite_50_59_2021 = surmortalite_50_59_2021/sum(surmort_50_59_2021$predit_50_59)*100
     
-    temp <-  essai %>% 
+    surmort_50_59_2020 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_50_59) %>% 
+             diff_50_59,semaine) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_50_59-53) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021-53)
     
-    surmortalite_50_59_2020 = sum(temp$diff_50_59)
+    surmortalite_50_59_2020 = sum(surmort_50_59_2020$diff_50_59)
     
-    temp <-  essai %>% 
+    surmort_50_59_2019 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_50_59) %>% 
+             diff_50_59,semaine) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_50_59-106) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021-106)
     
-    surmortalite_50_59_2019 = sum(temp$diff_50_59)
+    surmortalite_50_59_2019 = sum(surmort_50_59_2019$diff_50_59)
     
     #60-69
-    temp <-  essai %>% 
+    surmort_60_69_2021 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_60_69) %>% 
+             diff_60_69,semaine,predit_60_69) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_60_69) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021)
     
-    surmortalite_60_69_2021 = sum(temp$diff_60_69)
+    surmortalite_60_69_2021 = sum(surmort_60_69_2021$diff_60_69)
+    part_surmortalite_60_69_2021 = surmortalite_60_69_2021/sum(surmort_60_69_2021$predit_60_69)*100
     
-    temp <-  essai %>% 
+    surmort_60_69_2020 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_60_69) %>% 
+             diff_60_69,semaine) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_60_69-53) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021-53)
     
-    surmortalite_60_69_2020 = sum(temp$diff_60_69)
+    surmortalite_60_69_2020 = sum(surmort_60_69_2020$diff_60_69)
     
-    temp <-  essai %>% 
+    surmort_60_69_2019 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_60_69) %>% 
+             diff_60_69,semaine) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_60_69-106) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021-106)
     
-    surmortalite_60_69_2019 = sum(temp$diff_60_69)
+    surmortalite_60_69_2019 = sum(surmort_60_69_2019$diff_60_69)
     
     #70-79
-    temp <-  essai %>% 
+    surmort_70_79_2021 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_70_79) %>% 
+             diff_70_79,semaine,predit_70_79) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_70_79) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021)
     
-    surmortalite_70_79_2021 = sum(temp$diff_70_79)
+    surmortalite_70_79_2021 = sum(surmort_70_79_2021$diff_70_79)
+    part_surmortalite_70_79_2021 = surmortalite_70_79_2021/sum(surmort_70_79_2021$predit_70_79)*100
     
-    temp <-  essai %>% 
+    surmort_70_79_2020 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_70_79) %>% 
+             diff_70_79,semaine) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_70_79-53) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021-53)
     
-    surmortalite_70_79_2020 = sum(temp$diff_70_79)
+    surmortalite_70_79_2020 = sum(surmort_70_79_2020$diff_70_79)
     
-    temp <-  essai %>% 
+    surmort_70_79_2019 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_70_79) %>% 
+             diff_70_79,semaine) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_70_79-106) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021-106)
     
-    surmortalite_70_79_2019 = sum(temp$diff_70_79)
+    surmortalite_70_79_2019 = sum(surmort_70_79_2019$diff_70_79)
     
     #plus80
-    temp <-  essai %>% 
+    surmort_ge80_2021 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_ge80) %>% 
+             diff_ge80,semaine,predit_plus_80) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_ge80) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021)
     
-    surmortalite_ge80_2021 = sum(temp$diff_ge80)
+    surmortalite_ge80_2021 = sum(surmort_ge80_2021$diff_ge80)
+    part_surmortalite_ge80_2021 = surmortalite_ge80_2021/sum(surmort_ge80_2021$predit_plus_80)*100
     
-    temp <-  essai %>% 
+    surmort_ge80_2020 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_ge80) %>% 
+             diff_ge80,semaine) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_ge80-53) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021-53)
     
-    surmortalite_ge80_2020 = sum(temp$diff_ge80)
+    surmortalite_ge80_2020 = sum(surmort_ge80_2020$diff_ge80)
     
-    temp <-  essai %>% 
+    surmort_ge80_2019 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_ge80) %>% 
+             diff_ge80,semaine) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_ge80-106) %>% 
       filter(numSemaineDepuis2013 <= date_fin_2021-106)
     
-    surmortalite_ge80_2019 = sum(temp$diff_ge80)
+    surmortalite_ge80_2019 = sum(surmort_ge80_2019$diff_ge80)
     
     #Faire les corrélations de Spearman pour toutes les tranches d'âge
     
@@ -4018,7 +3991,85 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     periode_ge80 <- decalage %>% filter(numSemaineDepuis2013 >= date_debut_2021_ge80)
     resge80 <-cor.test(periode_ge80$moyenne_mobile_ge80 ,periode_ge80$`Age80+`,method="spearman") 
     
-  }
+  
+  
+  #Faire les test de Wilcoxon pour toutes les tranches d'âge
+
+    #15_24
+  surmort_15_24_2021 <- surmort_15_24_2021 %>% mutate(diff_15_24_2021=diff_15_24) %>% select(diff_15_24_2021,semaine)
+  surmort_15_24_2020 <- surmort_15_24_2020 %>% mutate(diff_15_24_2020=diff_15_24) %>% select(diff_15_24_2020,semaine)
+  surmort_15_24_2019 <- surmort_15_24_2019 %>% mutate(diff_15_24_2019=diff_15_24) %>% select(diff_15_24_2019,semaine)
+  
+  regroup_15_24 <- surmort_15_24_2021 %>% left_join(surmort_15_24_2020, by='semaine') %>% 
+    left_join(surmort_15_24_2019, by='semaine')
+  
+  wilcox15_24_21_20 <- wilcox.test(regroup_15_24$diff_15_24_2021,regroup_15_24$diff_15_24_2020, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox15_24_21_19 <- wilcox.test(regroup_15_24$diff_15_24_2021,regroup_15_24$diff_15_24_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox15_24_20_19 <- wilcox.test(regroup_15_24$diff_15_24_2020,regroup_15_24$diff_15_24_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  
+  #25_49
+  surmort_25_49_2021 <- surmort_25_49_2021 %>% mutate(diff_25_49_2021=diff_25_49) %>% select(diff_25_49_2021,semaine)
+  surmort_25_49_2020 <- surmort_25_49_2020 %>% mutate(diff_25_49_2020=diff_25_49) %>% select(diff_25_49_2020,semaine)
+  surmort_25_49_2019 <- surmort_25_49_2019 %>% mutate(diff_25_49_2019=diff_25_49) %>% select(diff_25_49_2019,semaine)
+  
+  regroup_25_49 <- surmort_25_49_2021 %>% left_join(surmort_25_49_2020, by='semaine') %>% 
+    left_join(surmort_25_49_2019, by='semaine')
+  
+  wilcox25_49_21_20 <- wilcox.test(regroup_25_49$diff_25_49_2021,regroup_25_49$diff_25_49_2020, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox25_49_21_19 <- wilcox.test(regroup_25_49$diff_25_49_2021,regroup_25_49$diff_25_49_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox25_49_20_19 <- wilcox.test(regroup_25_49$diff_25_49_2020,regroup_25_49$diff_25_49_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  
+  #50_59
+  surmort_50_59_2021 <- surmort_50_59_2021 %>% mutate(diff_50_59_2021=diff_50_59) %>% select(diff_50_59_2021,semaine)
+  surmort_50_59_2020 <- surmort_50_59_2020 %>% mutate(diff_50_59_2020=diff_50_59) %>% select(diff_50_59_2020,semaine)
+  surmort_50_59_2019 <- surmort_50_59_2019 %>% mutate(diff_50_59_2019=diff_50_59) %>% select(diff_50_59_2019,semaine)
+  
+  regroup_50_59 <- surmort_50_59_2021 %>% left_join(surmort_50_59_2020, by='semaine') %>% 
+    left_join(surmort_50_59_2019, by='semaine')
+  
+  wilcox50_59_21_20 <- wilcox.test(regroup_50_59$diff_50_59_2021,regroup_50_59$diff_50_59_2020, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox50_59_21_19 <- wilcox.test(regroup_50_59$diff_50_59_2021,regroup_50_59$diff_50_59_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox50_59_20_19 <- wilcox.test(regroup_50_59$diff_50_59_2020,regroup_50_59$diff_50_59_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  
+  #60_69
+  surmort_60_69_2021 <- surmort_60_69_2021 %>% mutate(diff_60_69_2021=diff_60_69) %>% select(diff_60_69_2021,semaine)
+  surmort_60_69_2020 <- surmort_60_69_2020 %>% mutate(diff_60_69_2020=diff_60_69) %>% select(diff_60_69_2020,semaine)
+  surmort_60_69_2019 <- surmort_60_69_2019 %>% mutate(diff_60_69_2019=diff_60_69) %>% select(diff_60_69_2019,semaine)
+  
+  regroup_60_69 <- surmort_60_69_2021 %>% left_join(surmort_60_69_2020, by='semaine') %>% 
+    left_join(surmort_60_69_2019, by='semaine')
+  
+  wilcox60_69_21_20 <- wilcox.test(regroup_60_69$diff_60_69_2021,regroup_60_69$diff_60_69_2020, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox60_69_21_19 <- wilcox.test(regroup_60_69$diff_60_69_2021,regroup_60_69$diff_60_69_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox60_69_20_19 <- wilcox.test(regroup_60_69$diff_60_69_2020,regroup_60_69$diff_60_69_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  
+  #70_79
+  surmort_70_79_2021 <- surmort_70_79_2021 %>% mutate(diff_70_79_2021=diff_70_79) %>% select(diff_70_79_2021,semaine)
+  surmort_70_79_2020 <- surmort_70_79_2020 %>% mutate(diff_70_79_2020=diff_70_79) %>% select(diff_70_79_2020,semaine)
+  surmort_70_79_2019 <- surmort_70_79_2019 %>% mutate(diff_70_79_2019=diff_70_79) %>% select(diff_70_79_2019,semaine)
+  
+  regroup_70_79 <- surmort_70_79_2021 %>% left_join(surmort_70_79_2020, by='semaine') %>% 
+    left_join(surmort_70_79_2019, by='semaine')
+  
+  wilcox70_79_21_20 <- wilcox.test(regroup_70_79$diff_70_79_2021,regroup_70_79$diff_70_79_2020, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox70_79_21_19 <- wilcox.test(regroup_70_79$diff_70_79_2021,regroup_70_79$diff_70_79_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox70_79_20_19 <- wilcox.test(regroup_70_79$diff_70_79_2020,regroup_70_79$diff_70_79_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  
+  #ge80
+  surmort_ge80_2021 <- surmort_ge80_2021 %>% mutate(diff_ge80_2021=diff_ge80) %>% select(diff_ge80_2021,semaine)
+  surmort_ge80_2020 <- surmort_ge80_2020 %>% mutate(diff_ge80_2020=diff_ge80) %>% select(diff_ge80_2020,semaine)
+  surmort_ge80_2019 <- surmort_ge80_2019 %>% mutate(diff_ge80_2019=diff_ge80) %>% select(diff_ge80_2019,semaine)
+  
+  regroup_ge80 <- surmort_ge80_2021 %>% left_join(surmort_ge80_2020, by='semaine') %>% 
+    left_join(surmort_ge80_2019, by='semaine')
+  
+  wilcoxge80_21_20 <- wilcox.test(regroup_ge80$diff_ge80_2021,regroup_ge80$diff_ge80_2020, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcoxge80_21_19 <- wilcox.test(regroup_ge80$diff_ge80_2021,regroup_ge80$diff_ge80_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcoxge80_20_19 <- wilcox.test(regroup_ge80$diff_ge80_2020,regroup_ge80$diff_ge80_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+
+
+}
+
   
   essai_court<-essai %>% filter(numSemaineDepuis2013>314)
   
@@ -4115,7 +4166,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       'norvege',
       'pologne',
       'portugal',
-      'suede'
+      'suede','europe','synchro'
     )) {
       histo_deces <- ggplot(essai_court) +
         geom_col(aes(x = numSemaineDepuis2013, y = diff_15_24, fill = pos15_24)) +
@@ -4138,7 +4189,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
         xlab(
           paste0(
             "surmortalité depuis le début de la vaccination en 2021 : ",
-            floor(surmortalite_15_24_2021),
+            floor(surmortalite_15_24_2021),"  (",floor(part_surmortalite_15_24_2021),"%)",
             "          (soit ",floor(surmortalite_15_24_2021/base::max(essai_court$cumul_15_24_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
             "  \n même période en 2020 : ",
             floor(surmortalite_15_24_2020),
@@ -4178,7 +4229,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
         scale_fill_manual(values = c("darkgreen", "red")) +
         geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_15_24),color = "#0066CC", size = 1) +
         geom_vline(xintercept = c(366, 419)) +
-        xlab("annee") +
+        xlab("") +
         ylab("Différence entre décès constatés \n et décès attendus") +
         geom_text(x = 339,
                   y = base::min(essai$diff_15_24),
@@ -4189,7 +4240,6 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
         geom_text(x = 440,
                   y = base::min(essai$diff_15_24),
                   label = "2021") +
-        xlab("annee") +
         ggtitle(
           paste0(
             "Ecart des décès hebdomadaires des 15-24 ans par rapport à l'attendu ",
@@ -4221,7 +4271,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
                       'espagne','estonie','finlande','france','grece','hongrie',
                       'islande','italie','luxembourg','malte','norvege',
-                      'pologne','portugal','suede')){
+                      'pologne','portugal','suede','europe','synchro')){
       
       courbes_vaccins<-ggplot(essai_court)+
         theme(axis.text.x = element_blank()) +
@@ -4234,7 +4284,12 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
         geom_text(x=339, y=0, label="2019")+
         geom_text(x=391, y=0, label="2020")+
         geom_text(x=440, y=0, label="2021")+
-        xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res15_24$estimate*100),"     p-value : " ,res15_24$p.value ))+
+        geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
+        geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
+        geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+        xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res15_24$estimate*100),"     p-value : " ,res15_24$p.value ,
+             "\n test Wilcoxon 2021/2020 : ",wilcox15_24_21_20$statistic,"  p-value : ",format(wilcox15_24_21_20$p.value, scientific=TRUE, digits=3),
+             "       2021/2019 : ",wilcox15_24_21_19$statistic,"  p-value : ",format(wilcox15_24_21_19$p.value, scientific=TRUE, digits=3)))+
         ylab("Part d'injections \n dans la population")+ 
         theme(legend.position = "none")+
         annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
@@ -4416,7 +4471,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     'norvege',
     'pologne',
     'portugal',
-    'suede'
+    'suede','europe','synchro'
   )) {
     histo_deces <- ggplot(essai_court) +
       theme(axis.text.x = element_blank()) +
@@ -4440,12 +4495,12 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
         paste0(
           "surmortalité depuis le début de la vaccination en 2021 : ",
           floor(surmortalite_25_49_2021),
+          "  (",floor(part_surmortalite_25_49_2021),"%)",
           "          (soit ",floor(surmortalite_25_49_2021/base::max(essai_court$cumul_25_49_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
           "  \n même période en 2020 : ",
           floor(surmortalite_25_49_2020),
           "           même période en 2019 : ",
-          floor(surmortalite_25_49_2019)
-        )
+          floor(surmortalite_25_49_2019))
       ) +
       ggtitle(
         paste0(
@@ -4479,7 +4534,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       scale_fill_manual(values = c("darkgreen", "red")) +
       geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_25_49),color = "#0066CC", size = 1) +
       geom_vline(xintercept = c(366, 419)) +
-      xlab("annee") +
+      xlab("") +
       ylab("Différence entre décès constatés \n et décès attendus") +
       geom_text(x = 339,
                 y = base::min(essai$diff_25_49),
@@ -4490,7 +4545,6 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x = 440,
                 y = base::min(essai$diff_25_49),
                 label = "2021") +
-      xlab("annee") +
       ggtitle(
         paste0(
           "Ecart des décès hebdomadaires des 25-49 ans par rapport à l'attendu ",
@@ -4522,7 +4576,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
                     'espagne','estonie','finlande','france','grece','hongrie',
                     'islande','italie','luxembourg','malte','norvege',
-                    'pologne','portugal','suede')){
+                    'pologne','portugal','suede','europe','synchro')){
     
     courbes_vaccins<-ggplot(essai_court)+
       theme(axis.text.x = element_blank()) +
@@ -4535,7 +4589,13 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x=339, y=0, label="2019")+
       geom_text(x=391, y=0, label="2020")+
       geom_text(x=440, y=0, label="2021")+
-      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res25_49$estimate*100),"      p-value : " ,res25_49$p.value))+
+      geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
+      geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
+      geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res25_49$estimate*100),"      p-value : " ,res25_49$p.value,
+           "\n test Wilcoxon 2021/2020 : ",wilcox25_49_21_20$statistic,"  p-value : ",format(wilcox25_49_21_20$p.value, scientific=TRUE, digits=3),
+           "       2021/2019 : ",wilcox25_49_21_19$statistic,"  p-value : ",format(wilcox25_49_21_19$p.value, scientific=TRUE, digits=3))
+      )+
       ylab("Part d'injections \n dans la population")+ 
       theme(legend.position = "none")+
       annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
@@ -4653,7 +4713,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     'norvege',
     'pologne',
     'portugal',
-    'suede'
+    'suede','europe','synchro'
   )) {
     histo_deces <- ggplot(essai_court) +
       theme(axis.text.x = element_blank()) +
@@ -4677,6 +4737,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
         paste0(
           "surmortalité depuis le début de la vaccination en 2021 : ",
           floor(surmortalite_50_59_2021),
+          "  (",floor(part_surmortalite_50_59_2021),"%)",
           "          (soit ",floor(surmortalite_50_59_2021/base::max(essai_court$cumul_50_59_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
           "  \n même période en 2020 : ",
           floor(surmortalite_50_59_2020),
@@ -4686,7 +4747,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       ) +
       ggtitle(
         paste0(
-          "Ecart des décès hebdomadaires des 50-49 ans par rapport à l'attendu ",
+          "Ecart des décès hebdomadaires des 50-59 ans par rapport à l'attendu ",
           str_to_title(nomPays)
         )
       ) +
@@ -4716,7 +4777,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       scale_fill_manual(values = c("darkgreen", "red")) +
       geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_50_59),color = "#0066CC", size = 1) +
       geom_vline(xintercept = c(366, 419)) +
-      xlab("annee") +
+      xlab("") +
       ylab("Différence entre décès constatés \n et décès attendus") +
       geom_text(x = 339,
                 y = base::min(essai$diff_50_59),
@@ -4727,7 +4788,6 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x = 440,
                 y = base::min(essai$diff_50_59),
                 label = "2021") +
-      xlab("annee") +
       ggtitle(
         paste0(
           "Ecart des décès hebdomadaires des 50-59 ans par rapport à l'attendu ",
@@ -4759,7 +4819,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
                     'espagne','estonie','finlande','france','grece','hongrie',
                     'islande','italie','luxembourg','malte','norvege',
-                    'pologne','portugal','suede')){
+                    'pologne','portugal','suede','europe','synchro')){
     
     courbes_vaccins<-ggplot(essai_court)+
       theme(axis.text.x = element_blank()) +
@@ -4772,7 +4832,12 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x=339, y=0, label="2019")+
       geom_text(x=391, y=0, label="2020")+
       geom_text(x=440, y=0, label="2021")+
-      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res50_59$estimate*100),"     p-value : " ,res50_59$p.value))+
+      geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
+      geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
+      geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res50_59$estimate*100),"     p-value : " ,res50_59$p.value,
+           "\n test Wilcoxon 2021/2020 : ",wilcox50_59_21_20$statistic,"  p-value : ",format(wilcox50_59_21_20$p.value, scientific=TRUE, digits=3),
+           "       2021/2019 : ",wilcox50_59_21_19$statistic,"  p-value : ",format(wilcox50_59_21_19$p.value, scientific=TRUE, digits=3)))+
       ylab("Part d'injections \n dans la population")+ 
       theme(legend.position = "none")+
       annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
@@ -4891,7 +4956,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     'norvege',
     'pologne',
     'portugal',
-    'suede'
+    'suede','europe','synchro'
   )) {
     histo_deces <- ggplot(essai_court) +
       theme(axis.text.x = element_blank()) +
@@ -4915,12 +4980,12 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
         paste0(
           "surmortalité depuis le début de la vaccination en 2021 : ",
           floor(surmortalite_60_69_2021),
+          "  (",floor(part_surmortalite_60_69_2021),"%)",
           "          (soit ",floor(surmortalite_60_69_2021/base::max(essai_court$cumul_60_69_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
           "  \n même période en 2020 : ",
           floor(surmortalite_60_69_2020),
           "           même période en 2019 : ",
-          floor(surmortalite_60_69_2019)
-        )
+          floor(surmortalite_60_69_2019))
       ) +
       ggtitle(
         paste0(
@@ -4954,7 +5019,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       scale_fill_manual(values = c("darkgreen", "red")) +
       geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_60_69),color = "#0066CC", size = 1) +
       geom_vline(xintercept = c(366, 419)) +
-      xlab("annee") +
+      xlab("") +
       ylab("Différence entre décès constatés \n et décès attendus") +
       geom_text(x = 339,
                 y = base::min(essai$diff_60_69),
@@ -4965,7 +5030,6 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x = 440,
                 y = base::min(essai$diff_60_69),
                 label = "2021") +
-      xlab("annee") +
       ggtitle(
         paste0(
           "Ecart des décès hebdomadaires des 60-69 ans par rapport à l'attendu ",
@@ -4997,7 +5061,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
                     'espagne','estonie','finlande','france','grece','hongrie',
                     'islande','italie','luxembourg','malte','norvege',
-                    'pologne','portugal','suede')){
+                    'pologne','portugal','suede','europe','synchro')){
     
     courbes_vaccins<-ggplot(essai_court)+
       theme(axis.text.x = element_blank()) +
@@ -5010,7 +5074,13 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x=339, y=0, label="2019")+
       geom_text(x=391, y=0, label="2020")+
       geom_text(x=440, y=0, label="2021")+
-      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res60_69$estimate*100),"     p-value : " ,res60_69$p.value))+
+      geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
+      geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
+      geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res60_69$estimate*100),"     p-value : " ,res60_69$p.value,
+           "\n test Wilcoxon 2021/2020 : ",wilcox60_69_21_20$statistic,"  p-value : ",format(wilcox60_69_21_20$p.value, scientific=TRUE, digits=3),
+           "       2021/2019 : ",wilcox60_69_21_19$statistic,"  p-value : ",format(wilcox60_69_21_19$p.value, scientific=TRUE, digits=3))
+      )+
       ylab("Part d'injections \n dans la population")+ 
       theme(legend.position = "none")+
       annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
@@ -5128,7 +5198,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     'norvege',
     'pologne',
     'portugal',
-    'suede'
+    'suede','europe','synchro'
   )) {
     histo_deces <- ggplot(essai_court) +
       theme(axis.text.x = element_blank()) +
@@ -5152,11 +5222,12 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
         paste0(
           "surmortalité depuis le début de la vaccination en 2021 : ",
           floor(surmortalite_70_79_2021),
+          "  (",floor(part_surmortalite_70_79_2021),"%)",
           "          (soit ",floor(surmortalite_70_79_2021/base::max(essai_court$cumul_70_79_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
           "  \n même période en 2020 : ",
           floor(surmortalite_70_79_2020),
           "           même période en 2019 : ",
-          floor(surmortalite_70_79_2019)
+          floor(surmortalite_70_79_2019)          
         )
       ) +
       ggtitle(
@@ -5191,7 +5262,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       scale_fill_manual(values = c("darkgreen", "red")) +
       geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_70_79),color = "#0066CC", size = 1) +
       geom_vline(xintercept = c(366, 419)) +
-      xlab("annee") +
+      xlab("")+
       ylab("Différence entre décès constatés \n et décès attendus") +
       geom_text(x = 339,
                 y = base::min(essai$diff_70_79),
@@ -5202,7 +5273,6 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x = 440,
                 y = base::min(essai$diff_70_79),
                 label = "2021") +
-      xlab("annee") +
       ggtitle(
         paste0(
           "Ecart des décès hebdomadaires des 70-79 ans par rapport à l'attendu ",
@@ -5234,7 +5304,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
                     'espagne','estonie','finlande','france','grece','hongrie',
                     'islande','italie','luxembourg','malte','norvege',
-                    'pologne','portugal','suede')){
+                    'pologne','portugal','suede','europe','synchro')){
     
     courbes_vaccins<-ggplot(essai_court)+
       theme(axis.text.x = element_blank()) +
@@ -5247,7 +5317,13 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x=339, y=0, label="2019")+
       geom_text(x=391, y=0, label="2020")+
       geom_text(x=440, y=0, label="2021")+
-      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res70_79$estimate*100),"     p-value : " ,res70_79$p.value))+
+      geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
+      geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
+      geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res70_79$estimate*100),"     p-value : " ,res70_79$p.value,
+           "\n test Wilcoxon 2021/2020 : ",wilcox70_79_21_20$statistic,"  p-value : ",format(wilcox70_79_21_20$p.value, scientific=TRUE, digits=3),
+           "       2021/2019 : ",wilcox70_79_21_19$statistic,"  p-value : ",format(wilcox70_79_21_19$p.value, scientific=TRUE, digits=3))
+      )+
       ylab("Part d'injections \n dans la population")+ 
       theme(legend.position = "none")+
       annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
@@ -5351,7 +5427,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
                     'espagne','estonie','finlande','france','grece','hongrie',
                     'islande','italie','luxembourg','malte','norvege',
-                    'pologne','portugal','suede')){
+                    'pologne','portugal','suede','europe','synchro')){
   histo_deces<-ggplot(essai_court)+
     theme(axis.text.x = element_blank()) +
     geom_col(aes(x=numSemaineDepuis2013,y=diff_ge80,fill=posge80))+
@@ -5361,9 +5437,13 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     geom_text(x=339, y=base::min(essai_court$diff_ge80), label="2019")+
     geom_text(x=391, y=base::min(essai_court$diff_ge80), label="2020")+
     geom_text(x=440, y=base::min(essai_court$diff_ge80), label="2021")+
+    geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
+    geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
+    geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
     geom_vline(xintercept = floor(date_debut_2021_ge80), colour="#336666", linetype = "longdash")+
     geom_text(x=floor(date_debut_2021_ge80), y=base::max(essai_court$diff_ge80), label="début vaccination", color="#336666")+
     xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",floor(surmortalite_ge80_2021),
+                "  (",floor(part_surmortalite_ge80_2021),"%)",
                 "          (soit ",floor(surmortalite_ge80_2021/base::max(essai_court$cumul_ge80_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
                 "  \n même période en 2020 : ",floor(surmortalite_ge80_2020),
                 "           même période en 2019 : ",floor(surmortalite_ge80_2019)))+
@@ -5387,7 +5467,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x=339, y=base::min(essai_court$diff_ge80), label="2019")+
       geom_text(x=391, y=base::min(essai_court$diff_ge80), label="2020")+
       geom_text(x=440, y=base::min(essai_court$diff_ge80), label="2021")+
-      xlab("annee")+
+      xlab("")+
       ylab("Différence entre décès constatés \n et décès attendus")+
       theme(legend.position = "none")+
       annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
@@ -5404,7 +5484,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
                     'espagne','estonie','finlande','france','grece','hongrie',
                     'islande','italie','luxembourg','malte','norvege',
-                    'pologne','portugal','suede')){
+                    'pologne','portugal','suede','europe','synchro')){
     courbes_vaccins<-ggplot(essai_court)+
       theme(axis.text.x = element_blank()) +
       geom_line(aes(x=numSemaineDepuis2013,y=(`Age80+`)/pop_week_ge80),col="#999999",size=2, linetype = "dotted")+
@@ -5416,7 +5496,13 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x=339, y=0, label="2019")+
       geom_text(x=391, y=0, label="2020")+
       geom_text(x=440, y=0, label="2021")+
-      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(resge80$estimate*100),"     p-value : " ,resge80$p.value))+
+      geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
+      geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
+      geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(resge80$estimate*100),"     p-value : " ,resge80$p.value,
+           "\n test Wilcoxon 2021/2020 : ",wilcoxge80_21_20$statistic,"  p-value : ",format(wilcoxge80_21_20$p.value, scientific=TRUE, digits=3),
+           "       2021/2019 : ",wilcoxge80_21_19$statistic,"  p-value : ",format(wilcoxge80_21_19$p.value, scientific=TRUE, digits=3))
+      )+
       ylab("Part d'injections \n dans la population")+ 
       theme(legend.position = "none")+
       annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
@@ -5436,7 +5522,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
                     ncol=1, nrow=2)
   }else{a<-histo_deces}
   
-  pngFileRelPath <- paste0(repertoire,"difference_2_semaines_plus_80_", nomPays, ".png")
+  pngFileRelPath <- paste0(repertoire,"difference_plus_80_", nomPays, ".png")
   ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
   
   
