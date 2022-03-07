@@ -695,6 +695,18 @@ es_deces_standard_pays_semaine_europe <- b__es_deces_week_standardises_si_pop_20
          deces_tot_60_69,
          deces_tot_70_79,
          deces_tot_plus_80,
+         deces_standardises_si_pop_2020_15_24,
+         deces_standardises_si_pop_2020_25_49,
+         deces_standardises_si_pop_2020_50_59,
+         deces_standardises_si_pop_2020_60_69,
+         deces_standardises_si_pop_2020_70_79,
+         deces_standardises_si_pop_2020_ge80,
+         predit_stand_15_24,
+         predit_stand_25_49,
+         predit_stand_50_59,
+         predit_stand_60_69,
+         predit_stand_70_79,
+         predit_stand_plus_80,
          predit_15_24,
          predit_25_49,
          predit_50_59,
@@ -740,7 +752,13 @@ es_deces_standard_pays_semaine_europe <- b__es_deces_week_standardises_si_pop_20
          diff_deces_tot_predit_50_59,
          diff_deces_tot_predit_60_69,
          diff_deces_tot_predit_70_79,
-         diff_deces_tot_predit_ge80)
+         diff_deces_tot_predit_ge80,
+         diff_deces_tot_predit_stand_15_24,
+         diff_deces_tot_predit_stand_25_49,
+         diff_deces_tot_predit_stand_50_59,
+         diff_deces_tot_predit_stand_60_69,
+         diff_deces_tot_predit_stand_70_79,
+         diff_deces_tot_predit_stand_ge80)
 
 
 es_deces_standard_pays_semaine_europe <-es_deces_standard_pays_semaine_europe %>% 
@@ -748,6 +766,18 @@ es_deces_standard_pays_semaine_europe <-es_deces_standard_pays_semaine_europe %>
   summarise(semaine=base::min(semaine,na.rm=TRUE),
             annee=base::min(semaine,na.rm=TRUE),
             time=base::min(time),
+            deces_standardises_si_pop_2020_15_24=sum(deces_standardises_si_pop_2020_15_24),
+            deces_standardises_si_pop_2020_25_49=sum(deces_standardises_si_pop_2020_25_49),
+            deces_standardises_si_pop_2020_50_59=sum(deces_standardises_si_pop_2020_50_59),
+            deces_standardises_si_pop_2020_60_69=sum(deces_standardises_si_pop_2020_60_69),
+            deces_standardises_si_pop_2020_70_79=sum(deces_standardises_si_pop_2020_70_79),
+            deces_standardises_si_pop_2020_ge80=sum(deces_standardises_si_pop_2020_ge80),
+            predit_stand_15_24=sum(predit_stand_15_24),
+            predit_stand_25_49=sum(predit_stand_25_49),
+            predit_stand_50_59=sum(predit_stand_50_59),
+            predit_stand_60_69=sum(predit_stand_60_69),
+            predit_stand_70_79=sum(predit_stand_70_79),
+            predit_stand_plus_80=sum(predit_stand_plus_80),
             deces_tot_15_24=sum(deces_tot_15_24),
             deces_tot_25_49=sum(deces_tot_25_49),
             deces_tot_50_59=sum(deces_tot_50_59),
@@ -799,9 +829,16 @@ es_deces_standard_pays_semaine_europe <-es_deces_standard_pays_semaine_europe %>
             diff_deces_tot_predit_50_59=sum(diff_deces_tot_predit_50_59),
             diff_deces_tot_predit_60_69=sum(diff_deces_tot_predit_60_69),
             diff_deces_tot_predit_70_79=sum(diff_deces_tot_predit_70_79),
-            diff_deces_tot_predit_ge80=sum(diff_deces_tot_predit_ge80)) %>% 
+            diff_deces_tot_predit_ge80=sum(diff_deces_tot_predit_ge80),
+            diff_deces_tot_predit_stand_15_24=sum(diff_deces_tot_predit_stand_15_24),
+            diff_deces_tot_predit_stand_25_49=sum(diff_deces_tot_predit_stand_25_49),
+            diff_deces_tot_predit_stand_50_59=sum(diff_deces_tot_predit_stand_50_59),
+            diff_deces_tot_predit_stand_60_69=sum(diff_deces_tot_predit_stand_60_69),
+            diff_deces_tot_predit_stand_70_79=sum(diff_deces_tot_predit_stand_70_79),
+            diff_deces_tot_predit_stand_ge80=sum(diff_deces_tot_predit_stand_ge80))%>% 
   mutate(Response_measure ='NA')
 
+a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_europe)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_europe)
 
 
@@ -834,7 +871,7 @@ for (pays in c('autriche','belgique','croatie','danmark','espagne',
                'italie','malte','norvege','pologne','portugal',
                'suede','europe')){
 
-  nom_table_spearman <- paste0("gen/rds/table_spearman_",pays,".RDS")
+  nom_table_spearman <- paste0("gen/rds/table_spearman_stand_",pays,".RDS")
   table_spearman_en_cours <- readRDS(file = nom_table_spearman)
   table_spearman_en_cours <- table_spearman_en_cours %>% 
     mutate(`p-value significative` = ifelse((`p-value de Spearman`)<0.05,TRUE,FALSE),
@@ -845,7 +882,7 @@ for (pays in c('autriche','belgique','croatie','danmark','espagne',
                                         `p-value significative` = icon_formatter(),
                                         `sens de l'estimateur` = arrow_formatter()))
   
-  nom_table_wilcoxon <- paste0("gen/rds/table_wilcoxon_",pays,".RDS")
+  nom_table_wilcoxon <- paste0("gen/rds/table_wilcoxon_stand_",pays,".RDS")
   table_wilcoxon_en_cours <- readRDS(file = nom_table_wilcoxon)
   table_wilcoxon_en_cours <- table_wilcoxon_en_cours %>% 
     mutate(`p-value significative` = ifelse((`p-value de Wilcoxon 2021-2020`)<0.05,TRUE,FALSE))
