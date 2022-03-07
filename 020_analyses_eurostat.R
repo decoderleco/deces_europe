@@ -191,41 +191,44 @@ es_annne_deces_maximum_autre <- es_annne_deces_maximum %>%
 #période de 2 ans
 
 deces_complet_annuel_analysable2000 <- deces_complet_annuel_analysable2000 %>%
-		mutate(deuxannees = case_when(time == "2001-01-01"~ "2001-2002",
-						time == "2002-01-01"~ "2001-2002",
-						time == "2003-01-01"~ "2003-2004",
-						time == "2004-01-01"~ "2003-2004",
-						time == "2005-01-01"~ "2005-2006",
-						time == "2006-01-01"~ "2005-2006",
-						time == "2007-01-01"~ "2007-2008",
-						time == "2008-01-01"~ "2007-2008",
-						time == "2009-01-01"~ "2009-2010",
-						time == "2010-01-01"~ "2009-2010",
-						time == "2011-01-01"~ "2011-2012",
-						time == "2012-01-01"~ "2011-2012",
-						time == "2013-01-01"~ "2013-2014",
-						time == "2014-01-01"~ "2013-2014",
-						time == "2015-01-01"~ "2015-2016",
-						time == "2016-01-01"~ "2015-2016",
-						time == "2017-01-01"~ "2017-2018",
-						time == "2018-01-01"~ "2017-2018",
-						time == "2019-01-01"~ "2019-2020",
-						time == "2020-01-01"~ "2019-2020", ))
+		mutate(deuxannees = case_when(
+		  time == "2000-01-01"~ "2000-2001",
+		  time == "2001-01-01"~ "2000-2001",
+						time == "2002-01-01"~ "2002-2003",
+						time == "2003-01-01"~ "2002-2003",
+						time == "2004-01-01"~ "2004-2005",
+						time == "2005-01-01"~ "2004-2005",
+						time == "2006-01-01"~ "2006-2007",
+						time == "2007-01-01"~ "2006-2007",
+						time == "2008-01-01"~ "2008-2009",
+						time == "2009-01-01"~ "2008-2009",
+						time == "2010-01-01"~ "2010-2011",
+						time == "2011-01-01"~ "2010-2011",
+						time == "2012-01-01"~ "2012-2013",
+						time == "2013-01-01"~ "2012-2013",
+						time == "2014-01-01"~ "2014-2015",
+						time == "2015-01-01"~ "2014-2015",
+						time == "2016-01-01"~ "2016-2017",
+						time == "2017-01-01"~ "2016-2017",
+						time == "2018-01-01"~ "2018-2019",
+						time == "2019-01-01"~ "2018-2019",
+						time == "2020-01-01"~ "2020-2021",
+						time == "2021-01-01"~ "2020-2021"))
 
 deces_complet_annuel_analysable2000_deuxannees <- deces_complet_annuel_analysable2000 %>%
-		filter(time>"2000-01-01") %>% 
 		group_by(geo, deuxannees, location, zone) %>%
 		summarise(deces=sum(deces),
 				population=mean(population),
 				pop2020=mean(pop2020),
 				deces_theo_si_pop_2020=sum(deces_theo_si_pop_2020),
-				deces_theo_du_pays_si_pop_FR_2020=sum(deces_theo_du_pays_si_pop_FR_2020))
+				deces_theo_du_pays_si_pop_FR_2020=sum(deces_theo_du_pays_si_pop_FR_2020)) %>% 
+  mutate(annee_debut = as.double(substr(deuxannees,1,4)))
 
 deces_complet_annuel_analysable2000_deuxannees20 <- deces_complet_annuel_analysable2000_deuxannees %>%
-		filter(deuxannees == "2019-2020")
+		filter(deuxannees == "2020-2021")
 
 print(ggplot(deces_complet_annuel_analysable2000_deuxannees) + 
-		geom_point(aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020, color = deuxannees), size = 2)+
+		geom_point(aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020, color = annee_debut), size = 2)+
 		geom_point(data=deces_complet_annuel_analysable2000_deuxannees20, aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020), color = "red", size = 3)
 )
 
@@ -234,37 +237,40 @@ print(ggplot(deces_complet_annuel_analysable2000_deuxannees) +
 #période de 3 ans
 
 deces_complet_annuel_analysable2000 <- deces_complet_annuel_analysable2000 %>%
-		mutate(troisannees = case_when(time == "2000-01-01"~ "2000-2002",
-						time == "2001-01-01"~ "2000-2002",
-						time == "2002-01-01"~ "2000-2002",
-						time == "2003-01-01"~ "2003-2005",
-						time == "2004-01-01"~ "2003-2005",
-						time == "2005-01-01"~ "2003-2005",
-						time == "2006-01-01"~ "2006-2008",
-						time == "2007-01-01"~ "2006-2008",
-						time == "2008-01-01"~ "2006-2008",
-						time == "2009-01-01"~ "2009-2011",
-						time == "2010-01-01"~ "2009-2011",
-						time == "2011-01-01"~ "2009-2011",
-						time == "2012-01-01"~ "2012-2014",
-						time == "2013-01-01"~ "2012-2014",
-						time == "2014-01-01"~ "2012-2014",
-						time == "2015-01-01"~ "2015-2017",
-						time == "2016-01-01"~ "2015-2017",
-						time == "2017-01-01"~ "2015-2017",
-						time == "2018-01-01"~ "2018-2020",
-						time == "2019-01-01"~ "2018-2020",
-						time == "2020-01-01"~ "2018-2020", ))
+  filter(time!="2000-01-01") %>% 
+		mutate(troisannees = case_when(
+						time == "2001-01-01"~ "2001-2003",
+						time == "2002-01-01"~ "2001-2003",
+						time == "2003-01-01"~ "2001-2003",
+						time == "2004-01-01"~ "2004-2006",
+						time == "2005-01-01"~ "2004-2006",
+						time == "2006-01-01"~ "2004-2006",
+						time == "2007-01-01"~ "2007-2009",
+						time == "2008-01-01"~ "2007-2009",
+						time == "2009-01-01"~ "2007-2009",
+						time == "2010-01-01"~ "2010-2012",
+						time == "2011-01-01"~ "2010-2012",
+						time == "2012-01-01"~ "2010-2012",
+						time == "2013-01-01"~ "2013-2015",
+						time == "2014-01-01"~ "2013-2015",
+						time == "2015-01-01"~ "2013-2015",
+						time == "2016-01-01"~ "2016-2018",
+						time == "2017-01-01"~ "2016-2018",
+						time == "2018-01-01"~ "2016-2018",
+						time == "2019-01-01"~ "2019-2021",
+						time == "2020-01-01"~ "2019-2021",
+						time == "2021-01-01"~ "2019-2021"))
 
 deces_complet_annuel_analysable2000_troisannees <- deces_complet_annuel_analysable2000 %>%
 		group_by(geo, troisannees, location, zone) %>% 
-		summarise(deces=mean(deces), population=mean(population), pop2020=mean(pop2020), deces_theo_si_pop_2020=mean(deces_theo_si_pop_2020), deces_theo_du_pays_si_pop_FR_2020=mean(deces_theo_du_pays_si_pop_FR_2020))
+		summarise(deces=mean(deces), population=mean(population), pop2020=mean(pop2020), deces_theo_si_pop_2020=mean(deces_theo_si_pop_2020), deces_theo_du_pays_si_pop_FR_2020=mean(deces_theo_du_pays_si_pop_FR_2020)) %>% 
+  mutate(annee_debut = as.double(substr(troisannees,1,4)))
 
 deces_complet_annuel_analysable2000_troisannees20 <- deces_complet_annuel_analysable2000_troisannees %>%
-		filter(troisannees == "2018-2020")
+		filter(troisannees == "2019-2021")
 
 print(ggplot(deces_complet_annuel_analysable2000_troisannees) + 
-		geom_point(aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020, color = troisannees), size = 2)+
+		geom_point(aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020, color = annee_debut), size = 2)+
 		geom_point(data=deces_complet_annuel_analysable2000_troisannees20, aes(x = geo, y = deces_theo_du_pays_si_pop_FR_2020), color = "red", size = 3)+
 		labs(title = "Décès standardisés par pays et par période de 3 ans",
 				subtitle = "selon la population de la France en 2020",

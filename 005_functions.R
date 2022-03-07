@@ -2003,1153 +2003,2197 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 ################################################################################
 # Generer le graphique et le png associé : deces_hebdo_std_vaccination
 ################################################################################
-a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_semaine, 
-                                                     decalageSemaines = 4) {
+a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_semaine) { start <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderStart")
+end <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderEnd")
+premier_conf_start <- base::min(start$numSemaineDepuis2013)
+dernier_conf_start <- base::max(start$numSemaineDepuis2013)
+premier_conf_end <- base::min(end$numSemaineDepuis2013)
+dernier_conf_end <- base::max(end$numSemaineDepuis2013)
+
+# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+# qui a étépassé dans le parametre region
+nomVar <- deparse(substitute(es_deces_standard_pays_semaine))
+
+# Recuperer le nom du pays qui est après "es_deces_standard_pays_semaine_"
+startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
+nomPays <- str_sub(nomVar, startIndex)
+
+# Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
+maxWeekTime <- es_deces_standard_pays_semaine %>%
+  ungroup %>%
+  filter(numSemaineDepuis2013 == base::max(numSemaineDepuis2013)) %>%
+  distinct() %>%
+  select(time)
+maxWeekTime <- maxWeekTime[1, 1]
+
+
+#créer les tables à comparer et notamment la moyenne 2013-2019
+essai <- ungroup(es_deces_standard_pays_semaine) %>% 
+  mutate(semaine = str_sub(time,6,8) , annee = as.numeric(str_sub(time,1,4)))%>% 
+  select(numSemaineDepuis2013,semaine,annee,
+         deces_standardises_si_pop_2020_15_24,
+         deces_standardises_si_pop_2020_25_49,
+         deces_standardises_si_pop_2020_50_59,
+         deces_standardises_si_pop_2020_60_69,
+         deces_standardises_si_pop_2020_70_79,
+         deces_standardises_si_pop_2020_ge80,
+         predit_stand_15_24,
+         predit_stand_25_49,
+         predit_stand_50_59,
+         predit_stand_60_69,
+         predit_stand_70_79,
+         predit_stand_plus_80,
+         pop_week_15_24,
+         pop_week_25_49,
+         pop_week_50_59,
+         pop_week_60_69,
+         pop_week_70_79,
+         pop_week_ge80,
+         Age15_17,
+         Age18_24,
+         Age25_49,
+         Age50_59,
+         Age60_69,
+         Age70_79,
+         `Age80+`,
+         Age15_17_dose1,
+         Age18_24_dose1,
+         Age25_49_dose1,
+         Age50_59_dose1,
+         Age60_69_dose1,
+         Age70_79_dose1,
+         `Age80+_dose1`,
+         Age15_17_dose2,
+         Age18_24_dose2,
+         Age25_49_dose2,
+         Age50_59_dose2,
+         Age60_69_dose2,
+         Age70_79_dose2,
+         `Age80+_dose2`,
+         Age15_17_dose3,
+         Age18_24_dose3,
+         Age25_49_dose3,
+         Age50_59_dose3,
+         Age60_69_dose3,
+         Age70_79_dose3,
+         `Age80+_dose3`,
+         diff_deces_tot_predit_stand_15_24,
+         diff_deces_tot_predit_stand_25_49,
+         diff_deces_tot_predit_stand_50_59,
+         diff_deces_tot_predit_stand_60_69,
+         diff_deces_tot_predit_stand_70_79,
+         diff_deces_tot_predit_stand_ge80)%>% 
+  mutate(Age15_24_dose2 = Age15_17_dose2 + Age18_24_dose2,
+         Age15_24_dose3 = Age15_17_dose3 + Age18_24_dose3,
+         Age15_24_dose1 = Age15_17_dose1 + Age18_24_dose1,
+         Age15_24 = Age15_17 + Age18_24) %>% 
+  mutate(diff_15_24=deces_standardises_si_pop_2020_15_24 - predit_stand_15_24,
+         diff_25_49=deces_standardises_si_pop_2020_25_49 - predit_stand_25_49,
+         diff_50_59=deces_standardises_si_pop_2020_50_59 - predit_stand_50_59,
+         diff_60_69=deces_standardises_si_pop_2020_60_69 - predit_stand_60_69,
+         diff_70_79=deces_standardises_si_pop_2020_70_79 - predit_stand_70_79,
+         diff_ge80=deces_standardises_si_pop_2020_ge80 - predit_stand_plus_80,
+         groupe_semaine = floor(numSemaineDepuis2013/2)) %>% 
+  mutate(pos15_24=(diff_15_24>0),
+         cumul_15_24_dose1=cumsum(replace_na(Age15_17_dose1+Age18_24_dose1,0)),
+         cumul_15_24_dose2=cumsum(replace_na(Age15_17_dose1+Age18_24_dose2,0)),
+         part_atteinte_15_24_dose1=cumul_15_24_dose1/pop_week_15_24,
+         pos25_49=(diff_25_49>0),
+         cumul_25_49_dose1=cumsum(replace_na(Age25_49_dose1,0)),
+         cumul_25_49_dose2=cumsum(replace_na(Age25_49_dose2,0)),
+         part_atteinte_25_49_dose1=cumul_25_49_dose1/pop_week_25_49,
+         pos50_59=(diff_50_59>0),
+         cumul_50_59_dose1=cumsum(replace_na(Age50_59_dose1,0)),
+         cumul_50_59_dose2=cumsum(replace_na(Age50_59_dose2,0)),
+         part_atteinte_50_59_dose1=cumul_50_59_dose1/pop_week_50_59,
+         pos60_69=(diff_60_69>0),
+         cumul_60_69_dose1=cumsum(replace_na(Age60_69_dose1,0)),
+         cumul_60_69_dose2=cumsum(replace_na(Age60_69_dose2,0)),
+         part_atteinte_60_69_dose1=cumul_60_69_dose1/pop_week_60_69,
+         pos70_79=(diff_70_79>0),
+         cumul_70_79_dose1=cumsum(replace_na(Age70_79_dose1,0)),
+         cumul_70_79_dose2=cumsum(replace_na(Age70_79_dose2,0)),
+         part_atteinte_70_79_dose1=cumul_70_79_dose1/pop_week_70_79,
+         posge80=(diff_ge80>0),
+         cumul_ge80_dose1=cumsum(replace_na(`Age80+_dose1`,0)),
+         cumul_ge80_dose2=cumsum(replace_na(`Age80+_dose2`,0)),
+         part_atteinte_ge80_dose1=cumul_ge80_dose1/pop_week_ge80)
+
+
+#Calculer les moyennes mobiles
+date_debut_donnees <- base::min(essai$numSemaineDepuis2013)-1
+
+moyenne_mobile_15_24 <- running_mean(essai$diff_deces_tot_predit_stand_15_24, 7)
+moyenne_mobile_25_49 <- running_mean(essai$diff_deces_tot_predit_stand_25_49, 7)
+moyenne_mobile_50_59 <- running_mean(essai$diff_deces_tot_predit_stand_50_59, 7)
+moyenne_mobile_60_69 <- running_mean(essai$diff_deces_tot_predit_stand_60_69, 7)
+moyenne_mobile_70_79 <- running_mean(essai$diff_deces_tot_predit_stand_70_79, 7)
+moyenne_mobile_ge80 <- running_mean(essai$diff_deces_tot_predit_stand_ge80, 7)
+
+moyenne_mobile_15_24 <- data.frame(moyenne_mobile_15_24)
+moyenne_mobile_25_49 <- data.frame(moyenne_mobile_25_49)
+moyenne_mobile_50_59 <- data.frame(moyenne_mobile_50_59)
+moyenne_mobile_60_69 <- data.frame(moyenne_mobile_60_69)
+moyenne_mobile_70_79 <- data.frame(moyenne_mobile_70_79)
+moyenne_mobile_ge80 <- data.frame(moyenne_mobile_ge80)
+
+moyenne_mobile_15_24$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_15_24)+date_debut_donnees + 3 
+moyenne_mobile_25_49$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_25_49)+date_debut_donnees + 3
+moyenne_mobile_50_59$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_50_59)+date_debut_donnees + 3
+moyenne_mobile_60_69$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_60_69)+date_debut_donnees + 3
+moyenne_mobile_70_79$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_70_79)+date_debut_donnees + 3
+moyenne_mobile_ge80$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_ge80)+date_debut_donnees + 3
+
+essai <- essai %>% left_join(moyenne_mobile_15_24, by=c("numSemaineDepuis2013")) %>% 
+  left_join(moyenne_mobile_25_49, by=c("numSemaineDepuis2013")) %>% 
+  left_join(moyenne_mobile_50_59, by=c("numSemaineDepuis2013")) %>% 
+  left_join(moyenne_mobile_60_69, by=c("numSemaineDepuis2013")) %>% 
+  left_join(moyenne_mobile_70_79, by=c("numSemaineDepuis2013")) %>% 
+  left_join(moyenne_mobile_ge80, by=c("numSemaineDepuis2013"))
+
+#Calculer les dates de début de la vaccination pour toutes les tranches d'âge
+
+if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
+                  'espagne','estonie','finlande','france','grece','hongrie',
+                  'islande','italie','luxembourg','malte','norvege',
+                  'pologne','portugal','suede','europe','synchro')){  
   
-  # deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
-  # qui a étépassé dans le parametre region
-  nomVar <- deparse(substitute(es_deces_standard_pays_semaine))
+  essai <- essai %>% 
+    mutate(barre_vax_15_24 = case_when(
+      cumul_15_24_dose1 >= 5*pop_week_15_24/100 ~ "barre dépassée",
+      TRUE ~ "sous la barre"),
+      barre_vax_25_49 = case_when(
+        cumul_25_49_dose1 >= 5*pop_week_25_49/100  ~ "barre dépassée",
+        TRUE ~ "sous la barre"),
+      barre_vax_50_59 = case_when(
+        cumul_50_59_dose1 >= 5*pop_week_50_59/100 ~ "barre dépassée",
+        TRUE ~ "sous la barre"),
+      barre_vax_60_69 = case_when(
+        cumul_60_69_dose1 >= 5*pop_week_60_69/100  ~ "barre dépassée",
+        TRUE ~ "sous la barre"),
+      barre_vax_70_79 = case_when(
+        cumul_70_79_dose1 >= 5*pop_week_70_79/100 ~ "barre dépassée",
+        TRUE ~ "sous la barre"),
+      barre_vax_ge80 = case_when(
+        cumul_ge80_dose1 >= 5*pop_week_ge80/100 ~ "barre dépassée",
+        TRUE ~ "sous la barre"))
   
-  # Recuperer le nom du pays qui est après "es_deces_standard_pays_semaine_"
-  startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
-  nomPays <- str_sub(nomVar, startIndex)
+  date_fin_2021 = 470 
   
-  # Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
-  maxWeekTime <- es_deces_standard_pays_semaine %>%
-    ungroup %>%
-    filter(numSemaineDepuis2013 == base::max(numSemaineDepuis2013)) %>%
-    distinct() %>%
-    select(time)
-  maxWeekTime <- maxWeekTime[1, 1]
+  #15-24
+  temp <- essai %>% 
+    select(numSemaineDepuis2013,barre_vax_15_24) %>% 
+    filter(barre_vax_15_24=="barre dépassée")
+  
+  date_debut_2021_15_24 = base::min(temp$numSemaineDepuis2013)
+  
+  #25-49
+  temp <- essai %>% 
+    select(numSemaineDepuis2013,barre_vax_25_49) %>% 
+    filter(barre_vax_25_49=="barre dépassée")
+  
+  date_debut_2021_25_49 = base::min(temp$numSemaineDepuis2013)
+  
+  #50-59
+  temp <- essai %>% 
+    select(numSemaineDepuis2013,barre_vax_50_59) %>% 
+    filter(barre_vax_50_59=="barre dépassée")
+  
+  date_debut_2021_50_59 = base::min(temp$numSemaineDepuis2013)
+  
+  #60-69
+  temp <- essai %>% 
+    select(numSemaineDepuis2013,barre_vax_60_69) %>% 
+    filter(barre_vax_60_69=="barre dépassée")
+  
+  date_debut_2021_60_69 = base::min(temp$numSemaineDepuis2013)
+  
+  #70-79
+  temp <- essai %>% 
+    select(numSemaineDepuis2013,barre_vax_70_79) %>% 
+    filter(barre_vax_70_79=="barre dépassée")
+  
+  date_debut_2021_70_79 = base::min(temp$numSemaineDepuis2013)
+  
+  #plus80
+  temp <- essai %>% 
+    select(numSemaineDepuis2013,barre_vax_ge80) %>% 
+    filter(barre_vax_ge80=="barre dépassée")
+  
+  date_debut_2021_ge80 = base::min(temp$numSemaineDepuis2013)
+  
+  #Calculer la surmortalité depuis le début de la vaccination pour toutes les tranches d'âge, la date de chacun des pics dose1, 2, 3 et de mortalité
+  
+  #15-24
+  surmort_15_24_2021 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_15_24,semaine,predit_stand_15_24,Age15_24_dose1,Age15_24_dose2,Age15_24_dose3) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_15_24) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021) %>% 
+    mutate(rang_dose1=rank(-Age15_24_dose1,ties.method = "random"),
+           rang_dose2=rank(-Age15_24_dose2,ties.method = "random"),
+           rang_dose3=rank(-Age15_24_dose3,ties.method = "random"),
+           rang_surmortalite=rank(-diff_15_24,ties.method = "random"),
+           pic_surmortalite=if_else(rang_surmortalite %in% c(1,2),TRUE,FALSE),
+           pic_dose1=if_else(Age15_24_dose1 == base::max(Age15_24_dose1),TRUE,FALSE),
+           pic_dose2=if_else(Age15_24_dose2 == base::max(Age15_24_dose2),TRUE,FALSE),
+           pic_dose3=if_else(Age15_24_dose3 == base::max(Age15_24_dose3),TRUE,FALSE))
+  ?max
+  temp <- surmort_15_24_2021 %>% filter(pic_dose1==TRUE)
+  numSemaineDose1_15_24 = temp$numSemaineDepuis2013
+  temp <- surmort_15_24_2021 %>% filter(pic_dose2==TRUE)
+  numSemaineDose2_15_24 = temp$numSemaineDepuis2013
+  temp <- surmort_15_24_2021 %>% filter(pic_dose3==TRUE)
+  numSemaineDose3_15_24 = temp$numSemaineDepuis2013
+  temp <- surmort_15_24_2021 %>% filter(diff_15_24==base::max(diff_15_24))
+  numSemainePic1_15_24 = temp$numSemaineDepuis2013[1]
+  temp <- surmort_15_24_2021 %>% filter(rang_surmortalite==2)
+  numSemainePic2_15_24 = temp$numSemaineDepuis2013
+  
+  pic1_corresp_15_24 <- ifelse(numSemainePic1_15_24 %in% c(numSemaineDose1_15_24,numSemaineDose1_15_24+2,numSemaineDose1_15_24+1,
+                                                           numSemaineDose2_15_24,numSemaineDose2_15_24+2,numSemaineDose2_15_24+1,
+                                                           numSemaineDose3_15_24,numSemaineDose3_15_24+2,numSemaineDose3_15_24+1),TRUE,FALSE)
+  pic2_corresp_15_24 <- ifelse(numSemainePic2_15_24 %in% c(numSemaineDose1_15_24,numSemaineDose1_15_24+2,numSemaineDose1_15_24+1,
+                                                           numSemaineDose2_15_24,numSemaineDose2_15_24+2,numSemaineDose2_15_24+1,
+                                                           numSemaineDose3_15_24,numSemaineDose3_15_24+2,numSemaineDose3_15_24+1),TRUE,FALSE)
+  pic_corresp_15_24 <- pic1_corresp_15_24 + pic2_corresp_15_24
+  
+  surmortalite_15_24_2021 = sum(surmort_15_24_2021$diff_15_24)
+  part_surmortalite_15_24_2021 = surmortalite_15_24_2021/sum(surmort_15_24_2021$predit_stand_15_24)*100
+  
+  surmort_15_24_2020 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_15_24,semaine) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_15_24-53) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021-53)
+  
+  surmortalite_15_24_2020 = sum(surmort_15_24_2020$diff_15_24)
+  
+  surmort_15_24_2019 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_15_24,semaine) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_15_24-106) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021-106)
+  
+  surmortalite_15_24_2019= sum(surmort_15_24_2019$diff_15_24)
+  
+  #25-49
+  surmort_25_49_2021 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_25_49,semaine,predit_stand_25_49,Age25_49_dose1,Age25_49_dose2,Age25_49_dose3) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_25_49) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021) %>% 
+    mutate(rang_dose1=rank(-Age25_49_dose1,ties.method = "random"),
+           rang_dose2=rank(-Age25_49_dose2,ties.method = "random"),
+           rang_dose3=rank(-Age25_49_dose3,ties.method = "random"),
+           rang_surmortalite=rank(-diff_25_49,ties.method = "random"),
+           pic_surmortalite=if_else(rang_surmortalite %in% c(1,2),TRUE,FALSE),
+           pic_dose1=if_else(Age25_49_dose1 == base::max(Age25_49_dose1),TRUE,FALSE),
+           pic_dose2=if_else(Age25_49_dose2 == base::max(Age25_49_dose2),TRUE,FALSE),
+           pic_dose3=if_else(Age25_49_dose3 == base::max(Age25_49_dose3),TRUE,FALSE))
+  
+  temp <- surmort_25_49_2021 %>% filter(pic_dose1==TRUE)
+  numSemaineDose1_25_49 = temp$numSemaineDepuis2013
+  temp <- surmort_25_49_2021 %>% filter(pic_dose2==TRUE)
+  numSemaineDose2_25_49 = temp$numSemaineDepuis2013
+  temp <- surmort_25_49_2021 %>% filter(pic_dose3==TRUE)
+  numSemaineDose3_25_49 = temp$numSemaineDepuis2013
+  temp <- surmort_25_49_2021 %>% filter(diff_25_49==base::max(diff_25_49))
+  numSemainePic1_25_49 = temp$numSemaineDepuis2013[1]
+  temp <- surmort_25_49_2021 %>% filter(rang_surmortalite==2)
+  numSemainePic2_25_49 = temp$numSemaineDepuis2013
+  
+  pic1_corresp_25_49 <- ifelse(numSemainePic1_25_49 %in% c(numSemaineDose1_25_49,numSemaineDose1_25_49+1,numSemaineDose1_25_49+2,
+                                                           numSemaineDose2_25_49,numSemaineDose2_25_49+1,numSemaineDose2_25_49+2,
+                                                           numSemaineDose3_25_49,numSemaineDose3_25_49+1,numSemaineDose3_25_49+2),TRUE,FALSE)
+  pic2_corresp_25_49 <- ifelse(numSemainePic2_25_49 %in% c(numSemaineDose1_25_49,numSemaineDose1_25_49+1,numSemaineDose1_25_49+2,
+                                                           numSemaineDose2_25_49,numSemaineDose2_25_49+1,numSemaineDose2_25_49+2,
+                                                           numSemaineDose3_25_49,numSemaineDose3_25_49+1,numSemaineDose3_25_49+2),TRUE,FALSE)
+  pic_corresp_25_49 <- pic1_corresp_25_49 + pic2_corresp_25_49
   
   
-  if(nomPays != 'allemagne'){
-    #
-    # Graphique 1 : Situation des 15_24 ans
-    #
+  pic_corresp_25_49 <-sum(surmort_25_49_2021$pic_corresp)
+  
+  surmortalite_25_49_2021 = sum(surmort_25_49_2021$diff_25_49)
+  
+  part_surmortalite_25_49_2021 = surmortalite_25_49_2021/sum(surmort_25_49_2021$predit_stand_25_49)*100
+  
+  
+  surmort_25_49_2020 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_25_49,semaine) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_25_49-53) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021-53)
+  
+  surmortalite_25_49_2020 = sum(surmort_25_49_2020$diff_25_49)
+  
+  surmort_25_49_2019 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_25_49,semaine) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_25_49-106) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021-106)
+  
+  surmortalite_25_49_2019 = sum(surmort_25_49_2019$diff_25_49)
+  
+  #50-59
+  surmort_50_59_2021 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_50_59,semaine,predit_stand_50_59,Age50_59_dose1,Age50_59_dose2,Age50_59_dose3) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_50_59) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021)%>% 
+    mutate(rang_dose1=rank(-Age50_59_dose1,ties.method = "random"),
+           rang_dose2=rank(-Age50_59_dose2,ties.method = "random"),
+           rang_dose3=rank(-Age50_59_dose3,ties.method = "random"),
+           rang_surmortalite=rank(-diff_50_59,ties.method = "random"),
+           pic_surmortalite=if_else(rang_surmortalite %in% c(1,2),TRUE,FALSE),
+           pic_dose1=if_else(Age50_59_dose1 == base::max(Age50_59_dose1),TRUE,FALSE),
+           pic_dose2=if_else(Age50_59_dose2 == base::max(Age50_59_dose2),TRUE,FALSE),
+           pic_dose3=if_else(Age50_59_dose3 == base::max(Age50_59_dose3),TRUE,FALSE))
+  
+  temp <- surmort_50_59_2021 %>% filter(pic_dose1==TRUE)
+  numSemaineDose1_50_59 = temp$numSemaineDepuis2013
+  temp <- surmort_50_59_2021 %>% filter(pic_dose2==TRUE)
+  numSemaineDose2_50_59 = temp$numSemaineDepuis2013
+  temp <- surmort_50_59_2021 %>% filter(pic_dose3==TRUE)
+  numSemaineDose3_50_59 = temp$numSemaineDepuis2013
+  temp <- surmort_50_59_2021 %>% filter(diff_50_59==base::max(diff_50_59))
+  numSemainePic1_50_59 = temp$numSemaineDepuis2013[1]
+  temp <- surmort_50_59_2021 %>% filter(rang_surmortalite==2)
+  numSemainePic2_50_59 = temp$numSemaineDepuis2013
+  
+  pic1_corresp_50_59 <- ifelse(numSemainePic1_50_59 %in% c(numSemaineDose1_50_59,numSemaineDose1_50_59+2,numSemaineDose1_50_59+1,
+                                                           numSemaineDose2_50_59,numSemaineDose2_50_59+2,numSemaineDose2_50_59+1,
+                                                           numSemaineDose3_50_59,numSemaineDose3_50_59+2,numSemaineDose3_50_59+1),TRUE,FALSE)
+  pic2_corresp_50_59 <- ifelse(numSemainePic2_50_59 %in% c(numSemaineDose1_50_59,numSemaineDose1_50_59+2,numSemaineDose1_50_59+1,
+                                                           numSemaineDose2_50_59,numSemaineDose2_50_59+2,numSemaineDose2_50_59+1,
+                                                           numSemaineDose3_50_59,numSemaineDose3_50_59+2,numSemaineDose3_50_59+1),TRUE,FALSE)
+  pic_corresp_50_59 <- pic1_corresp_50_59 + pic2_corresp_50_59
+  
+  surmortalite_50_59_2021 = sum(surmort_50_59_2021$diff_50_59)
+  part_surmortalite_50_59_2021 = surmortalite_50_59_2021/sum(surmort_50_59_2021$predit_stand_50_59)*100
+  
+  surmort_50_59_2020 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_50_59,semaine) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_50_59-53) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021-53)
+  
+  surmortalite_50_59_2020 = sum(surmort_50_59_2020$diff_50_59)
+  
+  surmort_50_59_2019 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_50_59,semaine) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_50_59-106) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021-106)
+  
+  surmortalite_50_59_2019 = sum(surmort_50_59_2019$diff_50_59)
+  
+  #60-69
+  surmort_60_69_2021 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_60_69,semaine,predit_stand_60_69,Age60_69_dose1,Age60_69_dose2,Age60_69_dose3) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_60_69) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021)%>% 
+    mutate(rang_dose1=rank(-Age60_69_dose1,ties.method = "random"),
+           rang_dose2=rank(-Age60_69_dose2,ties.method = "random"),
+           rang_dose3=rank(-Age60_69_dose3,ties.method = "random"),
+           rang_surmortalite=rank(-diff_60_69,ties.method = "random"),
+           pic_surmortalite=if_else(rang_surmortalite %in% c(1,2),TRUE,FALSE),
+           pic_dose1=if_else(Age60_69_dose1 == base::max(Age60_69_dose1),TRUE,FALSE),
+           pic_dose2=if_else(Age60_69_dose2 == base::max(Age60_69_dose2),TRUE,FALSE),
+           pic_dose3=if_else(Age60_69_dose3 == base::max(Age60_69_dose3),TRUE,FALSE))
+  
+  temp <- surmort_60_69_2021 %>% filter(pic_dose1==TRUE)
+  numSemaineDose1_60_69 = temp$numSemaineDepuis2013
+  temp <- surmort_60_69_2021 %>% filter(pic_dose2==TRUE)
+  numSemaineDose2_60_69 = temp$numSemaineDepuis2013
+  temp <- surmort_60_69_2021 %>% filter(pic_dose3==TRUE)
+  numSemaineDose3_60_69 = temp$numSemaineDepuis2013
+  temp <- surmort_60_69_2021 %>% filter(diff_60_69==base::max(diff_60_69))
+  numSemainePic1_60_69 = temp$numSemaineDepuis2013[1]
+  temp <- surmort_60_69_2021 %>% filter(rang_surmortalite==2)
+  numSemainePic2_60_69 = temp$numSemaineDepuis2013
+  
+  pic1_corresp_60_69 <- ifelse(numSemainePic1_60_69 %in% c(numSemaineDose1_60_69,numSemaineDose1_60_69+2,numSemaineDose1_60_69+1,
+                                                           numSemaineDose2_60_69,numSemaineDose2_60_69+2,numSemaineDose2_60_69+1,
+                                                           numSemaineDose3_60_69,numSemaineDose3_60_69+2,numSemaineDose3_60_69+1),TRUE,FALSE)
+  pic2_corresp_60_69 <- ifelse(numSemainePic2_60_69 %in% c(numSemaineDose1_60_69,numSemaineDose1_60_69+2,numSemaineDose1_60_69+1,
+                                                           numSemaineDose2_60_69,numSemaineDose2_60_69+2,numSemaineDose2_60_69+1,
+                                                           numSemaineDose3_60_69,numSemaineDose3_60_69+2,numSemaineDose3_60_69+1),TRUE,FALSE)
+  pic_corresp_60_69 <- pic1_corresp_60_69 + pic2_corresp_60_69
+  
+  surmortalite_60_69_2021 = sum(surmort_60_69_2021$diff_60_69)
+  part_surmortalite_60_69_2021 = surmortalite_60_69_2021/sum(surmort_60_69_2021$predit_stand_60_69)*100
+  
+  surmort_60_69_2020 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_60_69,semaine) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_60_69-53) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021-53)
+  
+  surmortalite_60_69_2020 = sum(surmort_60_69_2020$diff_60_69)
+  
+  surmort_60_69_2019 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_60_69,semaine) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_60_69-106) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021-106)
+  
+  surmortalite_60_69_2019 = sum(surmort_60_69_2019$diff_60_69)
+  
+  #70-79
+  surmort_70_79_2021 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_70_79,semaine,predit_stand_70_79,Age70_79_dose1,Age70_79_dose2,Age70_79_dose3) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_70_79) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021)%>% 
+    mutate(rang_dose1=rank(-Age70_79_dose1,ties.method = "random"),
+           rang_dose2=rank(-Age70_79_dose2,ties.method = "random"),
+           rang_dose3=rank(-Age70_79_dose3,ties.method = "random"),
+           rang_surmortalite=rank(-diff_70_79,ties.method = "random"),
+           pic_surmortalite=if_else(rang_surmortalite %in% c(1,2),TRUE,FALSE),
+           pic_dose1=if_else(Age70_79_dose1 == base::max(Age70_79_dose1),TRUE,FALSE),
+           pic_dose2=if_else(Age70_79_dose2 == base::max(Age70_79_dose2),TRUE,FALSE),
+           pic_dose3=if_else(Age70_79_dose3 == base::max(Age70_79_dose3),TRUE,FALSE))
+  
+  temp <- surmort_70_79_2021 %>% filter(pic_dose1==TRUE)
+  numSemaineDose1_70_79 = temp$numSemaineDepuis2013
+  temp <- surmort_70_79_2021 %>% filter(pic_dose2==TRUE)
+  numSemaineDose2_70_79 = temp$numSemaineDepuis2013
+  temp <- surmort_70_79_2021 %>% filter(pic_dose3==TRUE)
+  numSemaineDose3_70_79 = temp$numSemaineDepuis2013
+  temp <- surmort_70_79_2021 %>% filter(diff_70_79==base::max(diff_70_79))
+  numSemainePic1_70_79 = temp$numSemaineDepuis2013[1]
+  temp <- surmort_70_79_2021 %>% filter(rang_surmortalite==2)
+  numSemainePic2_70_79 = temp$numSemaineDepuis2013
+  
+  pic1_corresp_70_79 <- ifelse(numSemainePic1_70_79 %in% c(numSemaineDose1_70_79,numSemaineDose1_70_79+2,numSemaineDose1_70_79+1,
+                                                           numSemaineDose2_70_79,numSemaineDose2_70_79+2,numSemaineDose2_70_79+1,
+                                                           numSemaineDose3_70_79,numSemaineDose3_70_79+2,numSemaineDose3_70_79+1),TRUE,FALSE)
+  pic2_corresp_70_79 <- ifelse(numSemainePic2_70_79 %in% c(numSemaineDose1_70_79,numSemaineDose1_70_79+2,numSemaineDose1_70_79+1,
+                                                           numSemaineDose2_70_79,numSemaineDose2_70_79+2,numSemaineDose2_70_79+1,
+                                                           numSemaineDose3_70_79,numSemaineDose3_70_79+2,numSemaineDose3_70_79+1),TRUE,FALSE)
+  pic_corresp_70_79 <- pic1_corresp_70_79 + pic2_corresp_70_79
+  
+  surmortalite_70_79_2021 = sum(surmort_70_79_2021$diff_70_79)
+  part_surmortalite_70_79_2021 = surmortalite_70_79_2021/sum(surmort_70_79_2021$predit_stand_70_79)*100
+  
+  surmort_70_79_2020 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_70_79,semaine) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_70_79-53) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021-53)
+  
+  surmortalite_70_79_2020 = sum(surmort_70_79_2020$diff_70_79)
+  
+  surmort_70_79_2019 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_70_79,semaine) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_70_79-106) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021-106)
+  
+  surmortalite_70_79_2019 = sum(surmort_70_79_2019$diff_70_79)
+  
+  #plus80
+  surmort_ge80_2021 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_ge80,semaine,predit_stand_plus_80,`Age80+_dose1`,`Age80+_dose2`,`Age80+_dose3`) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_ge80) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021)%>% 
+    mutate(rang_dose1=rank(-`Age80+_dose1`,ties.method = "random"),
+           rang_dose2=rank(-`Age80+_dose2`,ties.method = "random"),
+           rang_dose3=rank(-`Age80+_dose3`,ties.method = "random"),
+           rang_surmortalite=rank(-diff_ge80,ties.method = "random"),
+           pic_surmortalite=if_else(rang_surmortalite %in% c(1,2),TRUE,FALSE),
+           pic_dose1=if_else(`Age80+_dose1` == base::max(`Age80+_dose1`),TRUE,FALSE),
+           pic_dose2=if_else(`Age80+_dose2` == base::max(`Age80+_dose2`),TRUE,FALSE),
+           pic_dose3=if_else(`Age80+_dose3` == base::max(`Age80+_dose3`),TRUE,FALSE))
+  
+  temp <- surmort_ge80_2021 %>% filter(pic_dose1==TRUE)
+  numSemaineDose1_ge80 = temp$numSemaineDepuis2013
+  temp <- surmort_ge80_2021 %>% filter(pic_dose2==TRUE)
+  numSemaineDose2_ge80 = temp$numSemaineDepuis2013
+  temp <- surmort_ge80_2021 %>% filter(pic_dose3==TRUE)
+  numSemaineDose3_ge80 = temp$numSemaineDepuis2013
+  temp <- surmort_ge80_2021 %>% filter(diff_ge80==base::max(diff_ge80))
+  numSemainePic1_ge80 = temp$numSemaineDepuis2013[1]
+  temp <- surmort_ge80_2021 %>% filter(rang_surmortalite==2)
+  numSemainePic2_ge80 = temp$numSemaineDepuis2013
+  
+  pic1_corresp_ge80 <- ifelse(numSemainePic1_ge80 %in% c(numSemaineDose1_ge80,numSemaineDose1_ge80+2,numSemaineDose1_ge80+1,
+                                                         numSemaineDose2_ge80,numSemaineDose2_ge80+2,numSemaineDose2_ge80+1,
+                                                         numSemaineDose3_ge80,numSemaineDose3_ge80+2,numSemaineDose3_ge80+1),TRUE,FALSE)
+  pic2_corresp_ge80 <- ifelse(numSemainePic2_ge80 %in% c(numSemaineDose1_ge80,numSemaineDose1_ge80+2,numSemaineDose1_ge80+1,
+                                                         numSemaineDose2_ge80,numSemaineDose2_ge80+2,numSemaineDose2_ge80+1,
+                                                         numSemaineDose3_ge80,numSemaineDose3_ge80+2,numSemaineDose3_ge80+1),TRUE,FALSE)
+  pic_corresp_ge80 <- pic1_corresp_ge80 + pic2_corresp_ge80
+  
+  surmortalite_ge80_2021 = sum(surmort_ge80_2021$diff_ge80)
+  part_surmortalite_ge80_2021 = surmortalite_ge80_2021/sum(surmort_ge80_2021$predit_stand_plus_80)*100
+  
+  surmort_ge80_2020 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_ge80,semaine) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_ge80-53) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021-53)
+  
+  surmortalite_ge80_2020 = sum(surmort_ge80_2020$diff_ge80)
+  
+  surmort_ge80_2019 <-  essai %>% 
+    select(numSemaineDepuis2013,
+           diff_ge80,semaine) %>% 
+    filter(numSemaineDepuis2013 >= date_debut_2021_ge80-106) %>% 
+    filter(numSemaineDepuis2013 <= date_fin_2021-106)
+  
+  surmortalite_ge80_2019 = sum(surmort_ge80_2019$diff_ge80)
+  
+  #Faire les corrélations de Spearman pour toutes les tranches d'âge en testant les décalages
+  
+  test_spearman <- data.frame()
+  
+  for (i in -2:4){
     
-    # Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
-    repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/15-24/")
-    a__f_createDir(repertoire)
+    vaccinations <- essai %>% 
+      select( Age25_49,
+              Age50_59,
+              Age60_69,
+              Age70_79,
+              `Age80+`,
+              Age25_49_dose1,
+              Age50_59_dose1,
+              Age60_69_dose1,
+              Age70_79_dose1,
+              `Age80+_dose1`,
+              Age25_49_dose2,
+              Age50_59_dose2,
+              Age60_69_dose2,
+              Age70_79_dose2,
+              `Age80+_dose2`,
+              Age25_49_dose3,
+              Age50_59_dose3,
+              Age60_69_dose3,
+              Age70_79_dose3,
+              `Age80+_dose3`,
+              numSemaineDepuis2013)%>% 
+      mutate(numSemaineDepuis2013=numSemaineDepuis2013+i)
     
-    #Nom du fichier png à générer
-    pngFileRelPath <- paste0(repertoire, nomPays, ".png")
-    
-    # Message
-    cat(paste0("Creation image (", pngFileRelPath,")\n"))
-    
-    # Moyenne mobile sur 8 semaines, des 15-24 ans
-    
-    moyenne_mobile_15_24 <- running_mean(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_15_24, 
-                                         8)
-    
-    # Moyenne de la Moyenne mobile
-    
-    moyenne_mobile_15_24 <- data_frame(moyenne_mobile_15_24)
-    
-    moyenne_mobile_15_24$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_15_24) + decalageSemaines
-    
-    # Ajouter les colonnes de la moyenne mobile 
-    es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-      left_join(moyenne_mobile_15_24, by = "numSemaineDepuis2013")
-    
-    
-    essai <- es_deces_standard_pays_semaine %>%
-      filter(numSemaineDepuis2013>410)
-    
-    # Calcul de surmortalité
-    
-    #TODO TW Il faudrait rajouter quelque chose comme : any(is.na(Age18_24_dose1)) avant le max() pour éviter le warning sur l'Armenie qui n'a que des NA
-    es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>% 
-      mutate(barre_vax_18_24 = case_when(
-        Age18_24_dose1 > 0.5*base::max(Age18_24_dose1, na.rm = TRUE) ~ "barre dépassée",
-        TRUE ~ "sous la barre"
-      ))
-    temp <- ungroup(es_deces_standard_pays_semaine) %>% 
-      select(numSemaineDepuis2013,barre_vax_18_24) %>% 
-      filter(barre_vax_18_24=="barre dépassée")
-    
-    date_debut = base::min(temp$numSemaineDepuis2013)
-    
-    # TODO TW pourquoi -4 ?
-    date_fin = base::max(es_deces_standard_pays_semaine$numSemaineDepuis2013)-4
-    
-    temp <-  ungroup(es_deces_standard_pays_semaine) %>% 
-      select(numSemaineDepuis2013,
-             ecart_moyenne_15_24) %>% 
-      filter(numSemaineDepuis2013 >= date_debut) %>% 
-      filter(numSemaineDepuis2013 <= date_fin)
-    ecart_moyenne = sum(temp$ecart_moyenne_15_24)
-    
-    nb_dose2 = sum(es_deces_standard_pays_semaine$Age15_17_dose2)+
-      sum(es_deces_standard_pays_semaine$Age18_24_dose2)
-    
-    ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
-    
-    #création du graphiques
-    plot(essai$numSemaineDepuis2013, 
-         essai$deces_standardises_si_pop_2020_15_24, 
-         pch=16, 
-         cex=0, 
-         axes=F, 
-         xlab="",
-         lwd =2,
-         ylab="", 
-         ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)), 
-         type="o", 
-         col="grey", 
-         main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
-    
-    # pour encadrer le graphique
-    box() 
-    
-    axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+    vaccinations_jeunes <- essai %>%
+      select( Age15_24,
+              Age15_24_dose1,
+              Age15_24_dose2,
+              Age15_24_dose3,
+              numSemaineDepuis2013)%>% 
+      mutate(numSemaineDepuis2013=numSemaineDepuis2013+i)           
     
     
-    mtext("nombre de décès toutes causes des 15 - 24 ans", side=2, line=3)
-    mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
-    mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
-    mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=3)
+    vaccinations<-vaccinations %>% left_join(vaccinations_jeunes,by="numSemaineDepuis2013")
     
-    # Lignes verticales
-    abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+    deces <- essai %>% 
+      select(moyenne_mobile_15_24,
+             moyenne_mobile_25_49,
+             moyenne_mobile_50_59,
+             moyenne_mobile_60_69,
+             moyenne_mobile_70_79,
+             moyenne_mobile_ge80,
+             numSemaineDepuis2013)
     
-    text(26,  base::min(essai$deces_standardises_si_pop_2020_15_24), "2013", cex=1.2)
-    text(78,  base::min(essai$deces_standardises_si_pop_2020_15_24), "2014", cex=1.2)
-    text(130, base::min(essai$deces_standardises_si_pop_2020_15_24), "2015", cex=1.2)
-    text(183, base::min(essai$deces_standardises_si_pop_2020_15_24), "2016", cex=1.2)
-    text(235, base::min(essai$deces_standardises_si_pop_2020_15_24), "2017", cex=1.2)
-    text(287, base::min(essai$deces_standardises_si_pop_2020_15_24), "2018", cex=1.2)
-    text(339, base::min(essai$deces_standardises_si_pop_2020_15_24), "2019", cex=1.2)
-    text(391, base::min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
-    text(440, base::min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
+    decalage <- deces %>% left_join(vaccinations,by="numSemaineDepuis2013")
     
-    # Superposer la moyenne mobile
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$moyenne_mobile_15_24, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="", 
-         lwd=3,  
-         ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)),
-         ylab="", 
-         type="o", 
-         col="red") 
     
-    # Superposer la moyenne 
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$moyenne_15_24, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="", 
-         lwd=1.5,  
-         ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)),
-         ylab="", 
-         type="o", 
-         col="purple") 
-    
-    # Superposer la bsup
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$bsup_15_24, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="", 
-         lwd=1.5,  
-         ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)),
-         ylab="", 
-         lty=2, 
-         type="o", 
-         col="purple") 
-    
-    # Superposer la binf
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$binf_15_24, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="", 
-         lwd=1.5, 
-         ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)),
-         ylab="",
-         lty=2, 
-         type="o", 
-         col="purple") 	
-    
-    if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
-      # Superposer la vaccination 
-      par(new=T)
-      plot(essai$numSemaineDepuis2013, 
-           essai$Age15_17_dose1+essai$Age18_24_dose1, 
-           pch=16, 
-           axes=F, 
-           cex=0, 
-           xlab="", 
-           lwd=2,
-           ylim=c(0, base::max(base::max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),base::max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
-           ylab="", 
-           type="o", 
-           col="#3399FF") 
-      axis(4, col = "blue", col.axis = "blue", lwd = 2)
-      
-      par(new=T)
-      plot(essai$numSemaineDepuis2013, 
-           essai$Age15_17_dose2+essai$Age18_24_dose2, 
-           pch=16, 
-           axes=F, 
-           cex=0, 
-           xlab="",
-           lwd=2,
-           ylim=c(0, base::max(base::max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),base::max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
-           ylab="", 
-           type="o", 
-           col="#0066CC")
-      
-      par(new=T)
-      plot(essai$numSemaineDepuis2013, 
-           essai$Age15_17_dose3+essai$Age18_24_dose3, 
-           pch=16, 
-           axes=F, 
-           cex=0, 
-           xlab="",
-           lwd=2,
-           ylim=c(0, base::max(base::max(essai$Age15_17_dose1+essai$Age18_24_dose1,na.rm=TRUE),base::max(essai$Age15_17_dose2+essai$Age18_24_dose2,na.rm=TRUE))), 
-           ylab="", 
-           type="o", 
-           col="#003366") 
-      
-      mtext("première dose                                                                         ", side=1, col="#3399FF", line=1)
-      mtext("deuxième dose", side=1, col="#0066CC", line=1)
-      mtext("                                                                                      troisième dose", side=1, col="#003366", line=1)
-      mtext(paste0("différence de mortalité depuis le début de la campagne vaccinale : ",round(ecart_moyenne,1)," soit ",round(ecart_pour_centmille,1)," pour 100 000 injections"), side=1, col="black", line=2)
-      
+    if(nomPays != 'allemagne'){
+      periode_15_24 <- decalage %>% filter(numSemaineDepuis2013 >= date_debut_2021_15_24)
+      res15_24<-cor.test(periode_15_24$moyenne_mobile_15_24,periode_15_24$Age15_24 ,method="spearman")
+    }else{
+      res15_24<-data.frame(estimate='NA',p.value='NA')
     }
-    dev.print(device = png, file = pngFileRelPath, width = 1000)
     
-    #
-    # Graphique 2 : Situation des 25- 49 ans
-    #
+    periode_25_49 <- decalage %>% filter(numSemaineDepuis2013 >= date_debut_2021_25_49)
+    res25_49<-cor.test(periode_25_49$moyenne_mobile_25_49,periode_25_49$Age25_49 ,method="spearman")
     
-    repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/25-50/")
-    a__f_createDir(repertoire)
+    periode_50_59 <- decalage %>% filter(numSemaineDepuis2013 >= date_debut_2021_50_59)
+    res50_59<-cor.test(periode_50_59$moyenne_mobile_50_59,periode_50_59$Age50_59 ,method="spearman")
     
-    #Nom du fichier png à générer
-    pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+    periode_60_69 <- decalage %>% filter(numSemaineDepuis2013 >= date_debut_2021_60_69)
+    res60_69<-cor.test(periode_60_69$moyenne_mobile_60_69,periode_60_69$Age60_69 ,method="spearman")
     
-    # Message
-    cat(paste0("Creation image (", pngFileRelPath,")\n"))
+    periode_70_79 <- decalage %>% filter(numSemaineDepuis2013 >= date_debut_2021_70_79)
+    res70_79<-cor.test(periode_70_79$moyenne_mobile_70_79,periode_70_79$Age70_79 ,method="spearman")
     
-    # Moyenne mobile sur 8 semaines, des 25-50 ans
+    periode_ge80 <- decalage %>% filter(numSemaineDepuis2013 >= date_debut_2021_ge80)
+    resge80 <-cor.test(periode_ge80$moyenne_mobile_ge80 ,periode_ge80$`Age80+`,method="spearman") 
     
-    moyenne_mobile_25_49<- running_mean(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_25_49, 
-                                        8)
     
-    # Moyenne de la Moyenne mobile
+    pays_concerne<-c(str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays))
+    tranches_dages<-c("15-24","25-49","50-59","60-69","70-79","ge80")
+    décalage <- c(i,i,i,i,i,i)
+    estimateur<-c(res15_24$estimate,res25_49$estimate,res50_59$estimate,res60_69$estimate,res70_79$estimate,resge80$estimate)
+    pvalue <- c(res15_24$p.value,res25_49$p.value,res50_59$p.value,res60_69$p.value,res70_79$p.value,resge80$p.value)
     
-    moyenne_mobile_25_49 <- data_frame(moyenne_mobile_25_49)
+    table_temp<-data.frame(list(pays_concerne,tranches_dages,décalage,estimateur,pvalue))
+    colnames(table_temp)<-c("geo","tranche d'âge","décalage","estimateur de Spearman","p-value de Spearman")
     
-    moyenne_mobile_25_49$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_25_49) + decalageSemaines
-    
-    # Ajouter les colonnes de la moyenne mobile 
-    es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-      left_join(moyenne_mobile_25_49, by = "numSemaineDepuis2013")
-    
-    essai <- es_deces_standard_pays_semaine %>%
-      filter(numSemaineDepuis2013>410)
-    
-    # Calcul de surmortalité
-    
-    es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>% 
-      mutate(barre_vax_25_49 = case_when(
-        Age25_49_dose1 > 0.5*base::max(Age25_49_dose1, na.rm = TRUE) ~ "barre dépassée",
-        TRUE ~ "sous la barre"
-      ))
-    temp <- ungroup(es_deces_standard_pays_semaine) %>% 
-      select(numSemaineDepuis2013,barre_vax_25_49) %>% 
-      filter(barre_vax_25_49=="barre dépassée")
-    
-    date_debut = base::min(temp$numSemaineDepuis2013)
-    date_fin = base::max(es_deces_standard_pays_semaine$numSemaineDepuis2013)-4
-    
-    temp <-  ungroup(es_deces_standard_pays_semaine) %>% 
-      select(numSemaineDepuis2013,ecart_moyenne_25_49) %>% 
-      filter(numSemaineDepuis2013 >= date_debut) %>% 
-      filter(numSemaineDepuis2013 <= date_fin)
-    
-    ecart_moyenne = sum(temp$ecart_moyenne_25_49)
-    nb_dose2 = sum(es_deces_standard_pays_semaine$Age25_49)+sum(es_deces_standard_pays_semaine$Age25_49_dose2)
-    ecart_pour_centmille = ecart_moyenne/nb_dose2*100000
-    
-    #création du graphiques
-    plot(essai$numSemaineDepuis2013, 
-         essai$deces_standardises_si_pop_2020_25_49, 
-         pch=16, 
-         cex=0, 
-         axes=F, 
-         lwd=2,
-         xlab="", 
-         ylab="", 
-         ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
-         type="o", 
-         col="grey", 
-         main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
-    
-    # pour encadrer le graphique
-    box() 
-    
-    axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
-    
-    mtext("nombre de décès toutes causes des 25 - 49 ans", side=2, line=3)
-    mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
-    mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
-    mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=3)
-    
-    # Lignes verticales
-    abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-    
-    text(26,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2013", cex=1.2)
-    text(78,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2014", cex=1.2)
-    text(130, base::min(essai$deces_standardises_si_pop_2020_25_49), "2015", cex=1.2)
-    text(183, base::min(essai$deces_standardises_si_pop_2020_25_49), "2016", cex=1.2)
-    text(235, base::min(essai$deces_standardises_si_pop_2020_25_49), "2017", cex=1.2)
-    text(287, base::min(essai$deces_standardises_si_pop_2020_25_49), "2018", cex=1.2)
-    text(339, base::min(essai$deces_standardises_si_pop_2020_25_49), "2019", cex=1.2)
-    text(391, base::min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
-    text(440, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
-    
-    #text(26, 22000, nomPays, cex=1.2)
-    
-    # Superposer la moyenne mobile
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$moyenne_mobile_25_49, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="", 
-         lwd=3,  
-         ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
-         ylab="", 
-         type="o", 
-         col="red") 
-    
-    # Superposer la moyenne 
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$moyenne_25_49, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="", 
-         lwd=1.5,  
-         ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
-         ylab="", 
-         type="o", 
-         col="purple") 
-    
-    # Superposer la bsup
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$bsup_25_49, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="", 
-         lwd=1.5,  
-         ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
-         ylab="", 
-         lty=2, 
-         type="o", 
-         col="purple") 
-    
-    # Superposer la binf
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$binf_25_49, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="", 
-         lwd=1.5, 
-         ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
-         ylab="",
-         lty=2, 
-         type="o", 
-         col="purple") 	
-    
-    if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
-      # Superposer la vaccination 
-      par(new=T)
-      plot(essai$numSemaineDepuis2013, 
-           essai$Age25_49_dose1, 
-           pch=16, 
-           axes=F, 
-           cex=0, 
-           xlab="",
-           lwd=2,
-           ylim=c(0, base::max(base::max(essai$Age25_49_dose1,na.rm=TRUE),base::max(essai$Age25_49_dose2,na.rm=TRUE))), 
-           ylab="", 
-           type="o", 
-           col="#3399FF") 
-      axis(4, col = "blue", col.axis = "blue", lwd = 2)
-      
-      par(new=T)
-      plot(essai$numSemaineDepuis2013, 
-           essai$Age25_49_dose2, 
-           pch=16, 
-           axes=F, 
-           cex=0, 
-           xlab="", 
-           lwd=2,
-           ylim=c(0, base::max(base::max(essai$Age25_49_dose1,na.rm=TRUE),base::max(essai$Age25_49_dose2,na.rm=TRUE))),
-           ylab="", 
-           type="o", 
-           col="#0066CC") 
-      
-      par(new=T)
-      plot(essai$numSemaineDepuis2013, 
-           essai$Age25_49_dose3, 
-           pch=16, 
-           axes=F, 
-           cex=0, 
-           xlab="",
-           lwd=2,
-           ylim=c(0, base::max(base::max(essai$Age25_49_dose1,na.rm=TRUE),base::max(essai$Age25_49_dose2,na.rm=TRUE))),
-           ylab="", 
-           type="o", 
-           col="#003366")  
-      
-      mtext("première dose                                                                         ", side=1, col="#3399FF", line=1)
-      mtext("deuxième dose", side=1, col="#0066CC", line=1)
-      mtext("                                                                                      troisième dose", side=1, col="#003366", line=1)
-      mtext(paste0("différence de mortalité depuis le début de la campagne vaccinale : ",round(ecart_moyenne,1)," soit ",round(ecart_pour_centmille,1)," pour 100 000 injections"), side=1, col="black", line=2)
-      
+    if(length(test_spearman)==0){
+      test_spearman<-table_temp
+    }else{
+      test_spearman<-test_spearman %>% 
+        rbind(table_temp)
     }
-    dev.print(device = png, file = pngFileRelPath, width = 1000)
+    
+    nom_fichier_spearman <- paste0("gen/rds/table_spearman_stand_",nomPays,".RDS")
+    saveRDS(test_spearman,file=nom_fichier_spearman)
     
   }
-  #
-  # Graphique 3 : Situation des 50- 59 ans
-  #
   
-  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/50-59/")
-  a__f_createDir(repertoire)
+  #Faire les test de Wilcoxon pour toutes les tranches d'âge
   
-  #Nom du fichier png à générer
-  pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+  #15_24
+  surmort_15_24_2021 <- surmort_15_24_2021 %>% mutate(diff_15_24_2021=diff_15_24) %>% select(diff_15_24_2021,semaine)
+  surmort_15_24_2020 <- surmort_15_24_2020 %>% mutate(diff_15_24_2020=diff_15_24) %>% select(diff_15_24_2020,semaine)
+  surmort_15_24_2019 <- surmort_15_24_2019 %>% mutate(diff_15_24_2019=diff_15_24) %>% select(diff_15_24_2019,semaine)
   
-  # Message
-  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  regroup_15_24 <- surmort_15_24_2021 %>% left_join(surmort_15_24_2020, by='semaine') %>% 
+    left_join(surmort_15_24_2019, by='semaine')
   
-  # Moyenne mobile sur 8 semaines, des 50-59 ans
+  wilcox15_24_21_20 <- wilcox.test(regroup_15_24$diff_15_24_2021,regroup_15_24$diff_15_24_2020, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox15_24_21_19 <- wilcox.test(regroup_15_24$diff_15_24_2021,regroup_15_24$diff_15_24_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox15_24_20_19 <- wilcox.test(regroup_15_24$diff_15_24_2020,regroup_15_24$diff_15_24_2019, paired=TRUE, correct=FALSE, exact=FALSE)
   
-  moyenne_mobile_50_59<- running_mean(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_50_59, 
-                                      8)
+  #25_49
+  surmort_25_49_2021 <- surmort_25_49_2021 %>% mutate(diff_25_49_2021=diff_25_49) %>% select(diff_25_49_2021,semaine)
+  surmort_25_49_2020 <- surmort_25_49_2020 %>% mutate(diff_25_49_2020=diff_25_49) %>% select(diff_25_49_2020,semaine)
+  surmort_25_49_2019 <- surmort_25_49_2019 %>% mutate(diff_25_49_2019=diff_25_49) %>% select(diff_25_49_2019,semaine)
   
-  # Moyenne de la Moyenne mobile
+  regroup_25_49 <- surmort_25_49_2021 %>% left_join(surmort_25_49_2020, by='semaine') %>% 
+    left_join(surmort_25_49_2019, by='semaine')
   
-  moyenne_mobile_50_59 <- data_frame(moyenne_mobile_50_59)
+  wilcox25_49_21_20 <- wilcox.test(regroup_25_49$diff_25_49_2021,regroup_25_49$diff_25_49_2020, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox25_49_21_19 <- wilcox.test(regroup_25_49$diff_25_49_2021,regroup_25_49$diff_25_49_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox25_49_20_19 <- wilcox.test(regroup_25_49$diff_25_49_2020,regroup_25_49$diff_25_49_2019, paired=TRUE, correct=FALSE, exact=FALSE)
   
-  moyenne_mobile_50_59$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_50_59) + decalageSemaines
+  #50_59
+  surmort_50_59_2021 <- surmort_50_59_2021 %>% mutate(diff_50_59_2021=diff_50_59) %>% select(diff_50_59_2021,semaine)
+  surmort_50_59_2020 <- surmort_50_59_2020 %>% mutate(diff_50_59_2020=diff_50_59) %>% select(diff_50_59_2020,semaine)
+  surmort_50_59_2019 <- surmort_50_59_2019 %>% mutate(diff_50_59_2019=diff_50_59) %>% select(diff_50_59_2019,semaine)
   
-  # Ajouter les colonnes de la moyenne mobile 
-  es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-    left_join(moyenne_mobile_50_59, by = "numSemaineDepuis2013")
+  regroup_50_59 <- surmort_50_59_2021 %>% left_join(surmort_50_59_2020, by='semaine') %>% 
+    left_join(surmort_50_59_2019, by='semaine')
   
-  essai <- es_deces_standard_pays_semaine %>%
-    filter(numSemaineDepuis2013>410)
+  wilcox50_59_21_20 <- wilcox.test(regroup_50_59$diff_50_59_2021,regroup_50_59$diff_50_59_2020, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox50_59_21_19 <- wilcox.test(regroup_50_59$diff_50_59_2021,regroup_50_59$diff_50_59_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox50_59_20_19 <- wilcox.test(regroup_50_59$diff_50_59_2020,regroup_50_59$diff_50_59_2019, paired=TRUE, correct=FALSE, exact=FALSE)
   
+  #60_69
+  surmort_60_69_2021 <- surmort_60_69_2021 %>% mutate(diff_60_69_2021=diff_60_69) %>% select(diff_60_69_2021,semaine)
+  surmort_60_69_2020 <- surmort_60_69_2020 %>% mutate(diff_60_69_2020=diff_60_69) %>% select(diff_60_69_2020,semaine)
+  surmort_60_69_2019 <- surmort_60_69_2019 %>% mutate(diff_60_69_2019=diff_60_69) %>% select(diff_60_69_2019,semaine)
+  
+  regroup_60_69 <- surmort_60_69_2021 %>% left_join(surmort_60_69_2020, by='semaine') %>% 
+    left_join(surmort_60_69_2019, by='semaine')
+  
+  wilcox60_69_21_20 <- wilcox.test(regroup_60_69$diff_60_69_2021,regroup_60_69$diff_60_69_2020, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox60_69_21_19 <- wilcox.test(regroup_60_69$diff_60_69_2021,regroup_60_69$diff_60_69_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox60_69_20_19 <- wilcox.test(regroup_60_69$diff_60_69_2020,regroup_60_69$diff_60_69_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  
+  #70_79
+  surmort_70_79_2021 <- surmort_70_79_2021 %>% mutate(diff_70_79_2021=diff_70_79) %>% select(diff_70_79_2021,semaine)
+  surmort_70_79_2020 <- surmort_70_79_2020 %>% mutate(diff_70_79_2020=diff_70_79) %>% select(diff_70_79_2020,semaine)
+  surmort_70_79_2019 <- surmort_70_79_2019 %>% mutate(diff_70_79_2019=diff_70_79) %>% select(diff_70_79_2019,semaine)
+  
+  regroup_70_79 <- surmort_70_79_2021 %>% left_join(surmort_70_79_2020, by='semaine') %>% 
+    left_join(surmort_70_79_2019, by='semaine')
+  
+  wilcox70_79_21_20 <- wilcox.test(regroup_70_79$diff_70_79_2021,regroup_70_79$diff_70_79_2020, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox70_79_21_19 <- wilcox.test(regroup_70_79$diff_70_79_2021,regroup_70_79$diff_70_79_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcox70_79_20_19 <- wilcox.test(regroup_70_79$diff_70_79_2020,regroup_70_79$diff_70_79_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  
+  #ge80
+  surmort_ge80_2021 <- surmort_ge80_2021 %>% mutate(diff_ge80_2021=diff_ge80) %>% select(diff_ge80_2021,semaine)
+  surmort_ge80_2020 <- surmort_ge80_2020 %>% mutate(diff_ge80_2020=diff_ge80) %>% select(diff_ge80_2020,semaine)
+  surmort_ge80_2019 <- surmort_ge80_2019 %>% mutate(diff_ge80_2019=diff_ge80) %>% select(diff_ge80_2019,semaine)
+  
+  regroup_ge80 <- surmort_ge80_2021 %>% left_join(surmort_ge80_2020, by='semaine') %>% 
+    left_join(surmort_ge80_2019, by='semaine')
+  
+  wilcoxge80_21_20 <- wilcox.test(regroup_ge80$diff_ge80_2021,regroup_ge80$diff_ge80_2020, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcoxge80_21_19 <- wilcox.test(regroup_ge80$diff_ge80_2021,regroup_ge80$diff_ge80_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  wilcoxge80_20_19 <- wilcox.test(regroup_ge80$diff_ge80_2020,regroup_ge80$diff_ge80_2019, paired=TRUE, correct=FALSE, exact=FALSE)
+  
+  
+  pays_concerne<-c(str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays))
+  tranches_dages<-c("15-24","25-49","50-59","60-69","70-79","ge80")
+  test_pics<-c(pic_corresp_15_24,pic_corresp_25_49,pic_corresp_50_59,pic_corresp_60_69,pic_corresp_70_79,pic_corresp_ge80)
+  nombre_semaine <-c(date_fin_2021-date_debut_2021_15_24,date_fin_2021-date_debut_2021_25_49,date_fin_2021-date_debut_2021_50_59,date_fin_2021-date_debut_2021_60_69,date_fin_2021-date_debut_2021_70_79,date_fin_2021-date_debut_2021_ge80)
+  date_debut <- c(date_debut_2021_15_24,date_debut_2021_25_49,date_debut_2021_50_59,date_debut_2021_60_69,date_debut_2021_70_79,date_debut_2021_ge80)
+  numSemaineDose1 <- c(numSemaineDose1_15_24,numSemaineDose1_25_49,numSemaineDose1_50_59,numSemaineDose1_60_69,numSemaineDose1_70_79,numSemaineDose1_ge80)
+  numSemaineDose2 <- c(numSemaineDose2_15_24,numSemaineDose2_25_49,numSemaineDose2_50_59,numSemaineDose2_60_69,numSemaineDose2_70_79,numSemaineDose2_ge80)
+  numSemaineDose3 <- c(numSemaineDose3_15_24,numSemaineDose3_25_49,numSemaineDose3_50_59,numSemaineDose3_60_69,numSemaineDose3_70_79,numSemaineDose3_ge80)
+  numSemainePic1 <- c(numSemainePic1_15_24,numSemainePic1_25_49,numSemainePic1_50_59,numSemainePic1_60_69,numSemainePic1_70_79,numSemainePic1_ge80)
+  numSemainePic2 <- c(numSemainePic2_15_24,numSemainePic2_25_49,numSemainePic2_50_59,numSemainePic2_60_69,numSemainePic2_70_79,numSemainePic2_ge80)
+  
+  surmortalite_2021 <- c(surmortalite_15_24_2021,surmortalite_25_49_2021,surmortalite_50_59_2021,surmortalite_60_69_2021,surmortalite_70_79_2021,surmortalite_ge80_2021)
+  surmortalite_2020 <- c(surmortalite_15_24_2020,surmortalite_25_49_2020,surmortalite_50_59_2020,surmortalite_60_69_2020,surmortalite_70_79_2020,surmortalite_ge80_2020)
+  pvalue <- c(wilcox15_24_21_20$p.value,wilcox25_49_21_20$p.value,wilcox50_59_21_20$p.value,wilcox60_69_21_20$p.value,wilcox70_79_21_20$p.value,wilcoxge80_21_20$p.value)
+  
+  
+  test_wilcoxon<-data.frame(list(pays_concerne,tranches_dages,
+                                 surmortalite_2021,surmortalite_2020,pvalue,
+                                 test_pics,
+                                 nombre_semaine,
+                                 numSemaineDose1,
+                                 numSemaineDose2,
+                                 numSemaineDose3,
+                                 numSemainePic1,
+                                 numSemainePic2))
+  colnames(test_wilcoxon)<-c("geo","tranche d'âge",
+                             "surmortalite 2021","surmortalite 2020","p-value de Wilcoxon 2021-2020",
+                             "correspondance entre pics de mortalité et de vaccination",
+                             "nombre de semaines étudiées",
+                             "numéro de semaine du pic dose 1",
+                             "numéro de semaine du pic dose 2",
+                             "numéro de semaine du pic dose 3",
+                             "numéro de semaine du pic de décès",
+                             "numéro de semaine du 2e pic de décès")
+  
+  nom_fichier_wilcoxon <- paste0("gen/rds/table_wilcoxon_stand_",nomPays,".RDS")
+  saveRDS(test_wilcoxon,file=nom_fichier_wilcoxon)
+  
+}
+
+
+essai_court<-essai %>% filter(numSemaineDepuis2013>314)
+
+#
+# Graphique 1 : Situation des 15_24 ans
+#
+
+# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand/15-24/")
+a__f_createDir(repertoire)
+
+#Nom du fichier png à générer
+pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+
+# Message
+cat(paste0("Creation image (", pngFileRelPath,")\n"))
+
+
+if(nomPays != 'allemagne'){
   
   #création du graphiques
+  
+  #décès prédits
   plot(essai$numSemaineDepuis2013, 
-       essai$deces_standardises_si_pop_2020_50_59, 
+       essai$predit_stand_15_24, 
        pch=16, 
        cex=0, 
        axes=F, 
-       xlab="", 
-       ylab="",
-       lwd=2,
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
+       lwd=3, 
+       xlab="week", 
+       ylab="", 
+       ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)), 
        type="o", 
        col="grey", 
-       main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
+       main=paste0("Décès hebdomadaires des 15-24 ans (=> ", maxWeekTime ,") : ",str_to_title(nomPays)))
   
   # pour encadrer le graphique
   box() 
   
   axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
   
-  mtext("nombre de décès toutes causes des 50 - 59 ans", side=2, line=3)
-  mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
-  mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
-  mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=3)
+  
+  mtext("Prédiction des décès toutes causes des 15 - 24 ans", side=2, line=3)
+  mtext("Décès toutes causes constatés des 15-24 ans", side=2, line=2, col="red")
+  mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
   
   # Lignes verticales
   abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
   
-  text(26,  base::min(essai$deces_standardises_si_pop_2020_50_59), "2013", cex=1.2)
-  text(78,  base::min(essai$deces_standardises_si_pop_2020_50_59), "2014", cex=1.2)
-  text(130, base::min(essai$deces_standardises_si_pop_2020_50_59), "2015", cex=1.2)
-  text(183, base::min(essai$deces_standardises_si_pop_2020_50_59), "2016", cex=1.2)
-  text(235, base::min(essai$deces_standardises_si_pop_2020_50_59), "2017", cex=1.2)
-  text(287, base::min(essai$deces_standardises_si_pop_2020_50_59), "2018", cex=1.2)
-  text(339, base::min(essai$deces_standardises_si_pop_2020_50_59), "2019", cex=1.2)
-  text(391, base::min(essai$deces_standardises_si_pop_2020_50_59), "2020", cex=1.2)
-  text(440, base::min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
+  text(26,  base::min(essai$deces_standardises_si_pop_2020_15_24), "2013", cex=1.2)
+  text(78,  base::min(essai$deces_standardises_si_pop_2020_15_24), "2014", cex=1.2)
+  text(130, base::min(essai$deces_standardises_si_pop_2020_15_24), "2015", cex=1.2)
+  text(183, base::min(essai$deces_standardises_si_pop_2020_15_24), "2016", cex=1.2)
+  text(235, base::min(essai$deces_standardises_si_pop_2020_15_24), "2017", cex=1.2)
+  text(287, base::min(essai$deces_standardises_si_pop_2020_15_24), "2018", cex=1.2)
+  text(339, base::min(essai$deces_standardises_si_pop_2020_15_24), "2019", cex=1.2)
+  text(391, base::min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
+  text(440, base::min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
   
   #text(26, 22000, nomPays, cex=1.2)
   
-  # Superposer la moyenne mobile
+  # Décès constatés
   par(new=T)
   plot(essai$numSemaineDepuis2013, 
-       essai$moyenne_mobile_50_59, 
+       essai$deces_standardises_si_pop_2020_15_24, 
        pch=16, 
        axes=F, 
        cex=0, 
        xlab="", 
-       lwd=3,  
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
+       lwd=1,  
+       ylim=c(base::min(essai$deces_standardises_si_pop_2020_15_24), base::max(essai$deces_standardises_si_pop_2020_15_24)),
        ylab="", 
        type="o", 
        col="red") 
   
-  # Superposer la moyenne 
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$moyenne_50_59, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=1.5,  
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
-       ylab="", 
-       type="o", 
-       col="purple") 
+  dev.print(device = png, file = pngFileRelPath, width = 1000) 	
   
-  # Superposer la bsup
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$bsup_50_59, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=1.5,  
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
-       ylab="", 
-       lty=2, 
-       type="o", 
-       col="purple") 
-  
-  # Superposer la binf
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$binf_50_59, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=1.5, 
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
-       ylab="",
-       lty=2, 
-       type="o", 
-       col="purple") 	
-  
-  if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
-    # Superposer la vaccination 
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$Age50_59_dose1, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="",
-         lwd=2,
-         ylim=c(0, base::max(base::max(essai$Age50_59_dose1,na.rm=TRUE),base::max(essai$Age50_59_dose2,na.rm=TRUE))), 
-         ylab="", 
-         type="o", 
-         col="#3399FF") 
-    axis(4, col = "blue", col.axis = "blue", lwd = 2)
+  if (nomPays %in% c(
+    'autriche',
+    'belgique',
+    'chypre',
+    'croatie',
+    'danmark',
+    'espagne',
+    'estonie',
+    'finlande',
+    'france',
+    'grece',
+    'hongrie',
+    'islande',
+    'italie',
+    'luxembourg',
+    'malte',
+    'norvege',
+    'pologne',
+    'portugal',
+    'suede','europe','synchro'
+  )) {
     
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$Age50_59_dose2, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="", 
-         lwd=2,
-         ylim=c(0, base::max(base::max(essai$Age50_59_dose1,na.rm=TRUE),base::max(essai$Age50_59_dose2,na.rm=TRUE))),
-         ylab="", 
-         type="o", 
-         col="#0066CC") 
-    
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$Age50_59_dose3, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="",
-         lwd=2,
-         ylim=c(0, base::max(base::max(essai$Age50_59_dose1,na.rm=TRUE),base::max(essai$Age50_59_dose2,na.rm=TRUE))),
-         ylab="", 
-         type="o", 
-         col="#003366")   
-    
-    
-    mtext("première dose                                                                         ", side=1, col="#3399FF", line=2)
-    mtext("deuxième dose", side=1, col="#0066CC", line=2)
-    mtext("                                                                                      troisième dose", side=1, col="#003366", line=2)
+    histo_deces <- ggplot(essai_court) +
+      geom_col(aes(x = numSemaineDepuis2013, y = diff_15_24, fill = pos15_24)) +
+      theme(axis.text.x = element_blank()) +
+      scale_fill_manual(values = c("darkgreen", "red")) +
+      geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_15_24),color = "#0066CC", size = 1) +
+      geom_vline(xintercept = c(366, 419)) +
+      ylab("Différence entre décès constatés \n et décès attendus") +
+      geom_vline(xintercept = floor(date_debut_2021_15_24), colour="#336666", linetype = "longdash")+
+      geom_text(x=floor(date_debut_2021_15_24), y=base::max(essai_court$diff_15_24), label="début vaccination", color="#336666")+
+      geom_text(x = 339,
+                y = base::min(essai_court$diff_15_24),
+                label = "2019") +
+      geom_text(x = 391,
+                y = base::min(essai_court$diff_15_24),
+                label = "2020") +
+      geom_text(x = 440,
+                y = base::min(essai_court$diff_15_24),
+                label = "2021") +
+      xlab(
+        paste0(
+          "surmortalité depuis le début de la vaccination en 2021 : ",
+          floor(surmortalite_15_24_2021),"  (",floor(part_surmortalite_15_24_2021),"%)",
+          "          (soit ",floor(surmortalite_15_24_2021/base::max(essai_court$cumul_15_24_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+          "  \n même période en 2020 : ",
+          floor(surmortalite_15_24_2020),
+          "           même période en 2019 : ",
+          floor(surmortalite_15_24_2019)
+        )
+      ) +
+      ggtitle(
+        paste0(
+          "Ecart des décès hebdomadaires des 15-24 ans par rapport à l'attendu ",
+          str_to_title(nomPays)
+        )
+      ) +
+      theme(legend.position = "none") +
+      annotate(
+        "rect",
+        xmin = premier_conf_start,
+        xmax = premier_conf_end,
+        ymin = base::min(essai$diff_15_24),
+        ymax = base::max(essai$diff_15_24),
+        alpha = .2,
+        fill = "orange"
+      ) +
+      annotate(
+        "rect",
+        xmin = dernier_conf_start,
+        xmax = dernier_conf_end,
+        ymin = base::min(essai$diff_15_24),
+        ymax = base::max(essai$diff_15_24),
+        alpha = .2,
+        fill = "orange"
+      )
+  } else{
+    histo_deces <- ggplot(essai_court) +
+      geom_col(aes(x = numSemaineDepuis2013, y = diff_15_24, fill = pos15_24)) +
+      theme(axis.text.x = element_blank()) +
+      scale_fill_manual(values = c("darkgreen", "red")) +
+      geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_15_24),color = "#0066CC", size = 1) +
+      geom_vline(xintercept = c(366, 419)) +
+      xlab("") +
+      ylab("Différence entre décès constatés \n et décès attendus") +
+      geom_text(x = 339,
+                y = base::min(essai$diff_15_24),
+                label = "2019") +
+      geom_text(x = 391,
+                y = base::min(essai$diff_15_24),
+                label = "2020") +
+      geom_text(x = 440,
+                y = base::min(essai$diff_15_24),
+                label = "2021") +
+      ggtitle(
+        paste0(
+          "Ecart des décès hebdomadaires des 15-24 ans par rapport à l'attendu ",
+          str_to_title(nomPays)
+        )
+      ) +
+      theme(legend.position = "none") +
+      annotate(
+        "rect",
+        xmin = premier_conf_start,
+        xmax = premier_conf_end,
+        ymin = base::min(essai$diff_15_24),
+        ymax = base::max(essai$diff_15_24),
+        alpha = .2,
+        fill = "orange"
+      ) +
+      annotate(
+        "rect",
+        xmin = dernier_conf_start,
+        xmax = dernier_conf_end,
+        ymin = base::min(essai$diff_15_24),
+        ymax = base::max(essai$diff_15_24),
+        alpha = .2,
+        fill = "orange"
+      )
     
   }
-  dev.print(device = png, file = pngFileRelPath, width = 1000)
+  
+  if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
+                    'espagne','estonie','finlande','france','grece','hongrie',
+                    'islande','italie','luxembourg','malte','norvege',
+                    'pologne','portugal','suede','europe','synchro')){
+    
+    courbes_vaccins<-ggplot(essai_court)+
+      theme(axis.text.x = element_blank()) +
+      geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24)/pop_week_15_24),col="#999999",size=2, linetype = "dotted")+
+      geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24_dose1)/pop_week_15_24),col="#0066CC",size=1)+
+      geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24_dose2)/pop_week_15_24),col="#003399",size=1)+
+      geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24_dose3)/pop_week_15_24),col="#000033",size=1)+
+      geom_vline(xintercept = floor(date_debut_2021_15_24), colour="#336666", linetype = "longdash")+
+      geom_vline(xintercept = c(366, 419))+
+      geom_text(x=339, y=0, label="2019")+
+      geom_text(x=391, y=0, label="2020")+
+      geom_text(x=440, y=0, label="2021")+
+      geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
+      geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
+      geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+      xlab("")+
+      ylab("Part d'injections \n dans la population")+ 
+      theme(legend.position = "none")+
+      annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
+               ymin = 0, 
+               ymax = 0.2,
+               alpha = .2, fill = "orange")+
+      annotate("rect", xmin = floor(dernier_conf_start), xmax = floor(dernier_conf_end), 
+               ymin = 0, 
+               ymax = 0.2,
+               alpha = .2, fill = "orange")+
+      annotate(geom="text", x=460, 
+               y=0.18, 
+               label=paste0(floor(base::max(essai_court$part_atteinte_15_24_dose1)*100)," % des 15-24 ans \n  a reçu une dose"),
+               color="#9900CC")
+    
+    a<-grid.arrange(histo_deces, courbes_vaccins,
+                    ncol=1, nrow=2)
+    
+  }else{a<-histo_deces}
   
   
-  #
-  # Graphique 4 : Situation des 60- 69 ans
-  #
+  pngFileRelPath <- paste0(repertoire,"difference_15_24_", nomPays, ".png")
   
-  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/60-69/")
-  a__f_createDir(repertoire)
-  
-  #Nom du fichier png à générer
-  pngFileRelPath <- paste0(repertoire, nomPays, ".png")
-  
-  # Message
-  cat(paste0("Creation image (", pngFileRelPath,")\n"))
-  
-  # Moyenne mobile sur 8 semaines, des 60-69 ans
-  
-  moyenne_mobile_60_69<- running_mean(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_60_69, 
-                                      8)
-  
-  # Moyenne de la Moyenne mobile
-  
-  moyenne_mobile_60_69 <- data_frame(moyenne_mobile_60_69)
-  
-  moyenne_mobile_60_69$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_60_69) + decalageSemaines
-  
-  # Ajouter les colonnes de la moyenne mobile 
-  es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-    left_join(moyenne_mobile_60_69, by = "numSemaineDepuis2013")
-  
-  essai <- es_deces_standard_pays_semaine %>%
-    filter(numSemaineDepuis2013>410)
+  ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
   
   
-  #création du graphiques
+  
+}
+
+#
+# Graphique 2 : Situation des 25- 49 ans
+#
+
+repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand/25-50/")
+a__f_createDir(repertoire)
+
+#Nom du fichier png à générer
+pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+
+# Message
+cat(paste0("Creation image (", pngFileRelPath,")\n"))
+
+
+#création des graphiques
+
+######graphique décès prédits VS réalité
+
+if(nomPays != 'allemagne'){
+  #décès prédits
   plot(essai$numSemaineDepuis2013, 
-       essai$deces_standardises_si_pop_2020_60_69, 
+       essai$predit_stand_25_49, 
        pch=16, 
        cex=0, 
        axes=F, 
-       xlab="",
-       lwd = 2,
+       lwd=3, 
+       xlab="week", 
        ylab="", 
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)),
+       ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)), 
        type="o", 
        col="grey", 
-       main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
+       main=paste0("Décès hebdomadaires des 25-49 ans (=> ", maxWeekTime ,") : ",str_to_title(nomPays)))
   
   # pour encadrer le graphique
   box() 
   
   axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
   
-  mtext("nombre de décès toutes causes des 60 - 69 ans", side=2, line=3)
-  mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
-  mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
-  mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=3)
+  
+  mtext("Prédiction des décès toutes causes des 25-49 ans", side=2, line=3)
+  mtext("Décès toutes causes constatés des 25-49 ans", side=2, line=2, col="red")
+  mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
   
   # Lignes verticales
   abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
   
-  text(26,  base::min(essai$deces_standardises_si_pop_2020_60_69), "2013", cex=1.2)
-  text(78,  base::min(essai$deces_standardises_si_pop_2020_60_69), "2014", cex=1.2)
-  text(130, base::min(essai$deces_standardises_si_pop_2020_60_69), "2015", cex=1.2)
-  text(183, base::min(essai$deces_standardises_si_pop_2020_60_69), "2016", cex=1.2)
-  text(235, base::min(essai$deces_standardises_si_pop_2020_60_69), "2017", cex=1.2)
-  text(287, base::min(essai$deces_standardises_si_pop_2020_60_69), "2018", cex=1.2)
-  text(339, base::min(essai$deces_standardises_si_pop_2020_60_69), "2019", cex=1.2)
-  text(391, base::min(essai$deces_standardises_si_pop_2020_60_69), "2020", cex=1.2)
-  text(440, base::min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
+  text(26,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2013", cex=1.2)
+  text(78,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2014", cex=1.2)
+  text(130, base::min(essai$deces_standardises_si_pop_2020_25_49), "2015", cex=1.2)
+  text(183, base::min(essai$deces_standardises_si_pop_2020_25_49), "2016", cex=1.2)
+  text(235, base::min(essai$deces_standardises_si_pop_2020_25_49), "2017", cex=1.2)
+  text(287, base::min(essai$deces_standardises_si_pop_2020_25_49), "2018", cex=1.2)
+  text(339, base::min(essai$deces_standardises_si_pop_2020_25_49), "2019", cex=1.2)
+  text(391, base::min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
+  text(440, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
   
   #text(26, 22000, nomPays, cex=1.2)
   
-  # Superposer la moyenne mobile
+  # Décès constatés
   par(new=T)
   plot(essai$numSemaineDepuis2013, 
-       essai$moyenne_mobile_60_69, 
+       essai$deces_standardises_si_pop_2020_25_49, 
        pch=16, 
        axes=F, 
        cex=0, 
        xlab="", 
-       lwd=3,  
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)),
+       lwd=1,  
+       ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
        ylab="", 
        type="o", 
        col="red") 
   
-  # Superposer la moyenne 
-  par(new=T)
+}else{
+  
+  #décès prédits
   plot(essai$numSemaineDepuis2013, 
-       essai$moyenne_60_69, 
+       essai$predit_stand_25_49, 
        pch=16, 
-       axes=F, 
        cex=0, 
-       xlab="", 
-       lwd=1.5,  
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)),
+       axes=F, 
+       lwd=3, 
+       xlab="week", 
        ylab="", 
-       type="o", 
-       col="purple") 
-  
-  # Superposer la bsup
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$bsup_60_69, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=1.5,  
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)),
-       ylab="", 
-       lty=2, 
-       type="o", 
-       col="purple") 
-  
-  # Superposer la binf
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$binf_60_69, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=1.5, 
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)), 
-       ylab="",
-       lty=2, 
-       type="o", 
-       col="purple") 	
-  
-  if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
-    # Superposer la vaccination 
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$Age60_69_dose1, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="",
-         lwd=2,
-         ylim=c(0, base::max(base::max(essai$Age60_69_dose1,na.rm=TRUE),base::max(essai$Age60_69_dose2,na.rm=TRUE))), 
-         ylab="", 
-         type="o", 
-         col="#3399FF") 
-    axis(4, col = "blue", col.axis = "blue", lwd = 2)
-    
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$Age60_69_dose2, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="", 
-         lwd=2,
-         ylim=c(0, base::max(base::max(essai$Age60_69_dose1,na.rm=TRUE),base::max(essai$Age60_69_dose2,na.rm=TRUE))),
-         ylab="", 
-         type="o", 
-         col="#0066CC")
-    
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$Age60_69_dose3, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="",
-         lwd=2,
-         ylim=c(0, base::max(base::max(essai$Age60_69_dose1,na.rm=TRUE),base::max(essai$Age60_69_dose2,na.rm=TRUE))),
-         ylab="", 
-         type="o", 
-         col="#003366")   
-    
-    
-    mtext("première dose                                                                         ", side=1, col="#3399FF", line=2)
-    mtext("deuxième dose", side=1, col="#0066CC", line=2)
-    mtext("                                                                                      troisième dose", side=1, col="#003366", line=2)
-    
-  }
-  dev.print(device = png, file = pngFileRelPath, width = 1000)
-  
-  
-  #
-  # Graphique 5 : Situation des 70- 79 ans
-  #
-  
-  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/70-79/")
-  a__f_createDir(repertoire)
-  
-  #Nom du fichier png à générer
-  pngFileRelPath <- paste0(repertoire, nomPays, ".png")
-  
-  # Message
-  cat(paste0("Creation image (", pngFileRelPath,")\n"))
-  
-  # Moyenne mobile sur 8 semaines, des 70-79 ans
-  
-  moyenne_mobile_70_79<- running_mean(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_70_79, 
-                                      8)
-  
-  # Moyenne de la Moyenne mobile
-  
-  moyenne_mobile_70_79 <- data_frame(moyenne_mobile_70_79)
-  
-  moyenne_mobile_70_79$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_70_79) + decalageSemaines
-  
-  # Ajouter les colonnes de la moyenne mobile 
-  es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-    left_join(moyenne_mobile_70_79, by = "numSemaineDepuis2013")
-  
-  essai <- es_deces_standard_pays_semaine %>%
-    filter(numSemaineDepuis2013>410)
-  
-  
-  #création du graphiques
-  plot(essai$numSemaineDepuis2013, 
-       essai$deces_standardises_si_pop_2020_70_79, 
-       pch=16, 
-       cex=0, 
-       axes=F, 
-       xlab="", 
-       lwd=2,
-       ylab="", 
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
+       ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)), 
        type="o", 
        col="grey", 
-       main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
+       main=paste0("Décès hebdomadaires des 40-49 ans (=> ", maxWeekTime ,") : ",str_to_title(nomPays)))
   
   # pour encadrer le graphique
   box() 
   
   axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
   
-  mtext("nombre de décès toutes causes des 70 - 79 ans", side=2, line=3)
-  mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
-  mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
-  mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=3)
+  
+  mtext("Prédiction des décès toutes causes des 40-49 ans", side=2, line=3)
+  mtext("Décès toutes causes constatés des 40-49 ans", side=2, line=2, col="red")
+  mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
   
   # Lignes verticales
   abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
   
-  text(26,  base::min(essai$deces_standardises_si_pop_2020_70_79), "2013", cex=1.2)
-  text(78,  base::min(essai$deces_standardises_si_pop_2020_70_79), "2014", cex=1.2)
-  text(130, base::min(essai$deces_standardises_si_pop_2020_70_79), "2015", cex=1.2)
-  text(183, base::min(essai$deces_standardises_si_pop_2020_70_79), "2016", cex=1.2)
-  text(235, base::min(essai$deces_standardises_si_pop_2020_70_79), "2017", cex=1.2)
-  text(287, base::min(essai$deces_standardises_si_pop_2020_70_79), "2018", cex=1.2)
-  text(339, base::min(essai$deces_standardises_si_pop_2020_70_79), "2019", cex=1.2)
-  text(391, base::min(essai$deces_standardises_si_pop_2020_70_79), "2020", cex=1.2)
-  text(440, base::min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
+  text(26,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2013", cex=1.2)
+  text(78,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2014", cex=1.2)
+  text(130, base::min(essai$deces_standardises_si_pop_2020_25_49), "2015", cex=1.2)
+  text(183, base::min(essai$deces_standardises_si_pop_2020_25_49), "2016", cex=1.2)
+  text(235, base::min(essai$deces_standardises_si_pop_2020_25_49), "2017", cex=1.2)
+  text(287, base::min(essai$deces_standardises_si_pop_2020_25_49), "2018", cex=1.2)
+  text(339, base::min(essai$deces_standardises_si_pop_2020_25_49), "2019", cex=1.2)
+  text(391, base::min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
+  text(440, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
   
   #text(26, 22000, nomPays, cex=1.2)
   
-  # Superposer la moyenne mobile
+  # Décès constatés
   par(new=T)
   plot(essai$numSemaineDepuis2013, 
-       essai$moyenne_mobile_70_79, 
+       essai$deces_standardises_si_pop_2020_25_49, 
        pch=16, 
        axes=F, 
        cex=0, 
        xlab="", 
-       lwd=3,  
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
+       lwd=1,  
+       ylim=c(base::min(essai$deces_standardises_si_pop_2020_25_49), base::max(essai$deces_standardises_si_pop_2020_25_49)),
        ylab="", 
        type="o", 
        col="red") 
+}
+
+dev.print(device = png, file = pngFileRelPath, width = 1000) 
+
+#### graphique comparaison décès vaccins
+
+if (nomPays %in% c(
+  'autriche',
+  'belgique',
+  'chypre',
+  'croatie',
+  'danmark',
+  'espagne',
+  'estonie',
+  'finlande',
+  'france',
+  'grece',
+  'hongrie',
+  'islande',
+  'italie',
+  'luxembourg',
+  'malte',
+  'norvege',
+  'pologne',
+  'portugal',
+  'suede','europe','synchro'
+)) {
+  histo_deces <- ggplot(essai_court) +
+    theme(axis.text.x = element_blank()) +
+    geom_col(aes(x = numSemaineDepuis2013, y = diff_25_49, fill = pos25_49)) +
+    scale_fill_manual(values = c("darkgreen", "red")) +
+    geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_25_49),color = "#0066CC", size = 1) +
+    geom_vline(xintercept = c(366, 419)) +
+    ylab("Différence entre décès constatés \n et décès attendus") +
+    geom_vline(xintercept = floor(date_debut_2021_25_49), colour="#336666", linetype = "longdash")+
+    geom_text(x=floor(date_debut_2021_25_49), y=base::max(essai_court$diff_25_49), label="début vaccination", color="#336666")+
+    geom_text(x = 339,
+              y = base::min(essai$diff_25_49),
+              label = "2019") +
+    geom_text(x = 391,
+              y = base::min(essai$diff_25_49),
+              label = "2020") +
+    geom_text(x = 440,
+              y = base::min(essai$diff_25_49),
+              label = "2021") +
+    xlab(
+      paste0(
+        "surmortalité depuis le début de la vaccination en 2021 : ",
+        floor(surmortalite_25_49_2021),
+        "  (",floor(part_surmortalite_25_49_2021),"%)",
+        "          (soit ",floor(surmortalite_25_49_2021/base::max(essai_court$cumul_25_49_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+        "  \n même période en 2020 : ",
+        floor(surmortalite_25_49_2020),
+        "           même période en 2019 : ",
+        floor(surmortalite_25_49_2019))
+    ) +
+    ggtitle(
+      paste0(
+        "Ecart des décès hebdomadaires des 25-49 ans par rapport à l'attendu ",
+        str_to_title(nomPays)
+      )
+    ) +
+    theme(legend.position = "none") +
+    annotate(
+      "rect",
+      xmin = premier_conf_start,
+      xmax = premier_conf_end,
+      ymin = base::min(essai$diff_25_49),
+      ymax = base::max(essai$diff_25_49),
+      alpha = .2,
+      fill = "orange"
+    ) +
+    annotate(
+      "rect",
+      xmin = dernier_conf_start,
+      xmax = dernier_conf_end,
+      ymin = base::min(essai$diff_25_49),
+      ymax = base::max(essai$diff_25_49),
+      alpha = .2,
+      fill = "orange"
+    )
+} else{
+  histo_deces <- ggplot(essai_court) +
+    theme(axis.text.x = element_blank()) +
+    geom_col(aes(x = numSemaineDepuis2013, y = diff_25_49, fill = pos25_49)) +
+    scale_fill_manual(values = c("darkgreen", "red")) +
+    geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_25_49),color = "#0066CC", size = 1) +
+    geom_vline(xintercept = c(366, 419)) +
+    xlab("") +
+    ylab("Différence entre décès constatés \n et décès attendus") +
+    geom_text(x = 339,
+              y = base::min(essai$diff_25_49),
+              label = "2019") +
+    geom_text(x = 391,
+              y = base::min(essai$diff_25_49),
+              label = "2020") +
+    geom_text(x = 440,
+              y = base::min(essai$diff_25_49),
+              label = "2021") +
+    ggtitle(
+      paste0(
+        "Ecart des décès hebdomadaires des 25-49 ans par rapport à l'attendu ",
+        str_to_title(nomPays)
+      )
+    ) +
+    theme(legend.position = "none") +
+    annotate(
+      "rect",
+      xmin = premier_conf_start,
+      xmax = premier_conf_end,
+      ymin = base::min(essai$diff_25_49),
+      ymax = base::max(essai$diff_25_49),
+      alpha = .2,
+      fill = "orange"
+    ) +
+    annotate(
+      "rect",
+      xmin = dernier_conf_start,
+      xmax = dernier_conf_end,
+      ymin = base::min(essai$diff_25_49),
+      ymax = base::max(essai$diff_25_49),
+      alpha = .2,
+      fill = "orange"
+    )
   
-  # Superposer la moyenne 
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$moyenne_70_79, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=1.5,  
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
-       ylab="", 
-       type="o", 
-       col="purple") 
+}
+
+if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
+                  'espagne','estonie','finlande','france','grece','hongrie',
+                  'islande','italie','luxembourg','malte','norvege',
+                  'pologne','portugal','suede','europe','synchro')){
   
-  # Superposer la bsup
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$bsup_70_79, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=1.5,  
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
-       ylab="", 
-       lty=2, 
-       type="o", 
-       col="purple") 
+  courbes_vaccins<-ggplot(essai_court)+
+    theme(axis.text.x = element_blank()) +
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49)/pop_week_25_49),col="#999999",size=2, linetype = "dotted")+
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49_dose1)/pop_week_25_49),col="#0066CC",size=1)+
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49_dose2)/pop_week_25_49),col="#003399",size=1)+
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49_dose3)/pop_week_25_49),col="#000033",size=1)+
+    geom_vline(xintercept = floor(date_debut_2021_25_49), colour="#336666", linetype = "longdash")+
+    geom_vline(xintercept = c(366, 419))+
+    geom_text(x=339, y=0, label="2019")+
+    geom_text(x=391, y=0, label="2020")+
+    geom_text(x=440, y=0, label="2021")+
+    geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
+    geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
+    geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+    xlab("")+
+    ylab("Part d'injections \n dans la population")+ 
+    theme(legend.position = "none")+
+    annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
+             ymin = 0, 
+             ymax = 0.2,
+             alpha = .2, fill = "orange")+
+    annotate("rect", xmin = floor(dernier_conf_start), xmax = floor(dernier_conf_end), 
+             ymin = 0, 
+             ymax = 0.2,
+             alpha = .2, fill = "orange")+
+    annotate(geom="text", x=460, 
+             y=0.18, 
+             label=paste0(floor(base::max(essai_court$part_atteinte_25_49_dose1)*100)," % des 25-49 ans \n  a reçu une dose"),
+             color="#9900CC")
   
-  # Superposer la binf
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$binf_70_79, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=1.5, 
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
-       ylab="",
-       lty=2, 
-       type="o", 
-       col="purple") 	
+  a<-grid.arrange(histo_deces, courbes_vaccins,
+                  ncol=1, nrow=2)
   
-  if(!is.na(mean(essai$Age15_17, na.rm = TRUE))){
-    # Superposer la vaccination 
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$Age70_79_dose1, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="",
-         lwd=2,
-         ylim=c(0, base::max(base::max(essai$Age70_79_dose1,na.rm=TRUE),base::max(essai$Age70_79_dose2,na.rm=TRUE))), 
-         ylab="", 
-         type="o", 
-         col="#3399FF") 
-    axis(4, col = "blue", col.axis = "blue", lwd = 2)
-    
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$Age70_79_dose2, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="", 
-         lwd=2,
-         ylim=c(0, base::max(base::max(essai$Age70_79_dose1,na.rm=TRUE),base::max(essai$Age70_79_dose2,na.rm=TRUE))),
-         ylab="", 
-         type="o", 
-         col="#0066CC") 
-    
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$Age70_79_dose3, 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="",
-         lwd=2,
-         ylim=c(0, base::max(base::max(essai$Age70_79_dose1,na.rm=TRUE),base::max(essai$Age70_79_dose2,na.rm=TRUE))),
-         ylab="", 
-         type="o", 
-         col="#003366")   
-    mtext("première dose                                                                         ", side=1, col="#3399FF", line=2)
-    mtext("deuxième dose", side=1, col="#0066CC", line=2)
-    mtext("                                                                                      troisième dose", side=1, col="#003366", line=2)
-    
-  }
+}else{a<-histo_deces}
+
+
+pngFileRelPath <- paste0(repertoire,"difference_25_49_", nomPays, ".png")
+
+ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
+
+
+
+#
+# Graphique 3 : Situation des 50-59 ans
+#
+
+repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand/50-59/")
+a__f_createDir(repertoire)
+
+#Nom du fichier png à générer
+pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+
+# Message
+cat(paste0("Creation image (", pngFileRelPath,")\n"))
+
+
+#décès prédits
+plot(essai$numSemaineDepuis2013, 
+     essai$predit_stand_50_59, 
+     pch=16, 
+     cex=0, 
+     axes=F, 
+     lwd=3, 
+     xlab="week", 
+     ylab="", 
+     ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)), 
+     type="o", 
+     col="grey", 
+     main=paste0("Décès hebdomadaires des 50-59 ans (=> ", maxWeekTime ,") : ",str_to_title(nomPays)))
+
+# pour encadrer le graphique
+box() 
+
+axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+
+
+mtext("Prédiction des décès toutes causes des 50-59 ans", side=2, line=3)
+mtext("Décès toutes causes constatés des 50-59 ans", side=2, line=2, col="red")
+mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
+
+# Lignes verticales
+abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+
+text(26,  base::min(essai$deces_standardises_si_pop_2020_50_59), "2013", cex=1.2)
+text(78,  base::min(essai$deces_standardises_si_pop_2020_50_59), "2014", cex=1.2)
+text(130, base::min(essai$deces_standardises_si_pop_2020_50_59), "2015", cex=1.2)
+text(183, base::min(essai$deces_standardises_si_pop_2020_50_59), "2016", cex=1.2)
+text(235, base::min(essai$deces_standardises_si_pop_2020_50_59), "2017", cex=1.2)
+text(287, base::min(essai$deces_standardises_si_pop_2020_50_59), "2018", cex=1.2)
+text(339, base::min(essai$deces_standardises_si_pop_2020_50_59), "2019", cex=1.2)
+text(391, base::min(essai$deces_standardises_si_pop_2020_50_59), "2020", cex=1.2)
+text(440, base::min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
+
+#text(26, 22000, nomPays, cex=1.2)
+
+# Décès constatés
+par(new=T)
+plot(essai$numSemaineDepuis2013, 
+     essai$deces_standardises_si_pop_2020_50_59, 
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=1,  
+     ylim=c(base::min(essai$deces_standardises_si_pop_2020_50_59), base::max(essai$deces_standardises_si_pop_2020_50_59)),
+     ylab="", 
+     type="o", 
+     col="red") 
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+#### graphique comparaison décès vaccins
+
+if (nomPays %in% c(
+  'autriche',
+  'belgique',
+  'chypre',
+  'croatie',
+  'danmark',
+  'espagne',
+  'estonie',
+  'finlande',
+  'france',
+  'grece',
+  'hongrie',
+  'islande',
+  'italie',
+  'luxembourg',
+  'malte',
+  'norvege',
+  'pologne',
+  'portugal',
+  'suede','europe','synchro'
+)) {
+  histo_deces <- ggplot(essai_court) +
+    theme(axis.text.x = element_blank()) +
+    geom_col(aes(x = numSemaineDepuis2013, y = diff_50_59, fill = pos50_59)) +
+    scale_fill_manual(values = c("darkgreen", "red")) +
+    geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_50_59),color = "#0066CC", size = 1) +
+    geom_vline(xintercept = c(366, 419)) +
+    ylab("Différence entre décès constatés \n et décès attendus") +
+    geom_vline(xintercept = floor(date_debut_2021_50_59), colour="#336666", linetype = "longdash")+
+    geom_text(x=floor(date_debut_2021_50_59), y=base::max(essai_court$diff_50_59), label="début vaccination", color="#336666")+
+    geom_text(x = 339,
+              y = base::min(essai$diff_50_59),
+              label = "2019") +
+    geom_text(x = 391,
+              y = base::min(essai$diff_50_59),
+              label = "2020") +
+    geom_text(x = 440,
+              y = base::min(essai$diff_50_59),
+              label = "2021") +
+    xlab(
+      paste0(
+        "surmortalité depuis le début de la vaccination en 2021 : ",
+        floor(surmortalite_50_59_2021),
+        "  (",floor(part_surmortalite_50_59_2021),"%)",
+        "          (soit ",floor(surmortalite_50_59_2021/base::max(essai_court$cumul_50_59_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+        "  \n même période en 2020 : ",
+        floor(surmortalite_50_59_2020),
+        "           même période en 2019 : ",
+        floor(surmortalite_50_59_2019)
+      )
+    ) +
+    ggtitle(
+      paste0(
+        "Ecart des décès hebdomadaires des 50-59 ans par rapport à l'attendu ",
+        str_to_title(nomPays)
+      )
+    ) +
+    theme(legend.position = "none") +
+    annotate(
+      "rect",
+      xmin = premier_conf_start,
+      xmax = premier_conf_end,
+      ymin = base::min(essai$diff_50_59),
+      ymax = base::max(essai$diff_50_59),
+      alpha = .2,
+      fill = "orange"
+    ) +
+    annotate(
+      "rect",
+      xmin = dernier_conf_start,
+      xmax = dernier_conf_end,
+      ymin = base::min(essai$diff_50_59),
+      ymax = base::max(essai$diff_50_59),
+      alpha = .2,
+      fill = "orange"
+    )
+} else{
+  histo_deces <- ggplot(essai_court) +
+    theme(axis.text.x = element_blank()) +
+    geom_col(aes(x = numSemaineDepuis2013, y = diff_50_59, fill = pos50_59)) +
+    scale_fill_manual(values = c("darkgreen", "red")) +
+    geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_50_59),color = "#0066CC", size = 1) +
+    geom_vline(xintercept = c(366, 419)) +
+    xlab("") +
+    ylab("Différence entre décès constatés \n et décès attendus") +
+    geom_text(x = 339,
+              y = base::min(essai$diff_50_59),
+              label = "2019") +
+    geom_text(x = 391,
+              y = base::min(essai$diff_50_59),
+              label = "2020") +
+    geom_text(x = 440,
+              y = base::min(essai$diff_50_59),
+              label = "2021") +
+    ggtitle(
+      paste0(
+        "Ecart des décès hebdomadaires des 50-59 ans par rapport à l'attendu ",
+        str_to_title(nomPays)
+      )
+    ) +
+    theme(legend.position = "none") +
+    annotate(
+      "rect",
+      xmin = premier_conf_start,
+      xmax = premier_conf_end,
+      ymin = base::min(essai$diff_50_59),
+      ymax = base::max(essai$diff_50_59),
+      alpha = .2,
+      fill = "orange"
+    ) +
+    annotate(
+      "rect",
+      xmin = dernier_conf_start,
+      xmax = dernier_conf_end,
+      ymin = base::min(essai$diff_50_59),
+      ymax = base::max(essai$diff_50_59),
+      alpha = .2,
+      fill = "orange"
+    )
   
-  dev.print(device = png, file = pngFileRelPath, width = 1000)
+}
+
+if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
+                  'espagne','estonie','finlande','france','grece','hongrie',
+                  'islande','italie','luxembourg','malte','norvege',
+                  'pologne','portugal','suede','europe','synchro')){
   
+  courbes_vaccins<-ggplot(essai_court)+
+    theme(axis.text.x = element_blank()) +
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59)/pop_week_50_59),col="#999999",size=2, linetype = "dotted")+
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59_dose1)/pop_week_50_59),col="#0066CC",size=1)+
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59_dose2)/pop_week_50_59),col="#003399",size=1)+
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59_dose3)/pop_week_50_59),col="#000033",size=1)+
+    geom_vline(xintercept = floor(date_debut_2021_50_59), colour="#336666", linetype = "longdash")+
+    geom_vline(xintercept = c(366, 419))+
+    geom_text(x=339, y=0, label="2019")+
+    geom_text(x=391, y=0, label="2020")+
+    geom_text(x=440, y=0, label="2021")+
+    geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
+    geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
+    geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+    xlab("")+
+    ylab("Part d'injections \n dans la population")+ 
+    theme(legend.position = "none")+
+    annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
+             ymin = 0, 
+             ymax = 0.2,
+             alpha = .2, fill = "orange")+
+    annotate("rect", xmin = floor(dernier_conf_start), xmax = floor(dernier_conf_end), 
+             ymin = 0, 
+             ymax = 0.2,
+             alpha = .2, fill = "orange")+
+    annotate(geom="text", x=460, 
+             y=0.18, 
+             label=paste0(floor(base::max(essai_court$part_atteinte_50_59_dose1)*100)," % des 15-24 ans \n  a reçu une dose"),
+             color="#9900CC")
   
+  a<-grid.arrange(histo_deces, courbes_vaccins,
+                  ncol=1, nrow=2)
   
-  #
-  # Graphique 6 : Situation des plus de 80 ans
-  #
+}else{a<-histo_deces}
+
+
+pngFileRelPath <- paste0(repertoire,"difference_50_59_", nomPays, ".png")
+
+ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
+
+
+#
+# Graphique 4 : Situation des 60- 69 ans
+#
+
+repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand/60-69/")
+a__f_createDir(repertoire)
+
+#Nom du fichier png à générer
+pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+
+# Message
+cat(paste0("Creation image (", pngFileRelPath,")\n"))
+
+
+
+#décès prédits
+plot(essai$numSemaineDepuis2013, 
+     essai$predit_stand_60_69, 
+     pch=16, 
+     cex=0, 
+     axes=F, 
+     lwd=3, 
+     xlab="week", 
+     ylab="", 
+     ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)), 
+     type="o", 
+     col="grey", 
+     main=paste0("Décès hebdomadaires des 60-69 ans (=> ", maxWeekTime ,") : ",str_to_title(nomPays)))
+
+# pour encadrer le graphique
+box() 
+
+axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+
+
+mtext("Prédiction des décès toutes causes des 60-69 ans", side=2, line=3)
+mtext("Décès toutes causes constatés des 60-69 ans", side=2, line=2, col="red")
+mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
+
+# Lignes verticales
+abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+
+text(26,  base::min(essai$deces_standardises_si_pop_2020_60_69), "2013", cex=1.2)
+text(78,  base::min(essai$deces_standardises_si_pop_2020_60_69), "2014", cex=1.2)
+text(130, base::min(essai$deces_standardises_si_pop_2020_60_69), "2015", cex=1.2)
+text(183, base::min(essai$deces_standardises_si_pop_2020_60_69), "2016", cex=1.2)
+text(235, base::min(essai$deces_standardises_si_pop_2020_60_69), "2017", cex=1.2)
+text(287, base::min(essai$deces_standardises_si_pop_2020_60_69), "2018", cex=1.2)
+text(339, base::min(essai$deces_standardises_si_pop_2020_60_69), "2019", cex=1.2)
+text(391, base::min(essai$deces_standardises_si_pop_2020_60_69), "2020", cex=1.2)
+text(440, base::min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
+
+#text(26, 22000, nomPays, cex=1.2)
+
+# Décès constatés
+par(new=T)
+plot(essai$numSemaineDepuis2013, 
+     essai$deces_standardises_si_pop_2020_60_69, 
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=1,  
+     ylim=c(base::min(essai$deces_standardises_si_pop_2020_60_69), base::max(essai$deces_standardises_si_pop_2020_60_69)),
+     ylab="", 
+     type="o", 
+     col="red") 
+
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+#### graphique comparaison décès vaccins
+
+if (nomPays %in% c(
+  'autriche',
+  'belgique',
+  'chypre',
+  'croatie',
+  'danmark',
+  'espagne',
+  'estonie',
+  'finlande',
+  'france',
+  'grece',
+  'hongrie',
+  'islande',
+  'italie',
+  'luxembourg',
+  'malte',
+  'norvege',
+  'pologne',
+  'portugal',
+  'suede','europe','synchro'
+)) {
+  histo_deces <- ggplot(essai_court) +
+    theme(axis.text.x = element_blank()) +
+    geom_col(aes(x = numSemaineDepuis2013, y = diff_60_69, fill = pos60_69)) +
+    scale_fill_manual(values = c("darkgreen", "red")) +
+    geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_60_69),color = "#0066CC", size = 1) +
+    geom_vline(xintercept = c(366, 419)) +
+    ylab("Différence entre décès constatés \n et décès attendus") +
+    geom_vline(xintercept = floor(date_debut_2021_60_69), colour="#336666", linetype = "longdash")+
+    geom_text(x=floor(date_debut_2021_60_69), y=base::max(essai_court$diff_60_69), label="début vaccination", color="#336666")+
+    geom_text(x = 339,
+              y = base::min(essai$diff_60_69),
+              label = "2019") +
+    geom_text(x = 391,
+              y = base::min(essai$diff_60_69),
+              label = "2020") +
+    geom_text(x = 440,
+              y = base::min(essai$diff_60_69),
+              label = "2021") +
+    xlab(
+      paste0(
+        "surmortalité depuis le début de la vaccination en 2021 : ",
+        floor(surmortalite_60_69_2021),
+        "  (",floor(part_surmortalite_60_69_2021),"%)",
+        "          (soit ",floor(surmortalite_60_69_2021/base::max(essai_court$cumul_60_69_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+        "  \n même période en 2020 : ",
+        floor(surmortalite_60_69_2020),
+        "           même période en 2019 : ",
+        floor(surmortalite_60_69_2019))
+    ) +
+    ggtitle(
+      paste0(
+        "Ecart des décès hebdomadaires des 60-69 ans par rapport à l'attendu ",
+        str_to_title(nomPays)
+      )
+    ) +
+    theme(legend.position = "none") +
+    annotate(
+      "rect",
+      xmin = premier_conf_start,
+      xmax = premier_conf_end,
+      ymin = base::min(essai$diff_60_69),
+      ymax = base::max(essai$diff_60_69),
+      alpha = .2,
+      fill = "orange"
+    ) +
+    annotate(
+      "rect",
+      xmin = dernier_conf_start,
+      xmax = dernier_conf_end,
+      ymin = base::min(essai$diff_60_69),
+      ymax = base::max(essai$diff_60_69),
+      alpha = .2,
+      fill = "orange"
+    )
+} else{
+  histo_deces <- ggplot(essai_court) +
+    theme(axis.text.x = element_blank()) +
+    geom_col(aes(x = numSemaineDepuis2013, y = diff_60_69, fill = pos60_69)) +
+    scale_fill_manual(values = c("darkgreen", "red")) +
+    geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_60_69),color = "#0066CC", size = 1) +
+    geom_vline(xintercept = c(366, 419)) +
+    xlab("") +
+    ylab("Différence entre décès constatés \n et décès attendus") +
+    geom_text(x = 339,
+              y = base::min(essai$diff_60_69),
+              label = "2019") +
+    geom_text(x = 391,
+              y = base::min(essai$diff_60_69),
+              label = "2020") +
+    geom_text(x = 440,
+              y = base::min(essai$diff_60_69),
+              label = "2021") +
+    ggtitle(
+      paste0(
+        "Ecart des décès hebdomadaires des 60-69 ans par rapport à l'attendu ",
+        str_to_title(nomPays)
+      )
+    ) +
+    theme(legend.position = "none") +
+    annotate(
+      "rect",
+      xmin = premier_conf_start,
+      xmax = premier_conf_end,
+      ymin = base::min(essai$diff_60_69),
+      ymax = base::max(essai$diff_60_69),
+      alpha = .2,
+      fill = "orange"
+    ) +
+    annotate(
+      "rect",
+      xmin = dernier_conf_start,
+      xmax = dernier_conf_end,
+      ymin = base::min(essai$diff_60_69),
+      ymax = base::max(essai$diff_60_69),
+      alpha = .2,
+      fill = "orange"
+    )
   
-  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin/80plus/")
-  a__f_createDir(repertoire)
+}
+
+if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
+                  'espagne','estonie','finlande','france','grece','hongrie',
+                  'islande','italie','luxembourg','malte','norvege',
+                  'pologne','portugal','suede','europe','synchro')){
   
-  #Nom du fichier png à générer
-  pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+  courbes_vaccins<-ggplot(essai_court)+
+    theme(axis.text.x = element_blank()) +
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69)/pop_week_60_69),col="#999999",size=2, linetype = "dotted")+
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69_dose1)/pop_week_60_69),col="#0066CC",size=1)+
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69_dose2)/pop_week_60_69),col="#003399",size=1)+
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69_dose3)/pop_week_60_69),col="#000033",size=1)+
+    geom_vline(xintercept = floor(date_debut_2021_60_69), colour="#336666", linetype = "longdash")+
+    geom_vline(xintercept = c(366, 419))+
+    geom_text(x=339, y=0, label="2019")+
+    geom_text(x=391, y=0, label="2020")+
+    geom_text(x=440, y=0, label="2021")+
+    geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
+    geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
+    geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+    xlab("")+
+    ylab("Part d'injections \n dans la population")+ 
+    theme(legend.position = "none")+
+    annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
+             ymin = 0, 
+             ymax = 0.2,
+             alpha = .2, fill = "orange")+
+    annotate("rect", xmin = floor(dernier_conf_start), xmax = floor(dernier_conf_end), 
+             ymin = 0, 
+             ymax = 0.2,
+             alpha = .2, fill = "orange")+
+    annotate(geom="text", x=460, 
+             y=0.18, 
+             label=paste0(floor(base::max(essai_court$part_atteinte_60_69_dose1)*100)," % des 60-69 ans \n  a reçu une dose"),
+             color="#9900CC")
   
-  # Message
-  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  a<-grid.arrange(histo_deces, courbes_vaccins,
+                  ncol=1, nrow=2)
   
-  # Moyenne mobile sur 8 semaines, des 80-89 ans
+}else{a<-histo_deces}
+
+
+pngFileRelPath <- paste0(repertoire,"difference_60_69_", nomPays, ".png")
+
+ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
+
+
+#
+# Graphique 5 : Situation des 70- 79 ans
+#
+
+repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand/70-79/")
+a__f_createDir(repertoire)
+
+#Nom du fichier png à générer
+pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+
+# Message
+cat(paste0("Creation image (", pngFileRelPath,")\n"))
+
+
+#décès prédits
+plot(essai$numSemaineDepuis2013, 
+     essai$predit_stand_70_79, 
+     pch=16, 
+     cex=0, 
+     axes=F, 
+     lwd=3, 
+     xlab="week", 
+     ylab="", 
+     ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)), 
+     type="o", 
+     col="grey", 
+     main=paste0("Décès hebdomadaires des 70-79 ans (=> ", maxWeekTime ,") : ",str_to_title(nomPays)))
+
+# pour encadrer le graphique
+box() 
+
+axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+
+
+mtext("Prédiction des décès toutes causes des 70-79 ans", side=2, line=3)
+mtext("Décès toutes causes constatés des 70-79 ans", side=2, line=2, col="red")
+mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
+
+# Lignes verticales
+abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+
+text(26,  base::min(essai$deces_standardises_si_pop_2020_70_79), "2013", cex=1.2)
+text(78,  base::min(essai$deces_standardises_si_pop_2020_70_79), "2014", cex=1.2)
+text(130, base::min(essai$deces_standardises_si_pop_2020_70_79), "2015", cex=1.2)
+text(183, base::min(essai$deces_standardises_si_pop_2020_70_79), "2016", cex=1.2)
+text(235, base::min(essai$deces_standardises_si_pop_2020_70_79), "2017", cex=1.2)
+text(287, base::min(essai$deces_standardises_si_pop_2020_70_79), "2018", cex=1.2)
+text(339, base::min(essai$deces_standardises_si_pop_2020_70_79), "2019", cex=1.2)
+text(391, base::min(essai$deces_standardises_si_pop_2020_70_79), "2020", cex=1.2)
+text(440, base::min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
+
+#text(26, 22000, nomPays, cex=1.2)
+
+# Décès constatés
+par(new=T)
+plot(essai$numSemaineDepuis2013, 
+     essai$deces_standardises_si_pop_2020_70_79, 
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=1,  
+     ylim=c(base::min(essai$deces_standardises_si_pop_2020_70_79), base::max(essai$deces_standardises_si_pop_2020_70_79)),
+     ylab="", 
+     type="o", 
+     col="red") 
+
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+#### graphique comparaison décès vaccins
+
+if (nomPays %in% c(
+  'autriche',
+  'belgique',
+  'chypre',
+  'croatie',
+  'danmark',
+  'espagne',
+  'estonie',
+  'finlande',
+  'france',
+  'grece',
+  'hongrie',
+  'islande',
+  'italie',
+  'luxembourg',
+  'malte',
+  'norvege',
+  'pologne',
+  'portugal',
+  'suede','europe','synchro'
+)) {
+  histo_deces <- ggplot(essai_court) +
+    theme(axis.text.x = element_blank()) +
+    geom_col(aes(x = numSemaineDepuis2013, y = diff_70_79, fill = pos70_79)) +
+    scale_fill_manual(values = c("darkgreen", "red")) +
+    geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_70_79),color = "#0066CC", size = 1) +
+    geom_vline(xintercept = c(366, 419)) +
+    ylab("Différence entre décès constatés \n et décès attendus") +
+    geom_vline(xintercept = floor(date_debut_2021_70_79), colour="#336666", linetype = "longdash")+
+    geom_text(x=floor(date_debut_2021_70_79), y=base::max(essai_court$diff_70_79), label="début vaccination", color="#336666")+
+    geom_text(x = 339,
+              y = base::min(essai$diff_70_79),
+              label = "2019") +
+    geom_text(x = 391,
+              y = base::min(essai$diff_70_79),
+              label = "2020") +
+    geom_text(x = 440,
+              y = base::min(essai$diff_70_79),
+              label = "2021") +
+    xlab(
+      paste0(
+        "surmortalité depuis le début de la vaccination en 2021 : ",
+        floor(surmortalite_70_79_2021),
+        "  (",floor(part_surmortalite_70_79_2021),"%)",
+        "          (soit ",floor(surmortalite_70_79_2021/base::max(essai_court$cumul_70_79_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+        "  \n même période en 2020 : ",
+        floor(surmortalite_70_79_2020),
+        "           même période en 2019 : ",
+        floor(surmortalite_70_79_2019)          
+      )
+    ) +
+    ggtitle(
+      paste0(
+        "Ecart des décès hebdomadaires des 70-79 ans par rapport à l'attendu ",
+        str_to_title(nomPays)
+      )
+    ) +
+    theme(legend.position = "none") +
+    annotate(
+      "rect",
+      xmin = premier_conf_start,
+      xmax = premier_conf_end,
+      ymin = base::min(essai$diff_70_79),
+      ymax = base::max(essai$diff_70_79),
+      alpha = .2,
+      fill = "orange"
+    ) +
+    annotate(
+      "rect",
+      xmin = dernier_conf_start,
+      xmax = dernier_conf_end,
+      ymin = base::min(essai$diff_70_79),
+      ymax = base::max(essai$diff_70_79),
+      alpha = .2,
+      fill = "orange"
+    )
+} else{
+  histo_deces <- ggplot(essai_court) +
+    theme(axis.text.x = element_blank()) +
+    geom_col(aes(x = numSemaineDepuis2013, y = diff_70_79, fill = pos70_79)) +
+    scale_fill_manual(values = c("darkgreen", "red")) +
+    geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_70_79),color = "#0066CC", size = 1) +
+    geom_vline(xintercept = c(366, 419)) +
+    xlab("")+
+    ylab("Différence entre décès constatés \n et décès attendus") +
+    geom_text(x = 339,
+              y = base::min(essai$diff_70_79),
+              label = "2019") +
+    geom_text(x = 391,
+              y = base::min(essai$diff_70_79),
+              label = "2020") +
+    geom_text(x = 440,
+              y = base::min(essai$diff_70_79),
+              label = "2021") +
+    ggtitle(
+      paste0(
+        "Ecart des décès hebdomadaires des 70-79 ans par rapport à l'attendu ",
+        str_to_title(nomPays)
+      )
+    ) +
+    theme(legend.position = "none") +
+    annotate(
+      "rect",
+      xmin = premier_conf_start,
+      xmax = premier_conf_end,
+      ymin = base::min(essai$diff_70_79),
+      ymax = base::max(essai$diff_70_79),
+      alpha = .2,
+      fill = "orange"
+    ) +
+    annotate(
+      "rect",
+      xmin = dernier_conf_start,
+      xmax = dernier_conf_end,
+      ymin = base::min(essai$diff_70_79),
+      ymax = base::max(essai$diff_70_79),
+      alpha = .2,
+      fill = "orange"
+    )
   
-  moyenne_mobile_ge80<- running_mean(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge80, 
-                                     8)
+}
+
+if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
+                  'espagne','estonie','finlande','france','grece','hongrie',
+                  'islande','italie','luxembourg','malte','norvege',
+                  'pologne','portugal','suede','europe','synchro')){
   
-  # Moyenne de la Moyenne mobile
+  courbes_vaccins<-ggplot(essai_court)+
+    theme(axis.text.x = element_blank()) +
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79)/pop_week_70_79),col="#999999",size=2, linetype = "dotted")+
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79_dose1)/pop_week_70_79),col="#0066CC",size=1)+
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79_dose2)/pop_week_70_79),col="#003399",size=1)+
+    geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79_dose3)/pop_week_70_79),col="#000033",size=1)+
+    geom_vline(xintercept = floor(date_debut_2021_70_79), colour="#336666", linetype = "longdash")+
+    geom_vline(xintercept = c(366, 419))+
+    geom_text(x=339, y=0, label="2019")+
+    geom_text(x=391, y=0, label="2020")+
+    geom_text(x=440, y=0, label="2021")+
+    geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
+    geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
+    geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+    xlab("")+
+    ylab("Part d'injections \n dans la population")+ 
+    theme(legend.position = "none")+
+    annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
+             ymin = 0, 
+             ymax = 0.2,
+             alpha = .2, fill = "orange")+
+    annotate("rect", xmin = floor(dernier_conf_start), xmax = floor(dernier_conf_end), 
+             ymin = 0, 
+             ymax = 0.2,
+             alpha = .2, fill = "orange")+
+    annotate(geom="text", x=460, 
+             y=0.18, 
+             label=paste0(floor(base::max(essai_court$part_atteinte_70_79_dose1)*100)," % des 70-79 ans \n  a reçu une dose"),
+             color="#9900CC")
   
-  moyenne_mobile_ge80 <- data_frame(moyenne_mobile_ge80)
+  a<-grid.arrange(histo_deces, courbes_vaccins,
+                  ncol=1, nrow=2)
   
-  moyenne_mobile_ge80$numSemaineDepuis2013 <- 1:nrow(moyenne_mobile_ge80) + decalageSemaines
+}else{a<-histo_deces}
+
+
+pngFileRelPath <- paste0(repertoire,"difference_70_79_", nomPays, ".png")
+
+ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
+
+
+#
+# Graphique 6 : Situation des plus de 80 ans
+#
+
+repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand/80plus/")
+a__f_createDir(repertoire)
+
+#Nom du fichier png à générer
+pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+
+# Message
+cat(paste0("Creation image (", pngFileRelPath,")\n"))
+
+
+
+#décès prédits
+plot(essai$numSemaineDepuis2013, 
+     essai$predit_stand_plus_80, 
+     pch=16, 
+     cex=0, 
+     axes=F, 
+     lwd=3, 
+     xlab="week", 
+     ylab="", 
+     ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)), 
+     type="o", 
+     col="grey", 
+     main=paste0("Décès hebdomadaires des plus de 80 ans (=> ", maxWeekTime ,") : ",str_to_title(nomPays)))
+
+# pour encadrer le graphique
+box() 
+
+axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+
+
+mtext("Prédiction des décès toutes causes des plus de 80 ans", side=2, line=3)
+mtext("Décès toutes causes constatés des plus de 80 ans", side=2, line=2, col="red")
+mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
+
+# Lignes verticales
+abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
+
+text(26,  base::min(essai$deces_standardises_si_pop_2020_ge80), "2013", cex=1.2)
+text(78,  base::min(essai$deces_standardises_si_pop_2020_ge80), "2014", cex=1.2)
+text(130, base::min(essai$deces_standardises_si_pop_2020_ge80), "2015", cex=1.2)
+text(183, base::min(essai$deces_standardises_si_pop_2020_ge80), "2016", cex=1.2)
+text(235, base::min(essai$deces_standardises_si_pop_2020_ge80), "2017", cex=1.2)
+text(287, base::min(essai$deces_standardises_si_pop_2020_ge80), "2018", cex=1.2)
+text(339, base::min(essai$deces_standardises_si_pop_2020_ge80), "2019", cex=1.2)
+text(391, base::min(essai$deces_standardises_si_pop_2020_ge80), "2020", cex=1.2)
+text(440, base::min(essai$deces_standardises_si_pop_2020_ge80), "2021", cex=1.2)
+
+#text(26, 22000, nomPays, cex=1.2)
+
+# Décès constatés
+par(new=T)
+plot(essai$numSemaineDepuis2013, 
+     essai$deces_standardises_si_pop_2020_ge80, 
+     pch=16, 
+     axes=F, 
+     cex=0, 
+     xlab="", 
+     lwd=1,  
+     ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),
+     ylab="", 
+     type="o", 
+     col="red") 
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)	
+
+
+
+#graphique regroupement semaines
+
+if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
+                  'espagne','estonie','finlande','france','grece','hongrie',
+                  'islande','italie','luxembourg','malte','norvege',
+                  'pologne','portugal','suede','europe','synchro')){
+  histo_deces<-ggplot(essai_court)+
+    theme(axis.text.x = element_blank()) +
+    geom_col(aes(x=numSemaineDepuis2013,y=diff_ge80,fill=posge80))+
+    scale_fill_manual(values = c("darkgreen", "red"))+
+    geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_ge80),color = "#0066CC", size = 1) +
+    geom_vline(xintercept = c(366, 419)) +
+    geom_text(x=339, y=base::min(essai_court$diff_ge80), label="2019")+
+    geom_text(x=391, y=base::min(essai_court$diff_ge80), label="2020")+
+    geom_text(x=440, y=base::min(essai_court$diff_ge80), label="2021")+
+    geom_vline(xintercept = floor(date_debut_2021_ge80), colour="#336666", linetype = "longdash")+
+    geom_text(x=floor(date_debut_2021_ge80), y=base::max(essai_court$diff_ge80), label="début vaccination", color="#336666")+
+    xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",floor(surmortalite_ge80_2021),
+                "  (",floor(part_surmortalite_ge80_2021),"%)",
+                "          (soit ",floor(surmortalite_ge80_2021/base::max(essai_court$cumul_ge80_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+                "  \n même période en 2020 : ",floor(surmortalite_ge80_2020),
+                "           même période en 2019 : ",floor(surmortalite_ge80_2019)))+
+    ylab("Différence entre décès constatés \n et décès attendus")+
+    theme(legend.position = "none")+
+    annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
+             ymin = base::min(essai_court$diff_ge80), 
+             ymax = base::max(essai_court$diff_ge80),
+             alpha = .2, fill = "orange")+
+    annotate("rect", xmin = floor(dernier_conf_start), xmax = floor(dernier_conf_end), 
+             ymin = base::min(essai_court$diff_ge80), 
+             ymax = base::max(essai_court$diff_ge80),
+             alpha = .2, fill = "orange")+
+    ggtitle(paste0("Ecart des décès hebdomadaires des plus de 80 ans par rapport à l'attendu ",str_to_title(nomPays)))
+}else{
+  histo_deces<-ggplot(essai_court)+
+    geom_col(aes(x=numSemaineDepuis2013,y=diff_ge80,fill=posge80))+
+    scale_fill_manual(values = c("darkgreen", "red"))+
+    geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_ge80),color = "#0066CC", size = 1) +
+    geom_vline(xintercept = c(366, 419)) +
+    geom_text(x=339, y=base::min(essai_court$diff_ge80), label="2019")+
+    geom_text(x=391, y=base::min(essai_court$diff_ge80), label="2020")+
+    geom_text(x=440, y=base::min(essai_court$diff_ge80), label="2021")+
+    xlab("")+
+    ylab("Différence entre décès constatés \n et décès attendus")+
+    theme(legend.position = "none")+
+    annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
+             ymin = base::min(essai_court$diff_ge80), 
+             ymax = base::max(essai_court$diff_ge80),
+             alpha = .2, fill = "orange")+
+    annotate("rect", xmin = floor(dernier_conf_start), xmax = floor(dernier_conf_end), 
+             ymin = base::min(essai_court$diff_ge80), 
+             ymax = base::max(essai_court$diff_ge80),
+             alpha = .2, fill = "orange")+
+    ggtitle(paste0("Ecart des décès hebdomadaires des plus de 80 ans par rapport à l'attendu ",str_to_title(nomPays)))
+}
+
+if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
+                  'espagne','estonie','finlande','france','grece','hongrie',
+                  'islande','italie','luxembourg','malte','norvege',
+                  'pologne','portugal','suede','europe','synchro')){
+  courbes_vaccins<-ggplot(essai_court)+
+    theme(axis.text.x = element_blank()) +
+    geom_line(aes(x=numSemaineDepuis2013,y=(`Age80+`)/pop_week_ge80),col="#999999",size=2, linetype = "dotted")+
+    geom_line(aes(x=numSemaineDepuis2013,y=`Age80+_dose1`/pop_week_ge80),col="#0066CC",size=1)+
+    geom_line(aes(x=numSemaineDepuis2013,y=`Age80+_dose2`/pop_week_ge80),col="#003399",size=1)+
+    geom_line(aes(x=numSemaineDepuis2013,y=`Age80+_dose3`/pop_week_ge80),col="#000033",size=1)+
+    geom_vline(xintercept = floor(date_debut_2021_ge80), colour="#336666", linetype = "longdash")+
+    geom_vline(xintercept = c(366, 419)) +
+    geom_text(x=339, y=0, label="2019")+
+    geom_text(x=391, y=0, label="2020")+
+    geom_text(x=440, y=0, label="2021")+
+    geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
+    geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
+    geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+    xlab("")+
+    ylab("Part d'injections \n dans la population")+ 
+    theme(legend.position = "none")+
+    annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
+             ymin = 0, 
+             ymax = 0.2,
+             alpha = .2, fill = "orange")+
+    annotate("rect", xmin = floor(dernier_conf_start), xmax = floor(dernier_conf_end), 
+             ymin = 0, 
+             ymax = 0.2,
+             alpha = .2, fill = "orange")+
+    annotate(geom="text", x=460, 
+             y=0.18, 
+             label=paste0(floor(base::max(essai_court$part_atteinte_ge80_dose1)*100)," % des plus de 80 ans \n  a reçu une dose"),
+             color="#9900CC")
   
-  # Ajouter les colonnes de la moyenne mobile 
-  es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
-    left_join(moyenne_mobile_ge80, by = "numSemaineDepuis2013")
-  
-  essai <- es_deces_standard_pays_semaine %>%
-    filter(numSemaineDepuis2013>410)
-  
-  
-  #création du graphiques
-  plot(essai$numSemaineDepuis2013, 
-       essai$deces_standardises_si_pop_2020_ge80, 
-       pch=16, 
-       cex=0, 
-       axes=F, 
-       xlab="", 
-       ylab="", 
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	     type="o", 
-       col="grey", 
-       main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
-  
-  # pour encadrer le graphique
-  box() 
-  
-  axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
-  
-  mtext("nombre de décès toutes causes des plus de 80 ans", side=2, line=3)
-  mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
-  mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
-  mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=3)
-  
-  # Lignes verticales
-  abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-  
-  text(26,  base::min(essai$deces_standardises_si_pop_2020_ge80), "2013", cex=1.2)
-  text(78,  base::min(essai$deces_standardises_si_pop_2020_ge80), "2014", cex=1.2)
-  text(130, base::min(essai$deces_standardises_si_pop_2020_ge80), "2015", cex=1.2)
-  text(183, base::min(essai$deces_standardises_si_pop_2020_ge80), "2016", cex=1.2)
-  text(235, base::min(essai$deces_standardises_si_pop_2020_ge80), "2017", cex=1.2)
-  text(287, base::min(essai$deces_standardises_si_pop_2020_ge80), "2018", cex=1.2)
-  text(339, base::min(essai$deces_standardises_si_pop_2020_ge80), "2019", cex=1.2)
-  text(391, base::min(essai$deces_standardises_si_pop_2020_ge80), "2020", cex=1.2)
-  text(440, base::min(essai$deces_standardises_si_pop_2020_ge80), "2021", cex=1.2)
-  
-  #text(26, 22000, nomPays, cex=1.2)
-  
-  # Superposer la moyenne mobile
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$moyenne_mobile_ge80, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=3,  
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	 
-       ylab="", 
-       type="o", 
-       col="red") 
-  
-  # Superposer la moyenne 
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$moyenne_ge80, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=1.5,  
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	 
-       ylab="", 
-       type="o", 
-       col="purple") 
-  
-  # Superposer la bsup
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$bsup_ge80, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=1.5,  
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	 
-       ylab="", 
-       lty=2, 
-       type="o", 
-       col="purple") 
-  
-  # Superposer la binf
-  par(new=T)
-  plot(essai$numSemaineDepuis2013, 
-       essai$binf_ge80, 
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=1.5, 
-       ylim=c(base::min(essai$deces_standardises_si_pop_2020_ge80), base::max(essai$deces_standardises_si_pop_2020_ge80)),	 
-       ylab="",
-       lty=2, 
-       type="o", 
-       col="purple") 	
-  
-  
-  if(!is.na(mean(essai$'Age80+', na.rm = TRUE))){
-    # Superposer la vaccination 
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$'Age80+_dose1', 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="",
-         lwd=2,
-         ylim=c(0, base::max(base::max(essai$'Age80+_dose1',na.rm=TRUE),base::max(essai$'Age80+_dose2',na.rm=TRUE))), 
-         ylab="", 
-         type="o", 
-         col="#3399FF") 
-    axis(4, col = "blue", col.axis = "blue", lwd = 2)
-    
-    mtext("première dose                                                                         ", side=1, col="#3399FF", line=2)
-    mtext("deuxième dose", side=1, col="#0066CC", line=2)
-    mtext("                                                                                      troisième dose", side=1, col="#003366", line=2)
-    
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$'Age80+_dose2', 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="", 
-         lwd=2,
-         ylim=c(0, base::max(base::max(essai$'Age80+_dose1',na.rm=TRUE),base::max(essai$'Age80+_dose2',na.rm=TRUE))), 
-         ylab="", 
-         type="o", 
-         col="#0066CC") 
-    
-    par(new=T)
-    plot(essai$numSemaineDepuis2013, 
-         essai$'Age80+_dose3', 
-         pch=16, 
-         axes=F, 
-         cex=0, 
-         xlab="",
-         lwd=2, 
-         ylim=c(0, base::max(base::max(essai$'Age80+_dose1',na.rm=TRUE),base::max(essai$'Age80+_dose2',na.rm=TRUE))), 
-         ylab="", 
-         type="o", 
-         col="#003366") 
-    
-  }
-  dev.print(device = png, file = pngFileRelPath, width = 1000)	
+  a<-grid.arrange(histo_deces, courbes_vaccins,
+                  ncol=1, nrow=2)
+}else{a<-histo_deces}
+
+pngFileRelPath <- paste0(repertoire,"difference_plus_80_", nomPays, ".png")
+ggsave(pngFileRelPath, width = 11, height = 8, plot = a)		
 }
 #######################################################################################
 #générer le graphique des décès Covid
@@ -3763,14 +4807,41 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     
     date_debut_2021_ge80 = base::min(temp$numSemaineDepuis2013)
     
-    #Calculer la surmortalité depuis le début de la vaccination pour toutes les tranches d'âge
+    #Calculer la surmortalité depuis le début de la vaccination pour toutes les tranches d'âge, la date de chacun des pics dose1, 2, 3 et de mortalité
     
     #15-24
     surmort_15_24_2021 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_15_24,semaine,predit_15_24) %>% 
+             diff_15_24,semaine,predit_15_24,Age15_24_dose1,Age15_24_dose2,Age15_24_dose3) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_15_24) %>% 
-      filter(numSemaineDepuis2013 <= date_fin_2021)
+      filter(numSemaineDepuis2013 <= date_fin_2021) %>% 
+      mutate(rang_dose1=rank(-Age15_24_dose1,ties.method = "random"),
+             rang_dose2=rank(-Age15_24_dose2,ties.method = "random"),
+             rang_dose3=rank(-Age15_24_dose3,ties.method = "random"),
+             rang_surmortalite=rank(-diff_15_24,ties.method = "random"),
+             pic_surmortalite=if_else(rang_surmortalite %in% c(1,2),TRUE,FALSE),
+             pic_dose1=if_else(Age15_24_dose1 == base::max(Age15_24_dose1),TRUE,FALSE),
+             pic_dose2=if_else(Age15_24_dose2 == base::max(Age15_24_dose2),TRUE,FALSE),
+             pic_dose3=if_else(Age15_24_dose3 == base::max(Age15_24_dose3),TRUE,FALSE))
+    ?max
+    temp <- surmort_15_24_2021 %>% filter(pic_dose1==TRUE)
+    numSemaineDose1_15_24 = temp$numSemaineDepuis2013
+    temp <- surmort_15_24_2021 %>% filter(pic_dose2==TRUE)
+    numSemaineDose2_15_24 = temp$numSemaineDepuis2013
+    temp <- surmort_15_24_2021 %>% filter(pic_dose3==TRUE)
+    numSemaineDose3_15_24 = temp$numSemaineDepuis2013
+    temp <- surmort_15_24_2021 %>% filter(diff_15_24==base::max(diff_15_24))
+    numSemainePic1_15_24 = temp$numSemaineDepuis2013[1]
+    temp <- surmort_15_24_2021 %>% filter(rang_surmortalite==2)
+    numSemainePic2_15_24 = temp$numSemaineDepuis2013
+    
+    pic1_corresp_15_24 <- ifelse(numSemainePic1_15_24 %in% c(numSemaineDose1_15_24,numSemaineDose1_15_24+2,numSemaineDose1_15_24+1,
+                                                             numSemaineDose2_15_24,numSemaineDose2_15_24+2,numSemaineDose2_15_24+1,
+                                                             numSemaineDose3_15_24,numSemaineDose3_15_24+2,numSemaineDose3_15_24+1),TRUE,FALSE)
+    pic2_corresp_15_24 <- ifelse(numSemainePic2_15_24 %in% c(numSemaineDose1_15_24,numSemaineDose1_15_24+2,numSemaineDose1_15_24+1,
+                                                             numSemaineDose2_15_24,numSemaineDose2_15_24+2,numSemaineDose2_15_24+1,
+                                                             numSemaineDose3_15_24,numSemaineDose3_15_24+2,numSemaineDose3_15_24+1),TRUE,FALSE)
+    pic_corresp_15_24 <- pic1_corresp_15_24 + pic2_corresp_15_24
     
     surmortalite_15_24_2021 = sum(surmort_15_24_2021$diff_15_24)
     part_surmortalite_15_24_2021 = surmortalite_15_24_2021/sum(surmort_15_24_2021$predit_15_24)*100
@@ -3794,9 +4865,39 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
    #25-49
     surmort_25_49_2021 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_25_49,semaine,predit_25_49) %>% 
+             diff_25_49,semaine,predit_25_49,Age25_49_dose1,Age25_49_dose2,Age25_49_dose3) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_25_49) %>% 
-      filter(numSemaineDepuis2013 <= date_fin_2021)
+      filter(numSemaineDepuis2013 <= date_fin_2021) %>% 
+      mutate(rang_dose1=rank(-Age25_49_dose1,ties.method = "random"),
+             rang_dose2=rank(-Age25_49_dose2,ties.method = "random"),
+             rang_dose3=rank(-Age25_49_dose3,ties.method = "random"),
+             rang_surmortalite=rank(-diff_25_49,ties.method = "random"),
+             pic_surmortalite=if_else(rang_surmortalite %in% c(1,2),TRUE,FALSE),
+             pic_dose1=if_else(Age25_49_dose1 == base::max(Age25_49_dose1),TRUE,FALSE),
+             pic_dose2=if_else(Age25_49_dose2 == base::max(Age25_49_dose2),TRUE,FALSE),
+             pic_dose3=if_else(Age25_49_dose3 == base::max(Age25_49_dose3),TRUE,FALSE))
+    
+    temp <- surmort_25_49_2021 %>% filter(pic_dose1==TRUE)
+    numSemaineDose1_25_49 = temp$numSemaineDepuis2013
+    temp <- surmort_25_49_2021 %>% filter(pic_dose2==TRUE)
+    numSemaineDose2_25_49 = temp$numSemaineDepuis2013
+    temp <- surmort_25_49_2021 %>% filter(pic_dose3==TRUE)
+    numSemaineDose3_25_49 = temp$numSemaineDepuis2013
+    temp <- surmort_25_49_2021 %>% filter(diff_25_49==base::max(diff_25_49))
+    numSemainePic1_25_49 = temp$numSemaineDepuis2013[1]
+    temp <- surmort_25_49_2021 %>% filter(rang_surmortalite==2)
+    numSemainePic2_25_49 = temp$numSemaineDepuis2013
+    
+    pic1_corresp_25_49 <- ifelse(numSemainePic1_25_49 %in% c(numSemaineDose1_25_49,numSemaineDose1_25_49+1,numSemaineDose1_25_49+2,
+                                                             numSemaineDose2_25_49,numSemaineDose2_25_49+1,numSemaineDose2_25_49+2,
+                                                             numSemaineDose3_25_49,numSemaineDose3_25_49+1,numSemaineDose3_25_49+2),TRUE,FALSE)
+    pic2_corresp_25_49 <- ifelse(numSemainePic2_25_49 %in% c(numSemaineDose1_25_49,numSemaineDose1_25_49+1,numSemaineDose1_25_49+2,
+                                                             numSemaineDose2_25_49,numSemaineDose2_25_49+1,numSemaineDose2_25_49+2,
+                                                             numSemaineDose3_25_49,numSemaineDose3_25_49+1,numSemaineDose3_25_49+2),TRUE,FALSE)
+    pic_corresp_25_49 <- pic1_corresp_25_49 + pic2_corresp_25_49
+    
+    
+    pic_corresp_25_49 <-sum(surmort_25_49_2021$pic_corresp)
     
     surmortalite_25_49_2021 = sum(surmort_25_49_2021$diff_25_49)
 
@@ -3822,9 +4923,36 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     #50-59
     surmort_50_59_2021 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_50_59,semaine,predit_50_59) %>% 
+             diff_50_59,semaine,predit_50_59,Age50_59_dose1,Age50_59_dose2,Age50_59_dose3) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_50_59) %>% 
-      filter(numSemaineDepuis2013 <= date_fin_2021)
+      filter(numSemaineDepuis2013 <= date_fin_2021)%>% 
+      mutate(rang_dose1=rank(-Age50_59_dose1,ties.method = "random"),
+             rang_dose2=rank(-Age50_59_dose2,ties.method = "random"),
+             rang_dose3=rank(-Age50_59_dose3,ties.method = "random"),
+             rang_surmortalite=rank(-diff_50_59,ties.method = "random"),
+             pic_surmortalite=if_else(rang_surmortalite %in% c(1,2),TRUE,FALSE),
+             pic_dose1=if_else(Age50_59_dose1 == base::max(Age50_59_dose1),TRUE,FALSE),
+             pic_dose2=if_else(Age50_59_dose2 == base::max(Age50_59_dose2),TRUE,FALSE),
+             pic_dose3=if_else(Age50_59_dose3 == base::max(Age50_59_dose3),TRUE,FALSE))
+    
+    temp <- surmort_50_59_2021 %>% filter(pic_dose1==TRUE)
+    numSemaineDose1_50_59 = temp$numSemaineDepuis2013
+    temp <- surmort_50_59_2021 %>% filter(pic_dose2==TRUE)
+    numSemaineDose2_50_59 = temp$numSemaineDepuis2013
+    temp <- surmort_50_59_2021 %>% filter(pic_dose3==TRUE)
+    numSemaineDose3_50_59 = temp$numSemaineDepuis2013
+    temp <- surmort_50_59_2021 %>% filter(diff_50_59==base::max(diff_50_59))
+    numSemainePic1_50_59 = temp$numSemaineDepuis2013[1]
+    temp <- surmort_50_59_2021 %>% filter(rang_surmortalite==2)
+    numSemainePic2_50_59 = temp$numSemaineDepuis2013
+    
+    pic1_corresp_50_59 <- ifelse(numSemainePic1_50_59 %in% c(numSemaineDose1_50_59,numSemaineDose1_50_59+2,numSemaineDose1_50_59+1,
+                                                             numSemaineDose2_50_59,numSemaineDose2_50_59+2,numSemaineDose2_50_59+1,
+                                                             numSemaineDose3_50_59,numSemaineDose3_50_59+2,numSemaineDose3_50_59+1),TRUE,FALSE)
+    pic2_corresp_50_59 <- ifelse(numSemainePic2_50_59 %in% c(numSemaineDose1_50_59,numSemaineDose1_50_59+2,numSemaineDose1_50_59+1,
+                                                             numSemaineDose2_50_59,numSemaineDose2_50_59+2,numSemaineDose2_50_59+1,
+                                                             numSemaineDose3_50_59,numSemaineDose3_50_59+2,numSemaineDose3_50_59+1),TRUE,FALSE)
+    pic_corresp_50_59 <- pic1_corresp_50_59 + pic2_corresp_50_59
     
     surmortalite_50_59_2021 = sum(surmort_50_59_2021$diff_50_59)
     part_surmortalite_50_59_2021 = surmortalite_50_59_2021/sum(surmort_50_59_2021$predit_50_59)*100
@@ -3848,9 +4976,36 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     #60-69
     surmort_60_69_2021 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_60_69,semaine,predit_60_69) %>% 
+             diff_60_69,semaine,predit_60_69,Age60_69_dose1,Age60_69_dose2,Age60_69_dose3) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_60_69) %>% 
-      filter(numSemaineDepuis2013 <= date_fin_2021)
+      filter(numSemaineDepuis2013 <= date_fin_2021)%>% 
+      mutate(rang_dose1=rank(-Age60_69_dose1,ties.method = "random"),
+             rang_dose2=rank(-Age60_69_dose2,ties.method = "random"),
+             rang_dose3=rank(-Age60_69_dose3,ties.method = "random"),
+             rang_surmortalite=rank(-diff_60_69,ties.method = "random"),
+             pic_surmortalite=if_else(rang_surmortalite %in% c(1,2),TRUE,FALSE),
+             pic_dose1=if_else(Age60_69_dose1 == base::max(Age60_69_dose1),TRUE,FALSE),
+             pic_dose2=if_else(Age60_69_dose2 == base::max(Age60_69_dose2),TRUE,FALSE),
+             pic_dose3=if_else(Age60_69_dose3 == base::max(Age60_69_dose3),TRUE,FALSE))
+    
+    temp <- surmort_60_69_2021 %>% filter(pic_dose1==TRUE)
+    numSemaineDose1_60_69 = temp$numSemaineDepuis2013
+    temp <- surmort_60_69_2021 %>% filter(pic_dose2==TRUE)
+    numSemaineDose2_60_69 = temp$numSemaineDepuis2013
+    temp <- surmort_60_69_2021 %>% filter(pic_dose3==TRUE)
+    numSemaineDose3_60_69 = temp$numSemaineDepuis2013
+    temp <- surmort_60_69_2021 %>% filter(diff_60_69==base::max(diff_60_69))
+    numSemainePic1_60_69 = temp$numSemaineDepuis2013[1]
+    temp <- surmort_60_69_2021 %>% filter(rang_surmortalite==2)
+    numSemainePic2_60_69 = temp$numSemaineDepuis2013
+    
+    pic1_corresp_60_69 <- ifelse(numSemainePic1_60_69 %in% c(numSemaineDose1_60_69,numSemaineDose1_60_69+2,numSemaineDose1_60_69+1,
+                                                             numSemaineDose2_60_69,numSemaineDose2_60_69+2,numSemaineDose2_60_69+1,
+                                                             numSemaineDose3_60_69,numSemaineDose3_60_69+2,numSemaineDose3_60_69+1),TRUE,FALSE)
+    pic2_corresp_60_69 <- ifelse(numSemainePic2_60_69 %in% c(numSemaineDose1_60_69,numSemaineDose1_60_69+2,numSemaineDose1_60_69+1,
+                                                             numSemaineDose2_60_69,numSemaineDose2_60_69+2,numSemaineDose2_60_69+1,
+                                                             numSemaineDose3_60_69,numSemaineDose3_60_69+2,numSemaineDose3_60_69+1),TRUE,FALSE)
+    pic_corresp_60_69 <- pic1_corresp_60_69 + pic2_corresp_60_69
     
     surmortalite_60_69_2021 = sum(surmort_60_69_2021$diff_60_69)
     part_surmortalite_60_69_2021 = surmortalite_60_69_2021/sum(surmort_60_69_2021$predit_60_69)*100
@@ -3874,9 +5029,36 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     #70-79
     surmort_70_79_2021 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_70_79,semaine,predit_70_79) %>% 
+             diff_70_79,semaine,predit_70_79,Age70_79_dose1,Age70_79_dose2,Age70_79_dose3) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_70_79) %>% 
-      filter(numSemaineDepuis2013 <= date_fin_2021)
+      filter(numSemaineDepuis2013 <= date_fin_2021)%>% 
+      mutate(rang_dose1=rank(-Age70_79_dose1,ties.method = "random"),
+             rang_dose2=rank(-Age70_79_dose2,ties.method = "random"),
+             rang_dose3=rank(-Age70_79_dose3,ties.method = "random"),
+             rang_surmortalite=rank(-diff_70_79,ties.method = "random"),
+             pic_surmortalite=if_else(rang_surmortalite %in% c(1,2),TRUE,FALSE),
+             pic_dose1=if_else(Age70_79_dose1 == base::max(Age70_79_dose1),TRUE,FALSE),
+             pic_dose2=if_else(Age70_79_dose2 == base::max(Age70_79_dose2),TRUE,FALSE),
+             pic_dose3=if_else(Age70_79_dose3 == base::max(Age70_79_dose3),TRUE,FALSE))
+    
+    temp <- surmort_70_79_2021 %>% filter(pic_dose1==TRUE)
+    numSemaineDose1_70_79 = temp$numSemaineDepuis2013
+    temp <- surmort_70_79_2021 %>% filter(pic_dose2==TRUE)
+    numSemaineDose2_70_79 = temp$numSemaineDepuis2013
+    temp <- surmort_70_79_2021 %>% filter(pic_dose3==TRUE)
+    numSemaineDose3_70_79 = temp$numSemaineDepuis2013
+    temp <- surmort_70_79_2021 %>% filter(diff_70_79==base::max(diff_70_79))
+    numSemainePic1_70_79 = temp$numSemaineDepuis2013[1]
+    temp <- surmort_70_79_2021 %>% filter(rang_surmortalite==2)
+    numSemainePic2_70_79 = temp$numSemaineDepuis2013
+    
+    pic1_corresp_70_79 <- ifelse(numSemainePic1_70_79 %in% c(numSemaineDose1_70_79,numSemaineDose1_70_79+2,numSemaineDose1_70_79+1,
+                                                             numSemaineDose2_70_79,numSemaineDose2_70_79+2,numSemaineDose2_70_79+1,
+                                                             numSemaineDose3_70_79,numSemaineDose3_70_79+2,numSemaineDose3_70_79+1),TRUE,FALSE)
+    pic2_corresp_70_79 <- ifelse(numSemainePic2_70_79 %in% c(numSemaineDose1_70_79,numSemaineDose1_70_79+2,numSemaineDose1_70_79+1,
+                                                             numSemaineDose2_70_79,numSemaineDose2_70_79+2,numSemaineDose2_70_79+1,
+                                                             numSemaineDose3_70_79,numSemaineDose3_70_79+2,numSemaineDose3_70_79+1),TRUE,FALSE)
+    pic_corresp_70_79 <- pic1_corresp_70_79 + pic2_corresp_70_79
     
     surmortalite_70_79_2021 = sum(surmort_70_79_2021$diff_70_79)
     part_surmortalite_70_79_2021 = surmortalite_70_79_2021/sum(surmort_70_79_2021$predit_70_79)*100
@@ -3900,9 +5082,36 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     #plus80
     surmort_ge80_2021 <-  essai %>% 
       select(numSemaineDepuis2013,
-             diff_ge80,semaine,predit_plus_80) %>% 
+             diff_ge80,semaine,predit_plus_80,`Age80+_dose1`,`Age80+_dose2`,`Age80+_dose3`) %>% 
       filter(numSemaineDepuis2013 >= date_debut_2021_ge80) %>% 
-      filter(numSemaineDepuis2013 <= date_fin_2021)
+      filter(numSemaineDepuis2013 <= date_fin_2021)%>% 
+      mutate(rang_dose1=rank(-`Age80+_dose1`,ties.method = "random"),
+             rang_dose2=rank(-`Age80+_dose2`,ties.method = "random"),
+             rang_dose3=rank(-`Age80+_dose3`,ties.method = "random"),
+             rang_surmortalite=rank(-diff_ge80,ties.method = "random"),
+             pic_surmortalite=if_else(rang_surmortalite %in% c(1,2),TRUE,FALSE),
+             pic_dose1=if_else(`Age80+_dose1` == base::max(`Age80+_dose1`),TRUE,FALSE),
+             pic_dose2=if_else(`Age80+_dose2` == base::max(`Age80+_dose2`),TRUE,FALSE),
+             pic_dose3=if_else(`Age80+_dose3` == base::max(`Age80+_dose3`),TRUE,FALSE))
+    
+    temp <- surmort_ge80_2021 %>% filter(pic_dose1==TRUE)
+    numSemaineDose1_ge80 = temp$numSemaineDepuis2013
+    temp <- surmort_ge80_2021 %>% filter(pic_dose2==TRUE)
+    numSemaineDose2_ge80 = temp$numSemaineDepuis2013
+    temp <- surmort_ge80_2021 %>% filter(pic_dose3==TRUE)
+    numSemaineDose3_ge80 = temp$numSemaineDepuis2013
+    temp <- surmort_ge80_2021 %>% filter(diff_ge80==base::max(diff_ge80))
+    numSemainePic1_ge80 = temp$numSemaineDepuis2013[1]
+    temp <- surmort_ge80_2021 %>% filter(rang_surmortalite==2)
+    numSemainePic2_ge80 = temp$numSemaineDepuis2013
+    
+    pic1_corresp_ge80 <- ifelse(numSemainePic1_ge80 %in% c(numSemaineDose1_ge80,numSemaineDose1_ge80+2,numSemaineDose1_ge80+1,
+                                                           numSemaineDose2_ge80,numSemaineDose2_ge80+2,numSemaineDose2_ge80+1,
+                                                           numSemaineDose3_ge80,numSemaineDose3_ge80+2,numSemaineDose3_ge80+1),TRUE,FALSE)
+    pic2_corresp_ge80 <- ifelse(numSemainePic2_ge80 %in% c(numSemaineDose1_ge80,numSemaineDose1_ge80+2,numSemaineDose1_ge80+1,
+                                                           numSemaineDose2_ge80,numSemaineDose2_ge80+2,numSemaineDose2_ge80+1,
+                                                           numSemaineDose3_ge80,numSemaineDose3_ge80+2,numSemaineDose3_ge80+1),TRUE,FALSE)
+    pic_corresp_ge80 <- pic1_corresp_ge80 + pic2_corresp_ge80
     
     surmortalite_ge80_2021 = sum(surmort_ge80_2021$diff_ge80)
     part_surmortalite_ge80_2021 = surmortalite_ge80_2021/sum(surmort_ge80_2021$predit_plus_80)*100
@@ -3923,7 +5132,11 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     
     surmortalite_ge80_2019 = sum(surmort_ge80_2019$diff_ge80)
     
-    #Faire les corrélations de Spearman pour toutes les tranches d'âge
+    #Faire les corrélations de Spearman pour toutes les tranches d'âge en testant les décalages
+    
+    test_spearman <- data.frame()
+    
+    for (i in -2:4){
     
     vaccinations <- essai %>% 
       select( Age25_49,
@@ -3947,7 +5160,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
               Age70_79_dose3,
               `Age80+_dose3`,
               numSemaineDepuis2013)%>% 
-      mutate(numSemaineDepuis2013=numSemaineDepuis2013+1)
+      mutate(numSemaineDepuis2013=numSemaineDepuis2013+i)
     
     vaccinations_jeunes <- essai %>%
       select( Age15_24,
@@ -3955,7 +5168,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
               Age15_24_dose2,
               Age15_24_dose3,
               numSemaineDepuis2013)%>% 
-      mutate(numSemaineDepuis2013=numSemaineDepuis2013+1)           
+      mutate(numSemaineDepuis2013=numSemaineDepuis2013+i)           
     
     
     vaccinations<-vaccinations %>% left_join(vaccinations_jeunes,by="numSemaineDepuis2013")
@@ -3975,7 +5188,9 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     if(nomPays != 'allemagne'){
       periode_15_24 <- decalage %>% filter(numSemaineDepuis2013 >= date_debut_2021_15_24)
       res15_24<-cor.test(periode_15_24$moyenne_mobile_15_24,periode_15_24$Age15_24 ,method="spearman")
-    }
+    }else{
+      res15_24<-data.frame(estimate='NA',p.value='NA')
+      }
     
     periode_25_49 <- decalage %>% filter(numSemaineDepuis2013 >= date_debut_2021_25_49)
     res25_49<-cor.test(periode_25_49$moyenne_mobile_25_49,periode_25_49$Age25_49 ,method="spearman")
@@ -3992,7 +5207,27 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     periode_ge80 <- decalage %>% filter(numSemaineDepuis2013 >= date_debut_2021_ge80)
     resge80 <-cor.test(periode_ge80$moyenne_mobile_ge80 ,periode_ge80$`Age80+`,method="spearman") 
     
-  
+    
+    pays_concerne<-c(str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays))
+    tranches_dages<-c("15-24","25-49","50-59","60-69","70-79","ge80")
+    décalage <- c(i,i,i,i,i,i)
+    estimateur<-c(res15_24$estimate,res25_49$estimate,res50_59$estimate,res60_69$estimate,res70_79$estimate,resge80$estimate)
+    pvalue <- c(res15_24$p.value,res25_49$p.value,res50_59$p.value,res60_69$p.value,res70_79$p.value,resge80$p.value)
+    
+    table_temp<-data.frame(list(pays_concerne,tranches_dages,décalage,estimateur,pvalue))
+    colnames(table_temp)<-c("geo","tranche d'âge","décalage","estimateur de Spearman","p-value de Spearman")
+    
+    if(length(test_spearman)==0){
+      test_spearman<-table_temp
+    }else{
+      test_spearman<-test_spearman %>% 
+        rbind(table_temp)
+    }
+    
+    nom_fichier_spearman <- paste0("gen/rds/table_spearman_",nomPays,".RDS")
+    saveRDS(test_spearman,file=nom_fichier_spearman)
+    
+    }
   
   #Faire les test de Wilcoxon pour toutes les tranches d'âge
 
@@ -4068,7 +5303,45 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
   wilcoxge80_21_19 <- wilcox.test(regroup_ge80$diff_ge80_2021,regroup_ge80$diff_ge80_2019, paired=TRUE, correct=FALSE, exact=FALSE)
   wilcoxge80_20_19 <- wilcox.test(regroup_ge80$diff_ge80_2020,regroup_ge80$diff_ge80_2019, paired=TRUE, correct=FALSE, exact=FALSE)
 
+  
+  pays_concerne<-c(str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays),str_to_title(nomPays))
+  tranches_dages<-c("15-24","25-49","50-59","60-69","70-79","ge80")
+  test_pics<-c(pic_corresp_15_24,pic_corresp_25_49,pic_corresp_50_59,pic_corresp_60_69,pic_corresp_70_79,pic_corresp_ge80)
+  nombre_semaine <-c(date_fin_2021-date_debut_2021_15_24,date_fin_2021-date_debut_2021_25_49,date_fin_2021-date_debut_2021_50_59,date_fin_2021-date_debut_2021_60_69,date_fin_2021-date_debut_2021_70_79,date_fin_2021-date_debut_2021_ge80)
+  date_debut <- c(date_debut_2021_15_24,date_debut_2021_25_49,date_debut_2021_50_59,date_debut_2021_60_69,date_debut_2021_70_79,date_debut_2021_ge80)
+  numSemaineDose1 <- c(numSemaineDose1_15_24,numSemaineDose1_25_49,numSemaineDose1_50_59,numSemaineDose1_60_69,numSemaineDose1_70_79,numSemaineDose1_ge80)
+  numSemaineDose2 <- c(numSemaineDose2_15_24,numSemaineDose2_25_49,numSemaineDose2_50_59,numSemaineDose2_60_69,numSemaineDose2_70_79,numSemaineDose2_ge80)
+  numSemaineDose3 <- c(numSemaineDose3_15_24,numSemaineDose3_25_49,numSemaineDose3_50_59,numSemaineDose3_60_69,numSemaineDose3_70_79,numSemaineDose3_ge80)
+  numSemainePic1 <- c(numSemainePic1_15_24,numSemainePic1_25_49,numSemainePic1_50_59,numSemainePic1_60_69,numSemainePic1_70_79,numSemainePic1_ge80)
+  numSemainePic2 <- c(numSemainePic2_15_24,numSemainePic2_25_49,numSemainePic2_50_59,numSemainePic2_60_69,numSemainePic2_70_79,numSemainePic2_ge80)
+  
+  surmortalite_2021 <- c(surmortalite_15_24_2021,surmortalite_25_49_2021,surmortalite_50_59_2021,surmortalite_60_69_2021,surmortalite_70_79_2021,surmortalite_ge80_2021)
+  surmortalite_2020 <- c(surmortalite_15_24_2020,surmortalite_25_49_2020,surmortalite_50_59_2020,surmortalite_60_69_2020,surmortalite_70_79_2020,surmortalite_ge80_2020)
+  pvalue <- c(wilcox15_24_21_20$p.value,wilcox25_49_21_20$p.value,wilcox50_59_21_20$p.value,wilcox60_69_21_20$p.value,wilcox70_79_21_20$p.value,wilcoxge80_21_20$p.value)
 
+  
+  test_wilcoxon<-data.frame(list(pays_concerne,tranches_dages,
+                                 surmortalite_2021,surmortalite_2020,pvalue,
+                                 test_pics,
+                                 nombre_semaine,
+                                 numSemaineDose1,
+                                 numSemaineDose2,
+                                 numSemaineDose3,
+                                 numSemainePic1,
+                                 numSemainePic2))
+  colnames(test_wilcoxon)<-c("geo","tranche d'âge",
+                             "surmortalite 2021","surmortalite 2020","p-value de Wilcoxon 2021-2020",
+                             "correspondance entre pics de mortalité et de vaccination",
+                             "nombre de semaines étudiées",
+                             "numéro de semaine du pic dose 1",
+                             "numéro de semaine du pic dose 2",
+                             "numéro de semaine du pic dose 3",
+                             "numéro de semaine du pic de décès",
+                             "numéro de semaine du 2e pic de décès")
+  
+  nom_fichier_wilcoxon <- paste0("gen/rds/table_wilcoxon_",nomPays,".RDS")
+  saveRDS(test_wilcoxon,file=nom_fichier_wilcoxon)
+  
 }
 
   
@@ -4169,6 +5442,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       'portugal',
       'suede','europe','synchro'
     )) {
+      
       histo_deces <- ggplot(essai_court) +
         geom_col(aes(x = numSemaineDepuis2013, y = diff_15_24, fill = pos15_24)) +
         theme(axis.text.x = element_blank()) +
@@ -4268,7 +5542,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
         )
       
     }
-    
+   
     if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
                       'espagne','estonie','finlande','france','grece','hongrie',
                       'islande','italie','luxembourg','malte','norvege',
@@ -4288,9 +5562,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
         geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
         geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
         geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
-        xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res15_24$estimate*100),"     p-value : " ,res15_24$p.value ,
-             "\n test Wilcoxon 2021/2020 : ",wilcox15_24_21_20$statistic,"  p-value : ",format(wilcox15_24_21_20$p.value, scientific=TRUE, digits=3),
-             "       2021/2019 : ",wilcox15_24_21_19$statistic,"  p-value : ",format(wilcox15_24_21_19$p.value, scientific=TRUE, digits=3)))+
+        xlab("")+
         ylab("Part d'injections \n dans la population")+ 
         theme(legend.position = "none")+
         annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
@@ -4305,7 +5577,6 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
                  y=0.18, 
                  label=paste0(floor(base::max(essai_court$part_atteinte_15_24_dose1)*100)," % des 15-24 ans \n  a reçu une dose"),
                  color="#9900CC")
-
       
       a<-grid.arrange(histo_deces, courbes_vaccins,
                       ncol=1, nrow=2)
@@ -4593,10 +5864,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
       geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
       geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
-      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res25_49$estimate*100),"      p-value : " ,res25_49$p.value,
-           "\n test Wilcoxon 2021/2020 : ",wilcox25_49_21_20$statistic,"  p-value : ",format(wilcox25_49_21_20$p.value, scientific=TRUE, digits=3),
-           "       2021/2019 : ",wilcox25_49_21_19$statistic,"  p-value : ",format(wilcox25_49_21_19$p.value, scientific=TRUE, digits=3))
-      )+
+      xlab("")+
       ylab("Part d'injections \n dans la population")+ 
       theme(legend.position = "none")+
       annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
@@ -4836,9 +6104,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
       geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
       geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
-      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res50_59$estimate*100),"     p-value : " ,res50_59$p.value,
-           "\n test Wilcoxon 2021/2020 : ",wilcox50_59_21_20$statistic,"  p-value : ",format(wilcox50_59_21_20$p.value, scientific=TRUE, digits=3),
-           "       2021/2019 : ",wilcox50_59_21_19$statistic,"  p-value : ",format(wilcox50_59_21_19$p.value, scientific=TRUE, digits=3)))+
+      xlab("")+
       ylab("Part d'injections \n dans la population")+ 
       theme(legend.position = "none")+
       annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
@@ -5078,10 +6344,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
       geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
       geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
-      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res60_69$estimate*100),"     p-value : " ,res60_69$p.value,
-           "\n test Wilcoxon 2021/2020 : ",wilcox60_69_21_20$statistic,"  p-value : ",format(wilcox60_69_21_20$p.value, scientific=TRUE, digits=3),
-           "       2021/2019 : ",wilcox60_69_21_19$statistic,"  p-value : ",format(wilcox60_69_21_19$p.value, scientific=TRUE, digits=3))
-      )+
+      xlab("")+
       ylab("Part d'injections \n dans la population")+ 
       theme(legend.position = "none")+
       annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
@@ -5321,10 +6584,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
       geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
       geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
-      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(res70_79$estimate*100),"     p-value : " ,res70_79$p.value,
-           "\n test Wilcoxon 2021/2020 : ",wilcox70_79_21_20$statistic,"  p-value : ",format(wilcox70_79_21_20$p.value, scientific=TRUE, digits=3),
-           "       2021/2019 : ",wilcox70_79_21_19$statistic,"  p-value : ",format(wilcox70_79_21_19$p.value, scientific=TRUE, digits=3))
-      )+
+      xlab("")+
       ylab("Part d'injections \n dans la population")+ 
       theme(legend.position = "none")+
       annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
@@ -5438,9 +6698,6 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
     geom_text(x=339, y=base::min(essai_court$diff_ge80), label="2019")+
     geom_text(x=391, y=base::min(essai_court$diff_ge80), label="2020")+
     geom_text(x=440, y=base::min(essai_court$diff_ge80), label="2021")+
-    geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
-    geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
-    geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
     geom_vline(xintercept = floor(date_debut_2021_ge80), colour="#336666", linetype = "longdash")+
     geom_text(x=floor(date_debut_2021_ge80), y=base::max(essai_court$diff_ge80), label="début vaccination", color="#336666")+
     xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",floor(surmortalite_ge80_2021),
@@ -5500,10 +6757,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
       geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
       geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
       geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
-      xlab(paste0("Coefficient de Spearman surmoratilté/vaccination : ",floor(resge80$estimate*100),"     p-value : " ,resge80$p.value,
-           "\n test Wilcoxon 2021/2020 : ",wilcoxge80_21_20$statistic,"  p-value : ",format(wilcoxge80_21_20$p.value, scientific=TRUE, digits=3),
-           "       2021/2019 : ",wilcoxge80_21_19$statistic,"  p-value : ",format(wilcoxge80_21_19$p.value, scientific=TRUE, digits=3))
-      )+
+      xlab("")+
       ylab("Part d'injections \n dans la population")+ 
       theme(legend.position = "none")+
       annotate("rect", xmin = floor(premier_conf_start), xmax = floor(premier_conf_end), 
