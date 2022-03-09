@@ -120,10 +120,11 @@ if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_ouest)
 if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_ouest20)
 if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_est)
 
+####typologie de l'année 2020####
 #dernière année avec mortalité supérieure à 2020
 
 annee_deces_superieure_2020 <- deces_complet_annuel_analysable1990 %>%
-		filter(surmortalite2020 <0) %>%
+		filter(surmortalite2020 <0,time!=("2021-01-01")) %>%
 		mutate(annee = str_sub(as.character(time), 1, 4))
 
 annee_deces_superieure_2020 <- tapply(annee_deces_superieure_2020$annee, annee_deces_superieure_2020$location, max)
@@ -135,10 +136,8 @@ annee_deces_superieure_2020$location <- rownames(annee_deces_superieure_2020)
 #première année avec mortalité inférieure à 2020
 
 annee_deces_inferieure_2020 <- deces_complet_annuel_analysable1990 %>%
-		filter(surmortalite2020 >0) %>%
+		filter(surmortalite2020 >0,time!=("2021-01-01"))%>%
 		mutate(annee = str_sub(as.character(time), 1, 4))
-
-if (shallDeleteVars) rm(deces_complet_annuel_analysable1990)
 
 annee_deces_inferieure_2020 <- tapply(annee_deces_inferieure_2020$annee, annee_deces_inferieure_2020$location, min)
 
@@ -146,7 +145,7 @@ annee_deces_inferieure_2020 <- data.frame(annee_deces_inferieure_2020)
 
 annee_deces_inferieure_2020$location <- rownames(annee_deces_inferieure_2020)
 
-#typo selon l'encadrement de 2020
+##encadrement de 2020##
 annee_comparaison_2020 <- annee_deces_inferieure_2020 %>%
 		full_join(annee_deces_superieure_2020)
 
@@ -164,9 +163,10 @@ annee_comparaison_2020 <- annee_comparaison_2020 %>%
 if (shallDeleteVars) rm(annee_deces_inferieure_2020)
 if (shallDeleteVars) rm(annee_deces_superieure_2020)
 
-#année de dèces maximum
 
-es_annne_deces_maximum <- tapply(b__es_deces_et_pop_par_annee$deces, b__es_deces_et_pop_par_annee$geo, max)
+####année de dèces maximum####
+
+es_annne_deces_maximum <- tapply(deces_complet_annuel_analysable1990$deces, deces_complet_annuel_analysable1990$geo, max)
 
 es_annne_deces_maximum <- data.frame(es_annne_deces_maximum)
 
@@ -416,39 +416,41 @@ if (shallDeleteVars) rm(hommes2000)
 if (shallDeleteVars) rm(hommes_femmes2000)
 if (shallDeleteVars) rm(pjanquinq2000)
 
-#--------------------------#
-####Analyse de la France####
-#--------------------------#
+#-------------------------------------------------#
+####graphiques des décès VS décès standardisés ####
+#-------------------------------------------------#
 
-#décès de la france
-
-deces_complet_annuel_france <- ungroup(b__es_deces_et_pop_par_annee) %>%
-		filter(geo == "FR") %>%
-		dplyr::rename(annee=time)
-
-barplot_deces_france <- ggplot(data=deces_complet_annuel_france, aes(x=annee, y=deces)) +
-		geom_bar(stat="identity", fill="steelblue")+
-		labs(title = "Décès annuels de la France",
-				caption = "Source des données : Eurostat", x="", y="nombre de décès")+
-		theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"))
-
-saveRDS(barplot_deces_france, "gen/rds/Eurostat_barplot_deces_france.RDS")
-
-
-
-barplot_decestheo_france <- ggplot(data=deces_complet_annuel_france, 
-				aes(x=annee, y=deces_theo_si_pop_2020)) +
-		geom_bar(stat="identity", fill="steelblue") +
-		labs(title = "Décès standardisés de la France", subtitle = "selon la population de la France en 2020",
-				caption = "Source des données : Eurostat", x="", y="nombre de décès standaridsés")+
-		theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),
-				plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"))
-
-saveRDS(barplot_decestheo_france, "gen/rds/Eurostat_barplot_deces_theo_france.RDS")
-
-if (shallDeleteVars) rm(deces_complet_annuel_france)
-if (shallDeleteVars) rm(barplot_deces_france)
-if (shallDeleteVars) rm(barplot_decestheo_france)
+#graphiques des décès VS décès standardisés
+a__f_plot_es_deces_annuel_vs_deces_std("FR")
+a__f_plot_es_deces_annuel_vs_deces_std("BE")
+a__f_plot_es_deces_annuel_vs_deces_std("AL")
+a__f_plot_es_deces_annuel_vs_deces_std("DE")
+a__f_plot_es_deces_annuel_vs_deces_std("AT")
+a__f_plot_es_deces_annuel_vs_deces_std("CY")
+a__f_plot_es_deces_annuel_vs_deces_std("HR")
+a__f_plot_es_deces_annuel_vs_deces_std("DK")
+a__f_plot_es_deces_annuel_vs_deces_std("ES")
+a__f_plot_es_deces_annuel_vs_deces_std("EE")
+a__f_plot_es_deces_annuel_vs_deces_std("FI")
+a__f_plot_es_deces_annuel_vs_deces_std("EL")
+a__f_plot_es_deces_annuel_vs_deces_std("HU")
+a__f_plot_es_deces_annuel_vs_deces_std("IS")
+a__f_plot_es_deces_annuel_vs_deces_std("IT")
+a__f_plot_es_deces_annuel_vs_deces_std("LV")
+a__f_plot_es_deces_annuel_vs_deces_std("LI")
+a__f_plot_es_deces_annuel_vs_deces_std("LU")
+a__f_plot_es_deces_annuel_vs_deces_std("MT")
+a__f_plot_es_deces_annuel_vs_deces_std("NO")
+a__f_plot_es_deces_annuel_vs_deces_std("NL")
+a__f_plot_es_deces_annuel_vs_deces_std("PL")
+a__f_plot_es_deces_annuel_vs_deces_std("PT")
+a__f_plot_es_deces_annuel_vs_deces_std("RO")
+a__f_plot_es_deces_annuel_vs_deces_std("CZ")
+a__f_plot_es_deces_annuel_vs_deces_std("RS")
+a__f_plot_es_deces_annuel_vs_deces_std("SK")
+a__f_plot_es_deces_annuel_vs_deces_std("SI")
+a__f_plot_es_deces_annuel_vs_deces_std("SE")
+a__f_plot_es_deces_annuel_vs_deces_std("CH")
 
 #pyramide des âges de la France 2020
 
@@ -595,7 +597,7 @@ p <- ggplot(data=worldmap) +
 				caption ="(C) EuroGeographics for the administrative boundaries
 						Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
 		theme_light() +
-		theme(legend.position=c(0, 0.7),
+		theme(legend.position=c(0, 0.4),
 				plot.title = element_text(hjust = 0.5,
 						color = "#0066CC", 
 						size = 16, 
@@ -645,6 +647,7 @@ ggsave(paste0(repertoire, "/Eurostat_Deces_2020_Typologie.png"), plot=p, width =
 
 if (shallDeleteVars)  rm(worldmap)
 if (shallDeleteVars)  rm(p)
+if (shallDeleteVars) rm(deces_complet_annuel_analysable1990)
 
 #----------------------------------------#
 ####  calcul de l'espérance de vie    ####
@@ -663,7 +666,11 @@ esperance_vie <- b__es_deces_et_pop_par_annee_agequinq %>%
 #caclul des taux de mortalité et taux de survie par âge
 esperance_vie <- esperance_vie %>%
 		mutate(taux_mortalite=deces/population) %>%
-		mutate(taux_survie=1-taux_mortalite)
+		mutate(taux_survie=1-taux_mortalite/5)
+
+#vérif France
+esperance_vie_france <- esperance_vie %>%
+  filter(geo=="FR" & time =="2020-01-01")
 
 #transposition
 esperance_vie_t <- esperance_vie %>%
@@ -675,102 +682,102 @@ esperance_vie_t <- esperance_vie_t %>%
 
 #calcul des survivants depuis la naissance
 esperance_vie_t <- esperance_vie_t %>%
-		mutate(survivant_naissance_Y_LT5=taux_survie_Y_LT5)
+		mutate(survivant_naissance_Y_LT5=(taux_survie_Y_LT5)^5)
 
 # Créer des colonnes pour les survivants par tranches quinquennales
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y5-9`=
-						`taux_survie_Y5-9`*survivant_naissance_Y_LT5)
+						`taux_survie_Y5-9`*(survivant_naissance_Y_LT5)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y10-14`=
-						`taux_survie_Y10-14`*`survivant_naissance_Y5-9`)
+						`taux_survie_Y10-14`*(`survivant_naissance_Y5-9`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y15-19`=
-						`taux_survie_Y15-19`*`survivant_naissance_Y10-14`)
+						`taux_survie_Y15-19`*(`survivant_naissance_Y10-14`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y20-24`=
-						`taux_survie_Y20-24`*`survivant_naissance_Y15-19`)
+						`taux_survie_Y20-24`*(`survivant_naissance_Y15-19`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y25-29`=
-						`taux_survie_Y25-29`*`survivant_naissance_Y20-24`)
+						`taux_survie_Y25-29`*(`survivant_naissance_Y20-24`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y30-34`=
-						`taux_survie_Y30-34`*`survivant_naissance_Y25-29`)
+						`taux_survie_Y30-34`*(`survivant_naissance_Y25-29`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y35-39`=
-						`taux_survie_Y35-39`*`survivant_naissance_Y30-34`)
+						`taux_survie_Y35-39`*(`survivant_naissance_Y30-34`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y40-44`=
-						`taux_survie_Y40-44`*`survivant_naissance_Y35-39`)
+						`taux_survie_Y40-44`*(`survivant_naissance_Y35-39`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y45-49`=
-						`taux_survie_Y45-49`*`survivant_naissance_Y40-44`)
+						`taux_survie_Y45-49`*(`survivant_naissance_Y40-44`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y50-54`=
-						`taux_survie_Y50-54`*`survivant_naissance_Y45-49`)
+						`taux_survie_Y50-54`*(`survivant_naissance_Y45-49`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y55-59`=
-						`taux_survie_Y55-59`*`survivant_naissance_Y50-54`)
+						`taux_survie_Y55-59`*(`survivant_naissance_Y50-54`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y60-64`=
-						`taux_survie_Y60-64`*`survivant_naissance_Y55-59`)
+						`taux_survie_Y60-64`*(`survivant_naissance_Y55-59`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y65-69`=
-						`taux_survie_Y65-69`*`survivant_naissance_Y60-64`)
+						`taux_survie_Y65-69`*(`survivant_naissance_Y60-64`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y70-74`=
-						`taux_survie_Y70-74`*`survivant_naissance_Y65-69`)
+						`taux_survie_Y70-74`*(`survivant_naissance_Y65-69`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y75-79`=
-						`taux_survie_Y75-79`*`survivant_naissance_Y70-74`)
+						`taux_survie_Y75-79`*(`survivant_naissance_Y70-74`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y80-84`=
-						`taux_survie_Y80-84`*`survivant_naissance_Y75-79`)
+						`taux_survie_Y80-84`*(`survivant_naissance_Y75-79`)^5)
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y85-89`=
 						if_else(!is.na(`taux_survie_Y_GE85`),
-								`taux_survie_Y_GE85`*`survivant_naissance_Y80-84`,
-								`taux_survie_Y85-89`*`survivant_naissance_Y80-84`))
+								`taux_survie_Y_GE85`*(`survivant_naissance_Y80-84`)^5,
+								`taux_survie_Y85-89`*(`survivant_naissance_Y80-84`)^5))
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y90-94`=
 						if_else(!is.na(`taux_survie_Y_GE90`),
-								`taux_survie_Y_GE90`*`survivant_naissance_Y85-89`,
-								`taux_survie_Y_GE85`*`survivant_naissance_Y85-89`))
+								`taux_survie_Y_GE90`*(`survivant_naissance_Y85-89`)^5,
+								`taux_survie_Y_GE85`*(`survivant_naissance_Y85-89`)^5))
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y95-99`=
 						if_else(!is.na(`taux_survie_Y_GE90`),
-								`taux_survie_Y_GE90`*`survivant_naissance_Y90-94`,
-								`taux_survie_Y_GE85`*`survivant_naissance_Y90-94`))
+								`taux_survie_Y_GE90`*(`survivant_naissance_Y90-94`)^5,
+								`taux_survie_Y_GE85`*(`survivant_naissance_Y90-94`)^5))
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y100-104`=
 						if_else(!is.na(`taux_survie_Y_GE90`),
-								`taux_survie_Y_GE90`*`survivant_naissance_Y95-99`,
-								`taux_survie_Y_GE85`*`survivant_naissance_Y95-99`))
+								`taux_survie_Y_GE90`*(`survivant_naissance_Y95-99`)^5,
+								`taux_survie_Y_GE85`*(`survivant_naissance_Y95-99`)^5))
 
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`survivant_naissance_Y105-109`=
 						if_else(!is.na(`taux_survie_Y_GE90`),
-								`taux_survie_Y_GE90`*`survivant_naissance_Y100-104`,
-								`taux_survie_Y_GE85`*`survivant_naissance_Y100-104`))
+								`taux_survie_Y_GE90`*(`survivant_naissance_Y100-104`)^5,
+								`taux_survie_Y_GE85`*(`survivant_naissance_Y100-104`)^5))
 
 #calcul de la mortalité sur les survivants depuis la naissance
 esperance_vie_t <- esperance_vie_t %>%
@@ -873,7 +880,7 @@ esperance_vie_t <- esperance_vie_t %>%
 #sommme des âges gagnés
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(esperance_vie_naissance=
-						mortalite_naissance_Y_LT5*5+
+						mortalite_naissance_Y_LT5*2+
 						`mortalite_naissance_Y5-9`*7+
 						`mortalite_naissance_Y10-14`*12+
 						`mortalite_naissance_Y15-19`*17+
@@ -896,7 +903,6 @@ esperance_vie_t <- esperance_vie_t %>%
 						`mortalite_naissance_Y100-104`*102+
 						`mortalite_naissance_Y105-109`*107)
 
-esperance_vie_t$esperance_vie_naissance
 
 esperance_vie_france <- esperance_vie_t %>%
 		filter(geo == "FR")

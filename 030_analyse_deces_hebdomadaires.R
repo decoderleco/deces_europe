@@ -617,10 +617,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_slove
 a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_suede, 3000)
 a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_suisse, 3000)
 
-
-#---------------------------------------#
-####    vaccinations et deces        ####
-#---------------------------------------#
+#---------------------------------------------------------------------------#
+####    vaccinations et deces standard        ####
+#---------------------------------------------------------------------------#
 
 # Aucune donnée pour les moins de 40 ans en Allemagne
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_allemagne)
@@ -646,6 +645,36 @@ a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_portugal
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_serbie)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_suede)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_suisse)
+
+
+#---------------------------------------------------------------------------#
+####    vaccinations et deces standard avec interpolation linéaire       ####
+#---------------------------------------------------------------------------#
+
+# Aucune donnée pour les moins de 40 ans en Allemagne
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_allemagne)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_armenie)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_autriche)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_belgique)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_chypre)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_croatie)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_danmark)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_espagne)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_estonie)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_finlande)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_france)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_grece)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_hongrie)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_islande)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_italie)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_malte)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_norvege)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_paysbas)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_pologne)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_portugal)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_serbie)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_suede)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_suisse)
 
 #---------------------------------------#
 ####    vaccinations et deces compare        ####
