@@ -136,9 +136,16 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 	
 	if (varName == "") {
 		
-		# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+		# deparse(subsituteregion)) permet d'obtenir le nom (sous forme de string) de la variable 
 		# qui a étépassé dans le parametre region
 		varName <- deparse(substitute(var))
+	}
+	
+	if (varName == "") {
+		# On n'a toujours pas réussi à récupérer un nom de variable
+		
+		# On utilise le nom arbitraire de la variable locale "downloadedDatas"
+		varName <- "downloadedDatas"
 	}
 	
 	if (fileRelPath == "") {
@@ -229,7 +236,11 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 						destfile = fileRelPath, 
 						quiet = FALSE)
 				
+				# On a téléchargé le fichier
 				downloaded = TRUE
+
+				# Mais on ne l'a pas lu et mis dans une variable 
+				downloadedDatas <- NULL
 				
 				cat("\n")
 				
@@ -275,12 +286,11 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 	if (!downloaded) {
 		# On n'a pas réussi à télécharger
 		
-		downloadedDatas <- NULL;
+		downloadedDatas <- NULL
 	}
 	
 	# Données chargées à renvoyer
 	downloadedDatas
-
 }
 
 ################################################################################
@@ -308,11 +318,10 @@ a__f_downloadFileUrlAndGetFilePath <- function(
   chemin_fichier <- file.path(dossier_cible, nom_fichier)
   
   # Télécharger avec CURL
-  downloadedDatas <- a__f_downloadIfNeeded(
+  a__f_downloadIfNeeded(
     sourceType = K_SOURCE_TYPE_CURL, 
     UrlOrEuroStatNameToDownload = fileUrl, 
-    fileRelPath = chemin_fichier,
-    var = downloadedDatas)
+    fileRelPath = chemin_fichier)
   
   # Renvoyer le nom du fichier
   chemin_fichier
