@@ -869,7 +869,7 @@ es_deces_standard_pays_semaine_europe <-es_deces_standard_pays_semaine_europe %>
 
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_europe)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_europe)
-
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_europe)
 
 #----------------------------------------------------#
 #### génération des tableaux Spearman et Wilcoxon ####
