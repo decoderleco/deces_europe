@@ -134,8 +134,6 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 		var, 
 		sep = ";") {
 	
-	downloadedDatas <- NULL;
-	
 	if (varName == "") {
 		
 		# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
@@ -271,6 +269,13 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 		downloadedDatas <- loadLocalFile(fileRelPath = fileRelPath, sep = sep)
 		
 		downloaded = TRUE
+		
+	} 
+	
+	if (!downloaded) {
+		# On n'a pas réussi à télécharger
+		
+		downloadedDatas <- NULL;
 	}
 	
 	# Données chargées à renvoyer
