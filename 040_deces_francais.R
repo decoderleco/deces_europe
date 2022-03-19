@@ -79,7 +79,7 @@ K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS <- a__f_createDir(file.path(K_DIR_EXT_DA
 # qui a étépassé dans le parametre region
 varName <- deparse(substitute(b__fr_gouv_deces_quotidiens))
 
-if (exists(varName)) {
+if (!shallForceDownload && exists(varName)) {
 	# La variable existe déjà
 	
 	message(paste0("(", varName, ") existe déjà. On ne la reconstruit pas. Supprimez-là et relancer si vous voulez la re-construire"))
@@ -281,7 +281,7 @@ if (exists(varName)) {
 	
 	if (shallDeleteVars) rm(fr_insee_communes)
 	
-	# 
+	# Ajouter les Départements et Régions 
 	dbp <- b__fr_gouv_deces_quotidiens %>%
 			left_join(
 					communes_deduplique %>%
@@ -425,8 +425,9 @@ deces_dep_jour <- deces_dep_jour %>%
 # Ajouter le nom des départements
 
 # Lire le fichier des departements-regions
-nom_departement <- read.csv("data/csv/departements-region.csv", sep=",", header = TRUE, encoding="UTF-8")
+nom_departement <- read.csv("data/csv/departements-region.csv", sep=",", header = TRUE)
 
+# Ajouter les colonnes dep_name et region_name
 deces_dep_jour <- deces_dep_jour %>%
 		left_join(nom_departement,
 				by=c("deces_num_dept"="num_dep"))
@@ -442,6 +443,7 @@ deces_dep_jour <- deces_dep_jour %>%
 						"pas de confinement"))
 
 # Filtrer les deces par region
+
 BourgogneFrancheComte <- deces_dep_jour %>%
 		filter(region_name == "Bourgogne-Franche-Comté")
 
