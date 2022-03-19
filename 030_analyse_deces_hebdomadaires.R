@@ -21,6 +21,7 @@ library(broom)
 library(purrr)
 library(tidyr)
 library("gridExtra")
+library(formattable)
 
 #---------------------------------------#
 ####analyse des donnees hebdomadaires####
@@ -34,109 +35,143 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- a__f_loadRdsIfNeed
 #---------------------------------------#
 
 es_deces_standard_pays_semaine_autriche <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "AT")
+		filter(geo == "AT") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_belgique <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "BE")
+		filter(geo == "BE") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_bulgarie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "BG")
+		filter(geo == "BG") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_suisse <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "CH")
+		filter(geo == "CH") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_rtcheque <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "CZ")
+		filter(geo == "CZ") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_danmark <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "DK")
+		filter(geo == "DK") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_estonie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "EE")
+		filter(geo == "EE") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_espagne <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "ES")
+		filter(geo == "ES") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_france <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "FR")
+		filter(geo == "FR") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 # Pourquoi filtre-t-on sur numSemaineDepuis2013 > 52 ? 
 # REP : Parce que les données ne ressemblent à rien pour ce pays les 51 premières semaines
 es_deces_standard_pays_semaine_croatie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
 		filter(geo == "HR") %>%
-		filter(numSemaineDepuis2013 > 52)
+		filter(numSemaineDepuis2013 > 52) %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_hongrie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "HU")
+		filter(geo == "HU") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_islande <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "IS")
+		filter(geo == "IS") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_italie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "IT")
+		filter(geo == "IT") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_lichtenstein <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "LI")
+		filter(geo == "LI") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_lituanie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "LT")
+		filter(geo == "LT") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_luxembourg <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "LU")
+		filter(geo == "LU") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_lettonie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "LV")
+		filter(geo == "LV") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_montenegro <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "ME")
+		filter(geo == "ME") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_malte <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "MT")
+		filter(geo == "MT") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_norvege <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "NO")
+		filter(geo == "NO") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_paysbas <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "NL")
+		filter(geo == "NL") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_portugal <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "PT")
+		filter(geo == "PT") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_pologne <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "PL")
+		filter(geo == "PL") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_serbie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "RS")
+		filter(geo == "RS") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_suede <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "SE")
+		filter(geo == "SE") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_slovenie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "SI")
+		filter(geo == "SI") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_slovaquie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "SK")
+		filter(geo == "SK") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_allemagne <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "DE")
+		filter(geo == "DE") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_chypre <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "CY")
+		filter(geo == "CY") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_albanie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "AL")
+		filter(geo == "AL") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_armenie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "AM")
+		filter(geo == "AM") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_grece <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "EL")
+		filter(geo == "EL") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_finlande <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "FI")
+		filter(geo == "FI") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 es_deces_standard_pays_semaine_roumanie <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
-		filter(geo == "RO")
+		filter(geo == "RO") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 
 #---------------------------------------#
@@ -582,24 +617,23 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_slove
 a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_suede, 3000)
 a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_suisse, 3000)
 
-
-#---------------------------------------#
-####    vaccinations et deces        ####
-#---------------------------------------#
+#---------------------------------------------------------------------------#
+####    vaccinations et deces standard        ####
+#---------------------------------------------------------------------------#
 
 # Aucune donnée pour les moins de 40 ans en Allemagne
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_allemagne)
-a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_armenie,113)
+a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_armenie)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_autriche)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_belgique)
-a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_chypre, 113)
-a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_croatie, 61)
+a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_chypre)
+a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_croatie)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_danmark)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_espagne)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_estonie)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_finlande)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_france)
-a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_grece, 113)
+a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_grece)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_hongrie)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_islande)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_italie)
@@ -611,6 +645,36 @@ a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_portugal
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_serbie)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_suede)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_suisse)
+
+
+#---------------------------------------------------------------------------#
+####    vaccinations et deces standard avec interpolation linéaire       ####
+#---------------------------------------------------------------------------#
+
+# Aucune donnée pour les moins de 40 ans en Allemagne
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_allemagne)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_armenie)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_autriche)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_belgique)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_chypre)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_croatie)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_danmark)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_espagne)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_estonie)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_finlande)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_france)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_grece)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_hongrie)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_islande)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_italie)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_malte)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_norvege)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_paysbas)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_pologne)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_portugal)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_serbie)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_suede)
+a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_suisse)
 
 #---------------------------------------#
 ####    vaccinations et deces compare        ####
@@ -660,6 +724,18 @@ es_deces_standard_pays_semaine_europe <- b__es_deces_week_standardises_si_pop_20
          deces_tot_60_69,
          deces_tot_70_79,
          deces_tot_plus_80,
+         deces_standardises_si_pop_2020_15_24,
+         deces_standardises_si_pop_2020_25_49,
+         deces_standardises_si_pop_2020_50_59,
+         deces_standardises_si_pop_2020_60_69,
+         deces_standardises_si_pop_2020_70_79,
+         deces_standardises_si_pop_2020_ge80,
+         predit_stand_15_24,
+         predit_stand_25_49,
+         predit_stand_50_59,
+         predit_stand_60_69,
+         predit_stand_70_79,
+         predit_stand_plus_80,
          predit_15_24,
          predit_25_49,
          predit_50_59,
@@ -705,7 +781,13 @@ es_deces_standard_pays_semaine_europe <- b__es_deces_week_standardises_si_pop_20
          diff_deces_tot_predit_50_59,
          diff_deces_tot_predit_60_69,
          diff_deces_tot_predit_70_79,
-         diff_deces_tot_predit_ge80)
+         diff_deces_tot_predit_ge80,
+         diff_deces_tot_predit_stand_15_24,
+         diff_deces_tot_predit_stand_25_49,
+         diff_deces_tot_predit_stand_50_59,
+         diff_deces_tot_predit_stand_60_69,
+         diff_deces_tot_predit_stand_70_79,
+         diff_deces_tot_predit_stand_ge80)
 
 
 es_deces_standard_pays_semaine_europe <-es_deces_standard_pays_semaine_europe %>% 
@@ -713,6 +795,18 @@ es_deces_standard_pays_semaine_europe <-es_deces_standard_pays_semaine_europe %>
   summarise(semaine=base::min(semaine,na.rm=TRUE),
             annee=base::min(semaine,na.rm=TRUE),
             time=base::min(time),
+            deces_standardises_si_pop_2020_15_24=sum(deces_standardises_si_pop_2020_15_24),
+            deces_standardises_si_pop_2020_25_49=sum(deces_standardises_si_pop_2020_25_49),
+            deces_standardises_si_pop_2020_50_59=sum(deces_standardises_si_pop_2020_50_59),
+            deces_standardises_si_pop_2020_60_69=sum(deces_standardises_si_pop_2020_60_69),
+            deces_standardises_si_pop_2020_70_79=sum(deces_standardises_si_pop_2020_70_79),
+            deces_standardises_si_pop_2020_ge80=sum(deces_standardises_si_pop_2020_ge80),
+            predit_stand_15_24=sum(predit_stand_15_24),
+            predit_stand_25_49=sum(predit_stand_25_49),
+            predit_stand_50_59=sum(predit_stand_50_59),
+            predit_stand_60_69=sum(predit_stand_60_69),
+            predit_stand_70_79=sum(predit_stand_70_79),
+            predit_stand_plus_80=sum(predit_stand_plus_80),
             deces_tot_15_24=sum(deces_tot_15_24),
             deces_tot_25_49=sum(deces_tot_25_49),
             deces_tot_50_59=sum(deces_tot_50_59),
@@ -764,10 +858,154 @@ es_deces_standard_pays_semaine_europe <-es_deces_standard_pays_semaine_europe %>
             diff_deces_tot_predit_50_59=sum(diff_deces_tot_predit_50_59),
             diff_deces_tot_predit_60_69=sum(diff_deces_tot_predit_60_69),
             diff_deces_tot_predit_70_79=sum(diff_deces_tot_predit_70_79),
-            diff_deces_tot_predit_ge80=sum(diff_deces_tot_predit_ge80)) %>% 
+            diff_deces_tot_predit_ge80=sum(diff_deces_tot_predit_ge80),
+            diff_deces_tot_predit_stand_15_24=sum(diff_deces_tot_predit_stand_15_24),
+            diff_deces_tot_predit_stand_25_49=sum(diff_deces_tot_predit_stand_25_49),
+            diff_deces_tot_predit_stand_50_59=sum(diff_deces_tot_predit_stand_50_59),
+            diff_deces_tot_predit_stand_60_69=sum(diff_deces_tot_predit_stand_60_69),
+            diff_deces_tot_predit_stand_70_79=sum(diff_deces_tot_predit_stand_70_79),
+            diff_deces_tot_predit_stand_ge80=sum(diff_deces_tot_predit_stand_ge80))%>% 
   mutate(Response_measure ='NA')
 
+a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_europe)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_europe)
+
+
+#----------------------------------------------------#
+#### génération des tableaux Spearman et Wilcoxon ####
+#----------------------------------------------------#
+
+#! Il faut avoir fait tourner les graphiques précédents !
+
+#Création des fonctions de format
+
+icon_formatter <- function() {
+  formatter("span",
+            style = x ~ style(color = ifelse(x, "green", "red")), x ~ icontext(ifelse(x, "ok", "remove"), "")
+  )
+}
+positive_formatter <- function() {
+  formatter("span", 
+            style = ~ style(color = ifelse(`estimateur de Spearman`  < 0, "darkgreen", "red"))
+  )
+}
+arrow_formatter <- function() {
+  formatter("span",
+            style = x ~ style(color = ifelse(x, "red", "green")), x ~ icontext(ifelse(x, "arrow-up", "arrow-down"), "")
+  )
+}
+
+for (pays in c('autriche','belgique','croatie','danmark','espagne',
+               'estonie','finlande','france','grece','hongrie',
+               'italie','malte','norvege','pologne','portugal',
+               'suede','europe')){
+
+  nom_table_spearman <- paste0("gen/rds/table_spearman_stand_",pays,".RDS")
+  table_spearman_en_cours <- readRDS(file = nom_table_spearman)
+  table_spearman_en_cours <- table_spearman_en_cours %>% 
+    mutate(`p-value significative` = ifelse((`p-value de Spearman`)<0.05,TRUE,FALSE),
+           `sens de l'estimateur`= ifelse((`estimateur de Spearman`)>0,TRUE,FALSE)	)
+  
+  widget_format_table_spearman = format_table(table_spearman_en_cours, 
+                                   list(`estimateur de Spearman` = positive_formatter(),
+                                        `p-value significative` = icon_formatter(),
+                                        `sens de l'estimateur` = arrow_formatter()))
+  
+  nom_table_wilcoxon <- paste0("gen/rds/table_wilcoxon_stand_",pays,".RDS")
+  table_wilcoxon_en_cours <- readRDS(file = nom_table_wilcoxon)
+  table_wilcoxon_en_cours <- table_wilcoxon_en_cours %>% 
+    mutate(`p-value significative` = ifelse((`p-value de Wilcoxon 2021-2020`)<0.05,TRUE,FALSE))
+  
+  widget_format_table_wilcoxon = format_table(table_wilcoxon_en_cours, 
+                                     list(`p-value significative` = icon_formatter())) 
+  
+  
+  html_header="
+<head>
+  <meta charset=\"utf-8\">
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+  <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css\">
+</head>
+<body>
+"
+  write(paste(html_header, widget_format_table_spearman, sep=""), paste0("gen/html/table_spearman_",pays,".html"))
+  write(paste(html_header, widget_format_table_wilcoxon, sep=""), paste0("gen/html/table_wilcoxon_",pays,".html"))
+  table_spearman_en_15_24 <- table_spearman_en_cours %>% filter(`tranche d'âge` == "15-24")
+  
+   }
+
+#------------------------------------------------------------------------------------#
+####            rechercher de DRIFTS entre les tranches d'âges par pays           ####
+#------------------------------------------------------------------------------------# 
+
+table_spearman_age <- data.frame()
+for (pays in c('AT','BE','CY','HR','DK',
+               'ES','EE','FI','FR','EL','HU',
+               'IS','IT','LU','MT','NO',
+               'PL','PT','SE')){
+  
+  table_pays <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+    ungroup() %>% 
+    filter(geo == pays) %>% select(annee,
+                                   diff_deces_tot_predit_15_24,
+                                   diff_deces_tot_predit_25_49,
+                                   diff_deces_tot_predit_50_59,
+                                   diff_deces_tot_predit_60_69,
+                                   diff_deces_tot_predit_70_79,
+                                   diff_deces_tot_predit_ge80
+                                   )
+  table_2021 <- table_pays %>% filter(annee==2021)
+  table_2020 <- table_pays %>% filter(annee==2020)
+  table_2019 <- table_pays %>% filter(annee==2019)
+  
+  res15_24_2021<-cor.test(table_2021$diff_deces_tot_predit_15_24,table_2021$diff_deces_tot_predit_70_79 ,method="spearman")
+  res25_49_2021<-cor.test(table_2021$diff_deces_tot_predit_25_49,table_2021$diff_deces_tot_predit_70_79 ,method="spearman")
+  res60_69_2021<-cor.test(table_2021$diff_deces_tot_predit_60_69,table_2021$diff_deces_tot_predit_70_79 ,method="spearman")
+  res50_59_2021<-cor.test(table_2021$diff_deces_tot_predit_50_59,table_2021$diff_deces_tot_predit_70_79 ,method="spearman")
+  resge80_2021<-cor.test(table_2021$diff_deces_tot_predit_ge80,table_2021$diff_deces_tot_predit_70_79 ,method="spearman")
+  
+  res15_24_2020<-cor.test(table_2020$diff_deces_tot_predit_15_24,table_2020$diff_deces_tot_predit_70_79 ,method="spearman")
+  res25_49_2020<-cor.test(table_2020$diff_deces_tot_predit_25_49,table_2020$diff_deces_tot_predit_70_79 ,method="spearman")
+  res60_69_2020<-cor.test(table_2020$diff_deces_tot_predit_60_69,table_2020$diff_deces_tot_predit_70_79 ,method="spearman")
+  res50_59_2020<-cor.test(table_2020$diff_deces_tot_predit_50_59,table_2020$diff_deces_tot_predit_70_79 ,method="spearman")
+  resge80_2020<-cor.test(table_2020$diff_deces_tot_predit_ge80,table_2020$diff_deces_tot_predit_70_79 ,method="spearman")
+  
+  res15_24_2019<-cor.test(table_2019$diff_deces_tot_predit_15_24,table_2019$diff_deces_tot_predit_70_79 ,method="spearman")
+  res25_49_2019<-cor.test(table_2019$diff_deces_tot_predit_25_49,table_2019$diff_deces_tot_predit_70_79 ,method="spearman")
+  res60_69_2019<-cor.test(table_2019$diff_deces_tot_predit_60_69,table_2019$diff_deces_tot_predit_70_79 ,method="spearman")
+  res50_59_2019<-cor.test(table_2019$diff_deces_tot_predit_50_59,table_2019$diff_deces_tot_predit_70_79 ,method="spearman")
+  resge80_2019<-cor.test(table_2019$diff_deces_tot_predit_ge80,table_2019$diff_deces_tot_predit_70_79 ,method="spearman")
+  
+  
+  pays_concerne<-c(pays,pays,pays,pays,pays)
+  tranches_dages<-c("15-24","25-49","60-69","50-59","ge80")
+  estimateur_2021<-c(res15_24_2021$estimate,res25_49_2021$estimate,res60_69_2021$estimate,res50_59_2021$estimate,resge80_2021$estimate)
+  pvalue_2021<-c(res15_24_2021$p.value,res25_49_2021$p.value,res60_69_2021$p.value,res50_59_2021$p.value,resge80_2021$p.value)
+  pos_pvalue_2021 <- c(ifelse(res15_24_2021$p.value<0.05,TRUE,FALSE),ifelse(res25_49_2021$p.value<0.05,TRUE,FALSE),ifelse(res60_69_2021$p.value<0.05,TRUE,FALSE),ifelse(res50_59_2021$p.value<0.05,TRUE,FALSE),ifelse(resge80_2021$p.value<0.05,TRUE,FALSE))
+  estimateur_2020<-c(res15_24_2020$estimate,res25_49_2020$estimate,res60_69_2020$estimate,res50_59_2020$estimate,resge80_2020$estimate)
+  pvalue_2020<-c(res15_24_2020$p.value,res25_49_2020$p.value,res60_69_2020$p.value,res50_59_2020$p.value,resge80_2020$p.value)
+  pos_pvalue_2020 <- c(ifelse(res15_24_2020$p.value<0.05,TRUE,FALSE),ifelse(res25_49_2020$p.value<0.05,TRUE,FALSE),ifelse(res60_69_2020$p.value<0.05,TRUE,FALSE),ifelse(res50_59_2020$p.value<0.05,TRUE,FALSE),ifelse(resge80_2020$p.value<0.05,TRUE,FALSE))
+  estimateur_2019<-c(res15_24_2019$estimate,res25_49_2019$estimate,res60_69_2019$estimate,res50_59_2019$estimate,resge80_2019$estimate)
+  pvalue_2019<-c(res15_24_2019$p.value,res25_49_2019$p.value,res60_69_2019$p.value,res50_59_2019$p.value,resge80_2019$p.value)
+  pos_pvalue_2019 <- c(ifelse(res15_24_2019$p.value<0.05,TRUE,FALSE),ifelse(res25_49_2019$p.value<0.05,TRUE,FALSE),ifelse(res60_69_2019$p.value<0.05,TRUE,FALSE),ifelse(res50_59_2019$p.value<0.05,TRUE,FALSE),ifelse(resge80_2019$p.value<0.05,TRUE,FALSE))
+  
+  table_temp<-data.frame(list(pays_concerne,tranches_dages,estimateur_2021,pvalue_2021,pos_pvalue_2021,estimateur_2020,pvalue_2020,pos_pvalue_2020,estimateur_2019,pvalue_2019,pos_pvalue_2019))
+  colnames(table_temp)<-c("geo","tranche d'âge","estimateur de Spearman 2021","p-value de Spearman 2021","significativité 2021","estimateur de Spearman 2020","p-value de Spearman 2020","significativité 2020","estimateur de Spearman 2019","p-value de Spearman 2019","significativité 2019")
+  
+  
+  if(length(table_spearman_age)==0){
+    table_spearman_age<-table_temp
+  }else{
+    table_spearman_age<-table_spearman_age %>% 
+      rbind(table_temp)
+  }
+  
+}
+saveRDS(table_spearman_age, file="gen/rds/table_spearman_age.RDS")
+
+
+
+
 
 #------------------------------------------------------------------------------------#
 ####    vaccinations et deces europe synchronisation à la période vaccinale       ####
