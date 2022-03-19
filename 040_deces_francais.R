@@ -97,6 +97,7 @@ if (exists(varName)) {
 	# Liste des URLs des fichiers de patients décédés
 	
 	urls_listes_deces <- c(
+	  '2022m02' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220311-142122/deces-2022-m02.txt',
 	  '2022m01' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220210-111900/deces-2022-m01.txt',
 	  '2021' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220112-114131/deces-2021.txt',
 	  '2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
