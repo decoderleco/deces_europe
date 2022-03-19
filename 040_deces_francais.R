@@ -79,7 +79,7 @@ K_DIR_EXT_DATA_FR_GOUV_DECES_QUOTIDIENS <- a__f_createDir(file.path(K_DIR_EXT_DA
 # qui a étépassé dans le parametre region
 varName <- deparse(substitute(b__fr_gouv_deces_quotidiens))
 
-if (exists(varName)) {
+if (!shallForceDownload && exists(varName)) {
 	# La variable existe déjà
 	
 	message(paste0("(", varName, ") existe déjà. On ne la reconstruit pas. Supprimez-là et relancer si vous voulez la re-construire"))
