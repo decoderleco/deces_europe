@@ -2122,7 +2122,7 @@ essai <- ungroup(es_deces_standard_pays_semaine) %>%
          cumul_ge80_dose2=cumsum(replace_na(`Age80+_dose2`,0)),
          part_atteinte_ge80_dose1=cumul_ge80_dose1/pop_week_ge80)
 
-essai2016_2018 <- essai %>% filter(annee%in% c(2016,2017,2018)) %>% 
+essai2013_2018 <- essai %>% filter(annee%in% c(2013,2014,2015,2016,2017,2018)) %>% 
   select(semaine,
          deces_standardises_si_pop_2020_15_24,
          deces_standardises_si_pop_2020_25_49,
@@ -2138,12 +2138,7 @@ essai2016_2018 <- essai %>% filter(annee%in% c(2016,2017,2018)) %>%
             deces_moyen_70_79=mean(deces_standardises_si_pop_2020_70_79),
             deces_moyen_ge80=mean(deces_standardises_si_pop_2020_ge80))
 
-essai2016_2018s53 <- essai2016_2018 %>% filter(semaine==52) %>% 
-  mutate(semaine=53)
-
-essai2016_2018<-essai2016_2018 %>% rbind(essai2016_2018s53)
-
-essai <- essai %>% left_join(essai2016_2018) %>% 
+essai <- essai %>% left_join(essai2013_2018) %>% 
   mutate(diff_deces_tot_predit_stand_15_24=deces_standardises_si_pop_2020_15_24-deces_moyen_15_24,
          diff_deces_tot_predit_stand_25_49=deces_standardises_si_pop_2020_25_49-deces_moyen_25_49,
          diff_deces_tot_predit_stand_50_59=deces_standardises_si_pop_2020_50_59-deces_moyen_50_59,
@@ -2609,7 +2604,7 @@ if(nomPays != 'allemagne'){
   
   #décès prédits
   plot(essai$numSemaineDepuis2013, 
-       essai$predit_stand_15_24, 
+       essai$deces_moyen_15_24, 
        pch=16, 
        cex=0, 
        axes=F, 
@@ -2854,7 +2849,7 @@ cat(paste0("Creation image (", pngFileRelPath,")\n"))
 if(nomPays != 'allemagne'){
   #décès prédits
   plot(essai$numSemaineDepuis2013, 
-       essai$predit_stand_25_49, 
+       essai$deces_moyen_25_49, 
        pch=16, 
        cex=0, 
        axes=F, 
@@ -3149,7 +3144,7 @@ cat(paste0("Creation image (", pngFileRelPath,")\n"))
 
 #décès prédits
 plot(essai$numSemaineDepuis2013, 
-     essai$predit_stand_50_59, 
+     essai$deces_moyen_50_59, 
      pch=16, 
      cex=0, 
      axes=F, 
@@ -3389,7 +3384,7 @@ cat(paste0("Creation image (", pngFileRelPath,")\n"))
 
 #décès prédits
 plot(essai$numSemaineDepuis2013, 
-     essai$predit_stand_60_69, 
+     essai$deces_moyen_60_69, 
      pch=16, 
      cex=0, 
      axes=F, 
@@ -3628,7 +3623,7 @@ cat(paste0("Creation image (", pngFileRelPath,")\n"))
 
 #décès prédits
 plot(essai$numSemaineDepuis2013, 
-     essai$predit_stand_70_79, 
+     essai$deces_moyen_70_79, 
      pch=16, 
      cex=0, 
      axes=F, 
@@ -3869,7 +3864,7 @@ cat(paste0("Creation image (", pngFileRelPath,")\n"))
 
 #décès prédits
 plot(essai$numSemaineDepuis2013, 
-     essai$predit_stand_plus_80, 
+     essai$deces_moyen_ge80, 
      pch=16, 
      cex=0, 
      axes=F, 
