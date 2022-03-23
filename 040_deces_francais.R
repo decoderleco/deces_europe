@@ -948,6 +948,9 @@ data_a_tracer <- data_a_tracer %>%
 # Ajouter la colonne tranche d'age (pas les tranches d'âge VAC-SI)
 data_a_tracer <- a__f_add_tranche_age(data_a_tracer)
 
+# Extraire les dates de début/fin en 2021 afin de pouvoir ensuite faire une estimation sur 365 jours pour l'année en cours
+date_max <- base::max(data_a_tracer$deces_date_complete) 
+
 # Calculer le nombre de décès pour chaque tranche d'age et chaque jour
 data_a_tracer <- data_a_tracer %>% 
 		group_by(tranche_age, 
@@ -1012,6 +1015,9 @@ repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quoti
 pngFileRelPath <- paste0(repertoire, "/Deces_annuels_par_tranche_age.png")
 
 dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+if (shallDeleteVars) rm(date_min)
+if (shallDeleteVars) rm(date_max)
 
 if (shallDeleteVars) rm(deces_par_jour_age)
 if (shallDeleteVars) rm(deces_par_jour_a_tracer)
