@@ -58,6 +58,33 @@ where <- function(name, env = caller_env()) {
 }
 
 ################################################################################
+# Gestion des Exceptions
+################################################################################
+
+# Fonction appelée en cas d'erreur
+b__f_error <- function(e) {
+	error(paste0("ERREUR : ", e))
+}
+
+# Fonction appelée en cas de warning
+b__f_warning <- function(e) {
+	warning(paste0("WARNING : ", e))
+}
+
+# Exemple d'utilisation
+## tryCatchLog( {
+## 
+##             a <- 3
+##             b <- 5
+##             print(a/b)
+##             warning("Ceci est un warning")
+##             stop("Ceci est une erreur")
+##         }, 
+## warning = b__f_warning, 
+## error = b__f_error)
+
+
+################################################################################
 # Télécharger un fichier EuroStat si la variable associée n'existe pas
 ################################################################################
 a__f_createDir <- function(dirPath) {
@@ -10029,7 +10056,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 
 a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semaine) {
   
-  tryCatchLog( { 
+  tryCatchLog( {
 			  
   temp <- es_deces_standard_pays_semaine %>% 
     mutate(annee_coupee_ete = case_when(
@@ -10450,14 +10477,10 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   
   ggsave(pngFileRelPath, width = 11, height = 8, plot = p)
   
-  print(p)
   }, 
-  error = function(e) {
-      warning("Il y a eu une erreur")
-  })
+  error = b__f_error)
   
 }
-
 
 ################################################################################
 # Generer le graphique et le png associé : Deces cumulés par année et tranche d'âge
