@@ -10487,7 +10487,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
 ################################################################################
 
 # Sous fonction pour l'affichage du graphique
-b__f_plot_es_deces_hebdo_std_cumul <- function(nomPays, finalDirName, titleSuffix, cumul_deces_hebdo) {
+b__f_plot_es_deces_hebdo_std_cumul <- function(nomPays, trancheAge, titleSuffix, cumul_deces_hebdo) {
 	
 	#
 	# Créer le répertoire pour stocker le graphique
@@ -10495,7 +10495,7 @@ b__f_plot_es_deces_hebdo_std_cumul <- function(nomPays, finalDirName, titleSuffi
 	
 	K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROSTAT, '/Deces/Hebdo/Std/deces_cumul'))
 	
-	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL, "/", finalDirName,"/")
+	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL, "/", trancheAge,"/")
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
@@ -10507,15 +10507,16 @@ b__f_plot_es_deces_hebdo_std_cumul <- function(nomPays, finalDirName, titleSuffi
 	# Générer le graphique
 	#
 	
-	# Déterminer le nom de la colonne à tracer
-	colName <- paste0("cum_deces_", gsub("-", "_", finalDirName))
-	
+	# Déterminer le nom de la colonne à tracer (= la tranche d'âge à tracer)
+	cumulDecesTrancheAgeColName <- paste0("cum_deces_", gsub("-", "_", trancheAge))
+
 	p <- ggplot(cumul_deces_hebdo) +
-			ggtitle(paste0("Décès standardisés cumulés : ", titleSuffix,"\n",str_to_title(nomPays)))+
+			ggtitle(paste0("Décès standardisés cumulés (", titleSuffix,")\n",str_to_title(nomPays)))+
+			theme_bw() + 
 			theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
 			
-			aes_string(x = "semaine", y = colName) +
-			geom_line(aes(color=annee), size=1.3) +
+			aes_string(x = "semaine", y = cumulDecesTrancheAgeColName) +
+			geom_line(aes(color = annee), size=1.3) +
 			
 			xlab("semaine")+ 
 			scale_x_continuous(breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
@@ -10540,28 +10541,44 @@ b__f_plot_es_deces_hebdo_std_cumul <- function(nomPays, finalDirName, titleSuffi
 	#
 
 	# Déterminer l'année ayant eu le plus de décès
-
-	
+	deathMaxIndex <- which.max(pull(cumul_deces_hebdo, cumulDecesTrancheAgeColName))
+	deathMaxYear <- as.numeric(cumul_deces_hebdo$annee[deathMaxIndex])
 
 	# Affecter les couleurs pour chaque courbe
 
 	if(nbLinesFor2013 > 0){
 		# Il y a la courbe pour 2013
-	
-		p <- p + scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))
+
+		# Gris, sauf pour les 3 années les plus récentes
+		lineColors <- c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033')
 		
-	}else{
+		# Forcer la couleur roug pour l'année la pire
+		lineColors[deathMaxYear - 2013 + 1] <- '#FF0000' 
+		
+	} else {
 		# Pas de courbe pour 2013
 		
-		p <- p + scale_color_manual(values=c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033'))
+	# Gris, sauf pour les 3 années les plus récentes
+	lineColors <- c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033')
+		
+		# Forcer la couleur roug pour l'année la pire
+		lineColors[deathMaxYear - 2014 + 1] <- '#FF0000' 
 	}	  
+
+	p <- p + scale_color_manual(values = lineColors)
+	
+	#
+	# Dessiner le graphe
+	#
+	
+	#plot(p)
 	
 	#
 	# Sauvegarder le graphique
 	#
-
+	
 	ggsave(pngFileRelPath, width = 11, height = 8, plot = p)
-}
+	}
 
 
 # Fonction pour le calcul des décès cumulés et leur affichage graphique
