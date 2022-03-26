@@ -10126,18 +10126,6 @@ b__f_plot_es_deces_hebdo_std_annee_juin <- function(nomPays, trancheAge, titleSu
 			geom_text(x=31, y=y_seasonLabel, label="hiver")+
 			geom_text(x=44, y=y_seasonLabel, label="printemps")
 
-	if (shallCumul) {
-
-		# RAF
-		
-	} else {
-		# Pas en mode cumul
-	
-		# Ajouter le smooth
-		p <- p + geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC')
-	}
-	
-	
 	#
 	# Couleurs de chaque courbe
 	#
@@ -10145,6 +10133,7 @@ b__f_plot_es_deces_hebdo_std_annee_juin <- function(nomPays, trancheAge, titleSu
 	# Déterminer l'année ayant eu le plus de décès
 	deathMaxIndex <- which.max(col)
 	deathMaxSummerCutYear <- deces_hebdo$annee_coupee_ete[deathMaxIndex]
+	deathMax <- as.integer(col[deathMaxIndex])
 	
 	# Année à gauche du tiret
 	deathMaxSummerCutYear_1 = as.numeric(str_sub(deathMaxSummerCutYear, 1, 4))
@@ -10171,6 +10160,33 @@ b__f_plot_es_deces_hebdo_std_annee_juin <- function(nomPays, trancheAge, titleSu
 	}	  
 	
 	p <- p + scale_color_manual(values = lineColors)
+
+	# Affichage d'un label avec la valeur max
+
+	if (shallCumul) {
+		
+		# Déterminer l'abscisse du dernier échantillon
+		x_max = max(deces_hebdo$numSemaineAnnee)
+		
+		# Calculer la valeur moyenne pour la dernière semaine
+		y_moy =	deces_hebdo  %>%
+				filter(numSemaineAnnee == x_max) %>%
+				group_by(geo) %>% 
+				summarise(meanNbOfDeaths = mean(!!sym(colName)))
+		
+		y_moy <- as.integer(y_moy[1,2])
+		
+		# Afficher les valeurs
+		p <- p + geom_text(x = x_max, y = deathMax, label = a__f_spaceThousandsSeparator(deathMax), hjust = 1)
+		p <- p + geom_text(x = x_max, y = y_moy, label = a__f_spaceThousandsSeparator(y_moy), hjust = 1)
+	
+	} else {
+		# Pas en mode cumul
+		
+		# Ajouter le smooth
+		p <- p + geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC')
+	}
+	
 	
 	#
 	# Dessiner le graphe
