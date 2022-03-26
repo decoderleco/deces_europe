@@ -10108,8 +10108,7 @@ b__f_plot_es_deces_hebdo_std_annee_juin <- function(nomPays, trancheAge, titleSu
 			
 			aes_string(x = "numSemaineAnnee", y = colName) +
 			
-			geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC') +
-			geom_line(aes(color = annee_coupee_ete), size=1.3) + 
+			geom_line(aes(color = annee_coupee_ete), size=1.3) +
 			
 			# Lignes verticales de séparation des saisons
 			geom_vline(xintercept = c(12,25,38,51), linetype = "longdash")+
@@ -10126,6 +10125,18 @@ b__f_plot_es_deces_hebdo_std_annee_juin <- function(nomPays, trancheAge, titleSu
 			geom_text(x=18, y=y_seasonLabel, label="automne")+
 			geom_text(x=31, y=y_seasonLabel, label="hiver")+
 			geom_text(x=44, y=y_seasonLabel, label="printemps")
+
+	if (shallCumul) {
+
+		# RAF
+		
+	} else {
+		# Pas en mode cumul
+	
+		# Ajouter le smooth
+		p <- p + geom_smooth(formula = y ~ x, method = "loess", color = '#CCCCCC')
+	}
+	
 	
 	#
 	# Couleurs de chaque courbe
@@ -10191,15 +10202,15 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
       numSemaineDepuis2013 >= 391 &  numSemaineDepuis2013 <= 442 ~ "2020-2021",
       numSemaineDepuis2013 >= 443 &  numSemaineDepuis2013 <= 494 ~ "2021-2022",
     )) %>% 
-    select(geo, annee_coupee_ete,numSemaineDepuis2013,deces_standardises_si_pop_2020_total = deces_standardises_si_pop_2020,
-           deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
-           deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
-           deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80
-		   ## ALL_dose1,ALL_dose2,
-		   ## Age15_17_dose1,Age18_24_dose1,Age25_49_dose1,Age50_59_dose1,Age60_69_dose1,Age70_79_dose1,`Age80+_dose1`,
-		   ## Age15_17_dose2,Age18_24_dose2,Age25_49_dose2,Age50_59_dose2,Age60_69_dose2,Age70_79_dose2,`Age80+_dose2`,
-    ) %>%
-	dplyr::rename(deces_standardises_si_pop_2020_plus80 = deces_standardises_si_pop_2020_ge80)
+    select(geo, annee_coupee_ete,numSemaineDepuis2013,
+			deces_standardises_si_pop_2020_total = deces_standardises_si_pop_2020,
+            deces_standardises_si_pop_2020_15_24,
+		    deces_standardises_si_pop_2020_25_49,
+            deces_standardises_si_pop_2020_50_59,
+		    deces_standardises_si_pop_2020_60_69,
+            deces_standardises_si_pop_2020_70_79,
+		    deces_standardises_si_pop_2020_plus80 =  deces_standardises_si_pop_2020_ge80
+    )
 
 	# Filtrer par année
 				
@@ -10265,13 +10276,13 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   
   
   # Ajouter des colonnes avec le cumul des décès std hebdo, pour chaque tranche d'âge, en re-démarrant à 0 à chaque changement d'année
-  temp2$cum_deces_total <-   as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_total,     temp2$annee_coupee_ete, cumsum)))
-  temp2$cum_deces_15_24 <- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_15_24, temp2$annee_coupee_ete, cumsum)))
-  temp2$cum_deces_25_49 <- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_25_49, temp2$annee_coupee_ete, cumsum)))
-  temp2$cum_deces_50_59 <- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_50_59, temp2$annee_coupee_ete, cumsum)))
-  temp2$cum_deces_60_69 <- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_60_69, temp2$annee_coupee_ete, cumsum)))
-  temp2$cum_deces_70_79 <- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_70_79, temp2$annee_coupee_ete, cumsum)))
-  temp2$cum_deces_plus80<-  as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_plus80, temp2$annee_coupee_ete, cumsum)))
+  temp2$cum_deces_total <- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_total,  temp2$annee_coupee_ete, cumsum)))
+  temp2$cum_deces_15_24 <- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_15_24,  temp2$annee_coupee_ete, cumsum)))
+  temp2$cum_deces_25_49 <- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_25_49,  temp2$annee_coupee_ete, cumsum)))
+  temp2$cum_deces_50_59 <- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_50_59,  temp2$annee_coupee_ete, cumsum)))
+  temp2$cum_deces_60_69 <- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_60_69,  temp2$annee_coupee_ete, cumsum)))
+  temp2$cum_deces_70_79 <- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_70_79,  temp2$annee_coupee_ete, cumsum)))
+  temp2$cum_deces_plus80<- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_plus80, temp2$annee_coupee_ete, cumsum)))
   
   
   # deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
@@ -10287,24 +10298,22 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_pays_semai
   ############################################
 
   # Afficher les décès hebdo
-  b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "total", "Tous âges confondus",temp2, nbLinesFor2013)
   b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "plus80", "Plus de 80 ans", 	temp2, nbLinesFor2013)
   b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "70-79", "70-79 ans", 	    temp2, nbLinesFor2013)
   b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "60-69", "60-69 ans", 	    temp2, nbLinesFor2013)
   b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "50-59", "50-59 ans", 	    temp2, nbLinesFor2013)
   b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "25-49", "25-49 ans", 	    temp2, nbLinesFor2013)
   b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "15-24", "15-24 ans", 	    temp2, nbLinesFor2013)
+  b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "total", "Tous âges confondus",temp2, nbLinesFor2013)
 
   # Afficher les Cumuls des décès hebdo
-  b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "total", "Tous âges confondus", 	    temp2, nbLinesFor2013, TRUE)
   b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "plus80", "Plus de 80 ans", 	temp2, nbLinesFor2013, TRUE)
   b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "70-79", "70-79 ans", 	    temp2, nbLinesFor2013, TRUE)
   b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "60-69", "60-69 ans", 	    temp2, nbLinesFor2013, TRUE)
   b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "50-59", "50-59 ans", 	    temp2, nbLinesFor2013, TRUE)
   b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "25-49", "25-49 ans", 	    temp2, nbLinesFor2013, TRUE)
   b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "15-24", "15-24 ans", 	    temp2, nbLinesFor2013, TRUE)
-  
-  
+  b__f_plot_es_deces_hebdo_std_annee_juin(nomPays, "total", "Tous âges confondus", 	    temp2, nbLinesFor2013, TRUE)
   
   }, 
   error = b__f_error)
