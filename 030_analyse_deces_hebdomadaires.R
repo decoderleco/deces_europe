@@ -271,7 +271,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_suede)
 a__f_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_suisse)
 
 #--------------------------#
-####     cumul          ####
+#### cumul Janvier/Déc  ####
 #--------------------------#
 
 a__f_plot_es_deces_hebdo_std_cumul(es_deces_standard_pays_semaine_allemagne)
