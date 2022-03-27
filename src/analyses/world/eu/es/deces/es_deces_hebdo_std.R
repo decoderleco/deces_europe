@@ -9287,13 +9287,13 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(nomPays, trancheAge, titleSu
 				
 				if (shallCumul) {
 					
-					K_DIR_GEN_IMG_EUROSTAT_DECES_ANNEE_COUPEE_ETE <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROSTAT, '/Deces/Hebdo/Std/Deces_Annee_coupee_ete_Cumul'))
+					K_DIR_GEN_IMG_EUROSTAT_DECES_ANNEE_COUPEE_ETE <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROSTAT, 'Deces/Hebdo/Std/Deces_Annee_coupee_ete_Cumul'))
 					
 					colName <- paste0("cum_deces_", gsub("-", "_", trancheAge))
 					
 				} else {
 					
-					K_DIR_GEN_IMG_EUROSTAT_DECES_ANNEE_COUPEE_ETE <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROSTAT, '/Deces/Hebdo/Std/Deces_Annee_coupee_ete'))
+					K_DIR_GEN_IMG_EUROSTAT_DECES_ANNEE_COUPEE_ETE <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROSTAT, 'Deces/Hebdo/Std/Deces_Annee_coupee_ete'))
 					
 					colName <- paste0("deces_standardises_si_pop_2020_", gsub("-", "_", trancheAge))
 				}
@@ -9381,7 +9381,8 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(nomPays, trancheAge, titleSu
 				if (shallCumul) {
 					
 					# Déterminer l'abscisse du dernier échantillon
-					x_max = max(deces_hebdo$numSemaineAnnee)
+					## x_max = max(deces_hebdo$numSemaineAnnee)
+					x_max = 52
 					
 					# Calculer la valeur moyenne pour la dernière semaine
 					y_moy =	deces_hebdo  %>%
@@ -9390,6 +9391,9 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(nomPays, trancheAge, titleSu
 							summarise(meanNbOfDeaths = mean(!!sym(colName)))
 					
 					y_moy <- as.integer(y_moy[1,2])
+
+					# Afficher les valeurs et le delta
+					cat(paste0("Nb décès std (", deathMax, "). Nb décès moyens (", y_moy, "). Sur-mortalité (", deathMax - y_moy, ")\n\n"))
 					
 					# Afficher les valeurs
 					p <- p + geom_text(x = x_max, y = deathMax, label = a__f_spaceThousandsSeparator(deathMax), hjust = 1)
@@ -9564,96 +9568,127 @@ a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_
 # Sous fonction pour l'affichage du graphique
 a__f_plot_es_deces_hebdo_std_cumul <- function(nomPays, trancheAge, titleSuffix, cumul_deces_hebdo) {
 	
-	#
-	# Créer le répertoire pour stocker le graphique
-	#
-	
-	K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROSTAT, '/Deces/Hebdo/Std/deces_cumul'))
-	
-	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL, "/", trancheAge,"/")
-	a__f_createDir(repertoire)
-	
-	#Nom du fichier png à générer
-	pngFileRelPath <- paste0(repertoire, nomPays, ".png")
-	
-	cat(paste0("Creation image (", pngFileRelPath,")\n"))
-	
-	#
-	# Générer le graphique
-	#
-	
-	# Déterminer le nom de la colonne à tracer (= la tranche d'âge à tracer)
-	cumulDecesTrancheAgeColName <- paste0("cum_deces_", gsub("-", "_", trancheAge))
-	
-	p <- ggplot(cumul_deces_hebdo) +
-			ggtitle(paste0("Décès standardisés cumulés (", titleSuffix,")\n",str_to_title(nomPays)))+
-			theme_bw() + 
-			theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
-			
-			aes_string(x = "semaine", y = cumulDecesTrancheAgeColName) +
-			geom_line(aes(color = annee), size=1.3) +
-			
-			xlab("semaine")+ 
-			scale_x_continuous(breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
-			
-			ylab(paste0("Deces standardisés (", titleSuffix,")"))+
-			#scale_y_continuous(labels = label_number_auto())+
-			scale_y_continuous(labels = a__f_spaceThousandsSeparator) +
-			
-			geom_text(x=2, y=0, label="janvier")+
-			geom_text(x=10, y=0, label="mars")+
-			geom_text(x=19, y=0, label="mai")+
-			geom_text(x=28, y=0, label="juillet")+
-			geom_text(x=37, y=0, label="septembre")+
-			geom_text(x=46, y=0, label="novembre")
-	
-	
-	# Y a-t-il des données pour 2013
-	temp2 <- cumul_deces_hebdo %>% filter(annee=='2013')
-	nbLinesFor2013 <- dim(temp2)[1]
-	
-	#
-	# Couleurs de chaque courbe
-	#
-	
-	# Déterminer l'année ayant eu le plus de décès
-	deathMaxIndex <- which.max(pull(cumul_deces_hebdo, cumulDecesTrancheAgeColName))
-	deathMaxYear <- as.numeric(cumul_deces_hebdo$annee[deathMaxIndex])
-	
-	# Affecter les couleurs pour chaque courbe
-	
-	if(nbLinesFor2013 > 0){
-		# Il y a la courbe pour 2013
-		
-		# Gris, sauf pour les 3 années les plus récentes
-		lineColors <- c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033')
-		
-		# Forcer la couleur roug pour l'année la pire
-		lineColors[deathMaxYear - 2013 + 1] <- '#FF0000' 
-		
-	} else {
-		# Pas de courbe pour 2013
-		
-		# Gris, sauf pour les 3 années les plus récentes
-		lineColors <- c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033')
-		
-		# Forcer la couleur roug pour l'année la pire
-		lineColors[deathMaxYear - 2014 + 1] <- '#FF0000' 
-	}	  
-	
-	p <- p + scale_color_manual(values = lineColors)
-	
-	#
-	# Dessiner le graphe
-	#
-	
-	plot(p)
-	
-	#
-	# Sauvegarder le graphique
-	#
-	
-	ggsave(pngFileRelPath, width = 11, height = 8, plot = p)
+	# ATTENTION : Pour voir les variables dans le debugger, il faut commenter le tryCatchLog
+	tryCatchLog( {
+				
+				
+				#
+				# Créer le répertoire pour stocker le graphique
+				#
+				
+				K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROSTAT, 'Deces/Hebdo/Std/deces_cumul'))
+				
+				repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT_DECES_CUMUL, "/", trancheAge,"/")
+				a__f_createDir(repertoire)
+				
+				#Nom du fichier png à générer
+				pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+				
+				cat(paste0("Creation image (", pngFileRelPath,")\n"))
+				
+				#
+				# Générer le graphique
+				#
+				
+				# Déterminer le nom de la colonne à tracer (= la tranche d'âge à tracer)
+				cumulDecesTrancheAgeColName <- paste0("cum_deces_", gsub("-", "_", trancheAge))
+				
+				p <- ggplot(cumul_deces_hebdo) +
+						ggtitle(paste0("Décès standardisés cumulés (", titleSuffix,")\n",str_to_title(nomPays)))+
+						theme_bw() + 
+						theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+						
+						aes_string(x = "semaine", y = cumulDecesTrancheAgeColName) +
+						geom_line(aes(color = annee), size=1.3) +
+						
+						xlab("semaine")+ 
+						scale_x_continuous(breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
+						
+						ylab(paste0("Deces standardisés (", titleSuffix,")"))+
+						#scale_y_continuous(labels = label_number_auto())+
+						scale_y_continuous(labels = a__f_spaceThousandsSeparator) +
+						
+						geom_text(x=2, y=0, label="janvier")+
+						geom_text(x=10, y=0, label="mars")+
+						geom_text(x=19, y=0, label="mai")+
+						geom_text(x=28, y=0, label="juillet")+
+						geom_text(x=37, y=0, label="septembre")+
+						geom_text(x=46, y=0, label="novembre")
+				
+				
+				# Y a-t-il des données pour 2013
+				temp2 <- cumul_deces_hebdo %>% filter(annee=='2013')
+				nbLinesFor2013 <- dim(temp2)[1]
+				
+				#
+				# Couleurs de chaque courbe
+				#
+				
+				# Déterminer l'année ayant eu le plus de décès
+				col <- pull(cumul_deces_hebdo, cumulDecesTrancheAgeColName)
+				deathMaxIndex <- which.max(col)
+				deathMaxYear <- as.numeric(cumul_deces_hebdo$annee[deathMaxIndex])
+				deathMax <- as.integer(col[deathMaxIndex])
+				
+				# Affecter les couleurs pour chaque courbe
+				
+				if(nbLinesFor2013 > 0){
+					# Il y a la courbe pour 2013
+					
+					# Gris, sauf pour les 3 années les plus récentes
+					lineColors <- c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033')
+					
+					# Forcer la couleur roug pour l'année la pire
+					lineColors[deathMaxYear - 2013 + 1] <- '#FF0000' 
+					
+				} else {
+					# Pas de courbe pour 2013
+					
+					# Gris, sauf pour les 3 années les plus récentes
+					lineColors <- c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033')
+					
+					# Forcer la couleur roug pour l'année la pire
+					lineColors[deathMaxYear - 2014 + 1] <- '#FF0000' 
+				}	  
+				
+				p <- p + scale_color_manual(values = lineColors)
+				
+				# Affichage d'un label avec la valeur max
+				
+				# Déterminer l'abscisse du dernier échantillon
+				## x_max = max(cumul_deces_hebdo$semaine)
+				x_max = 52
+
+				# Calculer la valeur moyenne pour la dernière semaine
+				y_moy =	cumul_deces_hebdo  %>%
+						filter(semaine == x_max) %>%
+						group_by(geo) %>% 
+						summarise(meanNbOfDeaths = mean(!!sym(cumulDecesTrancheAgeColName)))
+				
+				y_moy <- as.integer(y_moy[1,2])
+				
+				# Afficher les valeurs
+				p <- p + geom_text(x = x_max, y = deathMax, label = a__f_spaceThousandsSeparator(deathMax), hjust = 1)
+				p <- p + geom_text(x = x_max, y = y_moy, label = a__f_spaceThousandsSeparator(y_moy), hjust = 1)
+				
+				# Afficher les valeurs et le delta
+				cat(paste0("Nb décès std (", deathMax, "). Nb décès moyens (", y_moy, "). Sur-mortalité (", deathMax - y_moy, ")\n\n"))
+				
+				#
+				# Dessiner le graphe
+				#
+				
+				plot(p)
+				
+				#
+				# Sauvegarder le graphique
+				#
+				
+				ggsave(pngFileRelPath, width = 11, height = 8, plot = p)
+				
+			}, 
+			warning = a__f_warning, 
+			error = a__f_error)
 }
 
 
