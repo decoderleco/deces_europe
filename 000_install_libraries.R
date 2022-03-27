@@ -39,6 +39,11 @@ install.packages("knitr")
 install.packages("rmarkdown")
 install.packages("markdown")
 
+# Gestion des Exceptions
+install.packages("devtools")
+library(devtools)
+install_github("aryoda/tryCatchLog")
+
 library(knitr)
 library(rmarkdown)
 library(markdown)
