@@ -19,7 +19,7 @@ a__f_plot_es_deces_hebdo_std_cumul_get_max_deaths <- function(df_annee_semaine, 
 }
 
 # Sous fonction pour déterminer la couleur des lignes
-a__f_plot_es_deces_hebdo_std_cumul_get_line_colors <- function(df_annee_semaine, colName) {
+a__f_plot_es_deces_hebdo_std_get_line_colors <- function(df_annee_semaine, colName, isCumul) {
 	
 	annees <- unique(df_annee_semaine$annee)
 	
@@ -30,9 +30,17 @@ a__f_plot_es_deces_hebdo_std_cumul_get_line_colors <- function(df_annee_semaine,
 	# Déterminer le nombre d'années (donc le nombre de courbes)
 	nbOfYears <- length(annees)
 	
-	# Déterminer l'année ayant eu le plus de décès en semaine 52
-	cumul_deces_hebdo_semaine_52 <- df_annee_semaine %>%
-			filter(semaine == 52)
+	if (isCumul) {
+		# Il ne faut analyser que la semaine 52
+		
+		# Déterminer l'année ayant eu le plus de décès en semaine 52
+		cumul_deces_hebdo_semaine_52 <- df_annee_semaine %>%
+				filter(semaine == 52)
+	} else {
+		# Il faut analyser sur toutes les semaines
+		
+		cumul_deces_hebdo_semaine_52 <- df_annee_semaine 
+	}
 	
 	col <- pull(cumul_deces_hebdo_semaine_52, colName)
 	deathMaxIndex <- which.max(col)
@@ -120,7 +128,7 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(nomPays, trancheAge, titleSuffix,
 				# Couleurs de chaque courbe
 				#
 				
-				lineColors <- a__f_plot_es_deces_hebdo_std_cumul_get_line_colors(cumul_deces_hebdo, colName)
+				lineColors <- a__f_plot_es_deces_hebdo_std_get_line_colors(cumul_deces_hebdo, colName, isCumul = TRUE)
 				
 				p <- p + scale_color_manual(values = lineColors)
 				

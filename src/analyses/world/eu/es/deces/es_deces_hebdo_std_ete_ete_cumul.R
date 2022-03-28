@@ -76,7 +76,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(nomPays, trancheAge, titleSu
 				# Couleurs de chaque courbe
 				#
 				
-				lineColors <- a__f_plot_es_deces_hebdo_std_cumul_get_line_colors(deces_hebdo, colName)
+				lineColors <- a__f_plot_es_deces_hebdo_std_get_line_colors(deces_hebdo, colName, isCumul = shallCumul)
 				
 				p <- p + scale_color_manual(values = lineColors)
 				
