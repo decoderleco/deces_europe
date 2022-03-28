@@ -76,38 +76,7 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(nomPays, trancheAge, titleSu
 				# Couleurs de chaque courbe
 				#
 				
-				# Déterminer l'année ayant eu le plus de décès en semaine 52
-				deces_hebdo_semaine_52 <- deces_hebdo %>%
-						filter(numSemaineAnnee == 52)
-				
-				col <- pull(deces_hebdo_semaine_52, colName)
-				deathMaxIndex <- which.max(col)
-				deathMaxSummerCutYear <- deces_hebdo_semaine_52$annee_coupee_ete[deathMaxIndex]
-				deathMax <- as.integer(col[deathMaxIndex])
-
-				# Année à gauche du tiret
-				deathMaxSummerCutYear_1 = as.numeric(str_sub(deathMaxSummerCutYear, 1, 4))
-				
-				# Affecter les couleurs pour chaque courbe
-				
-				if(nbLinesFor2013 > 0){
-					# Il y a la courbe pour 2013
-					
-					# Gris, sauf pour les 3 années les plus récentes
-					lineColors <- c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033')
-					
-					# Forcer la couleur rouge pour l'année la pire
-					lineColors[deathMaxSummerCutYear_1 - 2013 + 1] <- '#FF0000' 
-					
-				} else {
-					# Pas de courbe pour 2013
-					
-					# Gris, sauf pour les 3 années les plus récentes
-					lineColors <- c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033')
-					
-					# Forcer la couleur rouge pour l'année la pire
-					lineColors[deathMaxSummerCutYear_1 - 2014 + 1] <- '#FF0000' 
-				}	  
+				lineColors <- a__f_plot_es_deces_hebdo_std_cumul_get_line_colors(deces_hebdo, colName)
 				
 				p <- p + scale_color_manual(values = lineColors)
 				
@@ -126,6 +95,9 @@ a__f_plot_es_deces_hebdo_std_annee_juin <- function(nomPays, trancheAge, titleSu
 							summarise(meanNbOfDeaths = mean(!!sym(colName)))
 					
 					y_moy <- as.integer(y_moy[1,2])
+					
+					# Récupérer le nombre max de décès
+					deathMax <- a__f_plot_es_deces_hebdo_std_cumul_get_max_deaths(deces_hebdo, colName)
 					
 					# Afficher les valeurs et le delta
 					cat(paste0("Nb décès std (", deathMax, "). Nb décès moyens (", y_moy, "). Sur-mortalité (", deathMax - y_moy, ")\n\n"))
@@ -259,6 +231,10 @@ a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_
 				temp2$cum_deces_70_79 <- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_70_79,  temp2$annee_coupee_ete, cumsum)))
 				temp2$cum_deces_plus80<- as.numeric(unlist(tapply(temp2$deces_standardises_si_pop_2020_plus80, temp2$annee_coupee_ete, cumsum)))
 				
+				# Ajouter les colonnes annee et semaine pour pouvoir utiliser la fonction a__f_plot_es_deces_hebdo_std_cumul_get_line_colors()
+				temp2 <- temp2 %>%
+						mutate(annee = as.numeric(str_sub(annee_coupee_ete, 6, 9)),
+								semaine = numSemaineAnnee)
 				
 				# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
 				# qui a étépassé dans le parametre region
