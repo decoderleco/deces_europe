@@ -2,6 +2,73 @@
 # 
 ###############################################################################
 
+# Sous fonction pour déterminer la couleur des lignes
+a__f_plot_es_deces_hebdo_std_cumul_get_max_deaths <- function(df_annee_semaine, colName) {
+	
+	# Déterminer l'année ayant eu le plus de décès en semaine 52
+	cumul_deces_hebdo_semaine_52 <- df_annee_semaine %>%
+			filter(semaine == 52)
+	
+	col <- pull(cumul_deces_hebdo_semaine_52, colName)
+	deathMaxIndex <- which.max(col)
+	deathMaxYear <- as.numeric(cumul_deces_hebdo_semaine_52$annee[deathMaxIndex])
+	deathMax <- as.integer(col[deathMaxIndex])
+	
+	# Renvoyer
+	ret = c(deathMax, deathMaxYear)
+}
+
+# Sous fonction pour déterminer la couleur des lignes
+a__f_plot_es_deces_hebdo_std_get_line_colors <- function(df_annee_semaine, colName, isCumul) {
+	
+	annees <- unique(df_annee_semaine$annee)
+	
+	# Déterminer la dernière année
+	## lastYear <- as.numeric(max(cumul_deces_hebdo_semaine_52$annee))
+	lastYear <- base::max(annees)
+	
+	# Déterminer le nombre d'années (donc le nombre de courbes)
+	nbOfYears <- length(annees)
+	
+	if (isCumul) {
+		# Il ne faut analyser que la semaine 52
+		
+		# Déterminer l'année ayant eu le plus de décès en semaine 52
+		cumul_deces_hebdo_semaine_52 <- df_annee_semaine %>%
+				filter(semaine == 52)
+	} else {
+		# Il faut analyser sur toutes les semaines
+		
+		cumul_deces_hebdo_semaine_52 <- df_annee_semaine 
+	}
+	
+	col <- pull(cumul_deces_hebdo_semaine_52, colName)
+	deathMaxIndex <- which.max(col)
+	deathMaxYear <- as.numeric(cumul_deces_hebdo_semaine_52$annee[deathMaxIndex])
+	deathMax <- as.integer(col[deathMaxIndex])
+	
+	# Créer un vecteur "gris" (avec au minimum 8 valeurs, car imposé par ggplot)
+	## lineColors <- rep('#CCCCCC', base::max(nbOfYears, 8))
+	lineColors <- rep('#CCCCCC', nbOfYears)
+	
+	# Définir les couleurs pour les années récentes
+	lineColors[nbOfYears - 0] = '#CC0033' # Rouge foncé
+	lineColors[nbOfYears - 1] = '#3399FF' # Bleu
+	lineColors[nbOfYears - 2] = '#00CC66' # Vert
+	
+	## print(lastYear)
+	## print(deathMaxYear)
+	## print(length(lineColors))
+	## print(length(lineColors) - (lastYear - deathMaxYear))
+	
+	# Forcer la couleur rouge pour l'année la pire
+	lineColors[length(lineColors) - (lastYear - deathMaxYear)] <- '#FF0000'
+	
+	# Renvoyer
+	lineColors
+}
+
+
 # Sous fonction pour l'affichage du graphique
 a__f_plot_es_deces_hebdo_std_cumul <- function(nomPays, trancheAge, titleSuffix, cumul_deces_hebdo) {
 	
@@ -28,15 +95,15 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(nomPays, trancheAge, titleSuffix,
 				#
 				
 				# Déterminer le nom de la colonne à tracer (= la tranche d'âge à tracer)
-				cumulDecesTrancheAgeColName <- paste0("cum_deces_", gsub("-", "_", trancheAge))
+				colName <- paste0("cum_deces_", gsub("-", "_", trancheAge))
 				
 				p <- ggplot(cumul_deces_hebdo) +
 						ggtitle(paste0("Décès standardisés cumulés (", titleSuffix,")\n",str_to_title(nomPays)))+
 						theme_bw() + 
 						theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
 						
-						aes_string(x = "semaine", y = cumulDecesTrancheAgeColName) +
-						geom_line(aes(color = annee), size=1.3) +
+						aes_string(x = "semaine", y = colName) +
+						geom_line(aes(color = as.factor(annee)), size=1.3) +
 						
 						xlab("semaine")+ 
 						scale_x_continuous(breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
@@ -61,35 +128,7 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(nomPays, trancheAge, titleSuffix,
 				# Couleurs de chaque courbe
 				#
 				
-				# Déterminer l'année ayant eu le plus de décès en semaine 52
-				cumul_deces_hebdo_semaine_52 <- cumul_deces_hebdo %>%
-						filter(semaine == 52)
-				
-				col <- pull(cumul_deces_hebdo_semaine_52, cumulDecesTrancheAgeColName)
-				deathMaxIndex <- which.max(col)
-				deathMaxYear <- as.numeric(cumul_deces_hebdo_semaine_52$annee[deathMaxIndex])
-				deathMax <- as.integer(col[deathMaxIndex])
-				
-				# Affecter les couleurs pour chaque courbe
-				
-				if(nbLinesFor2013 > 0){
-					# Il y a la courbe pour 2013
-					
-					# Gris, sauf pour les 3 années les plus récentes
-					lineColors <- c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033')
-					
-					# Forcer la couleur roug pour l'année la pire
-					lineColors[deathMaxYear - 2013 + 1] <- '#FF0000' 
-					
-				} else {
-					# Pas de courbe pour 2013
-					
-					# Gris, sauf pour les 3 années les plus récentes
-					lineColors <- c('#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#CCCCCC','#00CC66', '#3399FF','#CC0033')
-					
-					# Forcer la couleur roug pour l'année la pire
-					lineColors[deathMaxYear - 2014 + 1] <- '#FF0000' 
-				}	  
+				lineColors <- a__f_plot_es_deces_hebdo_std_get_line_colors(cumul_deces_hebdo, colName, isCumul = TRUE)
 				
 				p <- p + scale_color_manual(values = lineColors)
 				
@@ -103,16 +142,21 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(nomPays, trancheAge, titleSuffix,
 				y_moy =	cumul_deces_hebdo  %>%
 						filter(semaine == x_max) %>%
 						group_by(geo) %>% 
-						summarise(meanNbOfDeaths = mean(!!sym(cumulDecesTrancheAgeColName)))
+						summarise(meanNbOfDeaths = mean(!!sym(colName)))
 				
 				y_moy <- as.integer(y_moy[1,2])
+
+				# Récupérer le nombre max de décès
+				deathData <- a__f_plot_es_deces_hebdo_std_cumul_get_max_deaths(cumul_deces_hebdo, colName)
+				deathMax <- deathData[1]
+				deathMaxYear <- deathData[2]
 				
 				# Afficher les valeurs
 				p <- p + geom_text(x = x_max, y = deathMax, label = a__f_spaceThousandsSeparator(deathMax), hjust = 1)
 				p <- p + geom_text(x = x_max, y = y_moy, label = a__f_spaceThousandsSeparator(y_moy), hjust = 1)
 				
 				# Afficher les valeurs et le delta
-				cat(paste0("Nb décès std (", deathMax, "). Nb décès moyens (", y_moy, "). Sur-mortalité (", deathMax - y_moy, ")\n\n"))
+				cat(paste0("Nb décès std (", deathMax, " [", deathMaxYear, "]) . Nb décès moyens (", y_moy, "). Sur-mortalité (", deathMax - y_moy, ")\n\n"))
 				
 				#
 				# Dessiner le graphe
@@ -140,7 +184,8 @@ a__f_cumul_and_plot_es_deces_hebdo_std <- function(es_deces_standard_pays_semain
 					deces_standardises_si_pop_2020_15_24,deces_standardises_si_pop_2020_25_49,
 					deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
 					deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80) %>% 
-			mutate(annee =str_sub(time,1,4), semaine = as.numeric(str_sub(time,6,8)))
+			mutate(annee = as.numeric(str_sub(time,1,4)), 
+					semaine = as.numeric(str_sub(time,6,8)))
 	
 	temp <- ungroup(temp)
 	order(temp$time)
