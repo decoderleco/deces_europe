@@ -15,7 +15,7 @@ a__f_plot_es_deces_hebdo_std_cumul_get_max_deaths <- function(df_annee_semaine, 
 	deathMax <- as.integer(col[deathMaxIndex])
 	
 	# Renvoyer
-	deathMax
+	ret = c(deathMax, deathMaxYear)
 }
 
 # Sous fonction pour déterminer la couleur des lignes
@@ -139,14 +139,16 @@ a__f_plot_es_deces_hebdo_std_cumul <- function(nomPays, trancheAge, titleSuffix,
 				y_moy <- as.integer(y_moy[1,2])
 
 				# Récupérer le nombre max de décès
-				deathMax <- a__f_plot_es_deces_hebdo_std_cumul_get_max_deaths(cumul_deces_hebdo, colName)
+				deathData <- a__f_plot_es_deces_hebdo_std_cumul_get_max_deaths(cumul_deces_hebdo, colName)
+				deathMax <- deathData[1]
+				deathMaxYear <- deathData[2]
 				
 				# Afficher les valeurs
 				p <- p + geom_text(x = x_max, y = deathMax, label = a__f_spaceThousandsSeparator(deathMax), hjust = 1)
 				p <- p + geom_text(x = x_max, y = y_moy, label = a__f_spaceThousandsSeparator(y_moy), hjust = 1)
 				
 				# Afficher les valeurs et le delta
-				cat(paste0("Nb décès std (", deathMax, "). Nb décès moyens (", y_moy, "). Sur-mortalité (", deathMax - y_moy, ")\n\n"))
+				cat(paste0("Nb décès std (", deathMax, " [", deathMaxYear, "]) . Nb décès moyens (", y_moy, "). Sur-mortalité (", deathMax - y_moy, ")\n\n"))
 				
 				#
 				# Dessiner le graphe
