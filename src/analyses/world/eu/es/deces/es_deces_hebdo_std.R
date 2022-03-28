@@ -1631,8 +1631,6 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		
 		pic_corresp_25_49 <- pic1_corresp_25_49 + pic2_corresp_25_49
 		
-		## pic_corresp_25_49 <- sum(surmort_25_49_2021$pic_corresp)
-		
 		surmortalite_25_49_2021 = sum(surmort_25_49_2021$diff_deces_tot_predit_stand_25_49)
 		
 		part_surmortalite_25_49_2021 = surmortalite_25_49_2021/sum(surmort_25_49_2021$predit_stand_25_49)*100
@@ -9492,8 +9490,7 @@ a__f_plot_es_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_se
 			type="o", 
 			col="blue") 
 	
-	# TODO : C'est plutôt : Décès non Covid-19
-	mtext("Décès non Covid-19 standardisés à la population 2020 (= Diff entre décès déclarés Covid-19 et décès toutes causes)", side = PLOT_AXIS_SIDE_RIGHT, col="blue", line=2.5)
+	mtext("Décès non Covid-19 à la population 2020 (= Diff entre décès déclarés Covid-19 et décès toutes causes)", side = PLOT_AXIS_SIDE_RIGHT, col="blue", line=2.5)
 	
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
