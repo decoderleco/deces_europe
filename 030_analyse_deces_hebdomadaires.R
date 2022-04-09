@@ -247,7 +247,6 @@ dev.print(device = png, file = paste0(repertoire, "/Deces_Hebdo_france_suede_por
 #---------------------------------------#
 
 a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_allemagne)
-a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_armenie)
 a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_autriche)
 a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_belgique)
 a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine_chypre)
@@ -275,7 +274,6 @@ a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin(es_deces_standard_pays_semaine
 #--------------------------#
 
 a__f_cumul_and_plot_es_deces_hebdo_std(es_deces_standard_pays_semaine_allemagne)
-a__f_cumul_and_plot_es_deces_hebdo_std(es_deces_standard_pays_semaine_armenie)
 a__f_cumul_and_plot_es_deces_hebdo_std(es_deces_standard_pays_semaine_autriche)
 a__f_cumul_and_plot_es_deces_hebdo_std(es_deces_standard_pays_semaine_belgique)
 a__f_cumul_and_plot_es_deces_hebdo_std(es_deces_standard_pays_semaine_chypre)
@@ -584,7 +582,6 @@ dev.print(device = png, file = pngFileRelPath, width = 1000)
 
 a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_albanie, 1000, 157)
 a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_allemagne, 30000)
-a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_armenie, 2000, 157)
 a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_autriche, 3000)
 a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_belgique, 4000)
 a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_bulgarie, 5000)
@@ -623,7 +620,6 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_suiss
 
 # Aucune donnée pour les moins de 40 ans en Allemagne
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_allemagne)
-a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_armenie)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_autriche)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_belgique)
 a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_chypre)
@@ -653,7 +649,6 @@ a__f_plot_es_deces_hebdo_std_vaccination(es_deces_standard_pays_semaine_suisse)
 
 # Aucune donnée pour les moins de 40 ans en Allemagne
 a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_allemagne)
-a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_armenie)
 a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_autriche)
 a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_belgique)
 a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_chypre)
@@ -682,7 +677,6 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination(es_deces_standard_pays_semaine_s
 
 # Aucune donnée pour les moins de 40 ans en Allemagne
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_allemagne)
-a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_armenie)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_autriche)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_belgique)
 a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_chypre)
@@ -1536,7 +1530,6 @@ a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_sync
 #---------------------------------------#
 
 a__f_plot_es_deces_hebdo_std_vs_decesCovid(es_deces_standard_pays_semaine_allemagne, 30000)
-a__f_plot_es_deces_hebdo_std_vs_decesCovid(es_deces_standard_pays_semaine_armenie, 1500)
 a__f_plot_es_deces_hebdo_std_vs_decesCovid(es_deces_standard_pays_semaine_autriche, 3000)
 a__f_plot_es_deces_hebdo_std_vs_decesCovid(es_deces_standard_pays_semaine_belgique, 5000)
 a__f_plot_es_deces_hebdo_std_vs_decesCovid(es_deces_standard_pays_semaine_chypre, 200)
