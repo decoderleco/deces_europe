@@ -97,8 +97,7 @@ if (!shallForceDownload && exists(varName)) {
 	# Liste des URLs des fichiers de patients décédés
 	
 	urls_listes_deces <- c(
-	  '2022m02' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220311-142122/deces-2022-m02.txt',
-	  '2022m01' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220210-111900/deces-2022-m01.txt',
+	  '2022t1' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220411-143352/deces-2022-t1.txt',
 	  '2021' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220112-114131/deces-2021.txt',
 	  '2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
 	  '2019' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20200113-173945/deces-2019.txt',
@@ -341,7 +340,8 @@ if (!shallForceDownload && exists(varName)) {
 	# Ceci devrait suffire pour notre pyramide des ages en france (hors COM)
 	
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
-			mutate(deces_num_dept = str_sub(deces_code_lieu, 1, 2))
+			mutate(deces_num_dept = case_when(str_sub(deces_code_lieu, 1, 2)==97~str_sub(deces_code_lieu, 1, 3),
+			                                  TRUE~str_sub(deces_code_lieu, 1, 2)))
 	
 	# age_deces_millesime = age de la personne au moment de son décès
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
@@ -440,85 +440,28 @@ deces_dep_jour <- deces_dep_jour %>%
 						(deces_date_complete >= "2020-03-17" & deces_date_complete <= "2020-05-11") |
 								(deces_date_complete >= "2020-10-30" & deces_date_complete <= "2020-12-15"),
 						"confinement",
-						"pas de confinement"))
+						"pas de confinement")) %>% 
+  mutate (confinement = case_when(deces_date_complete=="2020-03-17"~ "début premier confinement",
+                                  deces_date_complete=="2020-05-11"~ "fin premier confinement",
+                                  deces_date_complete=="2020-10-30"~ "début deuxième confinement",
+                                  deces_date_complete=="2020-12-15"~ "fin deuxième confinement"))
 
 # Filtrer les deces par region
 
-BourgogneFrancheComte <- deces_dep_jour %>%
-		filter(region_name == "Bourgogne-Franche-Comté")
-
-a__f_plot_fr_deces_quotidiens_par_region(BourgogneFrancheComte)
-
-
-AuvergneRhoneAlpes <- deces_dep_jour %>%
-		filter(region_name == "Auvergne-Rhône-Alpes")
-
-a__f_plot_fr_deces_quotidiens_par_region(AuvergneRhoneAlpes)
-
-IledeFrance <- deces_dep_jour %>%
-		filter(region_name == "Île-de-France")
-
-a__f_plot_fr_deces_quotidiens_par_region(IledeFrance)
-
-
-PaysdelaLoire <- deces_dep_jour %>%
-		filter(region_name == "Pays de la Loire")
-
-a__f_plot_fr_deces_quotidiens_par_region(PaysdelaLoire)
-
-
-Normandie <- deces_dep_jour %>%
-		filter(region_name == "Normandie")
-
-a__f_plot_fr_deces_quotidiens_par_region(Normandie)
-
-
-NouvelleAquitaine <- deces_dep_jour %>%
-		filter(region_name == "Nouvelle-Aquitaine")
-
-a__f_plot_fr_deces_quotidiens_par_region(NouvelleAquitaine)
-
-
-HautsdeFrance <- deces_dep_jour %>%
-		filter(region_name == "Hauts-de-France")
-
-a__f_plot_fr_deces_quotidiens_par_region(HautsdeFrance)
-
-
-Occitanie <- deces_dep_jour %>%
-		filter(region_name == "Occitanie")
-
-a__f_plot_fr_deces_quotidiens_par_region(Occitanie)
-
-
-PACA <- deces_dep_jour %>%
-		filter(region_name == "Provence-Alpes-Côte d'Azur")
-
-a__f_plot_fr_deces_quotidiens_par_region(PACA)
-
-
-GrandEst <- deces_dep_jour %>%
-		filter(region_name == "Grand Est")
-
-a__f_plot_fr_deces_quotidiens_par_region(GrandEst)
-
-
-Bretagne <- deces_dep_jour %>%
-		filter(region_name == "Bretagne")
-
-a__f_plot_fr_deces_quotidiens_par_region(Bretagne)
-
-
-Corse <- deces_dep_jour %>%
-		filter(region_name == "Corse")
-
-a__f_plot_fr_deces_quotidiens_par_region(Corse)
-
-
-CentreValdeLoire <- deces_dep_jour %>%
-		filter(region_name == "Centre-Val de Loire")
-
-a__f_plot_fr_deces_quotidiens_par_region(CentreValdeLoire)
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour,"Bourgogne-Franche-Comté")
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour,"Auvergne-Rhône-Alpes")
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour, "Île-de-France")
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour,"Pays de la Loire")
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour,"Normandie")
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour,"Nouvelle-Aquitaine")
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour,"Hauts-de-France")
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour,"Occitanie")
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour,"Provence-Alpes-Côte d'Azur")
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour,"Grand Est")
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour,"Bretagne")
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour,"Corse")
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour,"Centre-Val de Loire")
+a__f_plot_fr_deces_quotidiens_par_region(deces_dep_jour,"La Réunion")
 
 if (shallDeleteVars) rm(deces_dep_jour)
 
@@ -532,6 +475,7 @@ if (shallDeleteVars) rm(deces_dep_jour)
 
 # On va construire une table des deces quotidiens par tranche d'age, 
 # avec au fur et à mesure des colonnes complémentaires
+# b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>% filter(deces_num_dept==974)
 
 deces_par_jour_age <- b__fr_gouv_deces_quotidiens %>% 
 		# Depuis 2018
@@ -627,6 +571,7 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 		mutate(deces_tranchedage_centre_reduit = (nbDeces - moyenne) / base::max(dernier_quartile - moyenne,
 				                                                           moyenne - premier_quartile))
 
+#write.table(deces_par_jour_tranchedage, "gen/csv/deces_par_jour_tranchedage.csv", row.names=TRUE, sep=";", dec=".", na=" ")
 ################################################################################
 #
 # Deces par jour et par age depuis 2018 des 0 ans

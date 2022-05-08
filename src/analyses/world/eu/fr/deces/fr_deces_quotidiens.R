@@ -71,13 +71,12 @@ a__f_add_tranche_age <- function(tabWithAge) {
 ################################################################################
 # Generer le graphique et le png associé
 ################################################################################
-a__f_plot_fr_deces_quotidiens_par_region <- function(region) {
+a__f_plot_fr_deces_quotidiens_par_region <- function(fichier, nomRegion) {
 	
-	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
-	# qui a étépassé dans le parametre region
-	nomRegion <- deparse(substitute(region))
+  region <- fichier %>%
+    filter(region_name == nomRegion)
 	
-	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+  #Nom du répertoire
 	repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_Quotidiens/Region/")
 	a__f_createDir(repertoire)
 	
@@ -90,15 +89,32 @@ a__f_plot_fr_deces_quotidiens_par_region <- function(region) {
 	# ATTENTION : Du fait que l'on est dans une fonction (ou un for), il faut impérativement
 	#             mettre un print() !!!
 	print(ggplot(data = region) + 
+	        
 					
 					geom_line(aes(x = deces_date_complete, 
-									y = deces_centre_reduit,
-									colour = confinement)) + 
+									y = deces_centre_reduit)) + 
 					
 					# Echelle verticale
 					ylim(-3, 10) + 
-					
-					scale_colour_manual(values=c("red", "black")) +
+					  
+					  annotate(
+					    "rect",
+					    xmin = as.Date("2020-03-17"),
+					    xmax = as.Date("2020-05-11"),
+					    ymin = -3,
+					    ymax = 10,
+					    alpha = .2,
+					    fill = "orange"
+					  ) +
+					  annotate(
+					    "rect",
+					    xmin = as.Date("2020-10-30"),
+					    xmax = as.Date("2020-12-15"),
+					    ymin = -3,
+					    ymax = 10,
+					    alpha = .2,
+					    fill = "orange"
+					  )+
 					
 					# Faire un graphique par département, répartis sur 3 colonnes
 					facet_wrap(~dep_name) +
@@ -116,8 +132,6 @@ a__f_plot_fr_deces_quotidiens_par_region <- function(region) {
 			file = pngFileRelPath, 
 			width = 1000)
 	
-	# Supprimer la variable de GlovaEnv correspondant à region car on n'en a plus besoin
-	if (shallDeleteVars) rm(list = c(nomRegion), envir = globalenv())
 }
 
 
