@@ -9340,7 +9340,7 @@ source("src/analyses/world/eu/es/deces/es_deces_hebdo_std_ete_ete_cumul.R")
 source("src/analyses/world/eu/es/deces/es_deces_hebdo_std_janvier_decembre_cumul.R")
 
 ################################################################################
-# Generer le graphique et le png associé : Deces vs Deces COVID
+# Generer le graphique et le png associé : Deces et Deces standardises
 ################################################################################
 a__f_plot_es_deces_annuel_vs_deces_std <- function(nomPays) {
 	
@@ -9350,11 +9350,39 @@ a__f_plot_es_deces_annuel_vs_deces_std <- function(nomPays) {
 	a__f_createDir(repertoire)
 	
 	
-	essai <- ungroup(b__es_deces_et_pop_par_annee) %>%
+	essai <- ungroup(b__es_deces_et_pop_par_annee_agequinq) %>%
 			filter(geo == nomPays) %>%
 			dplyr::rename(annee=time)
 	
 	libelle_pays <- essai$location[1]
+	
+	essai <- essai %>% 
+	  mutate(moins60=case_when(agequinq=='Y_LT5'~ '2 - moins de 65 ans',
+	                           agequinq=='Y5-9'~ '2 - moins de 65 ans',
+	                           agequinq=='Y10-14'~'2 - moins de 65 ans',
+	                           agequinq=='Y15-19'~'2 - moins de 65 ans',
+	                           agequinq=='Y20-24'~'2 - moins de 65 ans',
+	                           agequinq=='Y25-29'~'2 - moins de 65 ans',
+	                           agequinq=='Y30-34'~'2 - moins de 65 ans',
+	                           agequinq=='Y35-39'~'2 - moins de 65 ans',
+	                           agequinq=='Y40-44'~'2 - moins de 65 ans',
+	                           agequinq=='Y45-49'~'2 - moins de 65 ans',
+	                           agequinq=='Y50-54'~'2 - moins de 65 ans',
+	                           agequinq=='Y55-59'~'2 - moins de 65 ans',
+	                           agequinq=='Y60-64'~'2 - moins de 65 ans',
+	                           TRUE ~ '1 - plus de 65 ans'))
+	
+	#Synthtetiser par pays et recensement, les population, pop2020, deces-theo_2020...
+	essai <- essai %>%
+	  filter(!is.na(population)) %>%
+	  group_by(geo, annee, moins60) %>%
+	  summarise(population=sum(population), 
+	            pop2020=sum(pop2020), 
+	            deces=sum(deces), 
+	            deces2020=sum(deces2020), 
+	            deces_theo_si_pop_2020=sum(deces_theo_si_pop_2020), 
+	            deces_theo_du_pays_si_pop_FR_2020=sum(deces_theo_du_pays_si_pop_FR_2020))
+	
 	
 	
 	#Nom du fichier png à générer
@@ -9364,30 +9392,40 @@ a__f_plot_es_deces_annuel_vs_deces_std <- function(nomPays) {
 	# Message
 	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
-	temp <- essai %>%  filter(annee=="2020-01-01")
-	DC2020 <- temp$deces
-	DC2020std <- temp$deces_theo_si_pop_2020
+	tempjeune <- essai %>%  filter(annee=="2020-01-01" & moins60 =='2 - moins de 65 ans')
+	DC2020jeune <- tempjeune$deces
+	DC2020stdjeune <- tempjeune$deces_theo_si_pop_2020
+	
+
+	
+	tempvieux <- essai %>%  filter(annee=="2020-01-01" & moins60 =='1 - plus de 65 ans')
+	DC2020vieux <- tempvieux$deces
+	DC2020stdvieux <- tempvieux$deces_theo_si_pop_2020
+	
+
 	
 	# Graphe des décès toutes causes
-	barplot_deces <- ggplot(data=essai, aes(x=annee, y=deces)) +
-			geom_bar(stat="identity", fill="steelblue")+
+	barplot_deces <- ggplot(data=essai, aes(x=annee, y=deces, fill = moins60)) +
+			geom_bar(stat="identity")+
 			labs(title = paste0("Décès annuels de ", libelle_pays),
 					caption = "Source des données : Eurostat", x="", y="nombre de décès")+
-			theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"))+ 
-			geom_hline(yintercept=DC2020, linetype="dashed", color = "red")
+			theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),legend.position = "top")+
+			geom_hline(yintercept=DC2020jeune+DC2020vieux, linetype="dashed", color = "red")+
+	    scale_fill_manual("legend", values = c("1 - plus de 65 ans" = "steelblue", '2 - moins de 65 ans'= "steelblue1"))
 	
 	ggsave(pngFileRelPath, width = 11, height = 8, plot = barplot_deces)	  
 	
 	# Graphe des décès toutes causes standardisés  
 	barplot_decestheo <- ggplot(data=essai, 
-					aes(x=annee, y=deces_theo_si_pop_2020)) +
-			geom_bar(stat="identity", fill="steelblue") +
+					aes(x=annee, y=deces_theo_si_pop_2020, fill = moins60)) +
+			geom_bar(stat="identity") +
 			labs(title = paste0("Décès annuels standardisés de ", libelle_pays),
 					subtitle = paste0("selon la population de ",libelle_pays ," de 2020"),
 					caption = "Source des données : Eurostat", x="", y="nombre de décès standaridsés")+
 			theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),
-					plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"))+ 
-			geom_hline(yintercept=DC2020std, linetype="dashed", color = "red")
+					plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"),legend.position = "top")+ 
+			geom_hline(yintercept=DC2020stdjeune+DC2020stdvieux, linetype="dashed", color = "red")+
+	  scale_fill_manual("legend", values = c("1 - plus de 65 ans" = "steelblue",'2 - moins de 65 ans'= "steelblue1"))
 	
 	
 	ggsave(pngFileRelPath_std, width = 11, height = 8, plot = barplot_decestheo)	
