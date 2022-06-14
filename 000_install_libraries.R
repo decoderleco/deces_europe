@@ -16,6 +16,7 @@ install.packages("rgeos")
 install.packages("readr")
 install.packages("lsr")
 install.packages("formattable") 
+install.packages("RColorBrewer")
 
 install.packages("tinytex")
 install.packages("curl")

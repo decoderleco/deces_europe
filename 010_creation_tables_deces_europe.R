@@ -1009,7 +1009,7 @@ population_england <- population_england %>% mutate(time = str_sub(variable,2,11
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
   rename(population = value) %>% 
-  mutate(geo="GB")
+  mutate(geo="EN")
 
 col_population_ireland <- colnames(population_ireland)
 population_ireland <- melt(population_ireland,id.vars = 'Age',measure.vars = col_population_ireland[col_population_ireland!='Age'])
@@ -1026,7 +1026,7 @@ population_northern_ireland <- population_northern_ireland %>% mutate(time = str
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
   rename(population = value)%>% 
-  mutate(geo="GB")
+  mutate(geo="NI")
 
 
 col_population_scotland <- colnames(population_scotland)
@@ -1035,7 +1035,7 @@ population_scotland <- population_scotland %>% mutate(time = str_sub(variable,2,
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
   rename(population = value)%>% 
-  mutate(geo="GB")
+  mutate(geo="SC")
 
 
 col_population_wales <- colnames(population_wales)
@@ -1044,7 +1044,7 @@ population_wales <- population_wales %>% mutate(time = str_sub(variable,2,11)) %
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
   rename(population = value)%>% 
-  mutate(geo="GB")
+  mutate(geo="WA")
 
 #récupérer les décès annuels
 
@@ -1062,7 +1062,7 @@ deces_england <- deces_england %>% mutate(time = str_sub(variable,2,11)) %>%
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
   rename(deces = value) %>% 
-  mutate(geo="GB")
+  mutate(geo="EN")
 
 
 col_deces_ireland <- colnames(deces_ireland)
@@ -1080,7 +1080,7 @@ deces_northern_ireland <- deces_northern_ireland %>% mutate(time = str_sub(varia
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
   rename(deces = value)%>% 
-  mutate(geo="GB")
+  mutate(geo="NI")
 
 
 col_deces_scotland <- colnames(deces_scotland)
@@ -1089,7 +1089,7 @@ deces_scotland <- deces_scotland %>% mutate(time = str_sub(variable,2,11)) %>%
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
   rename(deces = value)%>% 
-  mutate(geo="GB")
+  mutate(geo="SC")
 
 
 col_deces_wales <- colnames(deces_wales)
@@ -1098,7 +1098,7 @@ deces_wales <- deces_wales %>% mutate(time = str_sub(variable,2,11)) %>%
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
   rename(deces = value)%>% 
-  mutate(geo="GB")
+  mutate(geo="WA")
 
 #regrouper les populations
 
@@ -1135,7 +1135,7 @@ population_agequinq_concat <- population_concat %>% filter(time >= "2002-01-01")
   group_by(geo, agequinq, time) %>% 
   summarise(population = sum(population)) %>% 
   mutate(agequinq=if_else(geo=="IR"&agequinq=="Y_OPEN","Y_GE85",agequinq)) %>% 
-  mutate(agequinq=if_else(geo=="GB"&agequinq=="Y_OPEN","Y_GE90",agequinq))
+  mutate(agequinq=if_else(geo!="IR"&agequinq=="Y_OPEN","Y_GE90",agequinq))
 
 
 #regrouper les déces
@@ -1193,6 +1193,10 @@ anglais2020 <- anglais %>% filter (time=="2020-01-01") %>%
   select(-time)
 
 anglais <- anglais %>% left_join(anglais2020) %>% mutate (sex = 'T')
+great_britain <- anglais %>% filter(geo %in% c("EN","WA","NI","SC")) %>% 
+  mutate(geo="GB") %>% group_by(geo,time,agequinq,sex) %>% 
+  summarise(deces=sum(deces),deces2020=sum(deces2020),population=sum(population),pop2020=sum(pop2020))
+anglais <- anglais %>% rbind(great_britain)
 
 b__es_deces_et_pop_par_annee_agequinq <- b__es_deces_et_pop_par_annee_agequinq %>% filter(geo!="IR")
 b__es_deces_et_pop_par_annee_agequinq <- b__es_deces_et_pop_par_annee_agequinq %>% rbind(anglais)
@@ -1211,6 +1215,9 @@ if (shallDeleteVars) rm(population_ireland)
 if (shallDeleteVars) rm(population_northern_ireland)
 if (shallDeleteVars) rm(population_scotland)
 if (shallDeleteVars) rm(population_wales)
+if (shallDeleteVars) rm(great_britain)
+if (shallDeleteVars) rm(anglais)
+if (shallDeleteVars) rm(anglais2020)
 
 
 ##----------------------------------------------------------------------------##
@@ -2665,6 +2672,11 @@ pays_geo_nom_zone <- ungroup(owid_covid_Europe_week) %>%
 		select(geo, location) %>%
 		distinct(geo, location)
 
+#ajouter les ID et noms des territoires de UK
+nom_anglais = data.frame(geo = c("EN","NI","SC","WA"), location = c("England","Northern Ireland","Scotland","Wales"))
+pays_geo_nom_zone <- pays_geo_nom_zone %>% rbind(nom_anglais)
+
+if (shallDeleteVars) rm(nom_anglais)
 if (shallDeleteVars) rm(owid_covid_Europe_week)
 
 # Ajouter une colonne zone pour indiquer si c'est un pays de l'Est ou de l'Ouest

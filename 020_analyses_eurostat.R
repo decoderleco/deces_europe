@@ -17,6 +17,7 @@ library(readr)
 library(lsr)
 library(reshape2)
 library(tidyr)
+library(RColorBrewer)
 
 #-----------------------------------#
 ####analyse des donnees annuelles####
@@ -53,6 +54,11 @@ deces_complet_annuel_analysable2000 <- b__es_deces_et_pop_par_annee %>%
 
 deces_complet_annuel_analysable1990 <- b__es_deces_et_pop_par_annee %>%
 		filter(time >= "1990-01-01")
+
+nom_pays <- deces_complet_annuel_analysable1990 %>% 
+  select(geo,location) %>% 
+  group_by(geo,location) %>% 
+  summarise()
 
 deces_complet_annuel_analysable2000_est <- deces_complet_annuel_est %>%
 		filter(time >= "2000-01-01")
@@ -151,8 +157,6 @@ annee_comparaison_2021 <- rang_annees_2021 %>%
                         TRUE ~"5 - mortalité haute pour la décennie"))
 
 
-if (shallDeleteVars) rm(annee_deces_inferieure_2021)
-if (shallDeleteVars) rm(annee_deces_superieure_2021)
 
 
 ####année de dèces maximum####
@@ -227,8 +231,6 @@ print(ggplot(deces_complet_annuel_analysable2000_troisannees) +
 dev.print(device = png, file = paste0(repertoire, "/Eurostat_Deces_2000_2020_par_3annees.png"), width = 1000)
 
 if (shallDeleteVars) rm(deces_complet_annuel_analysable2000)
-if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_deuxannees)
-if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_deuxannees20)
 if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_troisannees)
 if (shallDeleteVars) rm(deces_complet_annuel_analysable2000_troisannees20)
 
@@ -399,6 +401,10 @@ a__f_plot_es_deces_annuel_vs_deces_std("SI")
 a__f_plot_es_deces_annuel_vs_deces_std("SE")
 a__f_plot_es_deces_annuel_vs_deces_std("CH")
 a__f_plot_es_deces_annuel_vs_deces_std("UK")
+a__f_plot_es_deces_annuel_vs_deces_std("EN")
+a__f_plot_es_deces_annuel_vs_deces_std("SC")
+a__f_plot_es_deces_annuel_vs_deces_std("NI")
+a__f_plot_es_deces_annuel_vs_deces_std("WA")
 
 #pyramide des âges de la France 2020
 
@@ -508,9 +514,6 @@ worldmap <- worldmap %>%
 worldmap <- worldmap %>%
 		mutate (location=if_else(admin == "Belgium", "Belgium", location))
 
-worldmap <- worldmap %>%
-  mutate (location=if_else(admin == "United Kingdom",admin,location))
-
 #centroid_coordinates <- st_coordinates(st_centroid(worldmap))
 
 #worldmap <- cbind(worldmap, centroid_coordinates)
@@ -523,11 +526,8 @@ temp <- es_annne_deces_maximum %>%
 		mutate(time = as.character(time)) %>%
 		mutate(time = str_sub(time, 1, 4))
 
-if (shallDeleteVars)  rm(es_annne_deces_maximum)
-
-
 worldmap <- worldmap %>%
-		left_join(temp)
+		left_join(temp) %>% mutate(time=if_else(is.na(time),"Pas de donnée",time))
 
 if (shallDeleteVars) rm(temp)
 
@@ -536,11 +536,13 @@ worldmap <- worldmap %>%
 						geounit == "Walloon Region"~"Belgium",
 						TRUE~location))
 
+palette_6_couleurs_oranges = c("#FEEDDE", "#FDD0A2", "#FDAE6B", "#FD8D3C", "#E6550D" ,"#A63603","#FFFFFF")
+
 p <- ggplot(data=worldmap) +
 		geom_sf(aes(fill=time),
 				color="dim grey", 
 				size=.1) +
-		scale_fill_brewer(palette = "Oranges") +
+		scale_fill_manual(values=palette_6_couleurs_oranges) +
 		guides(fill = guide_legend(reverse=T, 
 						title = "Année de record de décès \n des pays européens")) +
 		
@@ -548,11 +550,11 @@ p <- ggplot(data=worldmap) +
 				caption ="(C) EuroGeographics for the administrative boundaries
 						Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
 		theme_light() +
-		theme(legend.position=c(-0.1, 0.4),
+		theme(legend.position=c(0, 0.4),
 				plot.title = element_text(hjust = 0.5,
 						color = "#0066CC", 
 						size = 16, 
-						face = "bold")) +
+						face = "bold"),panel.background = element_rect(fill = "light blue")) +
 		coord_sf(xlim=c(-22, 45),
 				ylim=c(35, 70))
 
@@ -563,8 +565,11 @@ a__f_createDir(repertoire)
 
 ggsave(paste0(repertoire, "/Eurostat_Deces_Annee_Maximum.png"), plot=p, width = 11, height = 8)
 
+if (shallDeleteVars)  rm(es_annne_deces_maximum)
 
 #typologie des décès de l'année 2020
+
+palette_5_couleurs_oranges = c("#FEEDDE", "#FDBE85", "#FD8D3C", "#E6550D", "#A63603","#FFFFFF")
 
 niveau_mortalite_par_pays <- annee_comparaison_2020 %>% filter(time=="2020-01-01") %>%
 		select(location, typo) 
@@ -575,6 +580,9 @@ if (shallDeleteVars) rm(annee_comparaison_2020)
 worldmap <- worldmap %>%
 		left_join(niveau_mortalite_par_pays)
 
+worldmap <- worldmap %>%
+   mutate(typo=if_else(is.na(typo),"Pas de donnée",typo))
+
 if (shallDeleteVars) rm(niveau_mortalite_par_pays)
 
 worldmap <- worldmap %>%
@@ -583,13 +591,13 @@ worldmap <- worldmap %>%
 						TRUE~location))
 
 p <- ggplot(data=worldmap) + geom_sf(aes(fill=typo), color="dim grey", size=.1) +
-		scale_fill_brewer(palette = "Oranges") +
+  scale_fill_manual(values=palette_5_couleurs_oranges) +
 		guides(fill = guide_legend(reverse=T, title = "Typologie \n des pays européens", size = 1)) +
 		
 		labs(title= paste0("Typologie des décès relativement à l'année 2020"),
 				caption="(C) EuroGeographics for the administrative boundaries
 						Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
-		theme_light() + theme(legend.position=c(-0.08, .5)) +
+		theme_light() + theme(legend.position=c(0, .5),panel.background = element_rect(fill = "light blue")) +
 		coord_sf(xlim=c(-22, 45), ylim=c(35, 70)) 
 
 plot(p)
@@ -614,25 +622,78 @@ worldmap <- worldmap %>%
                              geounit == "Walloon Region"~"Belgium",
                              TRUE~location))
 
+worldmap <- worldmap %>%
+  mutate(typo2021=if_else(is.na(typo2021),"Pas de donnée",typo2021))
+
 p <- ggplot(data=worldmap) + geom_sf(aes(fill=typo2021), color="dim grey", size=.1) +
-  scale_fill_brewer(palette = "Oranges") +
+  scale_fill_manual(values=palette_5_couleurs_oranges) +
   guides(fill = guide_legend(reverse=T, title = "Typologie \n des pays européens", size = 1)) +
   
   labs(title= paste0("Typologie des décès relativement à l'année 2021"),
        caption="(C) EuroGeographics for the administrative boundaries
 						Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
-  theme_light() + theme(legend.position=c(-0.08, .5)) +
+  theme_light() + theme(legend.position=c(0, .5),panel.background = element_rect(fill = "light blue")) +
   coord_sf(xlim=c(-22, 45), ylim=c(35, 70))
 
 plot(p)
 
 ggsave(paste0(repertoire, "/Eurostat_Deces_2021_Typologie.png"), plot=p, width = 11, height = 8)
 
+#--------------------------------------#
+#### carte du PIB par habitant     #####
+#--------------------------------------#
+
+# Demographie recensée au 1er janvier de chaque année (jusqu'en 2020 inclus)
+# time = année du recensement, 
+# age = tranche d'âge, 
+# values = population dans cette tranche d'âge à la date time
+
+a__original_pib_habitant_spa<- get_eurostat("tec00114") %>% 
+  filter(time=="2019-01-01") %>%
+  mutate(categoriePIB = case_when(values>=90 & values <=109 ~ "3 - Situation intermédaire",
+                               values>=75 & values <=89 ~ "4 - Pauvreté monétaire",
+                               values>=110 & values <=125 ~ "2 - Richesse monétaire",
+                               values<=74 ~ "5 - Grande pauvreté monétaire",
+                               TRUE ~ "1 - Grande richesse monétaire")) %>% 
+  left_join(nom_pays) %>% 
+  mutate (location = if_else(geo=="UK","United Kingdom",location)) %>% 
+  mutate(location = if_else(geo=="BA","Bosnia and Herzegovina",location)) %>% 
+  mutate(location = if_else(geo=="MK","Macedonia",location)) %>% 
+  mutate(location = if_else(geo=="TR","Turkey",location)) %>% 
+  mutate(location = if_else(geo=="IE","Ireland",location))
+
+
+
+
+worldmap <- worldmap %>%
+  mutate (location=case_when(admin == "United Kingdom"~"United Kingdom",
+                             TRUE~location)) %>% 
+left_join(a__original_pib_habitant_spa)
+
+worldmap <- worldmap %>%
+  mutate(categoriePIB=if_else(is.na(categoriePIB),"Pas de donnée",categoriePIB))
+
+p <- ggplot(data=worldmap) + geom_sf(aes(fill=categoriePIB), color="dim grey", size=.1) +
+  scale_fill_manual(values=palette_5_couleurs_oranges) +
+  guides(fill = guide_legend(reverse=T, title = "Typologie \n des pays européens", size = 1)) +
+  
+  labs(title= paste0("Typologie des PIB/habitant en 2019 en Europe en SPA"),
+       caption="(C) EuroGeographics for the administrative boundaries
+						Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
+  theme_light() + theme(legend.position=c(0, .5),panel.background = element_rect(fill = "light blue")) +
+  coord_sf(xlim=c(-22, 45), ylim=c(35, 70))
+
+plot(p)
+
+ggsave(paste0(repertoire, "/Eurostat_PIB_hab_2019_Typologie.png"), plot=p, width = 11, height = 8)
 
 
 if (shallDeleteVars)  rm(worldmap)
 if (shallDeleteVars)  rm(p)
 if (shallDeleteVars) rm(deces_complet_annuel_analysable1990)
+if (shallDeleteVars)  rm(deces_2021)
+if (shallDeleteVars)  rm(rang_annees)
+if (shallDeleteVars)  rm(rang_annees_2021)
 
 #----------------------------------------#
 ####  calcul de l'espérance de vie    ####
