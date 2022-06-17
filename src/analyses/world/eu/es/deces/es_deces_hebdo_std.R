@@ -9370,27 +9370,73 @@ a__f_plot_es_deces_annuel_vs_deces_std <- function(nomPays) {
 	DC2020 <- temp$deces
 	DC2020std <- temp$deces_theo_si_pop_2020
 	
+	#######################################################
+	#
 	# Graphe des décès toutes causes
+	#
+	#######################################################
+	
 	barplot_deces <- ggplot(data=essai, aes(x=annee, y=deces)) +
+			
 			geom_bar(stat="identity", fill="steelblue")+
+			
 			labs(title = paste0("Décès annuels de ", libelle_pays),
 					caption = "Source des données : Eurostat", x="", y="nombre de décès")+
+			
+			theme_bw() + 
 			theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"))+ 
+			
+			scale_y_continuous(labels = a__f_spaceThousandsSeparator) +
+			
+			# Ligne rouge horizontale des décès 2020
 			geom_hline(yintercept=DC2020, linetype="dashed", color = "red")
+	
+	#
+	# Dessiner le graphe
+	#
+	
+	plot(barplot_deces)
+	
+	#
+	# Sauvegarder le graphique
+	#
 	
 	ggsave(pngFileRelPath, width = 11, height = 8, plot = barplot_deces)	  
 	
-	# Graphe des décès toutes causes standardisés  
+	#######################################################
+	#
+	# Graphe des décès toutes causes standardisés
+	#
+	#######################################################
+
 	barplot_decestheo <- ggplot(data=essai, 
 					aes(x=annee, y=deces_theo_si_pop_2020)) +
+			
 			geom_bar(stat="identity", fill="steelblue") +
+			
 			labs(title = paste0("Décès annuels standardisés de ", libelle_pays),
 					subtitle = paste0("selon la population de ",libelle_pays ," de 2020"),
 					caption = "Source des données : Eurostat", x="", y="nombre de décès standaridsés")+
+			
+			theme_bw() + 
 			theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),
 					plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"))+ 
+
+			scale_y_continuous(labels = a__f_spaceThousandsSeparator) +
+			
+			# Ligne rouge horizontale des décès std 2020
 			geom_hline(yintercept=DC2020std, linetype="dashed", color = "red")
 	
+	
+	#
+	# Dessiner le graphe
+	#
+	
+	plot(barplot_decestheo)
+	
+	#
+	# Sauvegarder le graphique
+	#
 	
 	ggsave(pngFileRelPath_std, width = 11, height = 8, plot = barplot_decestheo)	
 	
