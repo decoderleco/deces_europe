@@ -163,14 +163,6 @@ if (shallDeleteVars) rm(proj_2023)
 if (shallDeleteVars) rm(proj_2022)
 if (shallDeleteVars) rm(proj_2021)
 
-##----------------------------------------------------------------------------##
-#
-#### Récupérer les données anglaises ####
-#
-##----------------------------------------------------------------------------##
-
-
-
 
 ##----------------------------------------------------------------------------##
 #
@@ -997,6 +989,239 @@ if (shallDeleteVars) rm(popDEagesexe)
 
 ##----------------------------------------------------------------------------##
 #
+#### Récupérer les données anglaises ####
+#
+##----------------------------------------------------------------------------##
+
+#récupérer les populations annuelles
+
+population_england <- read.csv("data/csv/population_england.csv")
+population_ireland <- read.csv("data/csv/population_ireland.csv")
+population_northern_ireland <- read.csv("data/csv/population_northern_ireland.csv")
+population_scotland <- read.csv("data/csv/population_scotland.csv")
+population_wales <- read.csv("data/csv/population_wales.csv")
+
+#mettre les populations annuelles en lignes
+
+col_population_england <- colnames(population_england)
+population_england <- melt(population_england,id.vars = 'Age',measure.vars = col_population_england[col_population_england!='Age'])
+population_england <- population_england %>% mutate(time = str_sub(variable,2,11)) %>% 
+  mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
+  select(-variable) %>% 
+  rename(population = value) %>% 
+  mutate(geo="EN")
+
+col_population_ireland <- colnames(population_ireland)
+population_ireland <- melt(population_ireland,id.vars = 'Age',measure.vars = col_population_ireland[col_population_ireland!='Age'])
+population_ireland <- population_ireland %>% mutate(time = str_sub(variable,2,11)) %>% 
+  mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
+  select(-variable) %>% 
+  rename(population = value)%>% 
+  mutate(geo="IR")
+
+
+col_population_northern_ireland <- colnames(population_northern_ireland)
+population_northern_ireland <- melt(population_northern_ireland,id.vars = 'Age',measure.vars = col_population_northern_ireland[col_population_northern_ireland!='Age'])
+population_northern_ireland <- population_northern_ireland %>% mutate(time = str_sub(variable,2,11)) %>% 
+  mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
+  select(-variable) %>% 
+  rename(population = value)%>% 
+  mutate(geo="NI")
+
+
+col_population_scotland <- colnames(population_scotland)
+population_scotland <- melt(population_scotland,id.vars = 'Age',measure.vars = col_population_scotland[col_population_scotland!='Age'])
+population_scotland <- population_scotland %>% mutate(time = str_sub(variable,2,11)) %>% 
+  mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
+  select(-variable) %>% 
+  rename(population = value)%>% 
+  mutate(geo="SC")
+
+
+col_population_wales <- colnames(population_wales)
+population_wales <- melt(population_wales,id.vars = 'Age',measure.vars = col_population_wales[col_population_wales!='Age'])
+population_wales <- population_wales %>% mutate(time = str_sub(variable,2,11)) %>% 
+  mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
+  select(-variable) %>% 
+  rename(population = value)%>% 
+  mutate(geo="WA")
+
+#récupérer les décès annuels
+
+deces_england <- read.csv("data/csv/deces_england.csv")
+deces_ireland <- read.csv("data/csv/deces_ireland.csv")
+deces_northern_ireland <- read.csv("data/csv/deces_northern_ireland.csv")
+deces_scotland <- read.csv("data/csv/deces_scotland.csv")
+deces_wales <- read.csv("data/csv/deces_wales.csv")
+
+#mettre les décès annuels en ligne
+
+col_deces_england <- colnames(deces_england)
+deces_england <- melt(deces_england,id.vars = 'Age',measure.vars = col_deces_england[col_deces_england!='Age'])
+deces_england <- deces_england %>% mutate(time = str_sub(variable,2,11)) %>% 
+  mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
+  select(-variable) %>% 
+  rename(deces = value) %>% 
+  mutate(geo="EN")
+
+
+col_deces_ireland <- colnames(deces_ireland)
+deces_ireland <- melt(deces_ireland,id.vars = 'Age',measure.vars = col_deces_ireland[col_deces_ireland!='Age'])
+deces_ireland <- deces_ireland %>% mutate(time = str_sub(variable,2,11)) %>% 
+  mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
+  select(-variable) %>% 
+  rename(deces = value)%>% 
+  mutate(geo="IR")
+
+
+col_deces_northern_ireland <- colnames(deces_northern_ireland)
+deces_northern_ireland <- melt(deces_northern_ireland,id.vars = 'Age',measure.vars = col_deces_northern_ireland[col_deces_northern_ireland!='Age'])
+deces_northern_ireland <- deces_northern_ireland %>% mutate(time = str_sub(variable,2,11)) %>% 
+  mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
+  select(-variable) %>% 
+  rename(deces = value)%>% 
+  mutate(geo="NI")
+
+
+col_deces_scotland <- colnames(deces_scotland)
+deces_scotland <- melt(deces_scotland,id.vars = 'Age',measure.vars = col_deces_scotland[col_deces_scotland!='Age'])
+deces_scotland <- deces_scotland %>% mutate(time = str_sub(variable,2,11)) %>% 
+  mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
+  select(-variable) %>% 
+  rename(deces = value)%>% 
+  mutate(geo="SC")
+
+
+col_deces_wales <- colnames(deces_wales)
+deces_wales <- melt(deces_wales,id.vars = 'Age',measure.vars = col_deces_wales[col_deces_wales!='Age'])
+deces_wales <- deces_wales %>% mutate(time = str_sub(variable,2,11)) %>% 
+  mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
+  select(-variable) %>% 
+  rename(deces = value)%>% 
+  mutate(geo="WA")
+
+#regrouper les populations
+
+population_concat <- population_england %>% 
+  rbind(population_ireland) %>% 
+  rbind(population_northern_ireland) %>% 
+  rbind(population_scotland) %>% 
+  rbind(population_wales)
+
+#mettre les populations en tranches d'âge
+
+population_concat <- population_concat %>% mutate(agequinq=case_when( as.numeric(str_sub(Age,3,5)) <= 4 ~ "Y_LT5",
+                                                Age == "Y_LT1"~ "Y_LT5",
+                                                as.numeric(str_sub(Age,3,5)) >= 5 &  as.numeric(str_sub(Age,3,5)) < 10 ~ "Y5-9",
+                                                as.numeric(str_sub(Age,3,5)) >= 10 &  as.numeric(str_sub(Age,3,5)) < 15 ~ "Y10-14",
+                                                as.numeric(str_sub(Age,3,5)) >= 15 &  as.numeric(str_sub(Age,3,5)) < 20 ~ "Y15-19",
+                                                as.numeric(str_sub(Age,3,5)) >= 20 &  as.numeric(str_sub(Age,3,5)) < 25 ~ "Y20-24",
+                                                as.numeric(str_sub(Age,3,5)) >= 25 &  as.numeric(str_sub(Age,3,5)) < 30 ~ "Y25-29",  
+                                                as.numeric(str_sub(Age,3,5)) >= 30 &  as.numeric(str_sub(Age,3,5)) < 35 ~ "Y30-34",
+                                                as.numeric(str_sub(Age,3,5)) >= 35 &  as.numeric(str_sub(Age,3,5)) < 40 ~ "Y35-39",  
+                                                as.numeric(str_sub(Age,3,5)) >= 40 &  as.numeric(str_sub(Age,3,5)) < 45 ~ "Y40-44",
+                                                as.numeric(str_sub(Age,3,5)) >= 45 &  as.numeric(str_sub(Age,3,5)) < 50 ~ "Y45-49",
+                                                as.numeric(str_sub(Age,3,5)) >= 50 &  as.numeric(str_sub(Age,3,5)) < 55 ~ "Y50-54",
+                                                as.numeric(str_sub(Age,3,5)) >= 55 &  as.numeric(str_sub(Age,3,5)) < 60 ~ "Y55-59",  
+                                                as.numeric(str_sub(Age,3,5)) >= 60 &  as.numeric(str_sub(Age,3,5)) < 65 ~ "Y60-64",
+                                                as.numeric(str_sub(Age,3,5)) >= 65 &  as.numeric(str_sub(Age,3,5)) < 70 ~ "Y65-69",  
+                                                as.numeric(str_sub(Age,3,5)) >= 70 &  as.numeric(str_sub(Age,3,5)) < 75 ~ "Y70-74",
+                                                as.numeric(str_sub(Age,3,5)) >= 75 &  as.numeric(str_sub(Age,3,5)) < 80 ~ "Y75-79",  
+                                                as.numeric(str_sub(Age,3,5)) >= 80 &  as.numeric(str_sub(Age,3,5)) < 85 ~ "Y80-84",
+                                                as.numeric(str_sub(Age,3,5)) >= 85 &  as.numeric(str_sub(Age,3,5)) < 90  & geo !="IR" ~ "Y85-89",
+                                                TRUE ~ "Y_OPEN"))
+
+population_agequinq_concat <- population_concat %>% filter(time >= "2002-01-01") %>% 
+  group_by(geo, agequinq, time) %>% 
+  summarise(population = sum(population)) %>% 
+  mutate(agequinq=if_else(geo=="IR"&agequinq=="Y_OPEN","Y_GE85",agequinq)) %>% 
+  mutate(agequinq=if_else(geo!="IR"&agequinq=="Y_OPEN","Y_GE90",agequinq))
+
+
+#regrouper les déces
+
+deces_concat <- deces_england %>% 
+  rbind(deces_northern_ireland) %>% 
+  rbind(deces_scotland) %>% 
+  rbind(deces_wales)
+
+#mettre les décèes en tranches d'âge
+
+deces_concat <- deces_concat %>% mutate(agequinq=case_when( as.numeric(str_sub(Age,3,5)) <= 4 ~ "Y_LT5",
+                                                                      Age == "Y_LT1"~ "Y_LT5",
+                                                                      as.numeric(str_sub(Age,3,5)) >= 5 &  as.numeric(str_sub(Age,3,5)) < 10 ~ "Y5-9",
+                                                                      as.numeric(str_sub(Age,3,5)) >= 10 &  as.numeric(str_sub(Age,3,5)) < 15 ~ "Y10-14",
+                                                                      as.numeric(str_sub(Age,3,5)) >= 15 &  as.numeric(str_sub(Age,3,5)) < 20 ~ "Y15-19",
+                                                                      as.numeric(str_sub(Age,3,5)) >= 20 &  as.numeric(str_sub(Age,3,5)) < 25 ~ "Y20-24",
+                                                                      as.numeric(str_sub(Age,3,5)) >= 25 &  as.numeric(str_sub(Age,3,5)) < 30 ~ "Y25-29",  
+                                                                      as.numeric(str_sub(Age,3,5)) >= 30 &  as.numeric(str_sub(Age,3,5)) < 35 ~ "Y30-34",
+                                                                      as.numeric(str_sub(Age,3,5)) >= 35 &  as.numeric(str_sub(Age,3,5)) < 40 ~ "Y35-39",  
+                                                                      as.numeric(str_sub(Age,3,5)) >= 40 &  as.numeric(str_sub(Age,3,5)) < 45 ~ "Y40-44",
+                                                                      as.numeric(str_sub(Age,3,5)) >= 45 &  as.numeric(str_sub(Age,3,5)) < 50 ~ "Y45-49",
+                                                                      as.numeric(str_sub(Age,3,5)) >= 50 &  as.numeric(str_sub(Age,3,5)) < 55 ~ "Y50-54",
+                                                                      as.numeric(str_sub(Age,3,5)) >= 55 &  as.numeric(str_sub(Age,3,5)) < 60 ~ "Y55-59",  
+                                                                      as.numeric(str_sub(Age,3,5)) >= 60 &  as.numeric(str_sub(Age,3,5)) < 65 ~ "Y60-64",
+                                                                      as.numeric(str_sub(Age,3,5)) >= 65 &  as.numeric(str_sub(Age,3,5)) < 70 ~ "Y65-69",  
+                                                                      as.numeric(str_sub(Age,3,5)) >= 70 &  as.numeric(str_sub(Age,3,5)) < 75 ~ "Y70-74",
+                                                                      as.numeric(str_sub(Age,3,5)) >= 75 &  as.numeric(str_sub(Age,3,5)) < 80 ~ "Y75-79",  
+                                                                      as.numeric(str_sub(Age,3,5)) >= 80 &  as.numeric(str_sub(Age,3,5)) < 85 ~ "Y80-84",
+                                                                      as.numeric(str_sub(Age,3,5)) >= 85 &  as.numeric(str_sub(Age,3,5)) < 90 ~ "Y85-89",
+                                                                      TRUE ~ "Y_GE90"))
+deces_ireland <- deces_ireland %>% mutate(agequinq = Age) %>% 
+  mutate(agequinq=if_else(Age == "Y_LT1","Y_LT5",Age)) %>% 
+  mutate(agequinq=if_else(Age == "Y1-4","Y_LT5",agequinq)) %>% 
+  mutate(agequinq=if_else(agequinq=="Y_OPEN","Y_GE85",agequinq))
+
+deces_concat <- deces_concat %>% 
+  rbind(deces_ireland)
+
+#enlever les tirets
+
+deces_concat <- deces_concat %>% 
+  mutate(deces=if_else(deces=='-','0',deces))
+
+deces_agequinq_concat <- deces_concat %>% filter(time >= "2002-01-01") %>% 
+  group_by(geo, agequinq, time) %>% 
+  summarise(deces = sum(as.numeric(deces)))
+
+#merge
+
+anglais <- deces_agequinq_concat %>% left_join(population_agequinq_concat)
+  
+anglais2020 <- anglais %>% filter (time=="2020-01-01") %>% 
+  rename (deces2020 =deces, pop2020=population) %>% 
+  select(-time)
+
+anglais <- anglais %>% left_join(anglais2020) %>% mutate (sex = 'T')
+great_britain <- anglais %>% filter(geo %in% c("EN","WA","NI","SC")) %>% 
+  mutate(geo="GB") %>% group_by(geo,time,agequinq,sex) %>% 
+  summarise(deces=sum(deces),deces2020=sum(deces2020),population=sum(population),pop2020=sum(pop2020))
+anglais <- anglais %>% rbind(great_britain)
+
+b__es_deces_et_pop_par_annee_agequinq <- b__es_deces_et_pop_par_annee_agequinq %>% filter(geo!="IR")
+b__es_deces_et_pop_par_annee_agequinq <- b__es_deces_et_pop_par_annee_agequinq %>% rbind(anglais)
+
+if (shallDeleteVars) rm(deces_agequinq_concat)
+if (shallDeleteVars) rm(deces_concat)
+if (shallDeleteVars) rm(deces_england)
+if (shallDeleteVars) rm(deces_ireland)
+if (shallDeleteVars) rm(deces_northern_ireland)
+if (shallDeleteVars) rm(deces_scotland)
+if (shallDeleteVars) rm(deces_wales)
+if (shallDeleteVars) rm(population_agequinq_concat)
+if (shallDeleteVars) rm(population_concat)
+if (shallDeleteVars) rm(population_england)
+if (shallDeleteVars) rm(population_ireland)
+if (shallDeleteVars) rm(population_northern_ireland)
+if (shallDeleteVars) rm(population_scotland)
+if (shallDeleteVars) rm(population_wales)
+if (shallDeleteVars) rm(great_britain)
+if (shallDeleteVars) rm(anglais)
+if (shallDeleteVars) rm(anglais2020)
+
+
+##----------------------------------------------------------------------------##
+#
 #### Calcul des deces theoriques et surmortalité ####
 #
 # + (NORMALISATION) en population française 2020
@@ -1025,12 +1250,25 @@ es_FR_pop2020_by_agequinq_sex <- es_FR_pop_pop2020_deces2020 %>%
 		group_by(sex, agequinq) %>%
 		summarise(pop_france2020 = sum(pop2020))
 
+#Ajouter le total des 2 sexes
+es_FR_pop2020_by_agequinq_sex_T <- es_FR_pop2020_by_agequinq_sex %>%
+  group_by(agequinq) %>%
+  summarise(pop_france2020 = sum(pop_france2020),sex='T')
+
+es_FR_pop2020_by_agequinq_sex <- es_FR_pop2020_by_agequinq_sex %>% rbind(es_FR_pop2020_by_agequinq_sex_T)
+
 # Regrouper les plus de 90 avec les 85-89
 es_FR_pop2020_ge85 <- es_FR_pop_pop2020_deces2020 %>%
 		filter(agequinq %in% c("Y85-89", "Y_GE90")) %>%
 		mutate (agequinq = "Y_GE85") %>%
 		group_by(sex, agequinq) %>%
 		summarise(pop_france2020 = sum(pop2020)) 
+
+es_FR_pop2020_ge85_T <-es_FR_pop2020_ge85  %>%
+  group_by(agequinq) %>%
+  summarise(pop_france2020 = sum(pop_france2020),sex='T')
+
+es_FR_pop2020_ge85<-es_FR_pop2020_ge85 %>% rbind(es_FR_pop2020_ge85_T)
 
 if (shallDeleteVars) rm(es_FR_pop_pop2020_deces2020)
 
@@ -2438,6 +2676,11 @@ pays_geo_nom_zone <- ungroup(owid_covid_Europe_week) %>%
 		select(geo, location) %>%
 		distinct(geo, location)
 
+#ajouter les ID et noms des territoires de UK
+nom_anglais = data.frame(geo = c("EN","NI","SC","WA"), location = c("England","Northern Ireland","Scotland","Wales"))
+pays_geo_nom_zone <- pays_geo_nom_zone %>% rbind(nom_anglais)
+
+if (shallDeleteVars) rm(nom_anglais)
 if (shallDeleteVars) rm(owid_covid_Europe_week)
 
 # Ajouter une colonne zone pour indiquer si c'est un pays de l'Est ou de l'Ouest
