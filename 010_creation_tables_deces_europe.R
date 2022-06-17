@@ -1081,6 +1081,10 @@ b__es_deces_et_pop_par_annee <- b__es_deces_et_pop_par_annee %>%
 b__es_deces_et_pop_par_annee <- b__es_deces_et_pop_par_annee %>%
 		mutate (surmortalite2020 = (deces2020 - deces_theo_si_pop_2020)/deces_theo_si_pop_2020)
 
+# Ajouter une colonne taux_deces
+b__es_deces_et_pop_par_annee <- b__es_deces_et_pop_par_annee %>%
+		mutate (taux_deces = (deces*100/population))
+
 ##----------------------------------------------------------------------------##
 #
 ##### STANDARDISATION des deces hebdomadaires des pays ####
