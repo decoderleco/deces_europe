@@ -9331,13 +9331,13 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 # Generer le graphique et le png associé : Deces année coupée en juin
 ################################################################################
 
-source("src/analyses/world/eu/es/deces/es_deces_hebdo_std_ete_ete_cumul.R")
+source("src/analyses/world/eu/es/deces/Hebdo/es_deces_hebdo_std_ete_ete_cumul.R")
 
 ################################################################################
 # Generer le graphique et le png associé : Deces cumulés par année et tranche d'âge
 ################################################################################
 
-source("src/analyses/world/eu/es/deces/es_deces_hebdo_std_janvier_decembre_cumul.R")
+source("src/analyses/world/eu/es/deces/Hebdo/es_deces_hebdo_std_janvier_decembre_cumul.R")
 
 ################################################################################
 # Generer le graphique et le png associé : Deces et Deces standardises
