@@ -1227,7 +1227,7 @@ p<-ggplot(deces_complet_graphique_groupe_vieux,
            color='#FF3366',size=10)+
   scale_x_date(date_labels = "%B")+
   theme(axis.text.x = element_text(angle=45, hjust = 1))+
-  ggtitle("Décès quotidiens standardisés en population 2020 par saison \n Moins de 65 ans") +
+  ggtitle("Décès quotidiens standardisés en population 2020 par saison \n Plus de 65 ans") +
   theme_bw() + 
   theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
   xlab("Jour de décès") + ylab("nombre de décès standardisés")+
