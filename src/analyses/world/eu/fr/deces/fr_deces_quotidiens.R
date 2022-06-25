@@ -74,7 +74,8 @@ a__f_add_tranche_age <- function(tabWithAge) {
 a__f_plot_fr_deces_quotidiens_par_region <- function(fichier, nomRegion) {
 	
   region <- fichier %>%
-    filter(region_name == nomRegion)
+    filter(region_name == nomRegion) %>% 
+    filter(deces_date_complete >= "2018-01-01")
 	
   #Nom du répertoire
 	repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_Quotidiens/Region/")
@@ -121,10 +122,10 @@ a__f_plot_fr_deces_quotidiens_par_region <- function(fichier, nomRegion) {
 					
 					theme(legend.position = "top") +
 					
-					ggtitle(paste0("Décès quotidiens France (fr/gouv/Registre/Deces_Quotidiens => ", base::max(region$deces_date_complete) ,") par département")) +
+					ggtitle(paste0("Décès quotidiens ",nomRegion," (", base::max(region$deces_date_complete) ,") par département")) +
 					
 					xlab("date de décès") + 
-					ylab("nombre de décès (centrés et réduits au quartile)"))
+					ylab("nombre de décès (z-score)"))
 	
 	
 	# Generer le fichier png

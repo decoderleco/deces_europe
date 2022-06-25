@@ -406,6 +406,7 @@ deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
 		summarise(minimum = base::min(nbDeces),
 				maximum = base::max(nbDeces),
 				moyenne = mean(nbDeces),
+				ecart_type = sd(nbDeces),
 				premier_quartile = quantile(nbDeces,
 						probs = 0.25),
 				dernier_quartile = quantile(nbDeces,
@@ -415,14 +416,13 @@ deces_dep_jour_moyenne_min_max_quartiles <- deces_dep_jour %>%
 deces_dep_jour <- deces_dep_jour %>%
 		left_join(deces_dep_jour_moyenne_min_max_quartiles, by = "deces_num_dept") %>%
 		arrange(deces_num_dept, deces_date_complete, nbDeces) %>%
-		select(deces_num_dept, minimum:dernier_quartile, deces_date_complete, everything())
+		select(deces_num_dept, minimum:dernier_quartile,ecart_type, deces_date_complete, everything())
 
 if (shallDeleteVars) rm(deces_dep_jour_moyenne_min_max_quartiles)
 
 # Ajouter la colonne deces_centre_reduit
 deces_dep_jour <- deces_dep_jour %>%
-		mutate(deces_centre_reduit = (nbDeces - moyenne) / base::max(dernier_quartile - moyenne,
-						                                       moyenne - premier_quartile))
+		mutate(deces_centre_reduit = (nbDeces - moyenne) / ecart_type)
 
 # Ajouter le nom des départements
 
@@ -797,13 +797,13 @@ nbDeces_moyen_par_tranchedAge <- data_a_tracer %>%
 		summarise(minimum = base::min(nbDeces),
 				maximum = base::max(nbDeces),
 				moyenne = mean(nbDeces),
-				ecart95pourcent = 2*sd(nbDeces),
+				ecart_type = sd(nbDeces),
 				premier_quartile = quantile(nbDeces,
 						probs = 0.25),
 				dernier_quartile = quantile(nbDeces,
 						probs = 0.75),
-				bsup = moyenne +   ecart95pourcent,
-				binf = moyenne -   ecart95pourcent
+				bsup = moyenne +   2*ecart_type,
+				binf = moyenne -   2*ecart_type
 		)
 
 # Ajouter les données statistiques de chaque tranche d'age
@@ -1063,7 +1063,7 @@ rm(deces_par_jour_age_stand)
 deces_par_jour_age_stand_complet<- read.csv2(file.path("gen/csv/deces_par_jour_age_stand_complet.csv"),sep=";")
 
 #---------------------------------------------------#
-#### graphique par saison standardisé --------------#
+#### graphique par saison standardisé -----------####
 #---------------------------------------------------#
 
 deces_par_jour_2014_2015 <- deces_par_jour_age_stand_complet %>% 
@@ -1170,22 +1170,30 @@ p<-ggplot(deces_complet_graphique_groupe_jeune,
   geom_area(aes(y=(deces_standard_2020_2020_2021)), color='#CC0000',size=1,fill="#CC0000", alpha=1/4)+
   geom_line(aes(y=(deces_standard_2020_2021_2022)), color='#FF3366',size=1)+
   annotate(geom="text", x=as.Date("2015-09-30"), y=100, label="saison 2014-2015",
-          color='#99FF66',size=5)+
+          color='#99FF66',size=10)+
   annotate(geom="text", x=as.Date("2015-09-30"), y=70, label="saison 2016-2017",
-           color='#3399FF',size=5)+
+           color='#3399FF',size=10)+
   annotate(geom="text", x=as.Date("2016-04-30"), y=100, label="saison 2019-2020",
-           color='#660000',size=5)+
+           color='#660000',size=10)+
   annotate(geom="text", x=as.Date("2016-04-30"), y=70, label="saison 2020-2021",
-           color='#CC0000',size=5)+
+           color='#CC0000',size=10)+
   annotate(geom="text", x=as.Date("2016-04-30"), y=40, label="saison 2021-2022",
-           color='#FF3366',size=5)+
+           color='#FF3366',size=10)+
   scale_x_date(date_labels = "%B")+
   theme(axis.text.x = element_text(angle=45, hjust = 1))+
   ggtitle("Décès quotidiens standardisés en population 2020 par saison \n Moins de 65 ans") +
   theme_bw() + 
   theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
   xlab("Jour de décès") + ylab("nombre de décès standardisés")+
-  ylim(0,400)
+  ylim(0,400)+
+  theme(axis.text.x = element_text(color="black", 
+                                              size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.title.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                   size=20, angle=90))
 
 p
 
@@ -1208,22 +1216,30 @@ p<-ggplot(deces_complet_graphique_groupe_vieux,
   geom_area(aes(y=(deces_standard_2020_2020_2021)), color='#CC0000',size=1,fill="#CC0000", alpha=1/4)+
   geom_line(aes(y=(deces_standard_2020_2021_2022)), color='#FF3366',size=1)+
   annotate(geom="text", x=as.Date("2015-09-30"), y=800, label="saison 2014-2015",
-           color='#99FF66',size=5)+
+           color='#99FF66',size=10)+
   annotate(geom="text", x=as.Date("2015-09-30"), y=500, label="saison 2016-2017",
-           color='#3399FF',size=5)+
+           color='#3399FF',size=10)+
   annotate(geom="text", x=as.Date("2016-04-30"), y=800, label="saison 2019-2020",
-           color='#660000',size=5)+
+           color='#660000',size=10)+
   annotate(geom="text", x=as.Date("2016-04-30"), y=500, label="saison 2020-2021",
-           color='#CC0000',size=5)+
+           color='#CC0000',size=10)+
   annotate(geom="text", x=as.Date("2016-04-30"), y=200, label="saison 2021-2022",
-           color='#FF3366',size=5)+
+           color='#FF3366',size=10)+
   scale_x_date(date_labels = "%B")+
   theme(axis.text.x = element_text(angle=45, hjust = 1))+
-  ggtitle("Décès quotidiens standardisés en population 2020 par saison \n Moins de 65 ans") +
+  ggtitle("Décès quotidiens standardisés en population 2020 par saison \n Plus de 65 ans") +
   theme_bw() + 
   theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
   xlab("Jour de décès") + ylab("nombre de décès standardisés")+
-  ylim(0,3000)
+  ylim(0,3000)+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))
 
 p
 
@@ -1294,28 +1310,34 @@ p<-ggplot(graphique_epidemie,
   geom_line(aes(y=(taux_mortalite_2016_2017)), color='#3399FF',size=1)+
   geom_line(aes(y=(taux_mortalite_2019_2020)), color='#660000',size=1)+
   geom_line(aes(y=(taux_mortalite_2020_2021)), color='#CC0000',size=1)+
-  annotate(geom="text", x=70, y=0.14, label="Du 26 février 2015 au 01 mai 2015",
-           color='#99FF66',size=5)+
-  annotate(geom="text", x=70, y=0.12, label="Du 16 décembre 2016 au 18 février 2017",
-           color='#3399FF',size=5)+
-  annotate(geom="text", x=70, y=0.10, label="Du 01 mars 2020 au 04 mai 2020",
-           color='#660000',size=5)+
-  annotate(geom="text", x=70, y=0.08, label="Du 06 octobre 2020 au 09 décembre 2020",
-           color='#CC0000',size=5)+
+  annotate(geom="text", x=72, y=0.14, label="Du 26 février 2015 au 01 mai 2015",
+           color='#99FF66',size=10)+
+  annotate(geom="text", x=72, y=0.12, label="Du 16 décembre 2016 au 18 février 2017",
+           color='#3399FF',size=10)+
+  annotate(geom="text", x=72, y=0.10, label="Du 01 mars 2020 au 04 mai 2020",
+           color='#660000',size=10)+
+  annotate(geom="text", x=72, y=0.08, label="Du 06 octobre 2020 au 09 décembre 2020",
+           color='#CC0000',size=10)+
   theme(axis.text.x = element_text(angle=45, hjust = 1))+
   ggtitle("Taux de mortalité par age \n par saison") +
   theme_bw() + 
   theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
   xlab("Age") + ylab("Taux de mortalité")+
   ylim(0,0.15)+
-  xlim(60,101)
+  xlim(60,101)+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))
 
 p
 
 repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quotidiens/Standardisation"))
 pngFileRelPath <- paste0(repertoire, "/Taux_mortalite_age.png")
-
-message(repertoire)
 
 dev.print(device = png, file = pngFileRelPath, width = 1000)
 
