@@ -203,6 +203,9 @@ a__f_cumul_and_plot_es_deces_hebdo_std <- function(es_deces_standard_pays_semain
 	# qui a ét épassé dans le parametre region
 	nomVar <- deparse(substitute(es_deces_standard_pays_semaine))
 	
+	# Indiquer le pays traité (pour voir l'avancement)
+	message(nomVar)
+	
 	# Recuperer le nom du pays qui est après "es_deces_standard_pays_semaine_"
 	startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
 	nomPays <- str_sub(nomVar, startIndex)
@@ -216,5 +219,7 @@ a__f_cumul_and_plot_es_deces_hebdo_std <- function(es_deces_standard_pays_semain
 	a__f_plot_es_deces_hebdo_std_cumul(nomPays = nomPays, "15-24", "15-24 ans", 			cumul_deces_hebdo = temp)
 	a__f_plot_es_deces_hebdo_std_cumul(nomPays = nomPays, "total", "Tous âges confondus", cumul_deces_hebdo = temp)
 	
+	# Si besoin, ajouter cette ligne pour obtenir les données sous forme CSV
+	# write.csv2(temp, file=paste0('gen/csv/',nomVar,'.csv'))
 } 
 

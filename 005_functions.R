@@ -20,8 +20,6 @@ options(encoding = "UTF-8")
 #
 ################################################################################
 
-library(stringr)
-
 # Library pour la gestion des Exceptions
 library(tryCatchLog)
 
@@ -31,6 +29,25 @@ library(tryCatchLog)
 #Charger la librairie rlang pour les fonctions sur les environnements de variables R
 library(rlang)
 
+library(maptools)
+library(rgdal)
+library(tidyr)
+library(maps)
+library(eurostat)
+library(dplyr)
+library(stringr)
+library(leaflet)
+library(questionr)
+library(ggplot2)
+library(lubridate)
+library(sf)
+library(rnaturalearth)
+library(rgeos)
+library("rnaturalearthdata")
+library(readr)
+library(lsr)
+library(reshape2)
+library(purrr)
 
 ################################################################################
 #
@@ -129,7 +146,7 @@ source("src/graphiques/graphiques.R")
 # EuroStat Décès Hebdomadaires
 ################################################################################
 
-source("src/analyses/world/eu/es/deces/es_deces_hebdo_std.R")
+source("src/analyses/world/eu/es/deces/hebdo/es_deces_hebdo_std.R")
 
 
 ################################################################################
