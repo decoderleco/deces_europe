@@ -1096,192 +1096,201 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		
 		essai <- es_deces_standard_pays_semaine 
 		
-		#création du graphiques
-		plot(essai$numSemaineDepuis2013, 
-				essai$deces_standardises_si_pop_2020_15_24, 
-				pch=16, 
-				cex=0, 
-				axes=F, 
-				xlab="", 
-				ylab="", 
-				ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)), 
-				type="o", 
-				col="#000033", 
-				main=paste0("Décès hebdomadaires standardisés à population 2020 (=> ", maxWeekTime ,") : ",nomPays))
-		
-		# pour encadrer le graphique
-		box() 
-		
-		axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
+		#création du graphique
 		
 		
-		mtext("nombre de décès toutes causes par tranche d'âge", side=2, line=3)
-		mtext("moyenne mobile sur 52 semaines", side=2, line=2, col="red")
-		mtext("début de confinement                                                         ", side=1, col="orange", line=2)
-		mtext("                                                          fin de confinement", side=1, col="green", line=2)
-		mtext("                                                          Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
-		
-		# Lignes verticales
-		abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-		abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
-		abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
-		
-		text(26,  base::max(essai$deces_standardises_si_pop_2020), "2013", cex=1.2)
-		text(78,  base::max(essai$deces_standardises_si_pop_2020), "2014", cex=1.2)
-		text(130, base::max(essai$deces_standardises_si_pop_2020), "2015", cex=1.2)
-		text(183, base::max(essai$deces_standardises_si_pop_2020), "2016", cex=1.2)
-		text(235, base::max(essai$deces_standardises_si_pop_2020), "2017", cex=1.2)
-		text(287, base::max(essai$deces_standardises_si_pop_2020), "2018", cex=1.2)
-		text(339, base::max(essai$deces_standardises_si_pop_2020), "2019", cex=1.2)
-		text(391, base::max(essai$deces_standardises_si_pop_2020), "2020", cex=1.2)
-		text(440, base::max(essai$deces_standardises_si_pop_2020), "2021", cex=1.2)
-		
-		# Superposer la moyenne mobile
-		par(new=T)
-		plot(essai$numSemaineDepuis2013, 
-				essai$moyenne_mobile_si_pop_2020, 
-				pch=16, 
-				axes=F, 
-				cex=0, 
-				xlab="", 
-				lwd=3,  
-				ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
-				ylab="", 
-				type="o", 
-				col="red") 
-		
-		# Superposer la moyenne 
-		par(new=T)
-		plot(essai$numSemaineDepuis2013, 
-				essai$moyenne, 
-				pch=16, 
-				axes=F, 
-				cex=0, 
-				xlab="", 
-				lwd=1.5,  
-				ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
-				ylab="", 
-				type="o", 
-				col="purple") 
-		
-		# Superposer la bsup
-		par(new=T)
-		plot(essai$numSemaineDepuis2013, 
-				essai$bsup, 
-				pch=16, 
-				axes=F, 
-				cex=0, 
-				xlab="", 
-				lwd=1.5,  
-				ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
-				ylab="", 
-				lty=2, 
-				type="o", 
-				col="purple") 
-		
-		# Superposer la binf
-		par(new=T)
-		plot(essai$numSemaineDepuis2013, 
-				essai$binf, 
-				pch=16, 
-				axes=F, 
-				cex=0, 
-				xlab="", 
-				lwd=1.5, 
-				ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
-				ylab="",
-				lty=2, 
-				type="o", 
-				col="purple") 	
-		
-		# Ajout des 25_49
-		par(new=T)
-		plot(essai$numSemaineDepuis2013, 
-				essai$deces_standardises_si_pop_2020_15_24+essai$deces_standardises_si_pop_2020_25_49, 
-				pch=16, 
-				axes=F, 
-				cex=0, 
-				xlab="", 
-				ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
-				ylab="",
-				type="o", 
-				col="#000066") 	
-		
-		# Ajout des 50_59
-		par(new=T)
-		plot(essai$numSemaineDepuis2013, 
-				essai$deces_standardises_si_pop_2020_15_24+
-						essai$deces_standardises_si_pop_2020_25_49+
-						essai$deces_standardises_si_pop_2020_50_59, 
-				pch=16, 
-				axes=F, 
-				cex=0, 
-				xlab="", 
-				ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
-				ylab="",
-				type="o", 
-				col="#000099") 	
-		
-		# Ajout des 60_69
-		par(new=T)
-		plot(essai$numSemaineDepuis2013, 
-				essai$deces_standardises_si_pop_2020_15_24+
-						essai$deces_standardises_si_pop_2020_25_49+
-						essai$deces_standardises_si_pop_2020_50_59+
-						essai$deces_standardises_si_pop_2020_60_69, 
-				pch=16, 
-				axes=F, 
-				cex=0, 
-				xlab="", 
-				ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
-				ylab="",
-				type="o", 
-				col="#0000CC")
-		
-		# Ajout des 70_79
-		par(new=T)
-		plot(essai$numSemaineDepuis2013, 
-				essai$deces_standardises_si_pop_2020_15_24+
-						essai$deces_standardises_si_pop_2020_25_49+
-						essai$deces_standardises_si_pop_2020_50_59+
-						essai$deces_standardises_si_pop_2020_60_69+
-						essai$deces_standardises_si_pop_2020_70_79, 
-				pch=16, 
-				axes=F, 
-				cex=0, 
-				xlab="", 
-				ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
-				ylab="",
-				type="o", 
-				col="#0000FF")
-		
-		# Ajout des plus de 80
-		par(new=T)
-		plot(essai$numSemaineDepuis2013, 
-				essai$deces_standardises_si_pop_2020_15_24+
-						essai$deces_standardises_si_pop_2020_25_49+
-						essai$deces_standardises_si_pop_2020_50_59+
-						essai$deces_standardises_si_pop_2020_60_69+
-						essai$deces_standardises_si_pop_2020_70_79+
-						essai$deces_standardises_si_pop_2020_ge80,
-				pch=16, 
-				axes=F, 
-				cex=0, 
-				xlab="", 
-				ylim=c(0, base::max(essai$deces_standardises_si_pop_2020)),
-				ylab="",
-				type="o", 
-				col="#3366CC") 
-		mtext("15-24 ans                                                                                                                                                                   ", side=1, col="#000033", line=1)
-		mtext("25-49 ans                                                                                                            ", side=1, col="#000066", line=1)
-		mtext("50-59 ans                                                      ", side=1, col="#000099", line=1)
-		mtext("60-69 ans", side=1, col="#0000CC", line=1)
-		mtext("                                           70-79 ans", side=1, col="#0000FF", line=1)
-		mtext("                                                                                      80+ ans", side=1, col="#3366CC", line=1)
+		g<-ggplot(data = es_deces_standard_pays_semaine) + 
+		  geom_area(aes(x = numSemaineDepuis2013, 
+		                y = deces_standardises_si_pop_2020_15_24+deces_standardises_si_pop_2020_25_49+
+		                  deces_standardises_si_pop_2020_50_59),color="#000099",fill="#000099",size=1,alpha=1/4) + 
+		  geom_area(aes(x = numSemaineDepuis2013, 
+		                y = deces_standardises_si_pop_2020_15_24+deces_standardises_si_pop_2020_25_49+
+		                  deces_standardises_si_pop_2020_50_59+deces_standardises_si_pop_2020_60_69),
+		            color="#0000CC",fill="#0000CC",size=1,alpha=1/4) + 
+		  geom_area(aes(x = numSemaineDepuis2013, 
+		                y = deces_standardises_si_pop_2020_15_24+deces_standardises_si_pop_2020_25_49+
+		                  deces_standardises_si_pop_2020_50_59+deces_standardises_si_pop_2020_60_69+
+		                  deces_standardises_si_pop_2020_70_79),
+		            color="#0000FF",fill="#0000FF",size=1,alpha=1/4)+
+		  geom_area(aes(x = numSemaineDepuis2013, 
+		                y = deces_standardises_si_pop_2020_15_24+deces_standardises_si_pop_2020_25_49+
+		                  deces_standardises_si_pop_2020_50_59+deces_standardises_si_pop_2020_60_69+
+		                  deces_standardises_si_pop_2020_70_79+deces_standardises_si_pop_2020_ge80),
+		            color="#3366CC",fill="#3366CC",size=1,alpha=1/4)+
+		  annotate("rect",
+		    xmin = Vdebut_confinement[1],
+		    xmax = Vfin_confinement[1],
+		    ymin = 0,
+		    ymax = base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020),
+		    alpha = .4,
+		    fill = "orange") +
+		  annotate("rect",
+		    xmin = Vdebut_confinement[2],
+		    xmax = Vfin_confinement[2],
+		    ymin = 0,
+		    ymax = base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020),
+		    alpha = .4,
+		    fill = "orange")+
+		  annotate("rect",
+		           xmin = Vdebut_confinement[3],
+		           xmax = Vfin_confinement[3],
+		           ymin = 0,
+		           ymax = base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020),
+		           alpha = .4,
+		           fill = "orange")+
+		  geom_vline(xintercept = seq(from=0, to=500, by = 52),linetype = "dashed",color="steelblue")+
+		  geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$bsup),linetype = "dashed",color="purple")+
+		  geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$binf),linetype = "dashed",color="purple")+
+		  geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$moyenne),color="purple")+
+		  theme(axis.title.x = element_blank(), 
+		        axis.text.x = element_blank(),
+		        axis.title.y = element_blank(),
+		        plot.title = element_text(color="#003366", size=25 ))+
+		  geom_text(x=26, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2013",size=6)+
+		  geom_text(x=78, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2014",size=6)+
+		  geom_text(x=130, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2015",size=6)+
+		  geom_text(x=183, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2016",size=6)+
+		  geom_text(x=235, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2017",size=6)+
+		  geom_text(x=287, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2018",size=6)+
+		  geom_text(x=339, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2019",size=6)+
+		  geom_text(x=391, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2020",size=6)+
+		  geom_text(x=440, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2021",size=6)+
+		  geom_text(x=492, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2022",size=6)+
+		 
+		  geom_text(x=base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013+26),
+		            y=(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_15_24[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_25_49[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_50_59[1]), 
+		            label="Moins de 60 ans", color = 'black',		size = 6)+
+		  geom_text(x=base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013+26),
+		            y=(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_15_24[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_25_49[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_50_59[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_60_69[1]), 
+		            label="60-69 ans", color = 'black',		size = 6)+
+		  geom_text(x=base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013+26),
+		            y=(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_15_24[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_25_49[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_50_59[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_60_69[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_70_79[1]), 
+		            label="70-79 ans", color = 'black',		size = 6)+
+		  geom_text(x=base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013+26),
+		            y=(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_15_24[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_25_49[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_50_59[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_60_69[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_70_79[1]+
+		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge80[1]), 
+		            label="Plus de 80 ans", color = 'black',		size = 6)+
+		  ggtitle(paste0("Décès hebdomadaires standardisés de ",str_to_title(nomPays)," par tranche d'âge"))
+		print(g)
 		
 		dev.print(device = png, file = pngFileRelPath, width = 1000)
 	}
-	
+
+	if(nomPays=='allemagne'){
+	  # Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+	  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
+	  a__f_createDir(repertoire)
+	  
+	  #Nom du fichier png à générer
+	  pngFileRelPath <- paste0(repertoire, nomPays, "_total.png")
+	  
+	  # Message
+	  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+	  
+	  essai <- es_deces_standard_pays_semaine 
+	  
+	  #création du graphique
+	  
+	  
+	  g<-ggplot(data = es_deces_standard_pays_semaine) + 
+	    geom_area(aes(x = numSemaineDepuis2013, 
+	                  y = 
+	                    deces_standardises_si_pop_2020_50_59),color="#000099",fill="#000099",size=1,alpha=1/4) + 
+	    geom_area(aes(x = numSemaineDepuis2013, 
+	                  y = 
+	                    deces_standardises_si_pop_2020_50_59+deces_standardises_si_pop_2020_60_69),
+	              color="#0000CC",fill="#0000CC",size=1,alpha=1/4) + 
+	    geom_area(aes(x = numSemaineDepuis2013, 
+	                  y = 
+	                    deces_standardises_si_pop_2020_50_59+deces_standardises_si_pop_2020_60_69+
+	                    deces_standardises_si_pop_2020_70_79),
+	              color="#0000FF",fill="#0000FF",size=1,alpha=1/4)+
+	    geom_area(aes(x = numSemaineDepuis2013, 
+	                  y = 
+	                    deces_standardises_si_pop_2020_50_59+deces_standardises_si_pop_2020_60_69+
+	                    deces_standardises_si_pop_2020_70_79+deces_standardises_si_pop_2020_ge80),
+	              color="#3366CC",fill="#3366CC",size=1,alpha=1/4)+
+	    annotate("rect",
+	             xmin = Vdebut_confinement[1],
+	             xmax = Vfin_confinement[1],
+	             ymin = 0,
+	             ymax = base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020),
+	             alpha = .4,
+	             fill = "orange") +
+	    annotate("rect",
+	             xmin = Vdebut_confinement[2],
+	             xmax = Vfin_confinement[2],
+	             ymin = 0,
+	             ymax = base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020),
+	             alpha = .4,
+	             fill = "orange")+
+	    annotate("rect",
+	             xmin = Vdebut_confinement[3],
+	             xmax = Vfin_confinement[3],
+	             ymin = 0,
+	             ymax = base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020),
+	             alpha = .4,
+	             fill = "orange")+
+	    geom_vline(xintercept = seq(from=0, to=500, by = 52),linetype = "dashed",color="steelblue")+
+	    geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$bsup),linetype = "dashed",color="purple")+
+	    geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$binf),linetype = "dashed",color="purple")+
+	    geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$moyenne),color="purple")+
+	    theme(axis.title.x = element_blank(), 
+	          axis.text.x = element_blank(),
+	          axis.title.y = element_blank(),
+	          plot.title = element_text(color="#003366", size=25 ))+
+	    geom_text(x=26, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2013",size=6)+
+	    geom_text(x=78, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2014",size=6)+
+	    geom_text(x=130, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2015",size=6)+
+	    geom_text(x=183, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2016",size=6)+
+	    geom_text(x=235, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2017",size=6)+
+	    geom_text(x=287, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2018",size=6)+
+	    geom_text(x=339, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2019",size=6)+
+	    geom_text(x=391, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2020",size=6)+
+	    geom_text(x=440, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2021",size=6)+
+	    geom_text(x=492, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2022",size=6)+
+	    
+	    geom_text(x=base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013+26),
+	              y=(
+	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_50_59[1]), 
+	              label="50-59 ans", color = 'black',		size = 6)+
+	    geom_text(x=base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013+26),
+	              y=(
+	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_50_59[1]+
+	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_60_69[1]), 
+	              label="60-69 ans", color = 'black',		size = 6)+
+	    geom_text(x=base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013+26),
+	              y=(
+	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_50_59[1]+
+	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_60_69[1]+
+	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_70_79[1]), 
+	              label="70-79 ans", color = 'black',		size = 6)+
+	    geom_text(x=base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013+26),
+	              y=(
+	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_50_59[1]+
+	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_60_69[1]+
+	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_70_79[1]+
+	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge80[1]), 
+	              label="Plus de 80 ans", color = 'black',		size = 6)+
+	    ggtitle(paste0("Décès hebdomadaires standardisés de ",str_to_title(nomPays)," par tranche d'âge"))
+	  print(g)
+	  
+	  dev.print(device = png, file = pngFileRelPath, width = 1000)
+	}
+		
 }
 
 ################################################################################
