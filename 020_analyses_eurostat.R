@@ -1,3 +1,9 @@
+###############################################################################
+#
+# Analyse des Décès (EuroStat) par Année
+# 
+###############################################################################
+
 library(pyramid)
 library(maptools)
 library(rgdal)
@@ -19,6 +25,7 @@ library(reshape2)
 library(tidyr)
 library(RColorBrewer)
 
+<<<<<<< HEAD
 #-----------------------------------#
 ####analyse des donnees annuelles####
 #-----------------------------------#
@@ -865,97 +872,53 @@ esperance_vie_t <- esperance_vie_t %>%
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`mortalite_naissance_Y45-49`=
 						`taux_mortalite_Y45-49`*`survivant_naissance_Y40-44`)
+=======
+############################################
+#
+# Evolution des décès annuels Europe
+#
+############################################
+>>>>>>> 32a20d31c5eb8136aa04e99a1252e1db65c5abc9
 
-esperance_vie_t <- esperance_vie_t %>%
-		mutate(`mortalite_naissance_Y50-54`=
-						`taux_mortalite_Y50-54`*`survivant_naissance_Y45-49`)
-
-esperance_vie_t <- esperance_vie_t %>%
-		mutate(`mortalite_naissance_Y55-59`=
-						`taux_survie_Y55-59`*`survivant_naissance_Y50-54`)
-
-esperance_vie_t <- esperance_vie_t %>%
-		mutate(`mortalite_naissance_Y60-64`=
-						`taux_mortalite_Y60-64`*`survivant_naissance_Y55-59`)
-
-esperance_vie_t <- esperance_vie_t %>%
-		mutate(`mortalite_naissance_Y65-69`=
-						`taux_mortalite_Y65-69`*`survivant_naissance_Y60-64`)
-
-esperance_vie_t <- esperance_vie_t %>%
-		mutate(`mortalite_naissance_Y70-74`=
-						`taux_mortalite_Y70-74`*`survivant_naissance_Y65-69`)
-
-esperance_vie_t <- esperance_vie_t %>%
-		mutate(`mortalite_naissance_Y75-79`=
-						`taux_mortalite_Y75-79`*`survivant_naissance_Y70-74`)
-
-esperance_vie_t <- esperance_vie_t %>%
-		mutate(`mortalite_naissance_Y80-84`=
-						`taux_mortalite_Y80-84`*`survivant_naissance_Y75-79`)
-
-esperance_vie_t <- esperance_vie_t %>%
-		mutate(`mortalite_naissance_Y85-89`=
-						if_else(!is.na(`taux_mortalite_Y_GE85`),
-								`taux_mortalite_Y_GE85`*`survivant_naissance_Y80-84`,
-								`taux_mortalite_Y85-89`*`survivant_naissance_Y80-84`))
-
-esperance_vie_t <- esperance_vie_t %>%
-		mutate(`mortalite_naissance_Y90-94`=
-						if_else(!is.na(`taux_mortalite_Y_GE90`),
-								`taux_mortalite_Y_GE90`*`survivant_naissance_Y85-89`,
-								`taux_mortalite_Y_GE85`*`survivant_naissance_Y85-89`))
-
-esperance_vie_t <- esperance_vie_t %>%
-		mutate(`mortalite_naissance_Y95-99`=
-						if_else(!is.na(`taux_mortalite_Y_GE90`),
-								`taux_mortalite_Y_GE90`*`survivant_naissance_Y90-94`,
-								`taux_mortalite_Y_GE85`*`survivant_naissance_Y90-94`))
-
-esperance_vie_t <- esperance_vie_t %>%
-		mutate(`mortalite_naissance_Y100-104`=
-						if_else(!is.na(`taux_mortalite_Y_GE90`),
-								`taux_mortalite_Y_GE90`*`survivant_naissance_Y95-99`,
-								`taux_mortalite_Y_GE85`*`survivant_naissance_Y95-99`))
-
-esperance_vie_t <- esperance_vie_t %>%
-		mutate(`mortalite_naissance_Y105-109`=
-						if_else(!is.na(`taux_mortalite_Y_GE90`),
-								`taux_mortalite_Y_GE90`*`survivant_naissance_Y100-104`,
-								`taux_mortalite_Y_GE85`*`survivant_naissance_Y100-104`))
-
-#sommme des âges gagnés
-esperance_vie_t <- esperance_vie_t %>%
-		mutate(esperance_vie_naissance=
-						mortalite_naissance_Y_LT5*2+
-						`mortalite_naissance_Y5-9`*7+
-						`mortalite_naissance_Y10-14`*12+
-						`mortalite_naissance_Y15-19`*17+
-						`mortalite_naissance_Y20-24`*22+
-						`mortalite_naissance_Y25-29`*27+
-						`mortalite_naissance_Y30-34`*32+
-						`mortalite_naissance_Y35-39`*37+
-						`mortalite_naissance_Y40-44`*42+
-						`mortalite_naissance_Y45-49`*47+
-						`mortalite_naissance_Y50-54`*52+
-						`mortalite_naissance_Y55-59`*57+
-						`mortalite_naissance_Y60-64`*62+
-						`mortalite_naissance_Y65-69`*67+
-						`mortalite_naissance_Y70-74`*72+
-						`mortalite_naissance_Y75-79`*77+
-						`mortalite_naissance_Y80-84`*82+
-						`mortalite_naissance_Y85-89`*87+
-						`mortalite_naissance_Y90-94`*92+
-						`mortalite_naissance_Y95-99`*97+
-						`mortalite_naissance_Y100-104`*102+
-						`mortalite_naissance_Y105-109`*107)
+source("src/analyses/world/eu/es/deces/annuels/evolution/es_deces_evolution.R")
 
 
-esperance_vie_france <- esperance_vie_t %>%
-		filter(geo == "FR")
+############################################
+#
+# Cartes par Typologies de Gravité de Décès
+#
+############################################
 
-if (shallDeleteVars) rm(esperance_vie)
-if (shallDeleteVars) rm(esperance_vie_france)
-if (shallDeleteVars) rm(esperance_vie_t)
+source("src/analyses/world/eu/es/deces/annuels/cartes/es_deces_cartes_europe.R")
+
+
+
+############################################
+#
+# Pyramides des âges des pays européens     
+#
+############################################
+
+source("src/analyses/world/eu/es/pyramides/es_pyramides_ages.R")
+
+
+############################################
+#
+# Histogrammes Décès et Décès Standardisés
+#
+############################################
+
+source("src/analyses/world/eu/es/deces/annuels/evolution/es_deces_std_histogrammes.R")
+
+
+############################################
+#
+# Espérance de vie
+#
+############################################
+
+source("src/analyses/world/eu/es/deces/annuels/evolution/es_esperance_vie.R")
+
+
 
 message("Terminé 020")
