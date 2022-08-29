@@ -97,8 +97,8 @@ if (!shallForceDownload && exists(varName)) {
 	# Liste des URLs des fichiers de patients décédés
 	
 	urls_listes_deces <- c(
-			'2022m05' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220613-084715/deces-2022-m05.txt',
-			'2022m04' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220513-142024/deces-2022-m04.txt',
+			'2022m07' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220817-104230/deces-2022-m07.txt',
+			'2022t2' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220707-171620/deces-2022-t2.txt',
 			'2022t1' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220411-143352/deces-2022-t1.txt',
 			'2021' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220112-114131/deces-2021.txt',
 			'2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
