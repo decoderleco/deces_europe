@@ -649,7 +649,8 @@ ggsave(paste0(repertoire, "/Eurostat_Deces_2021_Typologie.png"), plot=p, width =
 # values = population dans cette tranche d'âge à la date time
 
 a__original_pib_habitant_spa<- get_eurostat("tec00114") %>% 
-  filter(time=="2019-01-01") %>%
+  filter(time=="2020-01-01") %>%
+  mutate(time=as.Date(time)) %>% 
   mutate(categoriePIB = case_when(values>=90 & values <=109 ~ "3 - Situation intermédaire",
                                values>=75 & values <=89 ~ "4 - Pauvreté monétaire",
                                values>=110 & values <=125 ~ "2 - Richesse monétaire",
@@ -677,7 +678,7 @@ p <- ggplot(data=worldmap) + geom_sf(aes(fill=categoriePIB), color="dim grey", s
   scale_fill_manual(values=palette_5_couleurs_oranges) +
   guides(fill = guide_legend(reverse=T, title = "Typologie \n des pays européens", size = 1)) +
   
-  labs(title= paste0("Typologie des PIB/habitant en 2019 en Europe en SPA"),
+  labs(title= paste0("Typologie des PIB/habitant en 2020 en Europe en SPA"),
        caption="(C) EuroGeographics for the administrative boundaries
 						Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
   theme_light() + theme(legend.position=c(0, .5),panel.background = element_rect(fill = "light blue")) +
@@ -685,7 +686,7 @@ p <- ggplot(data=worldmap) + geom_sf(aes(fill=categoriePIB), color="dim grey", s
 
 plot(p)
 
-ggsave(paste0(repertoire, "/Eurostat_PIB_hab_2019_Typologie.png"), plot=p, width = 11, height = 8)
+ggsave(paste0(repertoire, "/Eurostat_PIB_hab_2020_Typologie.png"), plot=p, width = 11, height = 8)
 
 
 if (shallDeleteVars)  rm(worldmap)
