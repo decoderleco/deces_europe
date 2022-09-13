@@ -198,44 +198,48 @@ if (shallDeleteVars) rm(es_moyenne_mobile)
 
 
 plot(es_deces_standard_pays_semaine_france$numSemaineDepuis2013, 
-		es_deces_standard_pays_semaine_france$deces_standardises_si_pop_FR_2020_ge40, 
-		pch=16, cex=0, axes=F, ylim=c(0, 25000), xlab="", ylab="", type="o", col="black", 
-		main="Décès hebdomadaires standardisés")
+		es_deces_standard_pays_semaine_france$deces_standardises_si_pop_FR_2020, 
+		pch=20, cex=0, axes=F, ylim=c(0, 30000), xlab="", ylab="", col="#666666",
+		type="l", lwd=3,
+		main="Décès hebdomadaires standardisés", cex.main=4)
 
 axis(2, ylim=c(0, 60000), col="black")
-mtext("nombre de décès toutes causes des plus de 40 ans", side=2, line=3)
-mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=2.5)
+mtext("nombre de décès toutes causes standardisés", side=2, line=3, cex=1.5)
+mtext("                                                                   Source : Eurostat décès hebdomadaires et population", 
+      side=1, col="black", line=2.5, cex=1.5)
 abline(v=c(53, 105, 158, 210, 262, 314, 366, 419,471), col="blue", lty=3)
-text(26, 1000, "2013", cex=1.2)
-text(78, 1000, "2014", cex=1.2)
-text(130, 1000, "2015", cex=1.2)
-text(183, 1000, "2016", cex=1.2)
-text(235, 1000, "2017", cex=1.2)
-text(287, 1000, "2018", cex=1.2)
-text(339, 1000, "2019", cex=1.2)
-text(391, 1000, "2020", cex=1.2)
-text(444, 1000, "2021", cex=1.2)
-text(26, 22000, "FRANCE", cex=1.2)
+text(26, 1000, "2013", cex=1.5)
+text(78, 1000, "2014", cex=1.5)
+text(130, 1000, "2015", cex=1.5)
+text(183, 1000, "2016", cex=1.5)
+text(235, 1000, "2017", cex=1.5)
+text(287, 1000, "2018", cex=1.5)
+text(339, 1000, "2019", cex=1.5)
+text(391, 1000, "2020", cex=1.5)
+text(444, 1000, "2021", cex=1.5)
+text(40, 22000, "FRANCE", cex=2, col = "#666666")
 
 # Ne pas effacer le graphique avant de continuer (T = TRUE)
 par(new=T)
 
 # Superposer la Suède
 plot(es_deces_standard_pays_semaine_suede$numSemaineDepuis2013, 
-		es_deces_standard_pays_semaine_suede$deces_standardises_si_pop_FR_2020_ge40, 
-		pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1,  ylab="", type="o", col="blue")
+		es_deces_standard_pays_semaine_suede$deces_standardises_si_pop_FR_2020, 
+		pch=20, axes=F, cex=0, ylim=c(0, 30000), xlab="",  ylab="", col="black",
+		type="l", lwd=3)
 
-text(26, 23500, "SUEDE", cex=1.2, col="blue")
+text(40, 23500, "SUEDE", cex=2, col="black")
 
 # Ne pas effacer le graphique avant de continuer (T = TRUE)
 par(new=T)
 
 # Superposer le Portugal
 plot(es_deces_standard_pays_semaine_portugal$numSemaineDepuis2013, 
-		es_deces_standard_pays_semaine_portugal$deces_standardises_si_pop_FR_2020_ge40, 
-		pch=16, axes=F, cex=0, ylim=c(0, 25000), xlab="", lwd=1,  ylab="", type="o", col="green")
+		es_deces_standard_pays_semaine_portugal$deces_standardises_si_pop_FR_2020, 
+		pch=20, axes=F, cex=0, ylim=c(0, 30000), xlab="",  ylab="", col="grey",
+		type="l", lwd=3)
 
-text(26, 25000, "PORTUGAL", cex=1.2, col="green")
+text(40, 25000, "PORTUGAL", cex=2, col="grey")
 
 repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_FR_SU_PO")
 a__f_createDir(repertoire)

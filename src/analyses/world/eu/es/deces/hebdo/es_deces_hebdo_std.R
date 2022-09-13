@@ -2646,7 +2646,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 						alpha = .2, fill = "orange")+
 				annotate(geom="text", x=460, 
 						y=0.18, 
-						label=paste0(floor(base::max(essai_court$part_atteinte_50_59_dose1)*100)," % des 15-24 ans \n  a reçu une dose"),
+						label=paste0(floor(base::max(essai_court$part_atteinte_50_59_dose1)*100)," % des 50-59 ans \n  a reçu une dose"),
 						color="#9900CC")
 		
 		a<-grid.arrange(histo_deces, courbes_vaccins,
@@ -4884,7 +4884,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 									alpha = .2, fill = "orange")+
 							annotate(geom="text", x=460, 
 									y=0.18, 
-									label=paste0(floor(base::max(essai_court$part_atteinte_50_59_dose1)*100)," % des 15-24 ans \n  a reçu une dose"),
+									label=paste0(floor(base::max(essai_court$part_atteinte_50_59_dose1)*100)," % des 50-59 ans \n  a reçu une dose"),
 									color="#9900CC")
 					
 					a<-grid.arrange(histo_deces, courbes_vaccins,
@@ -7475,7 +7475,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 									alpha = .2, fill = "orange")+
 							annotate(geom="text", x=460, 
 									y=0.18, 
-									label=paste0(floor(base::max(essai_court$part_atteinte_50_59_dose1)*100)," % des 15-24 ans \n  a reçu une dose"),
+									label=paste0(floor(base::max(essai_court$part_atteinte_50_59_dose1)*100)," % des 50-59 ans \n  a reçu une dose"),
 									color="#9900CC")
 					
 					a<-grid.arrange(histo_deces, courbes_vaccins,

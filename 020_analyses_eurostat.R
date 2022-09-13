@@ -25,7 +25,6 @@ library(reshape2)
 library(tidyr)
 library(RColorBrewer)
 
-<<<<<<< HEAD
 #-----------------------------------#
 ####analyse des donnees annuelles####
 #-----------------------------------#
@@ -604,7 +603,11 @@ p <- ggplot(data=worldmap) + geom_sf(aes(fill=typo), color="dim grey", size=.1) 
 		labs(title= paste0("Typologie des décès relativement à l'année 2020"),
 				caption="(C) EuroGeographics for the administrative boundaries
 						Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
-		theme_light() + theme(legend.position=c(0, .5),panel.background = element_rect(fill = "light blue")) +
+		theme_light() + theme(legend.position=c(0, .5),panel.background = element_rect(fill = "light blue",size=0.5),
+		                      panel.grid.major = element_line(size = 1, linetype = 'solid',
+		                                                      colour = "white"), 
+		                      panel.grid.minor = element_line(size = 1, linetype = 'solid',
+		                                                      colour = "white")) +
 		coord_sf(xlim=c(-22, 45), ylim=c(35, 70)) 
 
 plot(p)
@@ -639,7 +642,11 @@ p <- ggplot(data=worldmap) + geom_sf(aes(fill=typo2021), color="dim grey", size=
   labs(title= paste0("Typologie des décès relativement à l'année 2021"),
        caption="(C) EuroGeographics for the administrative boundaries
 						Map produced in R with a help from Eurostat-package <github.com/ropengov/eurostat/>") +
-  theme_light() + theme(legend.position=c(0, .5),panel.background = element_rect(fill = "light blue")) +
+  theme_light() + theme(legend.position=c(0, .5),panel.background = element_rect(fill = "light blue",size=0.5),
+                        panel.grid.major = element_line(size = 1, linetype = 'solid',
+                                                        colour = "white"), 
+                        panel.grid.minor = element_line(size = 1, linetype = 'solid',
+                                                        colour = "white")) +
   coord_sf(xlim=c(-22, 45), ylim=c(35, 70))
 
 plot(p)
@@ -872,13 +879,12 @@ esperance_vie_t <- esperance_vie_t %>%
 esperance_vie_t <- esperance_vie_t %>%
 		mutate(`mortalite_naissance_Y45-49`=
 						`taux_mortalite_Y45-49`*`survivant_naissance_Y40-44`)
-=======
+
 ############################################
 #
 # Evolution des décès annuels Europe
 #
 ############################################
->>>>>>> 32a20d31c5eb8136aa04e99a1252e1db65c5abc9
 
 source("src/analyses/world/eu/es/deces/annuels/evolution/es_deces_evolution.R")
 
@@ -890,7 +896,6 @@ source("src/analyses/world/eu/es/deces/annuels/evolution/es_deces_evolution.R")
 ############################################
 
 source("src/analyses/world/eu/es/deces/annuels/cartes/es_deces_cartes_europe.R")
-
 
 
 ############################################

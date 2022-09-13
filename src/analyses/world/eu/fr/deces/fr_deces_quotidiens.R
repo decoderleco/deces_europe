@@ -121,10 +121,17 @@ a__f_plot_fr_deces_quotidiens_par_region <- function(fichier, nomRegion) {
 					facet_wrap(~dep_name) +
 					
 					theme(legend.position = "top") +
+					  
+					theme(
+					    plot.title = element_text(color="black", size=26, face="bold.italic"),
+					    axis.title.y = element_text(color="black", size=22, face="bold"),
+					    strip.text.x = element_text(size = 20, color = "black"),
+					    axis.text.x = element_text(color="black",size=18),
+					    axis.text.y = element_text(color="black",size=18)) +
 					
 					ggtitle(paste0("Décès quotidiens ",nomRegion," (", base::max(region$deces_date_complete) ,") par département")) +
 					
-					xlab("date de décès") + 
+					xlab("") + 
 					ylab("nombre de décès (z-score)"))
 	
 	
