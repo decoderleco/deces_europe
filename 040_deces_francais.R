@@ -1069,59 +1069,59 @@ deces_par_jour_age_stand_complet<- read.csv2(file.path("gen/csv/deces_par_jour_a
 deces_par_jour_2014_2015 <- deces_par_jour_age_stand_complet %>% 
   filter(deces_date_complete>"2014-07-31"&deces_date_complete<"2015-08-01") %>% 
   mutate(numjour=if_else(deces_date_complete>="2015-03-01",numjour-211,numjour-212)) %>% 
-  rename(nbDeces2014_2015=nbDeces) %>% 
-  rename(deces_standard_2020_2014_2015=deces_standard_2020) %>%
+  dplyr::rename(nbDeces2014_2015=nbDeces) %>% 
+  dplyr::rename(deces_standard_2020_2014_2015=deces_standard_2020) %>%
   select(numjour,age,nbDeces2014_2015,deces_standard_2020_2014_2015)
 
 deces_par_jour_2015_2016 <- deces_par_jour_age_stand_complet %>% 
   filter(deces_date_complete>"2015-07-31"&deces_date_complete<"2016-08-01")%>% 
   mutate(numjour=numjour-577) %>% 
-  rename(nbDeces2015_2016=nbDeces) %>% 
-  rename(deces_standard_2020_2015_2016=deces_standard_2020) %>%
+  dplyr::rename(nbDeces2015_2016=nbDeces) %>% 
+  dplyr::rename(deces_standard_2020_2015_2016=deces_standard_2020) %>%
   select(deces_date_complete,age,numjour,nbDeces2015_2016,deces_standard_2020_2015_2016)
 
 deces_par_jour_2016_2017 <- deces_par_jour_age_stand_complet %>% 
   filter(deces_date_complete>"2016-07-31"&deces_date_complete<"2017-08-01")%>% 
   mutate(numjour=if_else(deces_date_complete>="2017-03-01",numjour-942,numjour-943))%>% 
-  rename(nbDeces2016_2017=nbDeces) %>% 
-  rename(deces_standard_2020_2016_2017=deces_standard_2020) %>%
+  dplyr::rename(nbDeces2016_2017=nbDeces) %>% 
+  dplyr::rename(deces_standard_2020_2016_2017=deces_standard_2020) %>%
   select(numjour,age,nbDeces2016_2017,deces_standard_2020_2016_2017)
 
 deces_par_jour_2017_2018 <- deces_par_jour_age_stand_complet %>% 
   filter(deces_date_complete>"2017-07-31"&deces_date_complete<"2018-08-01")%>% 
   mutate(numjour=if_else(deces_date_complete>="2018-03-01",numjour-1307,numjour-1308))%>% 
-  rename(nbDeces2017_2018=nbDeces) %>% 
-  rename(deces_standard_2020_2017_2018=deces_standard_2020) %>%
+  dplyr::rename(nbDeces2017_2018=nbDeces) %>% 
+  dplyr::rename(deces_standard_2020_2017_2018=deces_standard_2020) %>%
   select(numjour,age,nbDeces2017_2018,deces_standard_2020_2017_2018)
 
 
 deces_par_jour_2018_2019 <- deces_par_jour_age_stand_complet %>% 
   filter(deces_date_complete>"2018-07-31"&deces_date_complete<"2019-08-01")%>% 
   mutate(numjour=if_else(deces_date_complete>="2019-03-01",numjour-1672,numjour-1673))%>% 
-  rename(nbDeces2018_2019=nbDeces) %>% 
-  rename(deces_standard_2020_2018_2019=deces_standard_2020) %>%
+  dplyr::rename(nbDeces2018_2019=nbDeces) %>% 
+  dplyr::rename(deces_standard_2020_2018_2019=deces_standard_2020) %>%
   select(numjour,age,nbDeces2018_2019,deces_standard_2020_2018_2019)
 
 
 deces_par_jour_2019_2020 <- deces_par_jour_age_stand_complet %>% 
   filter(deces_date_complete>"2019-07-31"&deces_date_complete<"2020-08-01")%>% 
   mutate(numjour=numjour-2038)%>% 
-  rename(nbDeces2019_2020=nbDeces) %>% 
-  rename(deces_standard_2020_2019_2020=deces_standard_2020) %>%
+  dplyr::rename(nbDeces2019_2020=nbDeces) %>% 
+  dplyr::rename(deces_standard_2020_2019_2020=deces_standard_2020) %>%
   select(numjour,age,nbDeces2019_2020,deces_standard_2020_2019_2020)
 
 deces_par_jour_2020_2021 <- deces_par_jour_age_stand_complet %>% 
   filter(deces_date_complete>"2020-07-31"&deces_date_complete<"2021-08-01")%>% 
   mutate(numjour=if_else(deces_date_complete>="2021-03-01",numjour-2403,numjour-2404))%>% 
-  rename(nbDeces2020_2021=nbDeces) %>% 
-  rename(deces_standard_2020_2020_2021=deces_standard_2020) %>%
+  dplyr::rename(nbDeces2020_2021=nbDeces) %>% 
+  dplyr::rename(deces_standard_2020_2020_2021=deces_standard_2020) %>%
   select(numjour,age,nbDeces2020_2021,deces_standard_2020_2020_2021)
 
 deces_par_jour_2021_2022 <- deces_par_jour_age_stand_complet %>% 
   filter(deces_date_complete>"2021-07-31"&deces_date_complete<"2022-02-28")%>% 
   mutate(numjour=numjour-2769)%>% 
-  rename(nbDeces2021_2022=nbDeces) %>% 
-  rename(deces_standard_2020_2021_2022=deces_standard_2020) %>%
+  dplyr::rename(nbDeces2021_2022=nbDeces) %>% 
+  dplyr::rename(deces_standard_2020_2021_2022=deces_standard_2020) %>%
   select(numjour,age,nbDeces2021_2022,deces_standard_2020_2021_2022)
 
 deces_complet_graphique <- deces_par_jour_2015_2016 %>% 
@@ -1156,8 +1156,12 @@ deces_complet_graphique_groupe <- deces_complet_graphique %>%
             deces_standard_2020_2021_2022=sum(deces_standard_2020_2021_2022)
   ) %>% mutate(deces_date_complete=as.Date(deces_date_complete))
 
+deces_complet_graphique_groupe[deces_complet_graphique_groupe==0]=NA
+
 deces_complet_graphique_groupe_jeune <- deces_complet_graphique_groupe %>% 
   filter(tranche_age=="0-64 ans")
+
+#graphique couleur
 
 p<-ggplot(deces_complet_graphique_groupe_jeune,
           aes(x=deces_date_complete))+
@@ -1202,6 +1206,51 @@ pngFileRelPath <- paste0(repertoire, "/Deces_quotidiens_standardisés_jeunes.png
 
 dev.print(device = png, file = pngFileRelPath, width = 1000)
 
+
+#graphique jeune noir et blanc
+
+
+p<-ggplot(deces_complet_graphique_groupe_jeune,
+          aes(x=deces_date_complete))+
+  geom_area(aes(y=(deces_standard_2020_2015_2016)), color='#999999',fill="#999999", alpha=1/4)+
+  geom_line(aes(y=(deces_standard_2020_2017_2018)), color='#999999',size=1)+
+  geom_line(aes(y=(deces_standard_2020_2018_2019)), color='#999999',size=1)+
+  geom_area(aes(y=(deces_standard_2020_2014_2015)), color='#999999',size=1,fill="#999999", alpha=1/4)+
+  geom_area(aes(y=(deces_standard_2020_2016_2017)), color='#999999',size=1,fill="#999999", alpha=1/4)+
+  geom_area(aes(y=(deces_standard_2020_2019_2020)), color='#666666',size=1.5,fill="#666666", alpha=1/4)+
+  geom_area(aes(y=(deces_standard_2020_2020_2021)), color='#333333',size=1.5,fill="#333333", alpha=1/4)+
+  geom_line(aes(y=(deces_standard_2020_2021_2022)), color='#000000',size=1.5)+
+  annotate(geom="text", x=as.Date("2016-03-31"), y=360, label="saison 2019-2020",
+           color='#666666',size=10)+
+  annotate(geom="text", x=as.Date("2016-03-31"), y=200, label="saison 2020-2021",
+           color='#333333',size=10)+
+  annotate(geom="text", x=as.Date("2015-09-30"), y=200, label="saison 2021-2022",
+           color='#000000',size=10)+
+  scale_x_date(date_labels = "%B")+
+  theme(axis.text.x = element_text(angle=45, hjust = 1))+
+  ggtitle("Décès quotidiens standardisés en population 2020 par saison \n Moins de 65 ans") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  xlab("Jour de décès") + ylab("nombre de décès standardisés")+
+  ylim(0,400)+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))
+
+p
+
+repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quotidiens/Standardisation"))
+pngFileRelPath <- paste0(repertoire, "/Deces_quotidiens_standardisés_jeunes_nb.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+#graphique vieux couleur
+
 deces_complet_graphique_groupe_vieux <- deces_complet_graphique_groupe %>% 
   filter(tranche_age!="0-64 ans")
 
@@ -1245,6 +1294,79 @@ p
 
 repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quotidiens/Standardisation"))
 pngFileRelPath <- paste0(repertoire, "/Deces_quotidiens_standardisés_vieux.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+#graphique vieux noir et blanc
+
+p<-ggplot(deces_complet_graphique_groupe_vieux,
+          aes(x=deces_date_complete))+
+  geom_area(aes(y=(deces_standard_2020_2015_2016)), color='#999999',fill="#999999", alpha=1/4)+
+  geom_line(aes(y=(deces_standard_2020_2017_2018)), color='#999999',size=1)+
+  geom_line(aes(y=(deces_standard_2020_2018_2019)), color='#999999',size=1)+
+  geom_area(aes(y=(deces_standard_2020_2014_2015)), color='#000000',size=1,fill="#000000", alpha=1/3)+
+  geom_area(aes(y=(deces_standard_2020_2016_2017)), color='#000000',size=1,fill="#999999", alpha=1/4)+
+  geom_area(aes(y=(deces_standard_2020_2019_2020)), color='#666666',size=1.5,fill="#666666", alpha=1/4)+
+  geom_area(aes(y=(deces_standard_2020_2020_2021)), color='#333333',size=1.5,fill="#333333", alpha=1/4)+
+  geom_line(aes(y=(deces_standard_2020_2021_2022)), color='#000000',size=1.5)+
+  annotate(geom="text", x=as.Date("2016-03-01"), y=2700, label="saison 2014-2015",
+           color='#000000',size=10)+
+  annotate(geom="text", x=as.Date("2015-11-15"), y=2400, label="saison 2016-2017",
+           color='#000000',size=10)+
+  annotate(geom="text", x=as.Date("2016-06-05"), y=2400, label="saison 2019-2020",
+           color='#666666',size=10)+
+  annotate(geom="text", x=as.Date("2015-09-15"), y=2150, label="saison 2020-2021",
+           color='#333333',size=10)+
+  annotate(geom="text", x=as.Date("2015-09-30"), y=1000, label="saison 2021-2022",
+           color='#000000',size=10)+
+  scale_x_date(date_labels = "%B")+
+  theme(axis.text.x = element_text(angle=45, hjust = 1))+
+  ggtitle("Décès quotidiens standardisés en population 2020 par saison \n Plus de 65 ans") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  xlab("Jour de décès") + ylab("nombre de décès standardisés")+
+  ylim(0,3000)+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))+
+  
+  geom_curve(aes(x = as.Date("2015-09-30"), y = 1070, 
+                   xend = as.Date("2015-09-29"), yend = 1230,
+                 ),curvature = 0.2,colour='#000000',size=1.5,lineend = "round",
+             arrow = arrow(length = unit(0.2, "inches")))+
+  
+  geom_curve(aes(x = as.Date("2015-09-15"), y = 2050, 
+                 xend = as.Date("2015-10-29"), yend = 2015,
+  ),curvature = 0.2,colour='#333333',size=1.5,lineend = "round",
+  arrow = arrow(length = unit(0.2, "inches")))+
+  
+  geom_curve(aes(x = as.Date("2016-06-05"), y = 2300, 
+                 xend = as.Date("2016-04-22"), yend = 2050,
+  ),curvature = -0.2,colour='#666666',size=1.5,lineend = "round",
+  arrow = arrow(length = unit(0.2, "inches")))+
+  
+  geom_curve(aes(x = as.Date("2015-11-15"), y = 2300, 
+                 xend = as.Date("2015-12-27"), yend = 2100,
+  ),curvature = 0.2,colour='#000000',size=1.2,lineend = "round",
+  arrow = arrow(length = unit(0.2, "inches")))+
+  
+  geom_curve(aes(x = as.Date("2016-03-01"), y = 2600, 
+                 xend = as.Date("2016-02-25"), yend = 2250,
+  ),curvature = -0.2,colour='#000000',size=1.2,lineend = "round",
+  arrow = arrow(length = unit(0.2, "inches")))
+
+
+ 
+
+p
+
+repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/Deces_Quotidiens/Standardisation"))
+pngFileRelPath <- paste0(repertoire, "/Deces_quotidiens_standardisés_vieux_nb.png")
 
 dev.print(device = png, file = pngFileRelPath, width = 1000)
 
