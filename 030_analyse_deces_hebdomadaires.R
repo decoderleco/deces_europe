@@ -339,167 +339,59 @@ es_deces_standard_pays_semaine_france$moyenne_ge60 <- mean(es_deces_standard_pay
 es_deces_standard_pays_semaine_france$binf_ge60 <- mean(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020_ge60) - 2*sd(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020_ge60)
 es_deces_standard_pays_semaine_france$bsup_ge60 <- mean(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020_ge60) + 2*sd(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020_ge60)
 
-essai <- es_deces_standard_pays_semaine_france %>% filter(numSemaineDepuis2013 > 192)
+essai <- es_deces_standard_pays_semaine_france %>% filter(numSemaineDepuis2013 > 192)%>% filter(numSemaineDepuis2013< 451)
 
-#création du graphiques
-plot(essai$numSemaineDepuis2013, 
-		essai$deces_standardises_si_pop_2020_ge60, 
-		pch=16, 
-		cex=0, 
-		axes=F, 
-		xlab="week", 
-		ylab="", 
-		ylim=c(0, max(essai$deces_standardises_si_pop_2020_ge60)), 
-		type="o", 
-		col="black", 
-		main=paste0("Décès hebdomadaires standardisés à population 2020 en France => ", maxWeekTime ))
+g<-ggplot(data = essai) + 
+  geom_area(aes(x = numSemaineDepuis2013, 
+                y = deces_standardises_si_pop_2020_ge60),color="#000099",fill="#000099",size=1,alpha=1/4) +
+  geom_area(aes(x = numSemaineDepuis2013, 
+                y = vaccins_grippe/130),color="#000000",fill="#000000",size=1,alpha=1/2) + 
+  geom_area(aes(x = numSemaineDepuis2013, 
+                y = (essai$Age60_69_dose1+essai$Age70_79_dose1+essai$`Age80+_dose1`)/130),
+            color="#666666",fill="#333333",size=1,alpha=1/2) +
+  geom_area(aes(x = numSemaineDepuis2013, 
+                y = (essai$Age60_69_dose2+essai$Age70_79_dose2+essai$`Age80+_dose2`)/130),
+            color="#666666",fill="#666666",size=1,alpha=1/2) +
+  
+  geom_vline(xintercept = seq(from=0, to=500, by = 52),linetype = "dashed",color="steelblue")+
+  geom_vline(xintercept = base::max(essai$numSemaineDepuis2013),color="black")+
+  geom_hline(yintercept = base::max(essai$bsup_ge60),linetype = "dashed",color="purple")+
+  geom_hline(yintercept = base::max(essai$binf_ge60),linetype = "dashed",color="purple")+
+  geom_hline(yintercept = base::max(essai$moyenne_ge60),color="purple")+
+  theme(axis.title.x = element_blank(), 
+        axis.text.x = element_blank(),
+        axis.title.y = element_text(color="#000000", size=15 ),
+        plot.title = element_text(color="#003366", size=25 ))+
+  ylab("Décès hebdomadaires standardisés")+
+  geom_text(x=235, y=base::max(essai$deces_standardises_si_pop_2020_ge60), label="2017",size=6)+
+  geom_text(x=287, y=base::max(essai$deces_standardises_si_pop_2020_ge60), label="2018",size=6)+
+  geom_text(x=339, y=base::max(essai$deces_standardises_si_pop_2020_ge60), label="2019",size=6)+
+  geom_text(x=391, y=base::max(essai$deces_standardises_si_pop_2020_ge60), label="2020",size=6)+
+  geom_text(x=440, y=base::max(essai$deces_standardises_si_pop_2020_ge60), label="2021",size=6)+
+  annotate(geom = "text", x = 400, y = 4000, label = "vaccins antigrppaux", color = "black",
+           angle = 90, size = 5)+
+  annotate(geom = "text", x = 430, y = 4000, label = "vaccins anticovid", color = "black",
+           angle = 90, size = 5)+
 
-# pour encadrer le graphique
-box() 
-
-axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, 60000), col="black")
-
-
-mtext("nombre de décès toutes causes des plus de 60 ans", side=2, line=3)
-mtext("moyenne mobile sur 8 semaines", side=2, line=2, col="red")
-mtext("nombre d'injections réalisées par semaine", side=4, line=2, col="blue")
-mtext("                                        Source : Eurostat décès hebdomadaires et population, ECDC vaccins par tranche d'âge", side=1, col="black", line=1)
-
-# Lignes verticales
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419), col="blue", lty=3)
-
-
-# Superposer la moyenne mobile
-par(new=T)
-plot(essai$numSemaineDepuis2013, 
-		essai$moyenne_mobile, 
-		pch=16, 
-		axes=F, 
-		cex=0, 
-		xlab="", 
-		lwd=2,  
-		ylim=c(0, max(essai$deces_standardises_si_pop_2020_ge60)),
-		ylab="", 
-		type="o", 
-		col="red") 
-
-# Superposer la moyenne 
-par(new=T)
-plot(essai$numSemaineDepuis2013, 
-		essai$moyenne_ge60, 
-		pch=16, 
-		axes=F, 
-		cex=0, 
-		xlab="", 
-		lwd=1.5,  
-		ylim=c(0, max(essai$deces_standardises_si_pop_2020_ge60)),
-		ylab="", 
-		type="o", 
-		col="purple") 
-
-# Superposer la bsup
-par(new=T)
-plot(essai$numSemaineDepuis2013, 
-		essai$bsup_ge60, 
-		pch=16, 
-		axes=F, 
-		cex=0, 
-		xlab="", 
-		lwd=1.5,  
-		ylim=c(0, max(essai$deces_standardises_si_pop_2020_ge60)),
-		ylab="", 
-		lty=2, 
-		type="o", 
-		col="purple") 
-
-# Superposer la binf
-par(new=T)
-plot(essai$numSemaineDepuis2013, 
-		essai$binf_ge60, 
-		pch=16, 
-		axes=F, 
-		cex=0, 
-		xlab="", 
-		lwd=1.5, 
-		ylim=c(0, max(essai$deces_standardises_si_pop_2020_ge60)),
-		ylab="",
-		lty=2, 
-		type="o", 
-		col="purple") 	
-
-grippe_lissage <- read.csv("data/csv/lissage_grippe.csv", sep=";")
-essai<-essai %>% left_join(grippe_lissage, by = "numSemaineDepuis2013")
-essai<-essai %>% mutate(vaccins_grippe=ifelse(is.na(vaccins_grippe),0,vaccins_grippe))
-
-# Superposer la vaccination 
-par(new=T)
-plot(essai$numSemaineDepuis2013, 
-		essai$Age60_69_dose1+essai$Age70_79_dose1+essai$`Age80+_dose1`, 
-		pch=16, 
-		axes=F, 
-		cex=0, 
-		xlab="", 
-		lty=1, 
-		lwd=2,
-		ylim=c(0, max(essai$vaccins_grippe,na.rm=TRUE)),
-		ylab="", 
-		type="o", 
-		col="blue") 
-axis(4, col = "blue", col.axis = "blue", lwd = 2)
-
-par(new=T)
-plot(essai$numSemaineDepuis2013, 
-		essai$Age60_69_dose2+essai$Age70_79_dose2+essai$`Age80+_dose2`,  
-		pch=16, 
-		axes=F, 
-		cex=0, 
-		xlab="",
-		lty=1, 
-		lwd=2,
-		ylim=c(0, max(essai$vaccins_grippe,na.rm=TRUE)), 
-		ylab="", 
-		type="o", 
-		col="dark blue") 
-mtext("Covid première dose", side=1, col="blue", line=2)
-mtext("                                                                                                       Covid deuxième dose", side=1, col="dark blue", line=2)
-mtext("vaccin grippe                                                                                          ", side=1, col="orange", line=2)
-
-
-
-
-par(new=T)
-plot(essai$numSemaineDepuis2013, 
-		essai$vaccins_grippe,  
-		pch=16, 
-		axes=F, 
-		cex=0, 
-		xlab="",
-		lty=1, 
-		lwd=2,
-		ylim=c(0, max(essai$vaccins_grippe,na.rm=TRUE)), 
-		ylab="", 
-		type="o", 
-		col="orange") 
-
-text(26,  min(essai$deces_standardises_si_pop_2020_15_24), "2013", cex=1.2)
-text(78,  min(essai$deces_standardises_si_pop_2020_15_24), "2014", cex=1.2)
-text(130, min(essai$deces_standardises_si_pop_2020_15_24), "2015", cex=1.2)
-text(183, min(essai$deces_standardises_si_pop_2020_15_24), "2016", cex=1.2)
-text(235, min(essai$deces_standardises_si_pop_2020_15_24), "2017", cex=1.2)
-text(287, min(essai$deces_standardises_si_pop_2020_15_24), "2018", cex=1.2)
-text(339, min(essai$deces_standardises_si_pop_2020_15_24), "2019", cex=1.2)
-text(391, min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
-text(440, min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
-
+  ggtitle(paste0("Décès hebdomadaires standardisés des plus de 60 ans et vaccinations"))+
+  xlim(base::min(essai$numSemaineDepuis2013), base::max(essai$numSemaineDepuis2013)+20)+
+  theme(axis.text.y = element_text(face = "bold", color = "#000000",size = 12, angle = 45))+
+  annotate("rect",
+           xmin = base::max(essai$numSemaineDepuis2013)+2,
+           xmax =  base::max(essai$numSemaineDepuis2013)+20,
+           ymin = 0,
+           ymax = base::max(essai$deces_standardises_si_pop_2020_ge60),
+           alpha = 1,
+           fill = "white")+
+  annotate(geom = "text", x = base::max(essai$numSemaineDepuis2013), y = 15000, label = "2", color = "black",
+           angle = 45, size = 5,fontface = "bold")+
+  annotate(geom = "text", x = base::max(essai$numSemaineDepuis2013), y = 7500, label =  "1", color = "black",
+           angle = 45, size = 5,fontface = "bold")+
+  annotate(geom = "text", x = base::max(essai$numSemaineDepuis2013)+10, y = 7500, label = "nombre de doses en millions", color = "black",
+           angle = 90, size = 5)
+print(g)
 
 dev.print(device = png, file = pngFileRelPath, width = 1000)
-
-
-
-
-
-
-
 
 #es_deces_standard_pays_semaine__analysables <- es_deces_standard_owid_vaccination_by_pays_semaine %>%
 #		filter(time >"2015-01-01")

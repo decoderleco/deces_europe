@@ -1083,6 +1083,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	#
 	# Graphique 7 : Somme
 	#
+	
+	
+	
 	if(nomPays!='allemagne'){
 		# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
 		repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
@@ -1183,7 +1186,8 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_70_79[1]+
 		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge80[1]), 
 		            label="Plus de 80 ans", color = 'black',		size = 6)+
-		  ggtitle(paste0("Décès hebdomadaires standardisés de ",str_to_title(nomPays)," par tranche d'âge"))
+		  ggtitle(paste0("Décès hebdomadaires standardisés de ",str_to_title(nomPays)," par tranche d'âge"))+
+		  xlim(base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013), base::max(es_deces_standard_pays_semaine$numSemaineDepuis2013))
 		print(g)
 		
 		dev.print(device = png, file = pngFileRelPath, width = 1000)
@@ -1285,7 +1289,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_70_79[1]+
 	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge80[1]), 
 	              label="Plus de 80 ans", color = 'black',		size = 6)+
-	    ggtitle(paste0("Décès hebdomadaires standardisés de ",str_to_title(nomPays)," par tranche d'âge"))
+	    ggtitle(paste0("Décès hebdomadaires standardisés de ",str_to_title(nomPays)," par tranche d'âge"))+
+	    xlim(base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013), base::max(es_deces_standard_pays_semaine$numSemaineDepuis2013))
+
 	  print(g)
 	  
 	  dev.print(device = png, file = pngFileRelPath, width = 1000)
