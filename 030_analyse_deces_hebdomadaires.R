@@ -197,55 +197,108 @@ if (shallDeleteVars) rm(es_moyenne)
 if (shallDeleteVars) rm(es_moyenne_mobile)
 
 
-plot(es_deces_standard_pays_semaine_france$numSemaineDepuis2013, 
-		es_deces_standard_pays_semaine_france$deces_standardises_si_pop_FR_2020, 
-		pch=20, cex=0, axes=F, ylim=c(0, 30000), xlab="", ylab="", col="#666666",
-		type="l", lwd=3,
-		main="Décès hebdomadaires standardisés", cex.main=4)
 
-axis(2, ylim=c(0, 60000), col="black")
-mtext("nombre de décès toutes causes standardisés", side=2, line=3, cex=1.5)
-mtext("                                                                   Source : Eurostat décès hebdomadaires et population", 
-      side=1, col="black", line=2.5, cex=1.5)
-abline(v=c(53, 105, 158, 210, 262, 314, 366, 419,471), col="blue", lty=3)
-text(26, 1000, "2013", cex=1.5)
-text(78, 1000, "2014", cex=1.5)
-text(130, 1000, "2015", cex=1.5)
-text(183, 1000, "2016", cex=1.5)
-text(235, 1000, "2017", cex=1.5)
-text(287, 1000, "2018", cex=1.5)
-text(339, 1000, "2019", cex=1.5)
-text(391, 1000, "2020", cex=1.5)
-text(444, 1000, "2021", cex=1.5)
-text(40, 22000, "FRANCE", cex=2, col = "#666666")
 
-# Ne pas effacer le graphique avant de continuer (T = TRUE)
-par(new=T)
+france<- es_deces_standard_pays_semaine_france %>% 
+  ungroup() %>% 
+  select(numSemaineDepuis2013,deces_standardises_si_pop_FR_2020) %>% 
+  dplyr::rename(deces_france=deces_standardises_si_pop_FR_2020)
 
-# Superposer la Suède
-plot(es_deces_standard_pays_semaine_suede$numSemaineDepuis2013, 
-		es_deces_standard_pays_semaine_suede$deces_standardises_si_pop_FR_2020, 
-		pch=20, axes=F, cex=0, ylim=c(0, 30000), xlab="",  ylab="", col="black",
-		type="l", lwd=3)
+suede<-es_deces_standard_pays_semaine_suede %>% 
+  ungroup() %>% 
+  select(numSemaineDepuis2013,deces_standardises_si_pop_FR_2020)%>% 
+  dplyr::rename(deces_suede=deces_standardises_si_pop_FR_2020)
+  
+portugal<-es_deces_standard_pays_semaine_portugal %>% 
+  ungroup() %>% 
+  select(numSemaineDepuis2013,deces_standardises_si_pop_FR_2020)%>% 
+  dplyr::rename(deces_portugal=deces_standardises_si_pop_FR_2020)
 
-text(40, 23500, "SUEDE", cex=2, col="black")
+france_suede_portugal <- france %>% left_join(suede) %>% left_join(portugal)
 
-# Ne pas effacer le graphique avant de continuer (T = TRUE)
-par(new=T)
+rm(france)
+rm(suede)
+rm(portugal)
 
-# Superposer le Portugal
-plot(es_deces_standard_pays_semaine_portugal$numSemaineDepuis2013, 
-		es_deces_standard_pays_semaine_portugal$deces_standardises_si_pop_FR_2020, 
-		pch=20, axes=F, cex=0, ylim=c(0, 30000), xlab="",  ylab="", col="grey",
-		type="l", lwd=3)
+g<-ggplot(data = france_suede_portugal) + 
+  geom_area(aes(x = numSemaineDepuis2013, 
+                y = deces_portugal),color="#006600",fill="#006600",size=1,alpha=1/4) +
+  geom_area(aes(x = numSemaineDepuis2013, 
+                y = deces_suede),color="#0066CC",fill="#0066CC",size=1,alpha=1/2) + 
+  geom_area(aes(x = numSemaineDepuis2013, 
+                y = deces_france),
+            color="#CC0000",fill="#CC0000",size=1,alpha=1/2) +
+  geom_vline(xintercept = seq(from=0, to=500, by = 52),linetype = "dashed",color="steelblue")+
+  theme(axis.title.x = element_blank(), 
+        axis.text.x = element_blank(),
+        axis.title.y = element_text(color="#000000", size=20 ),
+        plot.title = element_text(color="#003366", size=25 ),
+        axis.text.y =  element_text(color="#000000", size=15 , angle =45))+
+  ylab("Décès hebdomadaires standardisés")+
+  geom_text(x=26, y=1000, label="2013",size=10)+
+  geom_text(x=79, y=1000, label="2014",size=10)+
+  geom_text(x=131, y=1000, label="2015",size=10)+
+  geom_text(x=183, y=1000, label="2016",size=10)+
+  geom_text(x=235, y=1000, label="2017",size=10)+
+  geom_text(x=287, y=1000, label="2018",size=10)+
+  geom_text(x=339, y=1000, label="2019",size=10)+
+  geom_text(x=391, y=1000, label="2020",size=10)+
+  geom_text(x=440, y=1000, label="2021",size=10)+
+  annotate(geom = "text", x = 50, y = 30000, label = "Portugal", color = "#006600",
+           angle = 0, size = 15)+
+  annotate(geom = "text", x = 50, y = 28000, label = "Suède", color = "#0066CC",
+           angle = 0, size = 15)+
+  annotate(geom = "text", x = 50, y = 26000, label = "France", color = "#CC0000",
+           angle = 0, size = 15)+
+  ggtitle(paste0("Décès hebdomadaires standardisés selon 2020 par pays"))+
+  scale_y_continuous(labels=function(x) format(x,big.mark=" ",scientific = FALSE))
 
-text(40, 25000, "PORTUGAL", cex=2, col="grey")
+g
 
 repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_FR_SU_PO")
 a__f_createDir(repertoire)
 
-dev.print(device = png, file = paste0(repertoire, "/Deces_Hebdo_france_suede_portugal.png"), width = 1000)
+dev.print(device = png, file = paste0(repertoire, "/Deces_Hebdo_france_suede_portugal_couleur.png"), width = 1000)
 
+
+g<-ggplot(data = france_suede_portugal) + 
+  geom_area(aes(x = numSemaineDepuis2013, 
+                y = deces_portugal),color="#999999",fill="#999999",size=1,alpha=1/4) +
+  geom_area(aes(x = numSemaineDepuis2013, 
+                y = deces_suede),color="#666666",fill="#666666",size=1,alpha=1/2) + 
+  geom_area(aes(x = numSemaineDepuis2013, 
+                y = deces_france),
+            color="#000000",fill="#000000",size=1,alpha=1/2) +
+  geom_vline(xintercept = seq(from=0, to=500, by = 52),linetype = "dashed",color="steelblue")+
+  theme(axis.title.x = element_blank(), 
+        axis.text.x = element_blank(),
+        axis.title.y = element_text(color="#000000", size=20 ),
+        plot.title = element_text(color="#003366", size=25 ),
+        axis.text.y =  element_text(color="#000000", size=15 , angle =45))+
+  ylab("Décès hebdomadaires standardisés")+
+  geom_text(x=26, y=1000, label="2013",size=10)+
+  geom_text(x=79, y=1000, label="2014",size=10)+
+  geom_text(x=131, y=1000, label="2015",size=10)+
+  geom_text(x=183, y=1000, label="2016",size=10)+
+  geom_text(x=235, y=1000, label="2017",size=10)+
+  geom_text(x=287, y=1000, label="2018",size=10)+
+  geom_text(x=339, y=1000, label="2019",size=10)+
+  geom_text(x=391, y=1000, label="2020",size=10)+
+  geom_text(x=440, y=1000, label="2021",size=10)+
+  annotate(geom = "text", x = 50, y = 30000, label = "Portugal", color = "#999999",
+           angle = 0, size = 15)+
+  annotate(geom = "text", x = 50, y = 28000, label = "Suède", color = "#666666",
+           angle = 0, size = 15)+
+  annotate(geom = "text", x = 50, y = 26000, label = "France", color = "#000000",
+           angle = 0, size = 15)+
+  ggtitle(paste0("Décès hebdomadaires standardisés selon 2020 par pays"))+
+  scale_y_continuous(labels=function(x) format(x,big.mark=" ",scientific = FALSE))
+
+g
+
+
+
+dev.print(device = png, file = paste0(repertoire, "/Deces_Hebdo_france_suede_portugal.png"), width = 1000)
 #---------------------------------------#
 ####     analyse juillet-juin        ####
 #---------------------------------------#

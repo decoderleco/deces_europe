@@ -25,6 +25,12 @@ library(mgcv)
 #----------------------------------------------------------------------------------------------------------------#
 
 #!!! Faire tourner 005_functions et 040_deces_francais avant. Pour les décès il va falloir faire en 3 fois à cause de la mémoire
+# Faire tourner le 040 sur les tables entre 2018 et 2021
+#Puis exécuter le programme ci-dessous en modifiant les paramètres pour enregistrer 2018-2021
+#Faire de même pour 2015-2017
+#Faire de même pour 2011-2014
+# La suite du programme va agréger ces 3 résultats en n'oubliant pas que la table 2018-2021 contient des décès 
+# remontés tardivement des années précédentes. Il faut donc bien tout sommer.
 
 #-----------------------------------------------#
 #### Création de la base de données initiale ####
@@ -50,12 +56,12 @@ poptot<-read.csv2(file = 'data/csv/poptot.csv')
 
 
 #transformation météo ancienne
-meteo_simple <- meteo %>% select (TempÃ.rature, department..code.,Date)
+meteo_simple <- meteo %>% select (Température, department..code.,Date)
 meteo_simple <- meteo_simple %>% mutate(jour = str_sub(Date,1,10))
 meteo_simple$jour <- as.Date(meteo_simple$jour,'%Y-%m-%d')
 meteo_simple <- meteo_simple %>% drop_na()
-meteo_simple <- meteo_simple %>% filter(TempÃ.rature>100)
-meteo_simple <- meteo_simple %>% mutate(temperature = as.numeric(TempÃ.rature))
+meteo_simple <- meteo_simple %>% filter(Température>100)
+meteo_simple <- meteo_simple %>% mutate(temperature = as.numeric(Température))
 meteo_simple <- meteo_simple %>%  group_by(department..code.,jour) %>% 
   summarise(temperature = mean(temperature))
 meteo_simple <-meteo_simple %>% filter(year(jour)<2018)
@@ -80,7 +86,6 @@ calendrier_temp<-meteo_simple %>% select( department..code., jour ,temperature) 
   filter ( department..code. != "" ) %>% 
   arrange (jour)
 
-rm(selection_reunion)
 rm(meteo)
 rm(meteo_simple)
 rm(meteorecente)
@@ -94,11 +99,11 @@ calendrier_temp<-calendrier_temp %>% mutate(jour_annee=yday(jour)) %>%
 #-----------------------------------------------------------------------------------------------------#
 
 # j'ai fait 2011-2014 puis 2015-2017 puis 2018-2021 et ça passe déjà tout juste !
-# il faut donc mettre les bons filtre dans 040_deces_français
+# il faut donc mettre les bons filtres dans 040_deces_français
 
 # on filtre les deces sur la p?riode dont on dispose
 deces<-b__fr_gouv_deces_quotidiens %>%
-  rename (jour=deces_date)
+  rename (jour=deces_date) %>% filter(jour <"2022-01-01") 
 
 # pour chaque tranche d'age, on cr?e une table avec une variable correspondant au nombre de deces du jour dans le dep
 deces_lt5<-deces %>% filter(age_deces_millesime<5) %>% 
@@ -350,6 +355,8 @@ calend_general <- calend_general %>%
   left_join(calend_2015_2017) %>% 
   left_join(calend_2011_2014)
 
+calend_general[is.na(calend_general)] <- 0
+
 calend_general <- calend_general %>% 
   mutate(D_LT5=D_LT5+D_LT5_deux+D_LT5_trois,
          D5.9=D5.9+D5.9_deux+D5.9_trois,
@@ -491,7 +498,7 @@ calend_general_france <- calend_general_france %>%
 
 
 #------------------------------------------------#
-#graphiques et statistiques FRANCE METROPOLITAINE#
+##### graphiques et statistiques FRANCE METROPOLITAINE #####
 #------------------------------------------------#
 
 calend_general_france_mobile <- a__f_moyenne_mobile(calend_general_france,7,6,7,16)
@@ -522,403 +529,364 @@ cor.test(calend_general_france_17_19$moyenne_mobile_Mort60.64,calend_general_fra
 
 
 #création des graphiques + 90 ans
-plot(calend_general_france_17_19$jour, 
-     calend_general_france_17_19$moyenne_mobile_MortGe90, 
-     pch=16,
-     cex=0, 
-     xlab="date de décès", 
-     ylab="", 
-     type="l", 
-     col="blue",
-     main= paste0("Taux de mortalité quotidiens des plus de 90 ans et température"))
-axis(2, col = "blue", col.axis = "blue", lwd = 2)
+# temperature inversée en celsius
 
-# pour encadrer le graphique
-box() 
+calend_general_france_17_19<-calend_general_france_17_19 %>% mutate(celsius_oppose = -temperature+273.15)
+temperature_max<-base::max(calend_general_france_17_19$celsius_oppose)
+temperature_min<-base::min(calend_general_france_17_19$celsius_oppose)
 
-mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-mtext("Température", side=2, line=2, col="red")
-mtext("                                                                               Source : Data.gouv.fr décès quotidien et température", side=1, col="black", line=2)
-mtext(paste0("                                                                       ",res90$method," ",res90$estimate), side=1, col="black", line=4)
-    
-# Superposer la température
-tempmax<-max(calend_general_france_17_19$temperature)
-tempmin<-min(calend_general_france_17_19$temperature)
-par(new=T)
-plot(calend_general_france_17_19$jour, 
-     -calend_general_france_17_19$moyenne_mobile_temperature +273.15,
-     pch=16, 
-     axes=F, 
-     cex=0, 
-     xlab="", 
-     lwd=3,  
-     ylim=c(-tempmax+273.15, -tempmin+273.15), 
-     ylab="", 
-     type="l", 
-     col="red") 
-axis(4, col = "red", col.axis = "dark red", lwd = 2)
+
+p<-ggplot(calend_general_france_17_19,
+          aes(x=jour))+
+  geom_line(aes(y=(moyenne_mobile_MortGe90)), color='#000000',size=1.2)+
+  geom_line(aes(y=((celsius_oppose-temperature_min)/(temperature_max-temperature_min))*(base::max(moyenne_mobile_MortGe90)-base::min(moyenne_mobile_MortGe90))+(base::min(moyenne_mobile_MortGe90))), color='#999999',size=1)+
+  ggtitle("Taux de mortalité quotidien des plus de 90 ans et température extérieure") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  xlab(paste0("Rhô de Spearman : ",round(res90$estimate,digits = 3),"                            p-value : ",round(res90$p.value,digits = 5))) + ylab("Taux de mortalité")+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=45))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((0-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_MortGe90)-base::min(calend_general_france_17_19$moyenne_mobile_MortGe90))+(base::min(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
+           label="0°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-10-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_MortGe90)-base::min(calend_general_france_17_19$moyenne_mobile_MortGe90))+(base::min(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
+           label="10°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-20-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_MortGe90)-base::min(calend_general_france_17_19$moyenne_mobile_MortGe90))+(base::min(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
+           label="20°C",
+           color='#666666',size=10)+  
+  scale_y_continuous(limits=c(base::min(calend_general_france_17_19$moyenne_mobile_MortGe90),base::max(calend_general_france_17_19$moyenne_mobile_MortGe90)))
+p
+
 
 dev.print(device = png, file = 'gen/images/fr/meteo/tm90.png', width = 1000)
 
 #création des graphiques + 85-89 ans
-plot(calend_general_france_17_19$jour, 
-     calend_general_france_17_19$moyenne_mobile_Mort85.89, 
-     pch=16,
-     cex=0, 
-     xlab="date de décès", 
-     ylab="", 
-     type="l", 
-     col="blue",
-     main= paste0("Taux de mortalité quotidiens des 85-89 ans et température"))
-axis(2, col = "blue", col.axis = "dark blue", lwd = 2)
 
-# pour encadrer le graphique
-box() 
+p<-ggplot(calend_general_france_17_19,
+          aes(x=jour))+
+  geom_line(aes(y=(moyenne_mobile_Mort85.89)), color='#000000',size=1.2)+
+  geom_line(aes(y=((celsius_oppose-temperature_min)/(temperature_max-temperature_min))*(base::max(moyenne_mobile_Mort85.89)-base::min(moyenne_mobile_Mort85.89))+(base::min(moyenne_mobile_Mort85.89))), color='#999999',size=1)+
+  ggtitle("Taux de mortalité quotidien des 85-89 ans et température extérieure") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  xlab(paste0("Rhô de Spearman : ",round(res85$estimate,digits = 3),"                            p-value : ",round(res85$p.value,digits = 5))) + ylab("Taux de mortalité")+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=45))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((0-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort85.89)-base::min(calend_general_france_17_19$moyenne_mobile_Mort85.89))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort85.89)), 
+           label="0°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-10-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort85.89)-base::min(calend_general_france_17_19$moyenne_mobile_Mort85.89))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort85.89)), 
+           label="10°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-20-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort85.89)-base::min(calend_general_france_17_19$moyenne_mobile_Mort85.89))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort85.89)), 
+           label="20°C",
+           color='#666666',size=10)+  
+  scale_y_continuous(limits=c(base::min(calend_general_france_17_19$moyenne_mobile_Mort85.89),base::max(calend_general_france_17_19$moyenne_mobile_Mort85.89)))
+p
 
-mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-mtext("Température", side=2, line=2, col="red")
-mtext("                                                                               Source : Data.gouv.fr décès quotidien et température", side=1, col="black", line=2)
-mtext(paste0("                                                                       ",res85$method," ",res85$estimate), side=1, col="black", line=4)
-
-# Superposer la température
-tempmax<-max(calend_general_france_17_19$temperature)
-tempmin<-min(calend_general_france_17_19$temperature)
-par(new=T)
-plot(calend_general_france_17_19$jour, 
-     -calend_general_france_17_19$moyenne_mobile_temperature +273.15,
-     pch=16, 
-     axes=F, 
-     cex=0, 
-     xlab="", 
-     lwd=3,  
-     ylim=c(-tempmax+273.15, -tempmin+273.15), 
-     ylab="", 
-     type="l", 
-     col="red") 
-axis(4, col = "red", col.axis = "dark red", lwd = 2)
 dev.print(device = png, file = 'gen/images/fr/meteo/tm85.png', width = 1000)
 
 
 #création des graphiques + 80-84 ans
 
-plot(calend_general_france_17_19$jour, 
-     calend_general_france_17_19$moyenne_mobile_Mort80.84, 
-     pch=16,
-     cex=0, 
-     xlab="date de décès", 
-     ylab="", 
-     type="l", 
-     col="blue",
-     main= paste0("Taux de mortalité quotidiens des 80-84 ans et température"))
-axis(2, col = "blue", col.axis = "dark blue", lwd = 2)
-
-# pour encadrer le graphique
-box() 
-
-mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-mtext("Température", side=2, line=2, col="red")
-mtext("                                                                               Source : Data.gouv.fr décès quotidien et température", side=1, col="black", line=2)
-mtext(paste0("                                                                       ",res80$method," ",res80$estimate), side=1, col="black", line=4)
-
-# Superposer la température
-tempmax<-max(calend_general_france_17_19$temperature)
-tempmin<-min(calend_general_france_17_19$temperature)
-par(new=T)
-plot(calend_general_france_17_19$jour, 
-     -calend_general_france_17_19$moyenne_mobile_temperature +273.15,
-     pch=16, 
-     axes=F, 
-     cex=0, 
-     xlab="", 
-     lwd=3,  
-     ylim=c(-tempmax+273.15, -tempmin+273.15), 
-     ylab="", 
-     type="l", 
-     col="red") 
-axis(4, col = "red", col.axis = "dark red", lwd = 2)
+p<-ggplot(calend_general_france_17_19,
+          aes(x=jour))+
+  geom_line(aes(y=(moyenne_mobile_Mort80.84)), color='#000000',size=1.2)+
+  geom_line(aes(y=((celsius_oppose-temperature_min)/(temperature_max-temperature_min))*(base::max(moyenne_mobile_Mort80.84)-base::min(moyenne_mobile_Mort80.84))+(base::min(moyenne_mobile_Mort80.84))), color='#999999',size=1)+
+  ggtitle("Taux de mortalité quotidien des 80-84 ans et température extérieure") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  xlab(paste0("Rhô de Spearman : ",round(res80$estimate,digits = 3),"                            p-value : ",round(res80$p.value,digits = 5))) + ylab("Taux de mortalité")+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=45))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((0-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort80.84)-base::min(calend_general_france_17_19$moyenne_mobile_Mort80.84))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort80.84)), 
+           label="0°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-10-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort80.84)-base::min(calend_general_france_17_19$moyenne_mobile_Mort80.84))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort80.84)), 
+           label="10°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-20-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort80.84)-base::min(calend_general_france_17_19$moyenne_mobile_Mort80.84))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort80.84)), 
+           label="20°C",
+           color='#666666',size=10)+  
+  scale_y_continuous(limits=c(base::min(calend_general_france_17_19$moyenne_mobile_Mort80.84),base::max(calend_general_france_17_19$moyenne_mobile_Mort80.84)))
+p
 
 dev.print(device = png, file = 'gen/images/fr/meteo/tm80.png', width = 1000)
 
 
 #création des graphiques + 75-79 ans
 
-plot(calend_general_france_17_19$jour, 
-     calend_general_france_17_19$moyenne_mobile_Mort75.79, 
-     pch=16,
-     cex=0, 
-     xlab="date de décès", 
-     ylab="", 
-     type="l", 
-     col="blue",
-     main= paste0("Taux de mortalité quotidiens des 75-79 ans et température"))
-axis(2, col = "blue", col.axis = "dark blue", lwd = 2)
-
-# pour encadrer le graphique
-box() 
-
-mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-mtext("Température", side=2, line=2, col="red")
-mtext("                                                                               Source : Data.gouv.fr décès quotidien et température", side=1, col="black", line=2)
-mtext(paste0("                                                                       ",res75$method," ",res75$estimate), side=1, col="black", line=4)
-
-# Superposer la température
-tempmax<-max(calend_general_france_17_19$temperature)
-tempmin<-min(calend_general_france_17_19$temperature)
-par(new=T)
-plot(calend_general_france_17_19$jour, 
-     -calend_general_france_17_19$moyenne_mobile_temperature +273.15,
-     pch=16, 
-     axes=F, 
-     cex=0, 
-     xlab="", 
-     lwd=3,  
-     ylim=c(-tempmax+273.15, -tempmin+273.15), 
-     ylab="", 
-     type="l", 
-     col="red") 
-axis(4, col = "red", col.axis = "dark red", lwd = 2)
+p<-ggplot(calend_general_france_17_19,
+          aes(x=jour))+
+  geom_line(aes(y=(moyenne_mobile_Mort75.79)), color='#000000',size=1.2)+
+  geom_line(aes(y=((celsius_oppose-temperature_min)/(temperature_max-temperature_min))*(base::max(moyenne_mobile_Mort75.79)-base::min(moyenne_mobile_Mort75.79))+(base::min(moyenne_mobile_Mort75.79))), color='#999999',size=1)+
+  ggtitle("Taux de mortalité quotidien des 75-79 ans et température extérieure") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  xlab(paste0("Rhô de Spearman : ",round(res75$estimate,digits = 3),"                            p-value : ",round(res75$p.value,digits = 5))) + ylab("Taux de mortalité")+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=45))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((0-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort75.79)-base::min(calend_general_france_17_19$moyenne_mobile_Mort75.79))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort75.79)), 
+           label="0°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-10-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort75.79)-base::min(calend_general_france_17_19$moyenne_mobile_Mort75.79))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort75.79)), 
+           label="10°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-20-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort75.79)-base::min(calend_general_france_17_19$moyenne_mobile_Mort75.79))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort75.79)), 
+           label="20°C",
+           color='#666666',size=10)+  
+  scale_y_continuous(limits=c(base::min(calend_general_france_17_19$moyenne_mobile_Mort75.79),base::max(calend_general_france_17_19$moyenne_mobile_Mort75.79)))
+p
 
 dev.print(device = png, file = 'gen/images/fr/meteo/tm75.png', width = 1000)
 
 
 #création des graphiques + 70-74 ans
-plot(calend_general_france_17_19$jour, 
-     calend_general_france_17_19$moyenne_mobile_Mort70.74, 
-     pch=16,
-     cex=0, 
-     xlab="date de décès", 
-     ylab="", 
-     type="l", 
-     col="blue",
-     main= paste0("Taux de mortalité quotidiens des 70-74 ans et température"))
-axis(2, col = "blue", col.axis = "dark blue", lwd = 2)
-
-# pour encadrer le graphique
-box() 
-
-mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-mtext("Température", side=2, line=2, col="red")
-mtext("                                                                               Source : Data.gouv.fr décès quotidien et température", side=1, col="black", line=2)
-mtext(paste0("                                                                       ",res70$method," ",res70$estimate), side=1, col="black", line=4)
-
-# Superposer la température
-tempmax<-max(calend_general_france_17_19$temperature)
-tempmin<-min(calend_general_france_17_19$temperature)
-par(new=T)
-plot(calend_general_france_17_19$jour, 
-     -calend_general_france_17_19$moyenne_mobile_temperature +273.15,
-     pch=16, 
-     axes=F, 
-     cex=0, 
-     xlab="", 
-     lwd=3,  
-     ylim=c(-tempmax+273.15, -tempmin+273.15), 
-     ylab="", 
-     type="l", 
-     col="red") 
-axis(4, col = "red", col.axis = "dark red", lwd = 2)
+p<-ggplot(calend_general_france_17_19,
+          aes(x=jour))+
+  geom_line(aes(y=(moyenne_mobile_Mort70.74)), color='#000000',size=1.2)+
+  geom_line(aes(y=((celsius_oppose-temperature_min)/(temperature_max-temperature_min))*(base::max(moyenne_mobile_Mort70.74)-base::min(moyenne_mobile_Mort70.74))+(base::min(moyenne_mobile_Mort70.74))), color='#999999',size=1)+
+  ggtitle("Taux de mortalité quotidien des 70-74 ans et température extérieure") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  xlab(paste0("Rhô de Spearman : ",round(res70$estimate,digits = 3),"                            p-value : ",round(res70$p.value,digits = 5))) + ylab("Taux de mortalité")+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=45))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((0-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort70.74)-base::min(calend_general_france_17_19$moyenne_mobile_Mort70.74))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort70.74)), 
+           label="0°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-10-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort70.74)-base::min(calend_general_france_17_19$moyenne_mobile_Mort70.74))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort70.74)), 
+           label="10°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-20-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort70.74)-base::min(calend_general_france_17_19$moyenne_mobile_Mort70.74))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort70.74)), 
+           label="20°C",
+           color='#666666',size=10)+  
+  scale_y_continuous(limits=c(base::min(calend_general_france_17_19$moyenne_mobile_Mort70.74),base::max(calend_general_france_17_19$moyenne_mobile_Mort70.74)))
+p
 
 dev.print(device = png, file = 'gen/images/fr/meteo/tm70.png', width = 1000)
 
 
 #création des graphiques + 65-69 ans
-plot(calend_general_france_17_19$jour, 
-     calend_general_france_17_19$moyenne_mobile_Mort65.69, 
-     pch=16,
-     cex=0, 
-     xlab="date de décès", 
-     ylab="", 
-     type="l", 
-     col="blue",
-     main= paste0("Taux de mortalité quotidiens des 65-69 ans et température"))
-axis(2, col = "blue", col.axis = "dark blue", lwd = 2)
-
-# pour encadrer le graphique
-box() 
-
-mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-mtext("Température", side=2, line=2, col="red")
-mtext("                                                                               Source : Data.gouv.fr décès quotidien et température", side=1, col="black", line=2)
-mtext(paste0("                                                                       ",res65$method," ",res65$estimate), side=1, col="black", line=4)
-
-# Superposer la température
-tempmax<-max(calend_general_france_17_19$temperature)
-tempmin<-min(calend_general_france_17_19$temperature)
-par(new=T)
-plot(calend_general_france_17_19$jour, 
-     -calend_general_france_17_19$moyenne_mobile_temperature +273.15,
-     pch=16, 
-     axes=F, 
-     cex=0, 
-     xlab="", 
-     lwd=3,  
-     ylim=c(-tempmax+273.15, -tempmin+273.15), 
-     ylab="", 
-     type="l", 
-     col="red") 
-axis(4, col = "red", col.axis = "dark red", lwd = 2)
+p<-ggplot(calend_general_france_17_19,
+          aes(x=jour))+
+  geom_line(aes(y=(moyenne_mobile_Mort65.69)), color='#000000',size=1.2)+
+  geom_line(aes(y=((celsius_oppose-temperature_min)/(temperature_max-temperature_min))*(base::max(moyenne_mobile_Mort65.69)-base::min(moyenne_mobile_Mort65.69))+(base::min(moyenne_mobile_Mort65.69))), color='#999999',size=1)+
+  ggtitle("Taux de mortalité quotidien des 65-69 ans et température extérieure") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  xlab(paste0("Rhô de Spearman : ",round(res65$estimate,digits = 3),"                            p-value : ",round(res65$p.value,digits = 5))) + ylab("Taux de mortalité")+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=45))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((0-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort65.69)-base::min(calend_general_france_17_19$moyenne_mobile_Mort65.69))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort65.69)), 
+           label="0°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-10-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort65.69)-base::min(calend_general_france_17_19$moyenne_mobile_Mort65.69))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort65.69)), 
+           label="10°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-20-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort65.69)-base::min(calend_general_france_17_19$moyenne_mobile_Mort65.69))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort65.69)), 
+           label="20°C",
+           color='#666666',size=10)+  
+  scale_y_continuous(limits=c(base::min(calend_general_france_17_19$moyenne_mobile_Mort65.69),base::max(calend_general_france_17_19$moyenne_mobile_Mort65.69)))
+p
 
 dev.print(device = png, file = 'gen/images/fr/meteo/tm65.png', width = 1000)
 
 
 
 #création des graphiques + 60-64 ans
-plot(calend_general_france_17_19$jour, 
-     calend_general_france_17_19$moyenne_mobile_Mort60.64, 
-     pch=16,
-     cex=0, 
-     xlab="date de décès", 
-     ylab="", 
-     type="l", 
-     col="blue",
-     main= paste0("Taux de mortalité quotidiens des 60-64 ans et température"))
-axis(2, col = "blue", col.axis = "dark blue", lwd = 2)
-
-# pour encadrer le graphique
-box() 
-
-mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-mtext("Température", side=2, line=2, col="red")
-mtext("                                                                               Source : Data.gouv.fr décès quotidien et température", side=1, col="black", line=2)
-mtext(paste0("                                                                       ",res60$method," ",res60$estimate), side=1, col="black", line=4)
-
-# Superposer la température
-tempmax<-max(calend_general_france_17_19$temperature)
-tempmin<-min(calend_general_france_17_19$temperature)
-par(new=T)
-plot(calend_general_france_17_19$jour, 
-     -calend_general_france_17_19$moyenne_mobile_temperature +273.15,
-     pch=16, 
-     axes=F, 
-     cex=0, 
-     xlab="", 
-     lwd=3,  
-     ylim=c(-tempmax+273.15, -tempmin+273.15), 
-     ylab="", 
-     type="l", 
-     col="red") 
-axis(4, col = "red", col.axis = "dark red", lwd = 2)
+p<-ggplot(calend_general_france_17_19,
+          aes(x=jour))+
+  geom_line(aes(y=(moyenne_mobile_Mort60.64)), color='#000000',size=1.2)+
+  geom_line(aes(y=((celsius_oppose-temperature_min)/(temperature_max-temperature_min))*(base::max(moyenne_mobile_Mort60.64)-base::min(moyenne_mobile_Mort60.64))+(base::min(moyenne_mobile_Mort60.64))), color='#999999',size=1)+
+  ggtitle("Taux de mortalité quotidien des 60-64 ans et température extérieure") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  xlab(paste0("Rhô de Spearman : ",round(res60$estimate,digits = 3),"                            p-value : ",round(res60$p.value,digits = 5))) + ylab("Taux de mortalité")+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=45))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((0-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort60.64)-base::min(calend_general_france_17_19$moyenne_mobile_Mort60.64))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort60.64)), 
+           label="0°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-10-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort60.64)-base::min(calend_general_france_17_19$moyenne_mobile_Mort60.64))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort60.64)), 
+           label="10°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-20-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort60.64)-base::min(calend_general_france_17_19$moyenne_mobile_Mort60.64))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort60.64)), 
+           label="20°C",
+           color='#666666',size=10)+  
+  scale_y_continuous(limits=c(base::min(calend_general_france_17_19$moyenne_mobile_Mort60.64),base::max(calend_general_france_17_19$moyenne_mobile_Mort60.64)))
+p
 
 dev.print(device = png, file = 'gen/images/fr/meteo/tm60.png', width = 1000)
 
 
 #création des graphiques + 55-59 ans
-plot(calend_general_france_17_19$jour, 
-     calend_general_france_17_19$moyenne_mobile_Mort55.59, 
-     pch=16,
-     cex=0, 
-     xlab="date de décès", 
-     ylab="", 
-     type="l", 
-     col="blue",
-     main= paste0("Taux de mortalité quotidiens des 55-59 ans et température"))
-axis(2, col = "blue", col.axis = "dark blue", lwd = 2)
+p<-ggplot(calend_general_france_17_19,
+          aes(x=jour))+
+  geom_line(aes(y=(moyenne_mobile_Mort55.59)), color='#000000',size=1.2)+
+  geom_line(aes(y=((celsius_oppose-temperature_min)/(temperature_max-temperature_min))*(base::max(moyenne_mobile_Mort55.59)-base::min(moyenne_mobile_Mort55.59))+(base::min(moyenne_mobile_Mort55.59))), color='#999999',size=1)+
+  ggtitle("Taux de mortalité quotidien des 55-59 ans et température extérieure") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  xlab(paste0("Rhô de Spearman : ",round(res55$estimate,digits = 3),"                            p-value : ",round(res55$p.value,digits = 5))) + ylab("Taux de mortalité")+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=45))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((0-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort55.59)-base::min(calend_general_france_17_19$moyenne_mobile_Mort55.59))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort55.59)), 
+           label="0°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-10-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort55.59)-base::min(calend_general_france_17_19$moyenne_mobile_Mort55.59))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort55.59)), 
+           label="10°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-20-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort55.59)-base::min(calend_general_france_17_19$moyenne_mobile_Mort55.59))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort55.59)), 
+           label="20°C",
+           color='#666666',size=10)+  
+  scale_y_continuous(limits=c(base::min(calend_general_france_17_19$moyenne_mobile_Mort55.59),base::max(calend_general_france_17_19$moyenne_mobile_Mort55.59)))
+p
 
-# pour encadrer le graphique
-box() 
-
-mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-mtext("Température", side=2, line=2, col="red")
-mtext("                                                                               Source : Data.gouv.fr décès quotidien et température", side=1, col="black", line=2)
-mtext(paste0("                                                                       ",res55$method," ",res55$estimate), side=1, col="black", line=4)
-
-# Superposer la température
-tempmax<-max(calend_general_france_17_19$temperature)
-tempmin<-min(calend_general_france_17_19$temperature)
-par(new=T)
-plot(calend_general_france_17_19$jour, 
-     -calend_general_france_17_19$moyenne_mobile_temperature +273.15,
-     pch=16, 
-     axes=F, 
-     cex=0, 
-     xlab="", 
-     lwd=3,  
-     ylim=c(-tempmax+273.15, -tempmin+273.15), 
-     ylab="", 
-     type="l", 
-     col="red") 
-axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
 dev.print(device = png, file = 'gen/images/fr/meteo/tm55.png', width = 1000)
 
 
 #création des graphiques + 50-54 ans
-plot(calend_general_france_17_19$jour, 
-     calend_general_france_17_19$moyenne_mobile_Mort50.54, 
-     pch=16,
-     cex=0, 
-     xlab="date de décès", 
-     ylab="", 
-     type="l", 
-     col="blue",
-     main= paste0("Taux de mortalité quotidiens des 50-54 ans et température"))
-axis(2, col = "blue", col.axis = "dark blue", lwd = 2)
-
-# pour encadrer le graphique
-box() 
-
-mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-mtext("Température", side=2, line=2, col="red")
-mtext("                                                                               Source : Data.gouv.fr décès quotidien et température", side=1, col="black", line=2)
-mtext(paste0("                                                                       ",res50$method," ",res50$estimate), side=1, col="black", line=4)
-
-# Superposer la température
-tempmax<-max(calend_general_france_17_19$temperature)
-tempmin<-min(calend_general_france_17_19$temperature)
-par(new=T)
-plot(calend_general_france_17_19$jour, 
-     -calend_general_france_17_19$moyenne_mobile_temperature +273.15,
-     pch=16, 
-     axes=F, 
-     cex=0, 
-     xlab="", 
-     lwd=3,  
-     ylim=c(-tempmax+273.15, -tempmin+273.15), 
-     ylab="", 
-     type="l", 
-     col="red") 
-axis(4, col = "red", col.axis = "dark red", lwd = 2)
+p<-ggplot(calend_general_france_17_19,
+          aes(x=jour))+
+  geom_line(aes(y=(moyenne_mobile_Mort50.54)), color='#000000',size=1.2)+
+  geom_line(aes(y=((celsius_oppose-temperature_min)/(temperature_max-temperature_min))*(base::max(moyenne_mobile_Mort50.54)-base::min(moyenne_mobile_Mort50.54))+(base::min(moyenne_mobile_Mort50.54))), color='#999999',size=1)+
+  ggtitle("Taux de mortalité quotidien des 50-54 ans et température extérieure") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  xlab(paste0("Rhô de Spearman : ",round(res50$estimate,digits = 3),"                            p-value : ",round(res50$p.value,digits = 5))) + ylab("Taux de mortalité")+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=45))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((0-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort50.54)-base::min(calend_general_france_17_19$moyenne_mobile_Mort50.54))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort50.54)), 
+           label="0°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-10-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort50.54)-base::min(calend_general_france_17_19$moyenne_mobile_Mort50.54))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort50.54)), 
+           label="10°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-20-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort50.54)-base::min(calend_general_france_17_19$moyenne_mobile_Mort50.54))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort50.54)), 
+           label="20°C",
+           color='#666666',size=10)+  
+  scale_y_continuous(limits=c(base::min(calend_general_france_17_19$moyenne_mobile_Mort50.54),base::max(calend_general_france_17_19$moyenne_mobile_Mort50.54)))
+p
 
 dev.print(device = png, file = 'gen/images/fr/meteo/tm50.png', width = 1000)
 
 
 
 #création des graphiques + 45-49 ans
-plot(calend_general_france_17_19$jour, 
-     calend_general_france_17_19$moyenne_mobile_Mort45.49, 
-     pch=16,
-     cex=0, 
-     xlab="date de décès", 
-     ylab="", 
-     type="l", 
-     col="blue",
-     main= paste0("Taux de mortalité quotidiens des 45-49 ans et température"))
-axis(2, col = "blue", col.axis = "dark blue", lwd = 2)
-
-# pour encadrer le graphique
-box() 
-
-mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-mtext("Température", side=2, line=2, col="red")
-mtext("                                                                               Source : Data.gouv.fr décès quotidien et température", side=1, col="black", line=2)
-mtext(paste0("                                                                       ",res45$method," ",res45$estimate), side=1, col="black", line=4)
-
-# Superposer la température
-tempmax<-max(calend_general_france_17_19$temperature)
-tempmin<-min(calend_general_france_17_19$temperature)
-par(new=T)
-plot(calend_general_france_17_19$jour, 
-     -calend_general_france_17_19$moyenne_mobile_temperature +273.15,
-     pch=16, 
-     axes=F, 
-     cex=0, 
-     xlab="", 
-     lwd=3,  
-     ylim=c(-tempmax+273.15, -tempmin+273.15), 
-     ylab="", 
-     type="l", 
-     col="red") 
-axis(4, col = "red", col.axis = "dark red", lwd = 2)
+p<-ggplot(calend_general_france_17_19,
+          aes(x=jour))+
+  geom_line(aes(y=(moyenne_mobile_Mort45.49)), color='#000000',size=1.2)+
+  geom_line(aes(y=((celsius_oppose-temperature_min)/(temperature_max-temperature_min))*(base::max(moyenne_mobile_Mort45.49)-base::min(moyenne_mobile_Mort45.49))+(base::min(moyenne_mobile_Mort45.49))), color='#999999',size=1)+
+  ggtitle("Taux de mortalité quotidien des 45-49 ans et température extérieure") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  xlab(paste0("Rhô de Spearman : ",round(res45$estimate,digits = 3),"                            p-value : ",round(res45$p.value,digits = 5))) + ylab("Taux de mortalité")+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=45))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((0-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort45.49)-base::min(calend_general_france_17_19$moyenne_mobile_Mort45.49))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort45.49)), 
+           label="0°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-10-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort45.49)-base::min(calend_general_france_17_19$moyenne_mobile_Mort45.49))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort45.49)), 
+           label="10°C",
+           color='#666666',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-20-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_Mort45.49)-base::min(calend_general_france_17_19$moyenne_mobile_Mort45.49))+(base::min(calend_general_france_17_19$moyenne_mobile_Mort45.49)), 
+           label="20°C",
+           color='#666666',size=10)+  
+  scale_y_continuous(limits=c(base::min(calend_general_france_17_19$moyenne_mobile_Mort45.49),base::max(calend_general_france_17_19$moyenne_mobile_Mort45.49)))
+p
 
 dev.print(device = png, file = 'gen/images/fr/meteo/tm45.png', width = 1000)
 
@@ -928,6 +896,7 @@ dev.print(device = png, file = 'gen/images/fr/meteo/tm45.png', width = 1000)
 #-------------------------------------------------------------#
 
 calend_general<-calend_general %>% filter(!is.na(pop5.9)) %>% filter(dep!="971"&dep!="972"&dep!="973"&dep!="974"&dep!="976")
+
 departement_different <- calend_general$dep_name
 departement_different <- unique(departement_different)
 
@@ -937,6 +906,9 @@ for (departement in departement_different) {
   calend_departement_mobile <- a__f_moyenne_mobile(calend_departement,7,6,7,16)
   
   calend_departement_mobile_17_19 <- calend_departement_mobile %>% filter((jour>'2016-12-31')&(jour<'2020-01-01'))
+  calend_departement_mobile_17_19<-calend_departement_mobile_17_19 %>% mutate(celsius_oppose = -moyenne_mobile_temperature+273.15)
+  temperature_max<-base::max(calend_departement_mobile_17_19$celsius_oppose, na.rm = TRUE)
+  temperature_min<-base::min(calend_departement_mobile_17_19$celsius_oppose, na.rm = TRUE)
   
   res90<-cor.test(calend_departement_mobile_17_19$moyenne_mobile_MortGe90,calend_departement_mobile_17_19$moyenne_mobile_temperature,method="spearman")
   res85<-cor.test(calend_departement_mobile_17_19$moyenne_mobile_Mort85.89,calend_departement_mobile_17_19$moyenne_mobile_temperature,method="spearman")
@@ -951,44 +923,39 @@ for (departement in departement_different) {
   res40<-cor.test(calend_departement_mobile_17_19$moyenne_mobile_Mort40.44,calend_departement_mobile_17_19$moyenne_mobile_temperature,method="spearman")
   
   #création des graphiques + 90 ans
-  plot(calend_departement_mobile_17_19$jour, 
-       calend_departement_mobile_17_19$moyenne_mobile_MortGe90, 
-       pch=16,
-       cex=0, 
-       xlab="date de décès", 
-       ylab="", 
-       type="l", 
-       col="blue",
-       main= paste0("Taux de mortalité quotidiens des plus de 90 ans et température de ",departement))
-  axis(2, col = "blue", col.axis = "blue", lwd = 2)
-  
-  # pour encadrer le graphique
-  box() 
-  
-  mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-  mtext("Température", side=2, line=2, col="red")
-  mtext("                                                                               Source : Data.gouv.fr décès quotidien et température de ",departement, side=1, col="black", line=2)
-  mtext(paste0("                                                                       ",res90$method," ",res90$estimate), side=1, col="black", line=4)
-  
-  # Superposer la température
-  tempmax<-max(calend_departement_mobile_17_19$temperature)
-  tempmin<-min(calend_departement_mobile_17_19$temperature)
-  par(new=T)
-  plot(calend_departement_mobile_17_19$jour, 
-       -calend_departement_mobile_17_19$moyenne_mobile_temperature +273.15,
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=3,  
-       ylim=c(-tempmax+273.15, -tempmin+273.15), 
-       ylab="", 
-       type="l", 
-       col="red") 
-  axis(4, col = "red", col.axis = "dark red", lwd = 2)
+  p<-ggplot(calend_departement_mobile_17_19,
+            aes(x=jour))+
+    geom_line(aes(y=(moyenne_mobile_MortGe90)), color='#000000',size=1.2)+
+    geom_line(aes(y=((celsius_oppose-temperature_min)/(temperature_max-temperature_min))*(base::max(moyenne_mobile_MortGe90, na.rm = TRUE)-base::min(moyenne_mobile_MortGe90, na.rm = TRUE))+(base::min(moyenne_mobile_MortGe90, na.rm = TRUE))), color='#999999',size=1)+
+    ggtitle(paste0(departement," : Taux de mortalité quotidien des plus de 90 ans et température extérieure")) +
+    theme_bw() + 
+    theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+    xlab(paste0("Rhô de Spearman : ",round(res90$estimate,digits = 3),"                            p-value : ",round(res90$p.value,digits = 5))) + ylab("Taux de mortalité")+
+    theme(axis.text.x = element_text(color="black", 
+                                     size=20, angle=0))+
+    theme(axis.text.y = element_text(color="black", 
+                                     size=20, angle=45))+
+    theme(axis.title.x = element_text(color="black", 
+                                      size=20, angle=0))+
+    theme(axis.title.y = element_text(color="black", 
+                                      size=20, angle=90))+  
+    annotate(geom="text", x=as.Date("2019-07-01"), 
+             y=((0-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_departement_mobile_17_19$moyenne_mobile_MortGe90, na.rm = TRUE)-base::min(calend_departement_mobile_17_19$moyenne_mobile_MortGe90, na.rm = TRUE))+(base::min(calend_departement_mobile_17_19$moyenne_mobile_MortGe90, na.rm = TRUE)), 
+             label="0°C",
+             color='#666666',size=10)+  
+    annotate(geom="text", x=as.Date("2019-07-01"), 
+             y=((-10-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_departement_mobile_17_19$moyenne_mobile_MortGe90, na.rm = TRUE)-base::min(calend_departement_mobile_17_19$moyenne_mobile_MortGe90, na.rm = TRUE))+(base::min(calend_departement_mobile_17_19$moyenne_mobile_MortGe90, na.rm = TRUE)), 
+             label="10°C",
+             color='#666666',size=10)+  
+    annotate(geom="text", x=as.Date("2019-07-01"), 
+             y=((-20-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_departement_mobile_17_19$moyenne_mobile_MortGe90, na.rm = TRUE)-base::min(calend_departement_mobile_17_19$moyenne_mobile_MortGe90, na.rm = TRUE))+(base::min(calend_departement_mobile_17_19$moyenne_mobile_MortGe90, na.rm = TRUE)), 
+             label="20°C",
+             color='#666666',size=10)+  
+    scale_y_continuous(limits=c(base::min(calend_departement_mobile_17_19$moyenne_mobile_MortGe90, na.rm = TRUE),base::max(calend_departement_mobile_17_19$moyenne_mobile_MortGe90, na.rm = TRUE)))
+  print(p)
   
   dev.print(device = png, file = paste0('gen/images/fr/meteo/tm90',departement,'.png'), width = 1000)
-  
+} 
   #création des graphiques + 85-89 ans
   plot(calend_departement_mobile_17_19$jour, 
        calend_departement_mobile_17_19$moyenne_mobile_Mort85.89, 
@@ -1366,8 +1333,10 @@ mod_gam <- gam(moyenne_mobile_MortGe90 ~ s(moyenne_mobile_temperature, bs="cr"),
 summary(mod_gam)
 
 AIC(mod_gam)
-summary(mod_gam)$sp.criterion
-summary(mod_gam)$r.sq 
+critere<-summary(mod_gam)$sp.criterion
+format(critere, scientific=TRUE, digits=3)
+r2<-summary(mod_gam)$r.sq
+format(r2, scientific=FALSE, digits=3)
 
 testdata = data.frame(moyenne_mobile_temperature = mod_gam$model$moyenne_mobile_temperature,
                       estimateur_MortGe90= mod_gam$fitted.values)
@@ -1379,36 +1348,29 @@ calend_general_france_17_19 <- calend_general_france_17_19 %>% left_join(testdat
                               #-------------------------------------------------------#
 
 
-plot (calend_general_france_17_19$moyenne_mobile_temperature - 273.15, 
-      calend_general_france_17_19$moyenne_mobile_MortGe90, 
-      pch=21,
-      xlab="Température",
-      ylab="Mortalité",
-      ylim=c(0, max(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
-      cex = 2,
-      lwd = 2,
-      bg = "red",
-      col="blue",
-      main= "Taux de mortalité quotidien des plus de 90 ans de France Métropolitaine 
-      en fonction de la température 5 jours avant")
-
-box() 
-par(new=T)
-plot(calend_general_france_17_19$moyenne_mobile_temperature - 273.15, 
-     calend_general_france_17_19$estimateur_MortGe90,
-     pch=16, 
-     axes=F, 
-     cex=0, 
-     xlab="", 
-     lwd=4,  
-     ylim=c(0, max(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
-     ylab="", 
-     type="l", 
-     col="black") 
-
-mtext("                                                                               Source : Data.gouv.fr décès quotidiens et température", side=1, col="black", line=4)
-mtext(paste0("                                                            significativité =",summary(mod_gam)$sp.criterion,"    R² = ",summary(mod_gam)$r.sq), side=1, col="blue", line=2)
-
+p<-ggplot(calend_general_france_17_19,
+          aes(x=moyenne_mobile_temperature- 273.15))+
+  geom_point(aes(y=moyenne_mobile_MortGe90),color="#000000",size=1.2)+
+  geom_line(aes(y=estimateur_MortGe90),color="#999999",size=2)+
+  ggtitle("Taux de mortalité quotidien des plus de 90 ans et estimateur") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  ylab("Taux de mortalité")+
+  xlab(paste0(" significativité = ",format(summary(mod_gam)$sp.criterion, scientific=TRUE, digits=3),"                        R² = ",format(summary(mod_gam)$r.sq, scientific=FALSE, digits=3)))+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=25))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))+
+scale_y_continuous(limits=c(base::min(calend_general_france_17_19$moyenne_mobile_MortGe90),base::max(calend_general_france_17_19$moyenne_mobile_MortGe90)))+
+  annotate(geom="text", x=20, 
+           y=0.0007, 
+           label="estimateur",
+           color='#999999',size=10)
+p
 
 dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen/images/fr/meteo/GAM_tm90_correlation.png'), width = 1000)
 
@@ -1416,39 +1378,28 @@ dev.print(device = png, file = paste0('C:/Users/xxx/Documents/R/deces_europe/gen
                                   #création des graphiques de fit sur 2017-2019 + 90 ans
                                   #-----------------------------------------------------#
 
-plot(calend_general_france_17_19$jour, 
-     calend_general_france_17_19$moyenne_mobile_MortGe90, 
-     pch=16,
-     cex=0, 
-     xlab="date de décès",
-     ylim=c(0, max(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
-     ylab="", 
-     type="l", 
-     col="blue",
-     main= "Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans de France Métropolitaine")
-axis(2, col = "blue", col.axis = "blue", lwd = 2)
 
-# pour encadrer le graphique
-box() 
+p<-ggplot(calend_general_france_17_19,
+          aes(x=jour))+
+  geom_line(aes(y=estimateur_MortGe90),color="#999999",size=1.2)+
+  geom_line(aes(y=moyenne_mobile_MortGe90),color="#000000",size=1)+
+  
+  ggtitle("Taux de mortalité quotidien des plus de 90 ans et estimateur") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  ylab("Taux de mortalité")+
+  xlab(paste0(" significativité = ",format(summary(mod_gam)$sp.criterion, scientific=TRUE, digits=3),"                        R² = ",format(summary(mod_gam)$r.sq, scientific=FALSE, digits=3)))+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=25))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))
+scale_y_continuous(limits=c(base::min(calend_general_france_17_19$moyenne_mobile_MortGe90),base::max(calend_general_france_17_19$moyenne_mobile_MortGe90)))
+p
 
-mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-mtext("Estimateur température", side=2, line=2, col="red")
-
-# Superposer lestimateur
-
-par(new=T)
-plot(calend_general_france_17_19$jour, 
-     calend_general_france_17_19$estimateur_MortGe90,
-     pch=16, 
-     axes=F, 
-     cex=0, 
-     xlab="", 
-     lwd=3,  
-     ylim=c(0, max(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
-     ylab="", 
-     type="l", 
-     col="red") 
-axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
 dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm90_fit.png'), width = 1000)
 
@@ -1463,41 +1414,29 @@ calend_general_france_mobile_depuis17$estim_predict_GE90<-prediction
                                 #création du graphique total sur 2017-2021 + 90 ans
                                 #-----------------------------------------------------#
 
-plot(calend_general_france_mobile_depuis17$jour, 
-     calend_general_france_mobile_depuis17$moyenne_mobile_MortGe90, 
-     pch=16,
-     cex=0, 
-     xlab="date de décès",
-     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_MortGe90,na.rm=TRUE)), 
-     ylab="", 
-     type="l", 
-     col="blue",
-     main= "Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans de France Métropolitaine")
-axis(2, col = "blue", col.axis = "blue", lwd = 2)
 
+p<-ggplot(calend_general_france_mobile_depuis17,
+          aes(x=jour))+
+  geom_line(aes(y=estim_predict_GE90),color="#999999",size=1.2)+
+  geom_line(aes(y=moyenne_mobile_MortGe90),color="#000000",size=1)+
+  
+  ggtitle("Taux de mortalité quotidien des plus de 90 ans et estimateur") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  ylab("Taux de mortalité")+
+  xlab(paste0(" significativité = ",format(summary(mod_gam)$sp.criterion, scientific=TRUE, digits=3),"                        R² = ",format(summary(mod_gam)$r.sq, scientific=FALSE, digits=3)))+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="black", 
+                                   size=20, angle=25))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="black", 
+                                    size=20, angle=90))+
+  scale_y_continuous(limits=c(base::min(calend_general_france_mobile_depuis17$moyenne_mobile_MortGe90),base::max(calend_general_france_mobile_depuis17$moyenne_mobile_MortGe90)))+
+  xlim(as.Date("2017-01-01"),as.Date("2021-12-31"))
+p
 
-
-# pour encadrer le graphique
-box() 
-
-mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-mtext("Estimateur température", side=2, line=2, col="red")
-
-# Superposer l'estimateur
-
-par(new=T)
-plot(calend_general_france_mobile_depuis17$jour, 
-     calend_general_france_mobile_depuis17$estim_predict_GE90,
-     pch=16, 
-     axes=F, 
-     cex=0, 
-     xlab="", 
-     lwd=3,  
-     ylim=c(0, max(calend_general_france_mobile_depuis17$moyenne_mobile_MortGe90,na.rm=TRUE)), 
-     ylab="", 
-     type="l", 
-     col="red") 
-axis(4, col = "red", col.axis = "dark red", lwd = 2)
 
 dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm90_total.png'), width = 1000)
 
@@ -1987,45 +1926,6 @@ for (departement in departement_different) {
   calend_departement_mobile_17_19 <- calend_departement_mobile_17_19 %>% left_join(testdata)
   
   
-  #création des graphiques + 90 ans
-  plot(calend_departement_mobile_17_19$jour, 
-       calend_departement_mobile_17_19$moyenne_mobile_MortGe90, 
-       pch=16,
-       cex=0, 
-       xlab="date de décès",
-       ylim=c(0, max(calend_departement_mobile_17_19$moyenne_mobile_MortGe90,na.rm=TRUE)), 
-       ylab="", 
-       type="l", 
-       col="blue",
-       main= paste0("Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans de ",departement))
-  axis(2, col = "blue", col.axis = "blue", lwd = 2)
-  
-  # pour encadrer le graphique
-  box() 
-  
-  mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-  mtext("Estimateur température", side=2, line=2, col="red")
-  
-  # Superposer la température
-  
-  par(new=T)
-  plot(calend_departement_mobile_17_19$jour, 
-       calend_departement_mobile_17_19$estimateur_MortGe90,
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=3,  
-       ylim=c(0, max(calend_departement_mobile_17_19$moyenne_mobile_MortGe90,na.rm=TRUE)), 
-       ylab="", 
-       type="l", 
-       col="red") 
-  axis(4, col = "red", col.axis = "dark red", lwd = 2)
-  
-  dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm90_fit_',departement,'.png'), width = 1000)
-  
-  
-  
   calend_departement_mobile_depuis17<-calend_departement_mobile %>% 
     filter(jour>="2017-01-01")
   
@@ -2033,41 +1933,28 @@ for (departement in departement_different) {
   prediction<-predict.gam(mod_gam,newdata=calend_departement_mobile_depuis17)
   calend_departement_mobile_depuis17$estim_predict_GE90<-prediction
   
+  p<-ggplot(calend_departement_mobile_depuis17,
+            aes(x=jour))+
+    geom_line(aes(y=estim_predict_GE90),color="#999999",size=1.2)+
+    geom_line(aes(y=moyenne_mobile_MortGe90),color="#000000",size=1)+
+    
+    ggtitle("Taux de mortalité quotidien des plus de 90 ans et estimateur") +
+    theme_bw() + 
+    theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+    ylab("Taux de mortalité")+
+    xlab(paste0(" significativité = ",format(summary(mod_gam)$sp.criterion, scientific=TRUE, digits=3),"                        R² = ",format(summary(mod_gam)$r.sq, scientific=FALSE, digits=3)))+
+    theme(axis.text.x = element_text(color="black", 
+                                     size=20, angle=0))+
+    theme(axis.text.y = element_text(color="black", 
+                                     size=20, angle=25))+
+    theme(axis.title.x = element_text(color="black", 
+                                      size=20, angle=0))+
+    theme(axis.title.y = element_text(color="black", 
+                                      size=20, angle=90))+
+    scale_y_continuous(limits=c(base::min(calend_departement_mobile_depuis17$moyenne_mobile_MortGe90,na.rm=TRUE),base::max(calend_departement_mobile_depuis17$moyenne_mobile_MortGe90,na.rm=TRUE)))+
+    xlim(base::min(calend_departement_mobile_depuis17$jour),as.Date("2021-12-31"))
   
-  #création des graphiques + 90 ans
-  plot(calend_departement_mobile_depuis17$jour, 
-       calend_departement_mobile_depuis17$moyenne_mobile_MortGe90, 
-       pch=16,
-       cex=0, 
-       xlab="date de décès",
-       ylim=c(0, max(calend_departement_mobile_depuis17$moyenne_mobile_MortGe90,na.rm=TRUE)), 
-       ylab="", 
-       type="l", 
-       col="blue",
-       main= paste0("Taux de mortalité quotidien lissé sur 7 jours des plus de 90 ans de ",departement))
-  axis(2, col = "blue", col.axis = "blue", lwd = 2)
-  
-  # pour encadrer le graphique
-  box() 
-  
-  mtext("Taux de mortalité toutes causes", side=2, line=3, col="blue")
-  mtext("Estimateur température", side=2, line=2, col="red")
-  
-  # Superposer l'estimateur
-  
-  par(new=T)
-  plot(calend_departement_mobile_depuis17$jour, 
-       calend_departement_mobile_depuis17$estim_predict_GE90,
-       pch=16, 
-       axes=F, 
-       cex=0, 
-       xlab="", 
-       lwd=3,  
-       ylim=c(0, max(calend_departement_mobile_depuis17$moyenne_mobile_MortGe90,na.rm=TRUE)), 
-       ylab="", 
-       type="l", 
-       col="red") 
-  axis(4, col = "red", col.axis = "dark red", lwd = 2)
+  print(p)
   
   dev.print(device = png, file = paste0('gen/images/fr/meteo/GAM_tm90_total_',departement,'.png'), width = 1000)
   

@@ -103,11 +103,11 @@ if (!shallForceDownload && exists(varName)) {
 			'2021' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220112-114131/deces-2021.txt',
 			'2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
 			'2019' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20200113-173945/deces-2019.txt',
-			'2018' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191205-191652/deces-2018.txt',
-			'2017' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192304/deces-2017.txt',
-			'2016' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192203/deces-2016.txt',
-			'2015' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192119/deces-2015.txt',
-			'2014' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192022/deces-2014.txt'
+			'2018' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191205-191652/deces-2018.txt'
+	#		'2017' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192304/deces-2017.txt',
+	#		'2016' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192203/deces-2016.txt',
+	#		'2015' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192119/deces-2015.txt',
+	#		'2014' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192022/deces-2014.txt'
 	#'2013' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-191938/deces-2013.txt',
 	#'2012' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-191851/deces-2012.txt',
 	#'2011' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-191745/deces-2011.txt'
@@ -1620,6 +1620,17 @@ if (shallDeleteVars) rm(deces_par_jour_a_tracer)
 if (shallDeleteVars) rm(deces_par_jour_tranchedage)
 if (shallDeleteVars) rm(nbDeces_moyen_par_tranchedAge)
 if (shallDeleteVars) rm(data_a_tracer)
-
+if (shallDeleteVars) rm(Covid_vague_1)
+if (shallDeleteVars) rm(Covid_vague_2)
+if (shallDeleteVars) rm(deces_complet_graphique)
+if (shallDeleteVars) rm(deces_des_7jours)
+if (shallDeleteVars) rm(deces_par_semaine_age_des_7jours)
+if (shallDeleteVars) rm(deces_jeunes)
+if (shallDeleteVars) rm(deces_jeunes_groupe)
+if (shallDeleteVars) rm(deces_par_jour_age_stand_complet)
+if (shallDeleteVars) rm(vaccination)
+if (shallDeleteVars) rm(grippe_2015)
+if (shallDeleteVars) rm(grippe_2017)
+if (shallDeleteVars) rm(graphique_epidemie)
 
 message("Terminé 040_deces_francais.R")
