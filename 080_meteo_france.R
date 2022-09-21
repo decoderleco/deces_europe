@@ -570,6 +570,47 @@ p
 
 dev.print(device = png, file = 'gen/images/fr/meteo/tm90.png', width = 1000)
 
+
+p<-ggplot(calend_general_france_17_19,
+          aes(x=jour))+
+  geom_area(aes(y = moyenne_mobile_MortGe90),color="#3399FF",fill="#3399FF",size=1,alpha=1/4) +
+  geom_line(aes(y=((celsius_oppose-temperature_min)/(temperature_max-temperature_min))*(base::max(moyenne_mobile_MortGe90)-base::min(moyenne_mobile_MortGe90))+(base::min(moyenne_mobile_MortGe90))), color='#CC0000',size=1)+
+  ggtitle("Taux de mortalité quotidien des plus de 90 ans et température extérieure") +
+  theme_bw() + 
+  theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5))+
+  xlab(paste0("Rhô de Spearman : ",round(res90$estimate,digits = 3),"                            p-value : ",round(res90$p.value,digits = 5))) + ylab("Taux de mortalité")+
+  theme(axis.text.x = element_text(color="black", 
+                                   size=20, angle=0))+
+  theme(axis.text.y = element_text(color="#3399FF", 
+                                   size=20, angle=45))+
+  theme(axis.title.x = element_text(color="black", 
+                                    size=20, angle=0))+
+  theme(axis.title.y = element_text(color="#3399FF", 
+                                    size=20, angle=90))+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((0-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_MortGe90)-base::min(calend_general_france_17_19$moyenne_mobile_MortGe90))+(base::min(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
+           label="0°C",
+           color='#990000',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-10-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_MortGe90)-base::min(calend_general_france_17_19$moyenne_mobile_MortGe90))+(base::min(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
+           label="10°C",
+           color='#990000',size=10)+  
+  annotate(geom="text", x=as.Date("2019-07-01"), 
+           y=((-20-temperature_min)/(temperature_max-temperature_min))*(base::max(calend_general_france_17_19$moyenne_mobile_MortGe90)-base::min(calend_general_france_17_19$moyenne_mobile_MortGe90))+(base::min(calend_general_france_17_19$moyenne_mobile_MortGe90)), 
+           label="20°C",
+           color='#990000',size=10)  
+p
+
+
+dev.print(device = png, file = 'gen/images/fr/meteo/tm90_couleur.png', width = 1000)
+
+
+
+
+
+
+
+
 #création des graphiques + 85-89 ans
 
 p<-ggplot(calend_general_france_17_19,
