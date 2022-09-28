@@ -1,10 +1,11 @@
 # TODO: Add comment
 # 
-###############################################################################
 
-################################################################################
+
+# ______________________________________________________________________________
 # Mettre l'âge dans une tranche d'âge quinquennale (0 à 4, 5 à 9, ...)
-################################################################################
+# ______________________________________________________________________________
+
 a__f_quinquenisation <- function(tabWithAge, shallGroup_ge85) {
 	
 	# Numeriser l'age
@@ -52,9 +53,9 @@ a__f_quinquenisation <- function(tabWithAge, shallGroup_ge85) {
 	tabWithAge_quinq
 }
 
-################################################################################
+# ______________________________________________________________________________
 # Ajouter une colonne tranche_age quinquennale (0 à 4, 5 à 9, ...) à partir de la colone age
-################################################################################
+# ______________________________________________________________________________
 a__f_add_tranche_age_de_5_ans <- function(tabWithAge) {
 	
 	# Ajouter une colonne age_quinq avec la tranche d'age
@@ -86,9 +87,9 @@ a__f_add_tranche_age_de_5_ans <- function(tabWithAge) {
 	tabWith_tranche_age
 }
 
-################################################################################
+# ______________________________________________________________________________
 # Ajouter une colonne tranche_age (0 à 9, 10 à 19, ...) à partir de la colone age
-################################################################################
+# ______________________________________________________________________________
 a__f_add_tranche_age_de_10_ans <- function(tabWithAge) {
 	
 	# Ajouter une colonne age_quinq avec la tranche d'age
@@ -112,9 +113,9 @@ a__f_add_tranche_age_de_10_ans <- function(tabWithAge) {
 }
 
 
-################################################################################
-# Generer le graphique et le png associé : deces_hebdo_std_moyenne_mobile
-################################################################################
+# ______________________________________________________________________________
+##### Generer le graphique et le png associé : deces_hebdo_std_moyenne_mobile ####
+# ______________________________________________________________________________
 a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_semaine, 
 		ylim_max, 
 		decalageSemaines = 51) {
@@ -277,9 +278,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
-	#
-	# Graphique 1 : Situation des 15_24 ans
-	#
+	# ______________________________________________________________________________
+	##### Graphique 1 : Situation des 15_24 ans #####
+	# ______________________________________________________________________________
 	
 	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
 	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
@@ -414,9 +415,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	}
 	
 	
-	#
-	# Graphique 2 : Situation des 25- 50 ans
-	#
+	# ______________________________________________________________________________
+	##### Graphique 2 : Situation des 25- 50 ans #####
+	# ______________________________________________________________________________
 	
 	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
@@ -547,9 +548,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		dev.print(device = png, file = pngFileRelPath, width = 1000)
 	}
 	
-	#
-	# Graphique 3 : Situation des 50- 59 ans
-	#
+	# ______________________________________________________________________________
+	##### Graphique 3 : Situation des 50- 59 ans #####
+	# ______________________________________________________________________________
 	
 	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
@@ -680,9 +681,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
 	
-	#
-	# Graphique 4 : Situation des 60- 69 ans
-	#
+	# ______________________________________________________________________________
+	##### Graphique 4 : Situation des 60- 69 ans ####
+	# ______________________________________________________________________________
 	
 	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
@@ -813,9 +814,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
 	
-	#
-	# Graphique 5 : Situation des 70- 79 ans
-	#
+	# ______________________________________________________________________________
+	##### Graphique 5 : Situation des 70- 79 ans #####
+	# ______________________________________________________________________________
 	
 	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
@@ -949,9 +950,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	
 	
-	#
-	# Graphique 6 : Situation des plus de 80 ans
-	#
+	# ______________________________________________________________________________
+	##### Graphique 6 : Situation des plus de 80 ans ####
+	# ______________________________________________________________________________
 	
 	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_Pays/par_age/")
 	a__f_createDir(repertoire)
@@ -1080,9 +1081,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	
 	dev.print(device = png, file = pngFileRelPath, width = 1000)	
 	
-	#
-	# Graphique 7 : Somme
-	#
+	# ______________________________________________________________________________
+	##### Graphique 7 : Somme ####
+	# ______________________________________________________________________________
 	
 	
 	
@@ -1145,10 +1146,12 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		  geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$bsup),linetype = "dashed",color="purple")+
 		  geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$binf),linetype = "dashed",color="purple")+
 		  geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$moyenne),color="purple")+
+		  ylab("Nombre de décès")+
 		  theme(axis.title.x = element_blank(), 
 		        axis.text.x = element_blank(),
-		        axis.title.y = element_blank(),
-		        plot.title = element_text(color="#003366", size=25 ))+
+		        axis.title.y = element_text(color="#000000", size=20 ),
+		        plot.title = element_text(color="#003366", size=25 ),
+		        axis.text.y =  element_text(color="#000000", size=15 , angle =45))+
 		  geom_text(x=26, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2013",size=6)+
 		  geom_text(x=78, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2014",size=6)+
 		  geom_text(x=130, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2015",size=6)+
@@ -1186,7 +1189,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_70_79[1]+
 		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge80[1]), 
 		            label="Plus de 80 ans", color = 'black',		size = 6)+
-		  ggtitle(paste0("Décès hebdomadaires standardisés de ",str_to_title(nomPays)," par tranche d'âge"))+
+		  ggtitle(paste0(str_to_title(nomPays)," : décès hebdomadaires standardisés par tranche d'âge"))+
 		  xlim(base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013), base::max(es_deces_standard_pays_semaine$numSemaineDepuis2013))
 		print(g)
 		
@@ -1252,10 +1255,6 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	    geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$bsup),linetype = "dashed",color="purple")+
 	    geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$binf),linetype = "dashed",color="purple")+
 	    geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$moyenne),color="purple")+
-	    theme(axis.title.x = element_blank(), 
-	          axis.text.x = element_blank(),
-	          axis.title.y = element_blank(),
-	          plot.title = element_text(color="#003366", size=25 ))+
 	    geom_text(x=26, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2013",size=6)+
 	    geom_text(x=78, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2014",size=6)+
 	    geom_text(x=130, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2015",size=6)+
@@ -1289,7 +1288,13 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_70_79[1]+
 	                   es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_ge80[1]), 
 	              label="Plus de 80 ans", color = 'black',		size = 6)+
-	    ggtitle(paste0("Décès hebdomadaires standardisés de ",str_to_title(nomPays)," par tranche d'âge"))+
+	    ggtitle(paste0(str_to_title(nomPays)," : décès hebdomadaires standardisés par tranche d'âge"))+
+	    ylab("Nombre de décès")+
+	    theme(axis.title.x = element_blank(), 
+	          axis.text.x = element_blank(),
+	          axis.title.y = element_text(color="#000000", size=20 ),
+	          plot.title = element_text(color="#003366", size=25 ),
+	          axis.text.y =  element_text(color="#000000", size=15 , angle =45))+
 	    xlim(base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013), base::max(es_deces_standard_pays_semaine$numSemaineDepuis2013))
 
 	  print(g)
@@ -1299,9 +1304,10 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		
 }
 
-################################################################################
-# Generer le graphique et le png associé : deces_hebdo_std_vaccination
-################################################################################
+#______________________________________________________________________________
+#### Generer le graphique et le png associé : deces_hebdo_std_vaccination ####
+#______________________________________________________________________________
+
 a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_semaine) {
 	start <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderStart")
 	end <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderEnd")
@@ -1883,7 +1889,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	essai_court<-essai %>% filter(numSemaineDepuis2013>314)
 	
 #
-# Graphique 1 : Situation des 15_24 ans
+##### Graphique 1 : Situation des 15_24 ans #####
 #
 	
 # Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
@@ -2128,7 +2134,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	}
 	
 #
-# Graphique 2 : Situation des 25- 49 ans
+##### Graphique 2 : Situation des 25- 49 ans #####
 #
 	
 	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand/25-50/")
@@ -2427,9 +2433,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	
 	
 	
-#
-# Graphique 3 : Situation des 50-59 ans
-#
+  #
+	##### Graphique 3 : Situation des 50-59 ans #####
+  #
 	
 	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand/50-59/")
 	a__f_createDir(repertoire)
@@ -2666,9 +2672,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
 	
 	
-#
-# Graphique 4 : Situation des 60- 69 ans
-#
+  #
+	##### Graphique 4 : Situation des 60- 69 ans #####
+  #
 	
 	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand/60-69/")
 	a__f_createDir(repertoire)
@@ -2906,9 +2912,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
 	
 	
-#
-# Graphique 5 : Situation des 70- 79 ans
-#
+  #
+	##### Graphique 5 : Situation des 70- 79 ans #####
+  #
 	
 	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand/70-79/")
 	a__f_createDir(repertoire)
@@ -3146,9 +3152,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	ggsave(pngFileRelPath, width = 11, height = 8, plot = a)	
 	
 	
-#
-# Graphique 6 : Situation des plus de 80 ans
-#
+  #
+	##### Graphique 6 : Situation des plus de 80 ans #####
+  #
 	
 	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand/80plus/")
 	a__f_createDir(repertoire)
@@ -3316,9 +3322,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	ggsave(pngFileRelPath, width = 11, height = 8, plot = a)		
 }
 
-################################################################################
-# Generer le graphique et le png associé : deces_hebdo_std_vaccination_interp
-################################################################################
+#____________________________________________________________________________________
+#### Generer le graphique et le png associé : deces_hebdo_std_vaccination_interp ####
+#____________________________________________________________________________________
 a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pays_semaine) {
 	
 	# ATTENTION : Pour voir les variables dans le debugger, il faut commenter le tryCatchLog
@@ -4121,7 +4127,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				essai_court<-essai %>% filter(numSemaineDepuis2013>314)
 				
 				#
-				# Graphique 1 : Situation des 15_24 ans
+				##### Graphique 1 : Situation des 15_24 ans #####
 				#
 				
 				# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
@@ -4366,7 +4372,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				}
 				
 				#
-				# Graphique 2 : Situation des 25- 49 ans
+				##### Graphique 2 : Situation des 25- 49 ans ####
 				#
 				
 				repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand_interp/25-50/")
@@ -4381,7 +4387,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				
 				#création des graphiques
 				
-				######graphique décès prédits VS réalité
+				######graphique décès prédits VS réalité ####
 				
 				if(nomPays != 'allemagne'){
 					#décès prédits
@@ -4495,7 +4501,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				
 				dev.print(device = png, file = pngFileRelPath, width = 1000) 
 				
-				#### graphique comparaison décès vaccins
+				###### graphique comparaison décès vaccins ####
 				
 				if (nomPays %in% c(
 						'autriche',
@@ -4666,7 +4672,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				
 				
 				#
-				# Graphique 3 : Situation des 50-59 ans
+				##### Graphique 3 : Situation des 50-59 ans #####
 				#
 				
 				repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand_interp/50-59/")
@@ -4905,7 +4911,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				
 				
 				#
-				# Graphique 4 : Situation des 60- 69 ans
+				##### Graphique 4 : Situation des 60- 69 ans ####
 				#
 				
 				repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand_interp/60-69/")
@@ -5145,7 +5151,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				
 				
 				#
-				# Graphique 5 : Situation des 70- 79 ans
+				##### Graphique 5 : Situation des 70- 79 ans ####
 				#
 				
 				repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand_interp/70-79/")
@@ -5214,7 +5220,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				
 				dev.print(device = png, file = pngFileRelPath, width = 1000)
 				
-				#### graphique comparaison décès vaccins
+				###### graphique comparaison décès vaccins #####
 				
 				if (nomPays %in% c(
 						'autriche',
@@ -5385,7 +5391,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				
 				
 				#
-				# Graphique 6 : Situation des plus de 80 ans
+				##### Graphique 6 : Situation des plus de 80 ans ####
 				#
 				
 				repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_Pays_Vaccin_stand_interp/80plus/")
@@ -5556,9 +5562,9 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 			})
 }
 
-#######################################################################################
-# Générer le graphique des décès Covid
-#######################################################################################
+#______________________________________________________________________________________
+#### Générer le graphique des décès Covid ####
+#______________________________________________________________________________________
 
 a__f_plot_es_deces_hebdo_covid <- function(es_deces_standard_pays_semaine) {
 	
@@ -5587,7 +5593,7 @@ a__f_plot_es_deces_hebdo_covid <- function(es_deces_standard_pays_semaine) {
 	
 	
 	#
-	# Graphique 1 : Situation des 15_24 ans
+	##### Graphique 1 : Situation des 15_24 ans ####
 	#
 	
 	if(nomPays %in% c('france','belgique')){
@@ -5655,7 +5661,7 @@ a__f_plot_es_deces_hebdo_covid <- function(es_deces_standard_pays_semaine) {
 	}
 	
 	#
-	# Graphique 2 : Situation des 25- 49 ans
+	##### Graphique 2 : Situation des 25- 49 ans ####
 	# 
 	if(nomPays %in% c('france','autriche')){
 		histo_deces_covid<-ggplot(essai_nouv)+
@@ -5722,7 +5728,7 @@ a__f_plot_es_deces_hebdo_covid <- function(es_deces_standard_pays_semaine) {
 	}
 	
 	#
-	# Graphique 3 : Situation des 50-59 ans
+	##### Graphique 3 : Situation des 50-59 ans ####
 	#
 	
 	if(nomPays %in% c('france','autriche')){
@@ -5795,7 +5801,7 @@ a__f_plot_es_deces_hebdo_covid <- function(es_deces_standard_pays_semaine) {
 	}
 	
 	#
-	# Graphique 4 : Situation des 60- 69 ans
+	##### Graphique 4 : Situation des 60- 69 ans ####
 	#
 	
 	
@@ -5843,8 +5849,8 @@ a__f_plot_es_deces_hebdo_covid <- function(es_deces_standard_pays_semaine) {
 		}
 	}
 	
-	#
-	# Graphique 5 : Situation des 70- 79 ans
+	# 
+	##### Graphique 5 : Situation des 70- 79 ans ####
 	#
 	if(nomPays %in% c('france','belgique','autriche')){
 		histo_deces_covid<-ggplot(essai_nouv)+
@@ -5894,7 +5900,7 @@ a__f_plot_es_deces_hebdo_covid <- function(es_deces_standard_pays_semaine) {
 	}
 	
 	#
-	# Graphique 6 : Situation des plus de 80 ans
+	##### Graphique 6 : Situation des plus de 80 ans ####
 	#
 	
 	if(nomPays %in% c('belgique','autriche','france')){
@@ -5944,9 +5950,9 @@ a__f_plot_es_deces_hebdo_covid <- function(es_deces_standard_pays_semaine) {
 }
 
 
-################################################################################
-# Generer le graphique et le png associé : deces_hebdo_vaccination
-################################################################################
+#_______________________________________________________________________________
+#### Generer le graphique et le png associé : deces_hebdo_vaccination ####
+#_______________________________________________________________________________
 a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_semaine) {
 	
 	# ATTENTION : Pour voir les variables dans le debugger, il faut commenter le tryCatchLog
@@ -8148,9 +8154,9 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 }
 
 
-################################################################################
-# Generer le graphique et le png associé : deces_hebdo_vaccination_regroupe
-################################################################################
+#_______________________________________________________________________________
+#### Generer le graphique et le png associé : deces_hebdo_vaccination_regroupe ####
+#_______________________________________________________________________________
 a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_standard_pays_semaine) {
 	
 	start <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderStart")
@@ -9342,21 +9348,21 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 }
 
 
-################################################################################
-# Generer le graphique et le png associé : Deces année coupée en juin
-################################################################################
+#_______________________________________________________________________________
+#### Generer le graphique et le png associé : Deces année coupée en juin ####
+#_______________________________________________________________________________
 
 source("src/analyses/world/eu/es/deces/Hebdo/es_deces_hebdo_std_ete_ete_cumul.R")
 
-################################################################################
-# Generer le graphique et le png associé : Deces cumulés par année et tranche d'âge
-################################################################################
+#_______________________________________________________________________________
+#### Generer le graphique et le png associé : Deces cumulés par année et tranche d'âge ####
+#_______________________________________________________________________________
 
 source("src/analyses/world/eu/es/deces/Hebdo/es_deces_hebdo_std_janvier_decembre_cumul.R")
 
-################################################################################
-# Generer le graphique et le png associé : Deces et Deces standardises
-################################################################################
+#_______________________________________________________________________________
+#### Generer le graphique et le png associé : Deces et Deces standardises ####
+#_______________________________________________________________________________
 a__f_plot_es_deces_annuel_vs_deces_std <- function(nomPays) {
 	
 	
@@ -9415,11 +9421,11 @@ a__f_plot_es_deces_annuel_vs_deces_std <- function(nomPays) {
 	DC2020vieux <- tempvieux$deces
 	DC2020stdvieux <- tempvieux$deces_theo_si_pop_2020
 	
-	#######################################################
+	#_______________________________________________________________________________
 	#
-	# Graphe des décès toutes causes
+	#### Graphe des décès toutes causes ####
 	#
-	#######################################################
+	#_______________________________________________________________________________
 	
 	barplot_deces <- ggplot(data = essai, aes(x=annee, y=deces, fill = moins65)) +
 			
@@ -9449,11 +9455,11 @@ a__f_plot_es_deces_annuel_vs_deces_std <- function(nomPays) {
 	#
 	ggsave(pngFileRelPath, width = 11, height = 8, plot = barplot_deces)	  
 	
-	#######################################################
+	#_______________________________________________________________________________
 	#
-	# Graphe des décès toutes causes standardisés
+	#### Graphe des décès toutes causes standardisés ####
 	#
-	#######################################################
+	#_______________________________________________________________________________
 	
 	barplot_decestheo <- ggplot(data=essai, 
 					aes(x=annee, y=deces_theo_si_pop_2020, fill = moins65)) +
@@ -9489,9 +9495,9 @@ a__f_plot_es_deces_annuel_vs_deces_std <- function(nomPays) {
 	
 }
 
-################################################################################
-# Generer le graphique et le png associé : Deces vs Deces COVID
-################################################################################
+#_______________________________________________________________________________
+#### Generer le graphique et le png associé : Deces vs Deces COVID ####
+#_______________________________________________________________________________
 a__f_plot_es_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_semaine, 
 		ylim_max) {
 	

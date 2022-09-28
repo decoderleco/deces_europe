@@ -174,9 +174,9 @@ es_deces_standard_pays_semaine_roumanie <- b__es_deces_week_standardises_si_pop_
   filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-6)
 
 
-#---------------------------------------#
-# Graphe superposé France / Suede / Portugal
-#---------------------------------------#
+#---------------------------------------------------#
+#### Graphe superposé France / Suede / Portugal ####
+#---------------------------------------------------#
 
 # Moyenne mobile sur 52 semaines
 es_moyenne_mobile <- running_mean(es_deces_standard_pays_semaine_france$deces_standardises_si_pop_2020, 
@@ -524,9 +524,9 @@ dev.print(device = png, file = pngFileRelPath, width = 1000)
 #	ggsave(paste0("gen/images/carte", i, ".png"), plot=p, width = 11, height = 8)
 #}
 
-#---------------------------------------#
-# Graphe deces_hebdo_std_moyenne_mobile de chaque pays
-#---------------------------------------#
+#-------------------------------------------------------------#
+#### Graphe deces_hebdo_std_moyenne_mobile de chaque pays ####
+#-------------------------------------------------------------#
 
 
 a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_albanie, 1000, 157)
@@ -564,7 +564,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_suede
 a__f_plot_es_deces_hebdo_std_moyenne_mobile(es_deces_standard_pays_semaine_suisse, 3000)
 
 #---------------------------------------------------------------------------#
-####    vaccinations et deces standard        ####
+####          vaccinations et deces standard                      ####
 #---------------------------------------------------------------------------#
 
 # Aucune donnée pour les moins de 40 ans en Allemagne
