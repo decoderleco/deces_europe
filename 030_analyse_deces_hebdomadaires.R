@@ -659,7 +659,7 @@ es_deces_standard_pays_semaine_europe <- b__es_deces_week_standardises_si_pop_20
   filter(geo %in% c('AT','BE','CY','HR','DK',
                     'ES','EE','FI','FR','EL','HU',
                     'IS','IT','LU','MT','NO',
-                    'PL','PT','SE')&numSemaineDepuis2013<=465) %>%
+                    'PL','PT','SE')&numSemaineDepuis2013<=490) %>%
   select(numSemaineDepuis2013,semaine,annee,time,
          deces_tot_15_24,
          deces_tot_25_49,
