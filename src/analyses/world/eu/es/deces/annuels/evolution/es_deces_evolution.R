@@ -63,6 +63,7 @@ print(ggplot(deces_complet_annuel_analysable2000) +
 				labs(title = "Décès standardisés par pays et année",
 						subtitle = "selon la population de la France en 2020",
 						caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
+				theme_bw()+
 				theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),
 						plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"),
 						axis.text.x = element_text(angle = 90))
@@ -84,6 +85,7 @@ print(ggplot(deces_complet_annuel_analysable2000_est) +
 				labs(title = "Décès standardisés par pays et année",
 						subtitle = "selon la population de la France en 2020",
 						caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
+				theme_bw()+
 				theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),
 						plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"),
 						axis.text.x = element_text(angle = 90))
@@ -102,6 +104,7 @@ print(ggplot(deces_complet_annuel_analysable2000_ouest) +
 				labs(title = "Décès standardisés par pays et année",
 						subtitle = "selon la population de la France en 2020",
 						caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
+				theme_bw()+
 				theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),
 						plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"),
 						axis.text.x = element_text(angle = 90))
@@ -153,6 +156,7 @@ print(ggplot(deces_complet_annuel_analysable2000_troisannees) +
 				labs(title = "Décès standardisés par pays et par période de 3 ans",
 						subtitle = "selon la population de la France en 2020",
 						caption = "Source des données : Eurostat", x="", y="nombre de décès standardisés")+
+				theme_bw()+
 				theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),
 						plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"),
 						axis.text.x = element_text(angle = 90))
