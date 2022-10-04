@@ -43,7 +43,6 @@ source("src/analyses/world/eu/es/deces/annuels/evolution/es_deces_evolution.R")
 source("src/analyses/world/eu/es/deces/annuels/cartes/es_deces_cartes_europe.R")
 
 
-
 ############################################
 #
 # Pyramides des âges des pays européens     
