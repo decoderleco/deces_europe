@@ -1,8 +1,8 @@
-###############################################################################
+#----------------------------------------------------------------------------#
 #
 # Cartes d'Europe
 # 
-###############################################################################
+#----------------------------------------------------------------------------#
 
 ####typologie de Gravité de Décès de l'année 2020####
 
@@ -78,9 +78,9 @@ worldmap <- ne_countries(scale = 'medium',
 						geounit == "Walloon Region" ~ "Belgium",
 						TRUE ~ location))
 
-#-------------
+#----------------------------------------------------------------------------#
 # Créer un Thème pour l'affichage des Cartes d'Europe
-#-------------
+#----------------------------------------------------------------------------#
 
 my_theme <- theme(legend.position=c(0.07, 0.4),
 		plot.title = element_text(hjust = 0.5,
@@ -120,7 +120,7 @@ temp <- es_annne_deces_maximum %>%
 		
 		# Grouper les années antérieures à une certaine date pour avoir moins de 11 années distinctes (à cause de la palette Spectral)
 		mutate(annee_record_deces = case_when(
-						as.integer(annee_record_deces) < 2000 ~ "< 2000",
+						as.integer(annee_record_deces) < 2010 ~ "< 2010",
 						TRUE ~ annee_record_deces
 				)
 		)
@@ -152,7 +152,7 @@ p <- ggplot(data = worldmap_a_tracer) +
 #				aes(label = paste0(geo, " ", annee_record_deces))
 #				) +
 		
-		scale_fill_manual(values=palette_6_couleurs_oranges) +
+		scale_fill_manual(values=palette_5_couleurs_oranges) +
 		#scale_fill_brewer(palette = "Oranges") +
 		#scale_fill_brewer(palette = "Blues") +
 #		scale_fill_brewer(palette = "Spectral", direction = -1) +
@@ -185,11 +185,11 @@ a__f_createDir(repertoire)
 
 ggsave(paste0(repertoire, "/Eurostat_Deces_Annee_Record.png"), plot=p, width = 11, height = 8)
 
-############################################
+#----------------------------------------------------------------------------#
 #
-# Carte de Typologie des décès de l'année 2020
+#### Carte de Typologie des décès de l'année 2020 ####
 #
-############################################
+#----------------------------------------------------------------------------#
 
 niveau_mortalite_par_pays <- annee_comparaison_2020 %>% filter(time=="2020-01-01") %>%
 		select(location, typo) 
@@ -228,11 +228,11 @@ plot(p)
 ggsave(paste0(repertoire, "/Eurostat_Deces_2020_Typologie.png"), plot=p, width = 11, height = 8)
 
 
-############################################
+#----------------------------------------------------------------------------#
 #
-# Carte de Typologie des décès de l'année 2021
+#### Carte de Typologie des décès de l'année 2021 ####
 #
-############################################
+#----------------------------------------------------------------------------#
 
 niveau_mortalite_par_pays <- annee_comparaison_2021 %>% filter(time=="2021-01-01") %>%
 		select(location, typo2021)

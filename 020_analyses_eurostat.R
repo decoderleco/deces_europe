@@ -1,8 +1,8 @@
-###############################################################################
+#------------------------------------------#
 #
 # Analyse des Décès (EuroStat) par Année
 # 
-###############################################################################
+#------------------------------------------#
 
 library(pyramid)
 library(maptools)
@@ -25,47 +25,47 @@ library(reshape2)
 library(tidyr)
 library(RColorBrewer)
 
-############################################
+#------------------------------------------#
 #
-# Evolution des décès annuels Europe
+#### Evolution des décès annuels Europe ####
 #
-############################################
+#------------------------------------------#
 
 source("src/analyses/world/eu/es/deces/annuels/evolution/es_deces_evolution.R")
 
 
-############################################
+#------------------------------------------#
 #
-# Cartes par Typologies de Gravité de Décès
+#### Cartes par Typologies de Gravité de Décès ####
 #
-############################################
+#------------------------------------------#
 
 source("src/analyses/world/eu/es/deces/annuels/cartes/es_deces_cartes_europe.R")
 
 
-############################################
+#------------------------------------------#
 #
-# Pyramides des âges des pays européens     
+#### Pyramides des âges des pays européens ####    
 #
-############################################
+#------------------------------------------#
 
 source("src/analyses/world/eu/es/pyramides/es_pyramides_ages.R")
 
 
-############################################
+#------------------------------------------#
 #
-# Histogrammes Décès et Décès Standardisés
+#### Histogrammes Décès et Décès Standardisés ####
 #
-############################################
+#------------------------------------------#
 
 source("src/analyses/world/eu/es/deces/annuels/evolution/es_deces_std_histogrammes.R")
 
 
-############################################
+#------------------------------------------#
 #
-# Espérance de vie
+#### Espérance de vie ####
 #
-############################################
+#------------------------------------------#
 
 source("src/analyses/world/eu/es/deces/annuels/evolution/es_esperance_vie.R")
 
