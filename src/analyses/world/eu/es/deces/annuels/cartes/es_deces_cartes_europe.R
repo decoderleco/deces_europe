@@ -120,7 +120,7 @@ temp <- es_annne_deces_maximum %>%
 		
 		# Grouper les années antérieures à une certaine date pour avoir moins de 11 années distinctes (à cause de la palette Spectral)
 		mutate(annee_record_deces = case_when(
-						as.integer(annee_record_deces) < 2000 ~ "< 2000",
+						as.integer(annee_record_deces) < 2010 ~ "< 2010",
 						TRUE ~ annee_record_deces
 				)
 		)
@@ -152,7 +152,7 @@ p <- ggplot(data = worldmap_a_tracer) +
 #				aes(label = paste0(geo, " ", annee_record_deces))
 #				) +
 		
-		scale_fill_manual(values=palette_6_couleurs_oranges) +
+		scale_fill_manual(values=palette_5_couleurs_oranges) +
 		#scale_fill_brewer(palette = "Oranges") +
 		#scale_fill_brewer(palette = "Blues") +
 #		scale_fill_brewer(palette = "Spectral", direction = -1) +
