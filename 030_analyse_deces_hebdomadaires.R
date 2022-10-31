@@ -394,6 +394,11 @@ es_deces_standard_pays_semaine_france$bsup_ge60 <- mean(es_deces_standard_pays_s
 
 essai <- es_deces_standard_pays_semaine_france %>% filter(numSemaineDepuis2013 > 192)%>% filter(numSemaineDepuis2013< 451)
 
+grippe_lissage <- read.csv("data/csv/lissage_grippe.csv", sep=";")
+essai<-essai %>% left_join(grippe_lissage, by = "numSemaineDepuis2013")
+essai<-essai %>% mutate(vaccins_grippe=ifelse(is.na(vaccins_grippe),0,vaccins_grippe))
+
+
 g<-ggplot(data = essai) + 
   geom_area(aes(x = numSemaineDepuis2013, 
                 y = deces_standardises_si_pop_2020_ge60),color="#000099",fill="#000099",size=1,alpha=1/4) +
