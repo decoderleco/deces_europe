@@ -32,6 +32,11 @@ a__f_plot_es_deces_hebdo_brut <- function(nomPays, deces_hebdo) {
 				data_a_tracer <- deces_hebdo %>% 
 						filter(geo == nomPays)
 				
+				# Enlever la colonne geo
+				data_a_tracer <- data_a_tracer %>% 
+						ungroup() %>%
+						select(-geo)
+				
 				# Ajouter une numéro de semaine numérique
 				data_a_tracer$numSemaineDepuis2013 <- 1:nrow(data_a_tracer)
 				
@@ -40,25 +45,36 @@ a__f_plot_es_deces_hebdo_brut <- function(nomPays, deces_hebdo) {
 				# Générer le graphique
 				#
 				
+				# Séparateur d'années
+				semaine_separateur_annee = data_a_tracer %>%
+						filter(str_sub(semaine, 5, 7) == "W01") %>%
+						select(numSemaineDepuis2013)
+				
+				labelAnnee = 1:nrow(semaine_separateur_annee) + 2012
+				
+				
+				
 				# Graphe
 				p <- ggplot(data_a_tracer,
 								aes(x = numSemaineDepuis2013)) +
-						ggtitle(paste0("Décès bruts hebdo", str_to_title(nomPays))) +
+						ggtitle(paste0("Décès bruts hebdo : ", str_to_title(nomPays))) +
 						theme_bw() +
 						theme(plot.title = element_text(color = "#003366", size = 20, face = "bold",hjust = 0.5),
-								axis.text.x = element_text(angle = 45))+
+								axis.text.x = element_text(hjust = 0, angle = 00))+
 						
-						labs(caption = "Source des données : Eurostat")+
+						labs(caption = "Source des données : Eurostat") +
 						
 						
+						scale_x_continuous(breaks = semaine_separateur_annee$numSemaineDepuis2013, 
+								labels = labelAnnee) +
 						scale_y_continuous(limits = c(0, 80000)) +
 						
 						geom_point(aes(y = deces)) +
 						geom_line(aes(y = deces)) +
 						
 						xlab("semaine")+ 
-						ylab(paste0("Décès bruts hebdo"))
-						
+						ylab(paste0("Décès hebdo bruts"))
+				
 				
 				#
 				# Dessiner le graphe
