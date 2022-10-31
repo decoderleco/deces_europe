@@ -73,11 +73,11 @@ a__f_add_tranche_age <- function(tabWithAge) {
 ################################################################################
 a__f_plot_fr_deces_quotidiens_par_region <- function(fichier, nomRegion) {
 	
-  region <- fichier %>%
-    filter(region_name == nomRegion) %>% 
-    filter(deces_date_complete >= "2018-01-01")
+	region <- fichier %>%
+			filter(region_name == nomRegion) %>% 
+			filter(deces_date_complete >= "2018-01-01")
 	
-  #Nom du répertoire
+	#Nom du répertoire
 	repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_Quotidiens/Region/")
 	a__f_createDir(repertoire)
 	
@@ -90,44 +90,45 @@ a__f_plot_fr_deces_quotidiens_par_region <- function(fichier, nomRegion) {
 	# ATTENTION : Du fait que l'on est dans une fonction (ou un for), il faut impérativement
 	#             mettre un print() !!!
 	print(ggplot(data = region) + 
-	        
+					
 					
 					geom_line(aes(x = deces_date_complete, 
 									y = deces_centre_reduit)) + 
 					
 					# Echelle verticale
 					ylim(-3, 10) + 
-					  
-					  annotate(
-					    "rect",
-					    xmin = as.Date("2020-03-17"),
-					    xmax = as.Date("2020-05-11"),
-					    ymin = -3,
-					    ymax = 10,
-					    alpha = .2,
-					    fill = "orange"
-					  ) +
-					  annotate(
-					    "rect",
-					    xmin = as.Date("2020-10-30"),
-					    xmax = as.Date("2020-12-15"),
-					    ymin = -3,
-					    ymax = 10,
-					    alpha = .2,
-					    fill = "orange"
-					  )+
+					
+					# Rectangle orange durant les confinements
+					annotate(
+							"rect",
+							xmin = as.Date("2020-03-17"),
+							xmax = as.Date("2020-05-11"),
+							ymin = -3,
+							ymax = 10,
+							alpha = .2,
+							fill = "orange"
+					) +
+					annotate(
+							"rect",
+							xmin = as.Date("2020-10-30"),
+							xmax = as.Date("2020-12-15"),
+							ymin = -3,
+							ymax = 10,
+							alpha = .2,
+							fill = "orange"
+					) +
 					
 					# Faire un graphique par département, répartis sur 3 colonnes
 					facet_wrap(~dep_name) +
 					
 					theme(legend.position = "top") +
-					  
+					
 					theme(
-					    plot.title = element_text(color="black", size=26, face="bold.italic"),
-					    axis.title.y = element_text(color="black", size=22, face="bold"),
-					    strip.text.x = element_text(size = 20, color = "black"),
-					    axis.text.x = element_text(color="black",size=18),
-					    axis.text.y = element_text(color="black",size=18)) +
+							plot.title = element_text(color="black", size=26, face="bold.italic"),
+							axis.title.y = element_text(color="black", size=22, face="bold"),
+							strip.text.x = element_text(size = 20, color = "black"),
+							axis.text.x = element_text(color="black",size=18),
+							axis.text.y = element_text(color="black",size=18)) +
 					
 					ggtitle(paste0("Décès quotidiens ",nomRegion," (", base::max(region$deces_date_complete) ,") par département")) +
 					
