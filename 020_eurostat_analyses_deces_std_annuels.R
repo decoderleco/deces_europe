@@ -27,11 +27,11 @@ library(RColorBrewer)
 
 #------------------------------------------#
 #
-#### Evolution des décès annuels Europe ####
+#### Evolution des décès annuels standardisés Europe ####
 #
 #------------------------------------------#
 
-source("src/analyses/world/eu/es/deces/annuels/evolution/es_deces_evolution.R")
+source("src/analyses/world/eu/es/deces/annuels/evolution/es_deces_std_evolution.R")
 
 
 #------------------------------------------#
