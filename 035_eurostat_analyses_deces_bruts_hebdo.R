@@ -17,6 +17,8 @@ a__original_es_deces_week <- a__f_downloadEuroStatIfNeeded(var = a__original_es_
 es_deces_week <- a__original_es_deces_week %>%
 		# Filtrer les colonnes
 		select(geo, semaine = time, values) %>%
+		# Filtrer les semaines W99 !!!
+		filter(!grepl("W99", semaine, fixed = TRUE)) %>%
 		# Regrouper par semaines
 		group_by(geo, semaine) %>%
 		summarize(deces = sum(values)) %>%
@@ -24,12 +26,21 @@ es_deces_week <- a__original_es_deces_week %>%
 		arrange(geo, semaine)
 
 
-
 #---------------------------------------#
 #### Décès bruts hebdo        ####
 #---------------------------------------#
 
-data_a_tracer <- a__f_plot_es_deces_hebdo_brut("FR", es_deces_week)
+temp <- es_deces_week %>% select(geo) %>% filter(geo != "AD") %>% distinct()
+
+for (paysId in temp$geo) {
+
+	print(paysId)
+	
+	paysNom <- a__f_getPaysName(paysId)
+	print(paste("=>", paysNom))
+	
+	data_a_tracer <- a__f_plot_es_deces_hebdo_brut(paysNom, es_deces_week)
+}
 
 
 message("Terminé 035")
