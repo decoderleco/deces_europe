@@ -58,11 +58,11 @@ a__f_plot_es_deces_hebdo_brut <- function(nomPays, deces_hebdo) {
 				# Générer le graphique
 				#
 				
-#				# Séparateur d'années
-#				semaine_separateur_annee = data_a_tracer %>%
-#						filter(str_sub(semaine, 5, 7) == "W01") %>%
-#						select(numSemaineDepuis2013)
-#				
+				# Séparateur d'années
+				separateur_annees = data_a_tracer %>%
+						filter(str_sub(semaine, 5, 7) == "W01") %>%
+						select(date)
+				
 #				labelAnnee = 1:nrow(semaine_separateur_annee) + 2012
 				
 				
@@ -78,8 +78,7 @@ a__f_plot_es_deces_hebdo_brut <- function(nomPays, deces_hebdo) {
 						labs(caption = "Source des données : Eurostat") +
 						
 						
-#						scale_x_continuous(breaks = semaine_separateur_annee$numSemaineDepuis2013, 
-#								labels = labelAnnee) +
+						scale_x_continuous(breaks = separateur_annees$date) 
 						scale_y_continuous(limits = c(0, ymax)) +
 						
 						geom_point(aes(y = deces)) +
