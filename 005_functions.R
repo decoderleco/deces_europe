@@ -146,6 +146,7 @@ source("src/graphiques/graphiques.R")
 # EuroStat Décès Hebdomadaires
 ################################################################################
 
+source("src/analyses/world/eu/es/es_functions.R")
 source("src/analyses/world/eu/es/deces/hebdo/es_deces_hebdo_std.R")
 
 

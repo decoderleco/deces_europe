@@ -43,7 +43,12 @@ install.packages("markdown")
 # Gestion des Exceptions
 install.packages("devtools")
 library(devtools)
+
+# TODO TW : L'instruction ci-dessous nécessite l'exécution de 005 !
 install_github("aryoda/tryCatchLog")
+
+# Conversion semaine en date et inversément
+install.packages('ISOweek')
 
 library(knitr)
 library(rmarkdown)

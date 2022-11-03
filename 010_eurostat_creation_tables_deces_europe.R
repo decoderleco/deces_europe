@@ -1677,6 +1677,7 @@ eu_mesures_gouv <- eu_mesures_gouv %>%
 				date_end = as.Date(date_end))
 
 # Convertir en n° de semaine (20xxWyy)
+# TODO TW : Utiliser a__f_get_eurostat_week
 eu_mesures_gouv <- eu_mesures_gouv %>%
 		mutate(time_start = paste0(isoyear(date_start),
 						"W", 
