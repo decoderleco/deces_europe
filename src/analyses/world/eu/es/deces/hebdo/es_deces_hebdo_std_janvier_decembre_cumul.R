@@ -62,7 +62,8 @@ a__f_plot_es_deces_hebdo_std_get_line_colors <- function(df_annee_semaine, colNa
 	## print(length(lineColors) - (lastYear - deathMaxYear))
 	
 	# Forcer la couleur rouge pour l'année la pire
-	lineColors[length(lineColors) - (lastYear - deathMaxYear)] <- '#FF0000'
+	#je mets en commentaires, car ce n'est pas très lisible
+	#lineColors[length(lineColors) - (lastYear - deathMaxYear)] <- '#FF0000'
 	
 	# Renvoyer
 	lineColors
