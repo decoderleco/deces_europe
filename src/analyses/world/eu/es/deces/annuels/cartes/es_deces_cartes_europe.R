@@ -35,7 +35,7 @@ annee_comparaison_2021 <- rang_annees_2021 %>%
 
 #### Année Record de dèces ####
 
-es_annne_deces_maximum <- tapply(deces_complet_annuel_analysable1990$taux_deces, deces_complet_annuel_analysable1990$geo, max)
+es_annne_deces_maximum <- tapply(rang_annees$taux_deces, rang_annees$geo, max)
 es_annne_deces_maximum <- data.frame(es_annne_deces_maximum)
 
 es_annne_deces_maximum$geo <- rownames(es_annne_deces_maximum)
