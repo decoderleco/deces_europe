@@ -97,16 +97,18 @@ if (!shallForceDownload && exists(varName)) {
 	# Liste des URLs des fichiers de patients décédés
 	
 	urls_listes_deces <- c(
+	    
+	    '2022t4' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20230111-121130/deces-2022-t4.txt',
 			'2022t3' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20221006-142208/deces-2022-t3.txt',
 			'2022t2' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220707-171620/deces-2022-t2.txt',
 			'2022t1' ='https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220411-143352/deces-2022-t1.txt',
 			'2021' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220112-114131/deces-2021.txt',
 			'2020' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20210112-143457/deces-2020.txt',
 			'2019' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20200113-173945/deces-2019.txt',
-			'2018' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191205-191652/deces-2018.txt'
-	#		'2017' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192304/deces-2017.txt',
-	#		'2016' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192203/deces-2016.txt',
-	#		'2015' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192119/deces-2015.txt',
+			'2018' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191205-191652/deces-2018.txt',
+			'2017' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192304/deces-2017.txt',
+			'2016' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192203/deces-2016.txt',
+			'2015' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192119/deces-2015.txt'
 	#		'2014' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-192022/deces-2014.txt'
 	#'2013' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-191938/deces-2013.txt',
 	#'2012' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20191209-191851/deces-2012.txt',
@@ -583,7 +585,18 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 # Deces des 0 an
    deces_par_jour_age_des_0an <- deces_par_jour_age %>% 
 		   filter(age_deces_millesime == 0)
+
+deces_par_mois_age_des_0an <- deces_par_jour_age_des_0an %>% 
+  mutate(mois_annee = paste0(year(deces_date_complete),"-",substr(deces_date_complete,6,7),"-01")) %>% 
+  filter(deces_date_complete >= "2018-01-01")
    
+deces_par_mois_age_des_0an <- deces_par_mois_age_des_0an %>% group_by(mois_annee) %>% 
+  summarise(nbDeces=sum(nbDeces))
+
+deces_par_mois_age_des_0an <- deces_par_mois_age_des_0an %>% 
+  mutate(mois_annee = as.Date(mois_annee))
+
+ ###### deces quotidiens #####
    print(ggplot(data = deces_par_jour_age_des_0an,
 			    mapping = aes(x = deces_date_complete, y = nbDeces)) +
            geom_smooth() +
@@ -594,7 +607,8 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
 		   ggtitle("Décès quotidiens des 0 an") +
 		   
 		   xlab("date de décès") + 
-		   ylab("nombre de décès")
+		   ylab("nombre de décès")+
+		     scale_x_date(limits = c(as.Date("2018-1-1"), NA))
    )
 
    #Nom du fichier png à générer
@@ -605,6 +619,77 @@ deces_par_jour_tranchedage <- deces_par_jour_tranchedage %>%
    
    dev.print(device = png, file = pngFileRelPath, width = 1000)
    
+   ###### deces mensuels ######
+   print(ggplot(data = deces_par_mois_age_des_0an,
+                mapping = aes(x = mois_annee, y = nbDeces)) +
+           geom_smooth() +
+           geom_line() +
+           
+           theme(legend.position = "top") +
+           
+           ggtitle("Décès mensuels des 0 an") +
+           
+           xlab("date de décès") + 
+           ylab("nombre de décès")+ 
+           scale_x_date(date_labels = "%B %y")+
+           theme(axis.text.x = element_text(angle=45, hjust = 1))
+   )
+   
+   #Nom du fichier png à générer
+   
+   repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_Quotidiens/Tranche_age")
+   a__f_createDir(repertoire)
+   pngFileRelPath <- paste0(repertoire, "/deces_par_mois_age_des_0an", ".png")
+   
+   dev.print(device = png, file = pngFileRelPath, width = 1000)
+   
+   write.csv2(deces_par_mois_age_des_0an, file='gen/csv/deces_par_mois_0_an.csv')
+  
+   #------------------------------------------------------------------------------#
+   #
+   #### Deces par mois depuis 2018 des 0 ans selon le mois de naissance ####
+   #
+   #------------------------------------------------------------------------------#
+   
+   # Deces des 0 an
+   deces_par_mois_naissance_des_0an <- b__fr_gouv_deces_quotidiens %>% 
+     filter(age_deces_millesime == 0) %>% filter(substr(naissance_code_lieu,1,2)<=95)
+   
+   deces_par_mois_naissance_des_0an <- deces_par_mois_naissance_des_0an %>% 
+     mutate(mois_annee = paste0(year(naissance_date_complete),"-",substr(naissance_date_complete,6,7),"-01")) %>% 
+     filter(deces_date_complete >= "2015-01-01")
+   
+   deces_par_mois_naissance_des_0an <- deces_par_mois_naissance_des_0an %>% group_by(mois_annee) %>% 
+     summarise(nbDeces=sum(dplyr::n()))
+   
+   deces_par_mois_naissance_des_0an <- deces_par_mois_naissance_des_0an %>% 
+     mutate(mois_annee = as.Date(mois_annee))
+   
+   #deces mensuels
+   print(ggplot(data = deces_par_mois_naissance_des_0an,
+                mapping = aes(x = mois_annee, y = nbDeces)) +
+           geom_smooth() +
+           geom_line() +
+           
+           theme(legend.position = "top") +
+           
+           ggtitle("Décès mensuels des 0 an") +
+           
+           xlab("date de décès") + 
+           ylab("nombre de décès")+ 
+           scale_x_date(date_labels = "%B %y")+
+           theme(axis.text.x = element_text(angle=45, hjust = 1))
+   )
+   
+   #Nom du fichier png à générer
+   
+   repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_Quotidiens/Tranche_age")
+   a__f_createDir(repertoire)
+   pngFileRelPath <- paste0(repertoire, "/deces_par_mois_de naissance_des_0an", ".png")
+   
+   dev.print(device = png, file = pngFileRelPath, width = 1000)
+   
+   write.csv2(deces_par_mois_naissance_des_0an, file='gen/csv/deces_par_mois_de_naissance_0_an.csv') 
    
    if (shallDeleteVars) rm(deces_par_jour_age_des_0an)
    
