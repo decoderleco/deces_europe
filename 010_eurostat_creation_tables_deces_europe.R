@@ -528,7 +528,7 @@ es_deces_et_pop_annuel_by_agequinq <- es_deces_et_pop_annuel_by_agequinq %>%
  #récupération des décès 2020
 deces2020 <- es_deces_et_pop_annuel_by_agequinq %>% 
   filter(time=="2020-01-01") %>% 
-  rename(deces2020=deces) %>% 
+  dplyr::rename(deces2020=deces) %>% 
   select(-population,-time,-pop2020)
 
 
@@ -889,7 +889,7 @@ population_england <- melt(population_england,id.vars = 'Age',measure.vars = col
 population_england <- population_england %>% mutate(time = str_sub(variable,2,11)) %>% 
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
-  rename(population = value) %>% 
+  dplyr::rename(population = value) %>% 
   mutate(geo="EN")
 
 col_population_ireland <- colnames(population_ireland)
@@ -897,7 +897,7 @@ population_ireland <- melt(population_ireland,id.vars = 'Age',measure.vars = col
 population_ireland <- population_ireland %>% mutate(time = str_sub(variable,2,11)) %>% 
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
-  rename(population = value)%>% 
+  dplyr::rename(population = value)%>% 
   mutate(geo="IR")
 
 
@@ -906,7 +906,7 @@ population_northern_ireland <- melt(population_northern_ireland,id.vars = 'Age',
 population_northern_ireland <- population_northern_ireland %>% mutate(time = str_sub(variable,2,11)) %>% 
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
-  rename(population = value)%>% 
+  dplyr::rename(population = value)%>% 
   mutate(geo="NI")
 
 
@@ -915,7 +915,7 @@ population_scotland <- melt(population_scotland,id.vars = 'Age',measure.vars = c
 population_scotland <- population_scotland %>% mutate(time = str_sub(variable,2,11)) %>% 
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
-  rename(population = value)%>% 
+  dplyr::rename(population = value)%>% 
   mutate(geo="SC")
 
 
@@ -924,7 +924,7 @@ population_wales <- melt(population_wales,id.vars = 'Age',measure.vars = col_pop
 population_wales <- population_wales %>% mutate(time = str_sub(variable,2,11)) %>% 
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
-  rename(population = value)%>% 
+  dplyr::rename(population = value)%>% 
   mutate(geo="WA")
 
 #récupérer les décès annuels
@@ -942,7 +942,7 @@ deces_england <- melt(deces_england,id.vars = 'Age',measure.vars = col_deces_eng
 deces_england <- deces_england %>% mutate(time = str_sub(variable,2,11)) %>% 
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
-  rename(deces = value) %>% 
+  dplyr::rename(deces = value) %>% 
   mutate(geo="EN")
 
 
@@ -951,7 +951,7 @@ deces_ireland <- melt(deces_ireland,id.vars = 'Age',measure.vars = col_deces_ire
 deces_ireland <- deces_ireland %>% mutate(time = str_sub(variable,2,11)) %>% 
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
-  rename(deces = value)%>% 
+  dplyr::rename(deces = value)%>% 
   mutate(geo="IR")
 
 
@@ -960,7 +960,7 @@ deces_northern_ireland <- melt(deces_northern_ireland,id.vars = 'Age',measure.va
 deces_northern_ireland <- deces_northern_ireland %>% mutate(time = str_sub(variable,2,11)) %>% 
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
-  rename(deces = value)%>% 
+  dplyr::rename(deces = value)%>% 
   mutate(geo="NI")
 
 
@@ -969,7 +969,7 @@ deces_scotland <- melt(deces_scotland,id.vars = 'Age',measure.vars = col_deces_s
 deces_scotland <- deces_scotland %>% mutate(time = str_sub(variable,2,11)) %>% 
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
-  rename(deces = value)%>% 
+  dplyr::rename(deces = value)%>% 
   mutate(geo="SC")
 
 
@@ -978,7 +978,7 @@ deces_wales <- melt(deces_wales,id.vars = 'Age',measure.vars = col_deces_wales[c
 deces_wales <- deces_wales %>% mutate(time = str_sub(variable,2,11)) %>% 
   mutate(time = as.Date(time, format = "%Y . %m . %d")) %>% 
   select(-variable) %>% 
-  rename(deces = value)%>% 
+  dplyr::rename(deces = value)%>% 
   mutate(geo="WA")
 
 #regrouper les populations
@@ -1070,7 +1070,7 @@ deces_agequinq_concat <- deces_concat %>% filter(time >= "2002-01-01") %>%
 anglais <- deces_agequinq_concat %>% left_join(population_agequinq_concat)
   
 anglais2020 <- anglais %>% filter (time=="2020-01-01") %>% 
-  rename (deces2020 =deces, pop2020=population) %>% 
+  dplyr::rename (deces2020 =deces, pop2020=population) %>% 
   select(-time)
 
 anglais <- anglais %>% left_join(anglais2020) %>% mutate (sex = 'T')
@@ -1271,15 +1271,11 @@ numSemainesDepuis2013Complet <- numSemainesDepuis2013Complet %>%
 nbSemainesParAnneeDepuis2013 <- count(numSemainesDepuis2013Complet, annee) %>%
   dplyr::rename(nbSemainesDansAnnee = n)
 
-# Forcer 52 semaines en 2021
+# Forcer 52 semaines en 2021,2022,2023
 nbSemainesParAnneeDepuis2013 <- nbSemainesParAnneeDepuis2013 %>%
-		mutate(nbSemainesDansAnnee = if_else(annee %in% c(2021,2022), 
+		mutate(nbSemainesDansAnnee = if_else(annee %in% c(2021,2022,2023), 
 						as.integer(52),
 						nbSemainesDansAnnee))
-
-# Ajouter 52 semaines pour 2023
-nbSemainesParAnneeDepuis2013 <- nbSemainesParAnneeDepuis2013 %>%
-  rbind(c("2023", 52))
 
 
 if (shallDeleteVars) rm(es_deces_week)
@@ -1992,13 +1988,31 @@ vaccination_dose3 <-dcast(a__vaccination_age,
 
 colnames(vaccination_dose3)[3:19] <- paste(colnames(vaccination_dose3)[3:19], "dose3", sep = "_")
 
+vaccination_dose4 <-dcast(a__vaccination_age,
+                          time + Region ~ TargetGroup,
+                          value.var = "DoseAdditional2",
+                          fun.aggregate = sum)
+
+colnames(vaccination_dose4)[3:19] <- paste(colnames(vaccination_dose4)[3:19], "dose4", sep = "_")
+
+vaccination_dose5 <-dcast(a__vaccination_age,
+                          time + Region ~ TargetGroup,
+                          value.var = "DoseAdditional3",
+                          fun.aggregate = sum)
+
+colnames(vaccination_dose5)[3:19] <- paste(colnames(vaccination_dose5)[3:19], "dose5", sep = "_")
+
 vaccination_simple <-vaccination_simple %>% left_join(vaccination_dose1) %>% 
   left_join(vaccination_dose2) %>% 
-  left_join(vaccination_dose3)
+  left_join(vaccination_dose3) %>% 
+  left_join(vaccination_dose4) %>% 
+  left_join(vaccination_dose5)
 
 if (shallDeleteVars) rm(vaccination_dose2)
 if (shallDeleteVars) rm(vaccination_dose1)
 if (shallDeleteVars) rm(vaccination_dose3)
+if (shallDeleteVars) rm(vaccination_dose4)
+if (shallDeleteVars) rm(vaccination_dose5)
 
 
 vaccination_simple <- vaccination_simple %>% dplyr::rename(geo = Region)
