@@ -202,7 +202,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 	
 	# Lignes verticales
-	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
 	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
@@ -215,6 +215,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	text(339, 0, "2019", cex=1.2)
 	text(391, 0, "2020", cex=1.2)
 	text(440, 0, "2021", cex=1.2)
+	text(492, 0, "2022", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -338,7 +339,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		mtext("                                                          fin de confinement", side=1, col="green", line=1)
 		
 		# Lignes verticales
-		abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+		abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 		abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
 		abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 		
@@ -352,6 +353,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		text(339, base::min(essai$deces_standardises_si_pop_2020_15_24), "2019", cex=1.2)
 		text(391, base::min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
 		text(440, base::min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
+		text(492, base::min(essai$deces_standardises_si_pop_2020_15_24), "2022", cex=1.2)
 		
 		# Superposer la moyenne mobile
 		par(new=T)
@@ -470,7 +472,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		mtext("                                                          fin de confinement", side=1, col="green", line=2)
 		
 		# Lignes verticales
-		abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+		abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 		abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
 		abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 		
@@ -483,6 +485,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		text(339, base::min(essai$deces_standardises_si_pop_2020_25_49), "2019", cex=1.2)
 		text(391, base::min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
 		text(440, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
+		text(492, base::min(essai$deces_standardises_si_pop_2020_25_49), "2022", cex=1.2)
 		
 		#text(26, 22000, nomPays, cex=1.2)
 		
@@ -604,7 +607,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	mtext("                                                                   Source : Eurostat décès hebdomadaires et population", side=1, col="black", line=3)
 	
 	# Lignes verticales
-	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
 	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
@@ -617,6 +620,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	text(339, base::min(essai$deces_standardises_si_pop_2020_50_59), "2019", cex=1.2)
 	text(391, base::min(essai$deces_standardises_si_pop_2020_50_59), "2020", cex=1.2)
 	text(440, base::min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
+	text(492, base::min(essai$deces_standardises_si_pop_2020_50_59), "2022", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -737,7 +741,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 	
 	# Lignes verticales
-	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
 	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
@@ -750,6 +754,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	text(339, base::min(essai$deces_standardises_si_pop_2020_60_69), "2019", cex=1.2)
 	text(391, base::min(essai$deces_standardises_si_pop_2020_60_69), "2020", cex=1.2)
 	text(440, base::min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
+	text(492, base::min(essai$deces_standardises_si_pop_2020_60_69), "2022", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -870,7 +875,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 	
 	# Lignes verticales
-	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
 	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
@@ -883,6 +888,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	text(339, base::min(essai$deces_standardises_si_pop_2020_70_79), "2019", cex=1.2)
 	text(391, base::min(essai$deces_standardises_si_pop_2020_70_79), "2020", cex=1.2)
 	text(440, base::min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
+	text(492, base::min(essai$deces_standardises_si_pop_2020_70_79), "2022", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -1005,7 +1011,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	mtext("                                                          fin de confinement", side=1, col="green", line=1)
 	
 	# Lignes verticales
-	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 	abline(v=Vdebut_confinement, col="orange", lty=3, lwd = 2)
 	abline(v=Vfin_confinement, col="green", lty=3, lwd = 2)
 	
@@ -1018,6 +1024,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	text(339, base::min(essai$deces_standardises_si_pop_2020_ge80), "2019", cex=1.2)
 	text(391, base::min(essai$deces_standardises_si_pop_2020_ge80), "2020", cex=1.2)
 	text(440, base::min(essai$deces_standardises_si_pop_2020_ge80), "2021", cex=1.2)
+	text(492, base::min(essai$deces_standardises_si_pop_2020_ge80), "2022", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -1142,7 +1149,7 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		           ymax = base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020),
 		           alpha = .4,
 		           fill = "orange")+
-		  geom_vline(xintercept = seq(from=0, to=500, by = 52),linetype = "dashed",color="steelblue")+
+		  geom_vline(xintercept = seq(from=0, to=600, by = 52),linetype = "dashed",color="steelblue")+
 		  geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$bsup),linetype = "dashed",color="purple")+
 		  geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$binf),linetype = "dashed",color="purple")+
 		  geom_hline(yintercept = base::max(es_deces_standard_pays_semaine$moyenne),color="purple")+
@@ -1383,6 +1390,20 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 					Age60_69_dose3,
 					Age70_79_dose3,
 					`Age80+_dose3`,
+					Age15_17_dose4,
+					Age18_24_dose4,
+					Age25_49_dose4,
+					Age50_59_dose4,
+					Age60_69_dose4,
+					Age70_79_dose4,
+					`Age80+_dose4`,
+					Age15_17_dose5,
+					Age18_24_dose5,
+					Age25_49_dose5,
+					Age50_59_dose5,
+					Age60_69_dose5,
+					Age70_79_dose5,
+					`Age80+_dose5`,
 					diff_deces_tot_predit_stand_15_24,
 					diff_deces_tot_predit_stand_25_49,
 					diff_deces_tot_predit_stand_50_59,
@@ -1390,6 +1411,8 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 					diff_deces_tot_predit_stand_70_79,
 					diff_deces_tot_predit_stand_ge80)%>% 
 			mutate(Age15_24_dose2 = Age15_17_dose2 + Age18_24_dose2,
+			       Age15_24_dose4 = Age15_17_dose4 + Age18_24_dose4,
+			       Age15_24_dose5 = Age15_17_dose5 + Age18_24_dose5,
 					Age15_24_dose3 = Age15_17_dose3 + Age18_24_dose3,
 					Age15_24_dose1 = Age15_17_dose1 + Age18_24_dose1,
 					Age15_24 = Age15_17 + Age18_24) %>% 
@@ -1932,7 +1955,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 		
 		# Lignes verticales
-		abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+		abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 		
 		text(26,  base::min(essai$deces_standardises_si_pop_2020_15_24), "2013", cex=1.2)
 		text(78,  base::min(essai$deces_standardises_si_pop_2020_15_24), "2014", cex=1.2)
@@ -1942,7 +1965,8 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		text(287, base::min(essai$deces_standardises_si_pop_2020_15_24), "2018", cex=1.2)
 		text(339, base::min(essai$deces_standardises_si_pop_2020_15_24), "2019", cex=1.2)
 		text(391, base::min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
-		text(440, base::min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
+		text(443, base::min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
+		text(495, base::min(essai$deces_standardises_si_pop_2020_15_24), "2022", cex=1.2)
 		
 		#text(26, 22000, nomPays, cex=1.2)
 		
@@ -1989,7 +2013,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 					theme(axis.text.x = element_blank()) +
 					scale_fill_manual(values = c("darkgreen", "red")) +
 					geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_15_24),color = "#0066CC", size = 1) +
-					geom_vline(xintercept = c(366, 419, 471)) +
+					geom_vline(xintercept = c(366, 419, 471,523)) +
 					ylab("Différence entre décès constatés \n et décès attendus") +
 					geom_vline(xintercept = floor(date_debut_2021_15_24), colour="#336666", linetype = "longdash")+
 					geom_text(x=floor(date_debut_2021_15_24), y=base::max(essai_court$diff_deces_tot_predit_stand_15_24), label="début vaccination", color="#336666")+
@@ -1999,9 +2023,12 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 					geom_text(x = 391,
 							y = base::min(essai_court$diff_deces_tot_predit_stand_15_24),
 							label = "2020") +
-					geom_text(x = 440,
+					geom_text(x = 443,
 							y = base::min(essai_court$diff_deces_tot_predit_stand_15_24),
 							label = "2021") +
+			  geom_text(x = 495,
+			            y = base::min(essai_court$diff_deces_tot_predit_stand_15_24),
+			            label = "2022") +
 					xlab(
 							paste0(
 									"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -2044,7 +2071,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 					theme(axis.text.x = element_blank()) +
 					scale_fill_manual(values = c("darkgreen", "red")) +
 					geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_15_24),color = "#0066CC", size = 1) +
-					geom_vline(xintercept = c(366, 419, 471)) +
+					geom_vline(xintercept = c(366, 419, 471,523)) +
 					xlab("") +
 					ylab("Différence entre décès constatés \n et décès attendus") +
 					geom_text(x = 339,
@@ -2053,9 +2080,12 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 					geom_text(x = 391,
 							y = base::min(essai$diff_deces_tot_predit_stand_15_24),
 							label = "2020") +
-					geom_text(x = 440,
+					geom_text(x = 443,
 							y = base::min(essai$diff_deces_tot_predit_stand_15_24),
 							label = "2021") +
+			  geom_text(x = 495,
+			            y = base::min(essai$diff_deces_tot_predit_stand_15_24),
+			            label = "2022") +
 					ggtitle(
 							paste0(
 									"Ecart des décès hebdomadaires des 15-24 ans par rapport à l'attendu ",
@@ -2094,15 +2124,18 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 					geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24)/pop_week_15_24),col="#999999",size=2, linetype = "dotted")+
 					geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24_dose1)/pop_week_15_24),col="#0066CC",size=1)+
 					geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24_dose2)/pop_week_15_24),col="#003399",size=1)+
-					geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24_dose3)/pop_week_15_24),col="#000033",size=1)+
+					geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24_dose3)/pop_week_15_24),col="#990000",size=1)+
+			    geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24_dose4)/pop_week_15_24),col="#330000",size=1)+
 					geom_vline(xintercept = floor(date_debut_2021_15_24), colour="#336666", linetype = "longdash")+
-					geom_vline(xintercept = c(366, 419, 471))+
+					geom_vline(xintercept = c(366, 419, 471,523))+
 					geom_text(x=339, y=0, label="2019")+
 					geom_text(x=391, y=0, label="2020")+
-					geom_text(x=440, y=0, label="2021")+
-					geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
-					geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
-					geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+					geom_text(x=443, y=0, label="2021")+
+			    geom_text(x=495, y=0, label="2022")+
+					geom_text(x=410, y=0.08, label="dose 1",color="#0066CC")+
+					geom_text(x=410, y=0.06, label="dose 2",color="#003399")+
+					geom_text(x=410, y=0.04, label="dose 3",color="#990000")+
+			    geom_text(x=410, y=0.02, label="dose 4",color="#330000")+
 					xlab("")+
 					ylab("Part d'injections \n dans la population")+ 
 					theme(legend.position = "none")+
@@ -2177,7 +2210,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 		
 		# Lignes verticales
-		abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+		abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 		
 		text(26,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2013", cex=1.2)
 		text(78,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2014", cex=1.2)
@@ -2188,6 +2221,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		text(339, base::min(essai$deces_standardises_si_pop_2020_25_49), "2019", cex=1.2)
 		text(391, base::min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
 		text(440, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
+		text(492, base::min(essai$deces_standardises_si_pop_2020_25_49), "2022", cex=1.2)
 		
 		#text(26, 22000, nomPays, cex=1.2)
 		
@@ -2232,7 +2266,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 		
 		# Lignes verticales
-		abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+		abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 		
 		text(26,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2013", cex=1.2)
 		text(78,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2014", cex=1.2)
@@ -2243,6 +2277,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		text(339, base::min(essai$deces_standardises_si_pop_2020_25_49), "2019", cex=1.2)
 		text(391, base::min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
 		text(440, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
+		text(492, base::min(essai$deces_standardises_si_pop_2020_25_49), "2022", cex=1.2)
 		
 		#text(26, 22000, nomPays, cex=1.2)
 		
@@ -2291,7 +2326,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_col(aes(x = numSemaineDepuis2013, y = diff_deces_tot_predit_stand_25_49, fill = pos25_49)) +
 				scale_fill_manual(values = c("darkgreen", "red")) +
 				geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_25_49),color = "#0066CC", size = 1) +
-				geom_vline(xintercept = c(366, 419, 471)) +
+				geom_vline(xintercept = c(366, 419, 471,523)) +
 				ylab("Différence entre décès constatés \n et décès attendus") +
 				geom_vline(xintercept = floor(date_debut_2021_25_49), colour="#336666", linetype = "longdash")+
 				geom_text(x=floor(date_debut_2021_25_49), y=base::max(essai_court$diff_deces_tot_predit_stand_25_49), label="début vaccination", color="#336666")+
@@ -2301,9 +2336,12 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_text(x = 391,
 						y = base::min(essai$diff_deces_tot_predit_stand_25_49),
 						label = "2020") +
-				geom_text(x = 440,
+				geom_text(x = 443,
 						y = base::min(essai$diff_deces_tot_predit_stand_25_49),
 						label = "2021") +
+		  geom_text(x = 495,
+		            y = base::min(essai$diff_deces_tot_predit_stand_25_49),
+		            label = "2022") +
 				xlab(
 						paste0(
 								"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -2346,7 +2384,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_col(aes(x = numSemaineDepuis2013, y = diff_deces_tot_predit_stand_25_49, fill = pos25_49)) +
 				scale_fill_manual(values = c("darkgreen", "red")) +
 				geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_25_49),color = "#0066CC", size = 1) +
-				geom_vline(xintercept = c(366, 419, 471)) +
+				geom_vline(xintercept = c(366, 419, 471,523)) +
 				xlab("") +
 				ylab("Différence entre décès constatés \n et décès attendus") +
 				geom_text(x = 339,
@@ -2355,9 +2393,12 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_text(x = 391,
 						y = base::min(essai$diff_deces_tot_predit_stand_25_49),
 						label = "2020") +
-				geom_text(x = 440,
+				geom_text(x = 443,
 						y = base::min(essai$diff_deces_tot_predit_stand_25_49),
 						label = "2021") +
+		  geom_text(x = 495,
+		            y = base::min(essai$diff_deces_tot_predit_stand_25_49),
+		            label = "2022") +
 				ggtitle(
 						paste0(
 								"Ecart des décès hebdomadaires des 25-49 ans par rapport à l'attendu ",
@@ -2396,15 +2437,18 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49)/pop_week_25_49),col="#999999",size=2, linetype = "dotted")+
 				geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49_dose1)/pop_week_25_49),col="#0066CC",size=1)+
 				geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49_dose2)/pop_week_25_49),col="#003399",size=1)+
-				geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49_dose3)/pop_week_25_49),col="#000033",size=1)+
+				geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49_dose3)/pop_week_25_49),col="#990000",size=1)+
+		    geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49_dose4)/pop_week_25_49),col="#330000",size=1)+
 				geom_vline(xintercept = floor(date_debut_2021_25_49), colour="#336666", linetype = "longdash")+
-				geom_vline(xintercept = c(366, 419, 471))+
+				geom_vline(xintercept = c(366, 419, 471,523))+
 				geom_text(x=339, y=0, label="2019")+
 				geom_text(x=391, y=0, label="2020")+
-				geom_text(x=440, y=0, label="2021")+
-				geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
-				geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
-				geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+				geom_text(x=443, y=0, label="2021")+
+		    geom_text(x=495, y=0, label="2022")+
+				geom_text(x=410, y=0.08, label="dose 1",color="#0066CC")+
+				geom_text(x=410, y=0.06, label="dose 2",color="#003399")+
+				geom_text(x=410, y=0.04, label="dose 3",color="#990000")+
+		    geom_text(x=410, y=0.02, label="dose 4",color="#330000")+
 				xlab("")+
 				ylab("Part d'injections \n dans la population")+ 
 				theme(legend.position = "none")+
@@ -2472,7 +2516,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 	
 # Lignes verticales
-	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 	
 	text(26,  base::min(essai$deces_standardises_si_pop_2020_50_59), "2013", cex=1.2)
 	text(78,  base::min(essai$deces_standardises_si_pop_2020_50_59), "2014", cex=1.2)
@@ -2483,6 +2527,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	text(339, base::min(essai$deces_standardises_si_pop_2020_50_59), "2019", cex=1.2)
 	text(391, base::min(essai$deces_standardises_si_pop_2020_50_59), "2020", cex=1.2)
 	text(440, base::min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
+	text(492, base::min(essai$deces_standardises_si_pop_2020_50_59), "2022", cex=1.2)
 	
 #text(26, 22000, nomPays, cex=1.2)
 	
@@ -2530,7 +2575,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_col(aes(x = numSemaineDepuis2013, y = diff_deces_tot_predit_stand_50_59, fill = pos50_59)) +
 				scale_fill_manual(values = c("darkgreen", "red")) +
 				geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_50_59),color = "#0066CC", size = 1) +
-				geom_vline(xintercept = c(366, 419, 471)) +
+				geom_vline(xintercept = c(366, 419, 471,523)) +
 				ylab("Différence entre décès constatés \n et décès attendus") +
 				geom_vline(xintercept = floor(date_debut_2021_50_59), colour="#336666", linetype = "longdash")+
 				geom_text(x=floor(date_debut_2021_50_59), y=base::max(essai_court$diff_deces_tot_predit_stand_50_59), label="début vaccination", color="#336666")+
@@ -2540,9 +2585,12 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_text(x = 391,
 						y = base::min(essai$diff_deces_tot_predit_stand_50_59),
 						label = "2020") +
-				geom_text(x = 440,
+				geom_text(x = 443,
 						y = base::min(essai$diff_deces_tot_predit_stand_50_59),
 						label = "2021") +
+		  geom_text(x = 495,
+		            y = base::min(essai$diff_deces_tot_predit_stand_50_59),
+		            label = "2022") +
 				xlab(
 						paste0(
 								"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -2586,7 +2634,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_col(aes(x = numSemaineDepuis2013, y = diff_deces_tot_predit_stand_50_59, fill = pos50_59)) +
 				scale_fill_manual(values = c("darkgreen", "red")) +
 				geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_50_59),color = "#0066CC", size = 1) +
-				geom_vline(xintercept = c(366, 419, 471)) +
+				geom_vline(xintercept = c(366, 419, 471,523)) +
 				xlab("") +
 				ylab("Différence entre décès constatés \n et décès attendus") +
 				geom_text(x = 339,
@@ -2595,9 +2643,12 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_text(x = 391,
 						y = base::min(essai$diff_deces_tot_predit_stand_50_59),
 						label = "2020") +
-				geom_text(x = 440,
+				geom_text(x = 443,
 						y = base::min(essai$diff_deces_tot_predit_stand_50_59),
 						label = "2021") +
+		  geom_text(x = 495,
+		            y = base::min(essai$diff_deces_tot_predit_stand_50_59),
+		            label = "2022") +
 				ggtitle(
 						paste0(
 								"Ecart des décès hebdomadaires des 50-59 ans par rapport à l'attendu ",
@@ -2636,15 +2687,18 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59)/pop_week_50_59),col="#999999",size=2, linetype = "dotted")+
 				geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59_dose1)/pop_week_50_59),col="#0066CC",size=1)+
 				geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59_dose2)/pop_week_50_59),col="#003399",size=1)+
-				geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59_dose3)/pop_week_50_59),col="#000033",size=1)+
+				geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59_dose3)/pop_week_50_59),col="#990000",size=1)+
+		    geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59_dose4)/pop_week_50_59),col="#330000",size=1)+
 				geom_vline(xintercept = floor(date_debut_2021_50_59), colour="#336666", linetype = "longdash")+
-				geom_vline(xintercept = c(366, 419, 471))+
+				geom_vline(xintercept = c(366, 419, 471,523))+
 				geom_text(x=339, y=0, label="2019")+
 				geom_text(x=391, y=0, label="2020")+
-				geom_text(x=440, y=0, label="2021")+
-				geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
-				geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
-				geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+				geom_text(x=443, y=0, label="2021")+
+		    geom_text(x=495, y=0, label="2022")+
+				geom_text(x=410, y=0.08, label="dose 1",color="#0066CC")+
+				geom_text(x=410, y=0.06, label="dose 2",color="#003399")+
+				geom_text(x=410, y=0.04, label="dose 3",color="#990000")+
+		    geom_text(x=410, y=0.02, label="dose 4",color="#330000")+
 				xlab("")+
 				ylab("Part d'injections \n dans la population")+ 
 				theme(legend.position = "none")+
@@ -2712,7 +2766,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 	
 # Lignes verticales
-	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 	
 	text(26,  base::min(essai$deces_standardises_si_pop_2020_60_69), "2013", cex=1.2)
 	text(78,  base::min(essai$deces_standardises_si_pop_2020_60_69), "2014", cex=1.2)
@@ -2723,6 +2777,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	text(339, base::min(essai$deces_standardises_si_pop_2020_60_69), "2019", cex=1.2)
 	text(391, base::min(essai$deces_standardises_si_pop_2020_60_69), "2020", cex=1.2)
 	text(440, base::min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
+	text(492, base::min(essai$deces_standardises_si_pop_2020_60_69), "2022", cex=1.2)
 	
 #text(26, 22000, nomPays, cex=1.2)
 	
@@ -2771,7 +2826,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_col(aes(x = numSemaineDepuis2013, y = diff_deces_tot_predit_stand_60_69, fill = pos60_69)) +
 				scale_fill_manual(values = c("darkgreen", "red")) +
 				geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_60_69),color = "#0066CC", size = 1) +
-				geom_vline(xintercept = c(366, 419, 471)) +
+				geom_vline(xintercept = c(366, 419, 471,523)) +
 				ylab("Différence entre décès constatés \n et décès attendus") +
 				geom_vline(xintercept = floor(date_debut_2021_60_69), colour="#336666", linetype = "longdash")+
 				geom_text(x=floor(date_debut_2021_60_69), y=base::max(essai_court$diff_deces_tot_predit_stand_60_69), label="début vaccination", color="#336666")+
@@ -2781,9 +2836,12 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_text(x = 391,
 						y = base::min(essai$diff_deces_tot_predit_stand_60_69),
 						label = "2020") +
-				geom_text(x = 440,
+				geom_text(x = 443,
 						y = base::min(essai$diff_deces_tot_predit_stand_60_69),
 						label = "2021") +
+		  geom_text(x = 495,
+		            y = base::min(essai$diff_deces_tot_predit_stand_60_69),
+		            label = "2022") +
 				xlab(
 						paste0(
 								"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -2826,7 +2884,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_col(aes(x = numSemaineDepuis2013, y = diff_deces_tot_predit_stand_60_69, fill = pos60_69)) +
 				scale_fill_manual(values = c("darkgreen", "red")) +
 				geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_60_69),color = "#0066CC", size = 1) +
-				geom_vline(xintercept = c(366, 419, 471)) +
+				geom_vline(xintercept = c(366, 419, 471,523)) +
 				xlab("") +
 				ylab("Différence entre décès constatés \n et décès attendus") +
 				geom_text(x = 339,
@@ -2835,9 +2893,12 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_text(x = 391,
 						y = base::min(essai$diff_deces_tot_predit_stand_60_69),
 						label = "2020") +
-				geom_text(x = 440,
+				geom_text(x = 443,
 						y = base::min(essai$diff_deces_tot_predit_stand_60_69),
 						label = "2021") +
+		  geom_text(x = 495,
+		            y = base::min(essai$diff_deces_tot_predit_stand_60_69),
+		            label = "2022") +
 				ggtitle(
 						paste0(
 								"Ecart des décès hebdomadaires des 60-69 ans par rapport à l'attendu ",
@@ -2876,15 +2937,18 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69)/pop_week_60_69),col="#999999",size=2, linetype = "dotted")+
 				geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69_dose1)/pop_week_60_69),col="#0066CC",size=1)+
 				geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69_dose2)/pop_week_60_69),col="#003399",size=1)+
-				geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69_dose3)/pop_week_60_69),col="#000033",size=1)+
+				geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69_dose3)/pop_week_60_69),col="#990000",size=1)+
+	  	  geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69_dose4)/pop_week_60_69),col="#330000",size=1)+
 				geom_vline(xintercept = floor(date_debut_2021_60_69), colour="#336666", linetype = "longdash")+
-				geom_vline(xintercept = c(366, 419, 471))+
+				geom_vline(xintercept = c(366, 419, 471,523))+
 				geom_text(x=339, y=0, label="2019")+
 				geom_text(x=391, y=0, label="2020")+
-				geom_text(x=440, y=0, label="2021")+
-				geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
-				geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
-				geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+				geom_text(x=443, y=0, label="2021")+
+		    geom_text(x=495, y=0, label="2022")+
+				geom_text(x=410, y=0.08, label="dose 1",color="#0066CC")+
+				geom_text(x=410, y=0.06, label="dose 2",color="#003399")+
+				geom_text(x=410, y=0.04, label="dose 3",color="#990000")+
+		    geom_text(x=410, y=0.02, label="dose 4",color="#330000")+
 				xlab("")+
 				ylab("Part d'injections \n dans la population")+ 
 				theme(legend.position = "none")+
@@ -2951,7 +3015,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 	
 # Lignes verticales
-	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 	
 	text(26,  base::min(essai$deces_standardises_si_pop_2020_70_79), "2013", cex=1.2)
 	text(78,  base::min(essai$deces_standardises_si_pop_2020_70_79), "2014", cex=1.2)
@@ -2962,6 +3026,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	text(339, base::min(essai$deces_standardises_si_pop_2020_70_79), "2019", cex=1.2)
 	text(391, base::min(essai$deces_standardises_si_pop_2020_70_79), "2020", cex=1.2)
 	text(440, base::min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
+	text(492, base::min(essai$deces_standardises_si_pop_2020_70_79), "2022", cex=1.2)
 	
 #text(26, 22000, nomPays, cex=1.2)
 	
@@ -3010,7 +3075,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_col(aes(x = numSemaineDepuis2013, y = diff_deces_tot_predit_stand_70_79, fill = pos70_79)) +
 				scale_fill_manual(values = c("darkgreen", "red")) +
 				geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_70_79),color = "#0066CC", size = 1) +
-				geom_vline(xintercept = c(366, 419, 471)) +
+				geom_vline(xintercept = c(366, 419, 471,523)) +
 				ylab("Différence entre décès constatés \n et décès attendus") +
 				geom_vline(xintercept = floor(date_debut_2021_70_79), colour="#336666", linetype = "longdash")+
 				geom_text(x=floor(date_debut_2021_70_79), y=base::max(essai_court$diff_deces_tot_predit_stand_70_79), label="début vaccination", color="#336666")+
@@ -3020,9 +3085,12 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_text(x = 391,
 						y = base::min(essai$diff_deces_tot_predit_stand_70_79),
 						label = "2020") +
-				geom_text(x = 440,
+				geom_text(x = 443,
 						y = base::min(essai$diff_deces_tot_predit_stand_70_79),
 						label = "2021") +
+		  geom_text(x = 495,
+		            y = base::min(essai$diff_deces_tot_predit_stand_70_79),
+		            label = "2021") +
 				xlab(
 						paste0(
 								"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -3066,7 +3134,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_col(aes(x = numSemaineDepuis2013, y = diff_deces_tot_predit_stand_70_79, fill = pos70_79)) +
 				scale_fill_manual(values = c("darkgreen", "red")) +
 				geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_70_79),color = "#0066CC", size = 1) +
-				geom_vline(xintercept = c(366, 419, 471)) +
+				geom_vline(xintercept = c(366, 419, 471,523)) +
 				xlab("")+
 				ylab("Différence entre décès constatés \n et décès attendus") +
 				geom_text(x = 339,
@@ -3075,9 +3143,12 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_text(x = 391,
 						y = base::min(essai$diff_deces_tot_predit_stand_70_79),
 						label = "2020") +
-				geom_text(x = 440,
+				geom_text(x = 443,
 						y = base::min(essai$diff_deces_tot_predit_stand_70_79),
 						label = "2021") +
+		  geom_text(x = 495,
+		            y = base::min(essai$diff_deces_tot_predit_stand_70_79),
+		            label = "2022") +
 				ggtitle(
 						paste0(
 								"Ecart des décès hebdomadaires des 70-79 ans par rapport à l'attendu ",
@@ -3116,15 +3187,18 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79)/pop_week_70_79),col="#999999",size=2, linetype = "dotted")+
 				geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79_dose1)/pop_week_70_79),col="#0066CC",size=1)+
 				geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79_dose2)/pop_week_70_79),col="#003399",size=1)+
-				geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79_dose3)/pop_week_70_79),col="#000033",size=1)+
+				geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79_dose3)/pop_week_70_79),col="#990000",size=1)+
+		    geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79_dose4)/pop_week_70_79),col="#330000",size=1)+
 				geom_vline(xintercept = floor(date_debut_2021_70_79), colour="#336666", linetype = "longdash")+
 				geom_vline(xintercept = c(366, 419, 471))+
 				geom_text(x=339, y=0, label="2019")+
 				geom_text(x=391, y=0, label="2020")+
-				geom_text(x=440, y=0, label="2021")+
-				geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
-				geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
-				geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+				geom_text(x=443, y=0, label="2021")+
+		    geom_text(x=495, y=0, label="2022")+
+				geom_text(x=410, y=0.08, label="dose 1",color="#0066CC")+
+				geom_text(x=410, y=0.06, label="dose 2",color="#003399")+
+				geom_text(x=410, y=0.04, label="dose 3",color="#990000")+
+		    geom_text(x=410, y=0.02, label="dose 4",color="#330000")+
 				xlab("")+
 				ylab("Part d'injections \n dans la population")+ 
 				theme(legend.position = "none")+
@@ -3192,7 +3266,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 	
 # Lignes verticales
-	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 	
 	text(26,  base::min(essai$deces_standardises_si_pop_2020_ge80), "2013", cex=1.2)
 	text(78,  base::min(essai$deces_standardises_si_pop_2020_ge80), "2014", cex=1.2)
@@ -3203,6 +3277,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	text(339, base::min(essai$deces_standardises_si_pop_2020_ge80), "2019", cex=1.2)
 	text(391, base::min(essai$deces_standardises_si_pop_2020_ge80), "2020", cex=1.2)
 	text(440, base::min(essai$deces_standardises_si_pop_2020_ge80), "2021", cex=1.2)
+	text(492, base::min(essai$deces_standardises_si_pop_2020_ge80), "2022", cex=1.2)
 	
 #text(26, 22000, nomPays, cex=1.2)
 	
@@ -3235,10 +3310,11 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_col(aes(x=numSemaineDepuis2013,y=diff_deces_tot_predit_stand_ge80,fill=posge80))+
 				scale_fill_manual(values = c("darkgreen", "red"))+
 				geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_ge80),color = "#0066CC", size = 1) +
-				geom_vline(xintercept = c(366, 419, 471)) +
+				geom_vline(xintercept = c(366, 419, 471,523)) +
 				geom_text(x=339, y=base::min(essai_court$diff_deces_tot_predit_stand_ge80), label="2019")+
 				geom_text(x=391, y=base::min(essai_court$diff_deces_tot_predit_stand_ge80), label="2020")+
-				geom_text(x=440, y=base::min(essai_court$diff_deces_tot_predit_stand_ge80), label="2021")+
+				geom_text(x=443, y=base::min(essai_court$diff_deces_tot_predit_stand_ge80), label="2021")+
+		  geom_text(x=495, y=base::min(essai_court$diff_deces_tot_predit_stand_ge80), label="2022")+
 				geom_vline(xintercept = floor(date_debut_2021_ge80), colour="#336666", linetype = "longdash")+
 				geom_text(x=floor(date_debut_2021_ge80), y=base::max(essai_court$diff_deces_tot_predit_stand_ge80), label="début vaccination", color="#336666")+
 				xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",floor(surmortalite_ge80_2021),
@@ -3262,10 +3338,11 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_col(aes(x=numSemaineDepuis2013,y=diff_deces_tot_predit_stand_ge80,fill=posge80))+
 				scale_fill_manual(values = c("darkgreen", "red"))+
 				geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_ge80),color = "#0066CC", size = 1) +
-				geom_vline(xintercept = c(366, 419, 471)) +
+				geom_vline(xintercept = c(366, 419, 471,523)) +
 				geom_text(x=339, y=base::min(essai_court$diff_deces_tot_predit_stand_ge80), label="2019")+
 				geom_text(x=391, y=base::min(essai_court$diff_deces_tot_predit_stand_ge80), label="2020")+
-				geom_text(x=440, y=base::min(essai_court$diff_deces_tot_predit_stand_ge80), label="2021")+
+				geom_text(x=443, y=base::min(essai_court$diff_deces_tot_predit_stand_ge80), label="2021")+
+		  geom_text(x=495, y=base::min(essai_court$diff_deces_tot_predit_stand_ge80), label="2022")+
 				xlab("")+
 				ylab("Différence entre décès constatés \n et décès attendus")+
 				theme(legend.position = "none")+
@@ -3289,15 +3366,18 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_line(aes(x=numSemaineDepuis2013,y=(`Age80+`)/pop_week_ge80),col="#999999",size=2, linetype = "dotted")+
 				geom_line(aes(x=numSemaineDepuis2013,y=`Age80+_dose1`/pop_week_ge80),col="#0066CC",size=1)+
 				geom_line(aes(x=numSemaineDepuis2013,y=`Age80+_dose2`/pop_week_ge80),col="#003399",size=1)+
-				geom_line(aes(x=numSemaineDepuis2013,y=`Age80+_dose3`/pop_week_ge80),col="#000033",size=1)+
+				geom_line(aes(x=numSemaineDepuis2013,y=`Age80+_dose3`/pop_week_ge80),col="#990000",size=1)+
+		   geom_line(aes(x=numSemaineDepuis2013,y=`Age80+_dose4`/pop_week_ge80),col="#330000",size=1)+
 				geom_vline(xintercept = floor(date_debut_2021_ge80), colour="#336666", linetype = "longdash")+
-				geom_vline(xintercept = c(366, 419, 471)) +
+				geom_vline(xintercept = c(366, 419, 471,523)) +
 				geom_text(x=339, y=0, label="2019")+
 				geom_text(x=391, y=0, label="2020")+
-				geom_text(x=440, y=0, label="2021")+
-				geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
-				geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
-				geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+				geom_text(x=443, y=0, label="2021")+
+		  geom_text(x=495, y=0, label="2022")+
+				geom_text(x=410, y=0.08, label="dose 1",color="#0066CC")+
+				geom_text(x=410, y=0.06, label="dose 2",color="#003399")+
+				geom_text(x=410, y=0.04, label="dose 3",color="#990000")+
+		  geom_text(x=410, y=0.02, label="dose 4",color="#330000")+
 				xlab("")+
 				ylab("Part d'injections \n dans la population")+ 
 				theme(legend.position = "none")+
@@ -3404,6 +3484,20 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 								Age60_69_dose3,
 								Age70_79_dose3,
 								`Age80+_dose3`,
+								Age15_17_dose4,
+								Age18_24_dose4,
+								Age25_49_dose4,
+								Age50_59_dose4,
+								Age60_69_dose4,
+								Age70_79_dose4,
+								`Age80+_dose4`,
+								Age15_17_dose5,
+								Age18_24_dose5,
+								Age25_49_dose5,
+								Age50_59_dose5,
+								Age60_69_dose5,
+								Age70_79_dose5,
+								`Age80+_dose5`,
 								diff_deces_tot_predit_stand_15_24,
 								diff_deces_tot_predit_stand_25_49,
 								diff_deces_tot_predit_stand_50_59,
@@ -3411,6 +3505,8 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 								diff_deces_tot_predit_stand_70_79,
 								diff_deces_tot_predit_stand_ge80)%>% 
 						mutate(Age15_24_dose2 = Age15_17_dose2 + Age18_24_dose2,
+						       Age15_24_dose4 = Age15_17_dose4 + Age18_24_dose4,
+						       Age15_24_dose5 = Age15_17_dose5 + Age18_24_dose5,
 								Age15_24_dose3 = Age15_17_dose3 + Age18_24_dose3,
 								Age15_24_dose1 = Age15_17_dose1 + Age18_24_dose1,
 								Age15_24 = Age15_17 + Age18_24) %>% 
@@ -4170,7 +4266,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 					
 					# Lignes verticales
-					abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+					abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 					
 					text(26,  base::min(essai$deces_standardises_si_pop_2020_15_24), "2013", cex=1.2)
 					text(78,  base::min(essai$deces_standardises_si_pop_2020_15_24), "2014", cex=1.2)
@@ -4180,7 +4276,8 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					text(287, base::min(essai$deces_standardises_si_pop_2020_15_24), "2018", cex=1.2)
 					text(339, base::min(essai$deces_standardises_si_pop_2020_15_24), "2019", cex=1.2)
 					text(391, base::min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
-					text(440, base::min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
+					text(443, base::min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
+					text(495, base::min(essai$deces_standardises_si_pop_2020_15_24), "2022", cex=1.2)
 					
 					#text(26, 22000, nomPays, cex=1.2)
 					
@@ -4227,7 +4324,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 								theme(axis.text.x = element_blank()) +
 								scale_fill_manual(values = c("darkgreen", "red")) +
 								geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_15_24),color = "#0066CC", size = 1) +
-								geom_vline(xintercept = c(366, 419, 471)) +
+								geom_vline(xintercept = c(366, 419, 471,523)) +
 								ylab("Différence entre décès constatés \n et décès attendus") +
 								geom_vline(xintercept = floor(date_debut_2021_15_24), colour="#336666", linetype = "longdash")+
 								geom_text(x=floor(date_debut_2021_15_24), y=base::max(essai_court$diff_15_24), label="début vaccination", color="#336666")+
@@ -4237,9 +4334,12 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 								geom_text(x = 391,
 										y = base::min(essai_court$diff_15_24),
 										label = "2020") +
-								geom_text(x = 440,
+								geom_text(x = 443,
 										y = base::min(essai_court$diff_15_24),
 										label = "2021") +
+						  geom_text(x = 495,
+						            y = base::min(essai_court$diff_15_24),
+						            label = "2022") +
 								xlab(
 										paste0(
 												"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -4282,7 +4382,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 								theme(axis.text.x = element_blank()) +
 								scale_fill_manual(values = c("darkgreen", "red")) +
 								geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_15_24),color = "#0066CC", size = 1) +
-								geom_vline(xintercept = c(366, 419, 471)) +
+								geom_vline(xintercept = c(366, 419, 471,523)) +
 								xlab("") +
 								ylab("Différence entre décès constatés \n et décès attendus") +
 								geom_text(x = 339,
@@ -4291,9 +4391,12 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 								geom_text(x = 391,
 										y = base::min(essai$diff_15_24),
 										label = "2020") +
-								geom_text(x = 440,
+								geom_text(x = 443,
 										y = base::min(essai$diff_15_24),
 										label = "2021") +
+						  geom_text(x = 495,
+						            y = base::min(essai$diff_15_24),
+						            label = "2022") +
 								ggtitle(
 										paste0(
 												"Ecart des décès hebdomadaires des 15-24 ans par rapport à l'attendu ",
@@ -4332,15 +4435,18 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 								geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24)/pop_week_15_24),col="#999999",size=2, linetype = "dotted")+
 								geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24_dose1)/pop_week_15_24),col="#0066CC",size=1)+
 								geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24_dose2)/pop_week_15_24),col="#003399",size=1)+
-								geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24_dose3)/pop_week_15_24),col="#000033",size=1)+
+								geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24_dose3)/pop_week_15_24),col="#990000",size=1)+
+						    geom_line(aes(x=numSemaineDepuis2013,y=(Age15_24_dose4)/pop_week_15_24),col="#660000",size=1)+
 								geom_vline(xintercept = floor(date_debut_2021_15_24), colour="#336666", linetype = "longdash")+
-								geom_vline(xintercept = c(366, 419, 471))+
+								geom_vline(xintercept = c(366, 419, 471,523))+
 								geom_text(x=339, y=0, label="2019")+
 								geom_text(x=391, y=0, label="2020")+
-								geom_text(x=440, y=0, label="2021")+
-								geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
-								geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
-								geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+								geom_text(x=443, y=0, label="2021")+
+						  geom_text(x=495, y=0, label="2022")+
+								geom_text(x=410, y=0.08, label="dose 1",color="#0066CC")+
+								geom_text(x=410, y=0.06, label="dose 2",color="#003399")+
+								geom_text(x=410, y=0.04, label="dose 3",color="#990000")+
+						  geom_text(x=410, y=0.02, label="dose 4",color="#660000")+
 								xlab("")+
 								ylab("Part d'injections \n dans la population")+ 
 								theme(legend.position = "none")+
@@ -4415,7 +4521,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 					
 					# Lignes verticales
-					abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+					abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 					
 					text(26,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2013", cex=1.2)
 					text(78,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2014", cex=1.2)
@@ -4425,7 +4531,8 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					text(287, base::min(essai$deces_standardises_si_pop_2020_25_49), "2018", cex=1.2)
 					text(339, base::min(essai$deces_standardises_si_pop_2020_25_49), "2019", cex=1.2)
 					text(391, base::min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
-					text(440, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
+					text(443, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
+					text(495, base::min(essai$deces_standardises_si_pop_2020_25_49), "2022", cex=1.2)
 					
 					#text(26, 22000, nomPays, cex=1.2)
 					
@@ -4470,7 +4577,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 					
 					# Lignes verticales
-					abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+					abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 					
 					text(26,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2013", cex=1.2)
 					text(78,  base::min(essai$deces_standardises_si_pop_2020_25_49), "2014", cex=1.2)
@@ -4480,7 +4587,8 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					text(287, base::min(essai$deces_standardises_si_pop_2020_25_49), "2018", cex=1.2)
 					text(339, base::min(essai$deces_standardises_si_pop_2020_25_49), "2019", cex=1.2)
 					text(391, base::min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
-					text(440, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
+					text(443, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
+					text(495, base::min(essai$deces_standardises_si_pop_2020_25_49), "2022", cex=1.2)
 					
 					#text(26, 22000, nomPays, cex=1.2)
 					
@@ -4529,7 +4637,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_col(aes(x = numSemaineDepuis2013, y = diff_25_49, fill = pos25_49)) +
 							scale_fill_manual(values = c("darkgreen", "red")) +
 							geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_25_49),color = "#0066CC", size = 1) +
-							geom_vline(xintercept = c(366, 419, 471)) +
+							geom_vline(xintercept = c(366, 419, 471,523)) +
 							ylab("Différence entre décès constatés \n et décès attendus") +
 							geom_vline(xintercept = floor(date_debut_2021_25_49), colour="#336666", linetype = "longdash")+
 							geom_text(x=floor(date_debut_2021_25_49), y=base::max(essai_court$diff_25_49), label="début vaccination", color="#336666")+
@@ -4539,9 +4647,12 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_text(x = 391,
 									y = base::min(essai$diff_25_49),
 									label = "2020") +
-							geom_text(x = 440,
+							geom_text(x = 443,
 									y = base::min(essai$diff_25_49),
 									label = "2021") +
+					  geom_text(x = 495,
+					            y = base::min(essai$diff_25_49),
+					            label = "2022") +
 							xlab(
 									paste0(
 											"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -4584,7 +4695,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_col(aes(x = numSemaineDepuis2013, y = diff_25_49, fill = pos25_49)) +
 							scale_fill_manual(values = c("darkgreen", "red")) +
 							geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_25_49),color = "#0066CC", size = 1) +
-							geom_vline(xintercept = c(366, 419, 471)) +
+							geom_vline(xintercept = c(366, 419, 471,523)) +
 							xlab("") +
 							ylab("Différence entre décès constatés \n et décès attendus") +
 							geom_text(x = 339,
@@ -4593,9 +4704,12 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_text(x = 391,
 									y = base::min(essai$diff_25_49),
 									label = "2020") +
-							geom_text(x = 440,
+							geom_text(x = 443,
 									y = base::min(essai$diff_25_49),
 									label = "2021") +
+					  geom_text(x = 495,
+					            y = base::min(essai$diff_25_49),
+					            label = "2022") +
 							ggtitle(
 									paste0(
 											"Ecart des décès hebdomadaires des 25-49 ans par rapport à l'attendu ",
@@ -4634,15 +4748,18 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49)/pop_week_25_49),col="#999999",size=2, linetype = "dotted")+
 							geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49_dose1)/pop_week_25_49),col="#0066CC",size=1)+
 							geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49_dose2)/pop_week_25_49),col="#003399",size=1)+
-							geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49_dose3)/pop_week_25_49),col="#000033",size=1)+
-							geom_vline(xintercept = floor(date_debut_2021_25_49), colour="#336666", linetype = "longdash")+
-							geom_vline(xintercept = c(366, 419, 471))+
+							geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49_dose3)/pop_week_25_49),col="#990000",size=1)+
+					  geom_line(aes(x=numSemaineDepuis2013,y=(Age25_49_dose4)/pop_week_25_49),col="#330000",size=1)+	
+					  geom_vline(xintercept = floor(date_debut_2021_25_49), colour="#336666", linetype = "longdash")+
+							geom_vline(xintercept = c(366, 419, 471,523))+
 							geom_text(x=339, y=0, label="2019")+
 							geom_text(x=391, y=0, label="2020")+
-							geom_text(x=440, y=0, label="2021")+
-							geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
-							geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
-							geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+							geom_text(x=443, y=0, label="2021")+
+					  geom_text(x=495, y=0, label="2022")+
+							geom_text(x=410, y=0.08, label="dose 1",color="#0066CC")+
+							geom_text(x=410, y=0.06, label="dose 2",color="#003399")+
+							geom_text(x=410, y=0.04, label="dose 3",color="#990000")+
+					  geom_text(x=410, y=0.02, label="dose 4",color="#330000")+
 							xlab("")+
 							ylab("Part d'injections \n dans la population")+ 
 							theme(legend.position = "none")+
@@ -4710,7 +4827,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 				
 				# Lignes verticales
-				abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+				abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 				
 				text(26,  base::min(essai$deces_standardises_si_pop_2020_50_59), "2013", cex=1.2)
 				text(78,  base::min(essai$deces_standardises_si_pop_2020_50_59), "2014", cex=1.2)
@@ -4720,7 +4837,8 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				text(287, base::min(essai$deces_standardises_si_pop_2020_50_59), "2018", cex=1.2)
 				text(339, base::min(essai$deces_standardises_si_pop_2020_50_59), "2019", cex=1.2)
 				text(391, base::min(essai$deces_standardises_si_pop_2020_50_59), "2020", cex=1.2)
-				text(440, base::min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
+				text(443, base::min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
+				text(495, base::min(essai$deces_standardises_si_pop_2020_50_59), "2022", cex=1.2)
 				
 				#text(26, 22000, nomPays, cex=1.2)
 				
@@ -4768,7 +4886,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_col(aes(x = numSemaineDepuis2013, y = diff_50_59, fill = pos50_59)) +
 							scale_fill_manual(values = c("darkgreen", "red")) +
 							geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_50_59),color = "#0066CC", size = 1) +
-							geom_vline(xintercept = c(366, 419, 471)) +
+							geom_vline(xintercept = c(366, 419, 471,523)) +
 							ylab("Différence entre décès constatés \n et décès attendus") +
 							geom_vline(xintercept = floor(date_debut_2021_50_59), colour="#336666", linetype = "longdash")+
 							geom_text(x=floor(date_debut_2021_50_59), y=base::max(essai_court$diff_50_59), label="début vaccination", color="#336666")+
@@ -4778,9 +4896,12 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_text(x = 391,
 									y = base::min(essai$diff_50_59),
 									label = "2020") +
-							geom_text(x = 440,
+							geom_text(x = 443,
 									y = base::min(essai$diff_50_59),
 									label = "2021") +
+					  geom_text(x = 495,
+					            y = base::min(essai$diff_50_59),
+					            label = "2022") +
 							xlab(
 									paste0(
 											"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -4824,7 +4945,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_col(aes(x = numSemaineDepuis2013, y = diff_50_59, fill = pos50_59)) +
 							scale_fill_manual(values = c("darkgreen", "red")) +
 							geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_50_59),color = "#0066CC", size = 1) +
-							geom_vline(xintercept = c(366, 419, 471)) +
+							geom_vline(xintercept = c(366, 419, 471,523)) +
 							xlab("") +
 							ylab("Différence entre décès constatés \n et décès attendus") +
 							geom_text(x = 339,
@@ -4833,9 +4954,12 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_text(x = 391,
 									y = base::min(essai$diff_50_59),
 									label = "2020") +
-							geom_text(x = 440,
+							geom_text(x = 443,
 									y = base::min(essai$diff_50_59),
 									label = "2021") +
+					  geom_text(x = 495,
+					            y = base::min(essai$diff_50_59),
+					            label = "2022") +
 							ggtitle(
 									paste0(
 											"Ecart des décès hebdomadaires des 50-59 ans par rapport à l'attendu ",
@@ -4874,15 +4998,18 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59)/pop_week_50_59),col="#999999",size=2, linetype = "dotted")+
 							geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59_dose1)/pop_week_50_59),col="#0066CC",size=1)+
 							geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59_dose2)/pop_week_50_59),col="#003399",size=1)+
-							geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59_dose3)/pop_week_50_59),col="#000033",size=1)+
-							geom_vline(xintercept = floor(date_debut_2021_50_59), colour="#336666", linetype = "longdash")+
-							geom_vline(xintercept = c(366, 419, 471))+
+							geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59_dose3)/pop_week_50_59),col="#990000",size=1)+
+					  geom_line(aes(x=numSemaineDepuis2013,y=(Age50_59_dose4)/pop_week_50_59),col="#330000",size=1)+	
+					  geom_vline(xintercept = floor(date_debut_2021_50_59), colour="#336666", linetype = "longdash")+
+							geom_vline(xintercept = c(366, 419, 471,523))+
 							geom_text(x=339, y=0, label="2019")+
 							geom_text(x=391, y=0, label="2020")+
-							geom_text(x=440, y=0, label="2021")+
-							geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
-							geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
-							geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+							geom_text(x=443, y=0, label="2021")+
+					  geom_text(x=495, y=0, label="2022")+
+							geom_text(x=410, y=0.08, label="dose 1",color="#0066CC")+
+							geom_text(x=410, y=0.06, label="dose 2",color="#003399")+
+							geom_text(x=410, y=0.04, label="dose 3",color="#990000")+
+					  geom_text(x=410, y=0.02, label="dose 4",color="#330000")+
 							xlab("")+
 							ylab("Part d'injections \n dans la population")+ 
 							theme(legend.position = "none")+
@@ -4950,7 +5077,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 				
 				# Lignes verticales
-				abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+				abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 				
 				text(26,  base::min(essai$deces_standardises_si_pop_2020_60_69), "2013", cex=1.2)
 				text(78,  base::min(essai$deces_standardises_si_pop_2020_60_69), "2014", cex=1.2)
@@ -4960,7 +5087,8 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				text(287, base::min(essai$deces_standardises_si_pop_2020_60_69), "2018", cex=1.2)
 				text(339, base::min(essai$deces_standardises_si_pop_2020_60_69), "2019", cex=1.2)
 				text(391, base::min(essai$deces_standardises_si_pop_2020_60_69), "2020", cex=1.2)
-				text(440, base::min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
+				text(443, base::min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
+				text(495, base::min(essai$deces_standardises_si_pop_2020_60_69), "2022", cex=1.2)
 				
 				#text(26, 22000, nomPays, cex=1.2)
 				
@@ -5009,7 +5137,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_col(aes(x = numSemaineDepuis2013, y = diff_60_69, fill = pos60_69)) +
 							scale_fill_manual(values = c("darkgreen", "red")) +
 							geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_60_69),color = "#0066CC", size = 1) +
-							geom_vline(xintercept = c(366, 419, 471)) +
+							geom_vline(xintercept = c(366, 419, 471,523)) +
 							ylab("Différence entre décès constatés \n et décès attendus") +
 							geom_vline(xintercept = floor(date_debut_2021_60_69), colour="#336666", linetype = "longdash")+
 							geom_text(x=floor(date_debut_2021_60_69), y=base::max(essai_court$diff_60_69), label="début vaccination", color="#336666")+
@@ -5019,9 +5147,12 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_text(x = 391,
 									y = base::min(essai$diff_60_69),
 									label = "2020") +
-							geom_text(x = 440,
+							geom_text(x = 443,
 									y = base::min(essai$diff_60_69),
 									label = "2021") +
+					  geom_text(x = 495,
+					            y = base::min(essai$diff_60_69),
+					            label = "2022") +
 							xlab(
 									paste0(
 											"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -5064,7 +5195,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_col(aes(x = numSemaineDepuis2013, y = diff_60_69, fill = pos60_69)) +
 							scale_fill_manual(values = c("darkgreen", "red")) +
 							geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_60_69),color = "#0066CC", size = 1) +
-							geom_vline(xintercept = c(366, 419, 471)) +
+							geom_vline(xintercept = c(366, 419, 471,523)) +
 							xlab("") +
 							ylab("Différence entre décès constatés \n et décès attendus") +
 							geom_text(x = 339,
@@ -5073,9 +5204,12 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_text(x = 391,
 									y = base::min(essai$diff_60_69),
 									label = "2020") +
-							geom_text(x = 440,
+							geom_text(x = 443,
 									y = base::min(essai$diff_60_69),
 									label = "2021") +
+					  geom_text(x = 495,
+					            y = base::min(essai$diff_60_69),
+					            label = "2022") +
 							ggtitle(
 									paste0(
 											"Ecart des décès hebdomadaires des 60-69 ans par rapport à l'attendu ",
@@ -5114,15 +5248,18 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69)/pop_week_60_69),col="#999999",size=2, linetype = "dotted")+
 							geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69_dose1)/pop_week_60_69),col="#0066CC",size=1)+
 							geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69_dose2)/pop_week_60_69),col="#003399",size=1)+
-							geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69_dose3)/pop_week_60_69),col="#000033",size=1)+
-							geom_vline(xintercept = floor(date_debut_2021_60_69), colour="#336666", linetype = "longdash")+
-							geom_vline(xintercept = c(366, 419, 471))+
+							geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69_dose3)/pop_week_60_69),col="#990000",size=1)+
+					   geom_line(aes(x=numSemaineDepuis2013,y=(Age60_69_dose4)/pop_week_60_69),col="#330000",size=1)+
+					  	geom_vline(xintercept = floor(date_debut_2021_60_69), colour="#336666", linetype = "longdash")+
+							geom_vline(xintercept = c(366, 419, 471,523))+
 							geom_text(x=339, y=0, label="2019")+
 							geom_text(x=391, y=0, label="2020")+
-							geom_text(x=440, y=0, label="2021")+
-							geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
-							geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
-							geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+							geom_text(x=443, y=0, label="2021")+
+					  geom_text(x=495, y=0, label="2022")+
+							geom_text(x=410, y=0.08, label="dose 1",color="#0066CC")+
+							geom_text(x=410, y=0.06, label="dose 2",color="#003399")+
+							geom_text(x=410, y=0.04, label="dose 3",color="#990000")+
+					  geom_text(x=410, y=0.02, label="dose 4",color="#330000")+
 							xlab("")+
 							ylab("Part d'injections \n dans la population")+ 
 							theme(legend.position = "none")+
@@ -5189,7 +5326,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 				
 				# Lignes verticales
-				abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+				abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 				
 				text(26,  base::min(essai$deces_standardises_si_pop_2020_70_79), "2013", cex=1.2)
 				text(78,  base::min(essai$deces_standardises_si_pop_2020_70_79), "2014", cex=1.2)
@@ -5199,7 +5336,8 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				text(287, base::min(essai$deces_standardises_si_pop_2020_70_79), "2018", cex=1.2)
 				text(339, base::min(essai$deces_standardises_si_pop_2020_70_79), "2019", cex=1.2)
 				text(391, base::min(essai$deces_standardises_si_pop_2020_70_79), "2020", cex=1.2)
-				text(440, base::min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
+				text(443, base::min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
+				text(495, base::min(essai$deces_standardises_si_pop_2020_70_79), "2022", cex=1.2)
 				
 				#text(26, 22000, nomPays, cex=1.2)
 				
@@ -5248,7 +5386,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_col(aes(x = numSemaineDepuis2013, y = diff_70_79, fill = pos70_79)) +
 							scale_fill_manual(values = c("darkgreen", "red")) +
 							geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_70_79),color = "#0066CC", size = 1) +
-							geom_vline(xintercept = c(366, 419, 471)) +
+							geom_vline(xintercept = c(366, 419, 471,523)) +
 							ylab("Différence entre décès constatés \n et décès attendus") +
 							geom_vline(xintercept = floor(date_debut_2021_70_79), colour="#336666", linetype = "longdash")+
 							geom_text(x=floor(date_debut_2021_70_79), y=base::max(essai_court$diff_70_79), label="début vaccination", color="#336666")+
@@ -5258,9 +5396,12 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_text(x = 391,
 									y = base::min(essai$diff_70_79),
 									label = "2020") +
-							geom_text(x = 440,
+							geom_text(x = 443,
 									y = base::min(essai$diff_70_79),
 									label = "2021") +
+					  geom_text(x = 495,
+					            y = base::min(essai$diff_70_79),
+					            label = "2022") +
 							xlab(
 									paste0(
 											"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -5304,7 +5445,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_col(aes(x = numSemaineDepuis2013, y = diff_70_79, fill = pos70_79)) +
 							scale_fill_manual(values = c("darkgreen", "red")) +
 							geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_70_79),color = "#0066CC", size = 1) +
-							geom_vline(xintercept = c(366, 419, 471)) +
+							geom_vline(xintercept = c(366, 419, 471,523)) +
 							xlab("")+
 							ylab("Différence entre décès constatés \n et décès attendus") +
 							geom_text(x = 339,
@@ -5313,9 +5454,12 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_text(x = 391,
 									y = base::min(essai$diff_70_79),
 									label = "2020") +
-							geom_text(x = 440,
+							geom_text(x = 443,
 									y = base::min(essai$diff_70_79),
 									label = "2021") +
+					  geom_text(x = 495,
+					            y = base::min(essai$diff_70_79),
+					            label = "2022") +
 							ggtitle(
 									paste0(
 											"Ecart des décès hebdomadaires des 70-79 ans par rapport à l'attendu ",
@@ -5354,15 +5498,18 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79)/pop_week_70_79),col="#999999",size=2, linetype = "dotted")+
 							geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79_dose1)/pop_week_70_79),col="#0066CC",size=1)+
 							geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79_dose2)/pop_week_70_79),col="#003399",size=1)+
-							geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79_dose3)/pop_week_70_79),col="#000033",size=1)+
-							geom_vline(xintercept = floor(date_debut_2021_70_79), colour="#336666", linetype = "longdash")+
-							geom_vline(xintercept = c(366, 419, 471))+
+							geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79_dose3)/pop_week_70_79),col="#990000",size=1)+
+					  geom_line(aes(x=numSemaineDepuis2013,y=(Age70_79_dose4)/pop_week_70_79),col="#330000",size=1)+
+						geom_vline(xintercept = floor(date_debut_2021_70_79), colour="#336666", linetype = "longdash")+
+							geom_vline(xintercept = c(366, 419, 471,523))+
 							geom_text(x=339, y=0, label="2019")+
 							geom_text(x=391, y=0, label="2020")+
-							geom_text(x=440, y=0, label="2021")+
-							geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
-							geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
-							geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+							geom_text(x=443, y=0, label="2021")+
+					  geom_text(x=495, y=0, label="2022")+
+							geom_text(x=410, y=0.08, label="dose 1",color="#0066CC")+
+							geom_text(x=410, y=0.06, label="dose 2",color="#003399")+
+							geom_text(x=410, y=0.04, label="dose 3",color="#990000")+
+					  geom_text(x=410, y=0.02, label="dose 3",color="#330000")+
 							xlab("")+
 							ylab("Part d'injections \n dans la population")+ 
 							theme(legend.position = "none")+
@@ -5430,7 +5577,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				mtext("                                                                 Source : Eurostat décès hebdomadaires", side=1, col="black", line=1)
 				
 				# Lignes verticales
-				abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
+				abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471,523), col="blue", lty=3)
 				
 				text(26,  base::min(essai$deces_standardises_si_pop_2020_ge80), "2013", cex=1.2)
 				text(78,  base::min(essai$deces_standardises_si_pop_2020_ge80), "2014", cex=1.2)
@@ -5440,7 +5587,8 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				text(287, base::min(essai$deces_standardises_si_pop_2020_ge80), "2018", cex=1.2)
 				text(339, base::min(essai$deces_standardises_si_pop_2020_ge80), "2019", cex=1.2)
 				text(391, base::min(essai$deces_standardises_si_pop_2020_ge80), "2020", cex=1.2)
-				text(440, base::min(essai$deces_standardises_si_pop_2020_ge80), "2021", cex=1.2)
+				text(443, base::min(essai$deces_standardises_si_pop_2020_ge80), "2021", cex=1.2)
+				text(495, base::min(essai$deces_standardises_si_pop_2020_ge80), "2022", cex=1.2)
 				
 				#text(26, 22000, nomPays, cex=1.2)
 				
@@ -5473,10 +5621,11 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_col(aes(x=numSemaineDepuis2013,y=diff_ge80,fill=posge80))+
 							scale_fill_manual(values = c("darkgreen", "red"))+
 							geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_ge80),color = "#0066CC", size = 1) +
-							geom_vline(xintercept = c(366, 419, 471)) +
+							geom_vline(xintercept = c(366, 419, 471,523)) +
 							geom_text(x=339, y=base::min(essai_court$diff_ge80), label="2019")+
 							geom_text(x=391, y=base::min(essai_court$diff_ge80), label="2020")+
-							geom_text(x=440, y=base::min(essai_court$diff_ge80), label="2021")+
+							geom_text(x=443, y=base::min(essai_court$diff_ge80), label="2021")+
+					  geom_text(x=495, y=base::min(essai_court$diff_ge80), label="2022")+
 							geom_vline(xintercept = floor(date_debut_2021_ge80), colour="#336666", linetype = "longdash")+
 							geom_text(x=floor(date_debut_2021_ge80), y=base::max(essai_court$diff_ge80), label="début vaccination", color="#336666")+
 							xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",floor(surmortalite_ge80_2021),
@@ -5500,10 +5649,11 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_col(aes(x=numSemaineDepuis2013,y=diff_ge80,fill=posge80))+
 							scale_fill_manual(values = c("darkgreen", "red"))+
 							geom_line(aes(x = numSemaineDepuis2013, y = moyenne_mobile_ge80),color = "#0066CC", size = 1) +
-							geom_vline(xintercept = c(366, 419, 471)) +
+							geom_vline(xintercept = c(366, 419, 471,523)) +
 							geom_text(x=339, y=base::min(essai_court$diff_ge80), label="2019")+
 							geom_text(x=391, y=base::min(essai_court$diff_ge80), label="2020")+
-							geom_text(x=440, y=base::min(essai_court$diff_ge80), label="2021")+
+							geom_text(x=443, y=base::min(essai_court$diff_ge80), label="2021")+
+					  geom_text(x=495, y=base::min(essai_court$diff_ge80), label="2022")+
 							xlab("")+
 							ylab("Différence entre décès constatés \n et décès attendus")+
 							theme(legend.position = "none")+
@@ -5527,15 +5677,18 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_line(aes(x=numSemaineDepuis2013,y=(`Age80+`)/pop_week_ge80),col="#999999",size=2, linetype = "dotted")+
 							geom_line(aes(x=numSemaineDepuis2013,y=`Age80+_dose1`/pop_week_ge80),col="#0066CC",size=1)+
 							geom_line(aes(x=numSemaineDepuis2013,y=`Age80+_dose2`/pop_week_ge80),col="#003399",size=1)+
-							geom_line(aes(x=numSemaineDepuis2013,y=`Age80+_dose3`/pop_week_ge80),col="#000033",size=1)+
+							geom_line(aes(x=numSemaineDepuis2013,y=`Age80+_dose3`/pop_week_ge80),col="#990000",size=1)+
+					  geom_line(aes(x=numSemaineDepuis2013,y=`Age80+_dose4`/pop_week_ge80),col="#330000",size=1)+
 							geom_vline(xintercept = floor(date_debut_2021_ge80), colour="#336666", linetype = "longdash")+
-							geom_vline(xintercept = c(366, 419, 471)) +
+							geom_vline(xintercept = c(366, 419, 471,523)) +
 							geom_text(x=339, y=0, label="2019")+
 							geom_text(x=391, y=0, label="2020")+
-							geom_text(x=440, y=0, label="2021")+
-							geom_text(x=410, y=0.075, label="dose 1",color="#0066CC")+
-							geom_text(x=410, y=0.05, label="dose 2",color="#003399")+
-							geom_text(x=410, y=0.025, label="dose 3",color="#000033")+
+							geom_text(x=443, y=0, label="2021")+
+					  geom_text(x=495, y=0, label="2022")+
+							geom_text(x=410, y=0.08, label="dose 1",color="#0066CC")+
+							geom_text(x=410, y=0.06, label="dose 2",color="#003399")+
+							geom_text(x=410, y=0.04, label="dose 3",color="#990000")+
+					  geom_text(x=410, y=0.02, label="dose 3",color="#330000")+
 							xlab("")+
 							ylab("Part d'injections \n dans la population")+ 
 							theme(legend.position = "none")+
@@ -6032,6 +6185,20 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 								Age60_69_dose3,
 								Age70_79_dose3,
 								`Age80+_dose3`,
+								Age15_17_dose4,
+								Age18_24_dose4,
+								Age25_49_dose4,
+								Age50_59_dose4,
+								Age60_69_dose4,
+								Age70_79_dose4,
+								`Age80+_dose4`,
+								Age15_17_dose5,
+								Age18_24_dose5,
+								Age25_49_dose5,
+								Age50_59_dose5,
+								Age60_69_dose5,
+								Age70_79_dose5,
+								`Age80+_dose5`,
 								diff_deces_tot_predit_15_24,
 								diff_deces_tot_predit_25_49,
 								diff_deces_tot_predit_50_59,
@@ -6040,6 +6207,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 								diff_deces_tot_predit_ge80)%>% 
 						mutate(Age15_24_dose2 = Age15_17_dose2 + Age18_24_dose2,
 								Age15_24_dose3 = Age15_17_dose3 + Age18_24_dose3,
+								Age15_24_dose4 = Age15_17_dose4 + Age18_24_dose4,
+								Age15_24_dose5 = Age15_17_dose5 + Age18_24_dose5,
 								Age15_24_dose1 = Age15_17_dose1 + Age18_24_dose1,
 								Age15_24 = Age15_17 + Age18_24) %>% 
 						mutate(diff_15_24=deces_tot_15_24 - predit_15_24,
@@ -8233,6 +8402,20 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 					Age60_69_dose3,
 					Age70_79_dose3,
 					`Age80+_dose3`,
+					Age15_17_dose4,
+					Age18_24_dose4,
+					Age25_49_dose4,
+					Age50_59_dose4,
+					Age60_69_dose4,
+					Age70_79_dose4,
+					`Age80+_dose4`,
+					Age15_17_dose5,
+					Age18_24_dose5,
+					Age25_49_dose5,
+					Age50_59_dose5,
+					Age60_69_dose5,
+					Age70_79_dose5,
+					`Age80+_dose5`,
 					deces_covid_0_24, 
 					deces_covid_0_4,
 					deces_covid_0_9,
@@ -8270,6 +8453,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 					deces_covid_moins60)%>% 
 			mutate(Age15_24_dose2 = Age15_17_dose2 + Age18_24_dose2,
 					Age15_24_dose3 = Age15_17_dose3 + Age18_24_dose3,
+					Age15_24_dose4 = Age15_17_dose4 + Age18_24_dose4,
+					Age15_24_dose5 = Age15_17_dose5 + Age18_24_dose5,
 					Age15_24_dose1 = Age15_17_dose1 + Age18_24_dose1,
 					Age15_24 = Age15_17 + Age18_24) %>% 
 			mutate(diff_15_24=deces_tot_15_24 - predit_15_24,
@@ -8545,6 +8730,12 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 					Age15_17_dose3 = sum(Age15_17_dose3),
 					Age18_24_dose3 = sum(Age18_24_dose3),
 					Age15_24_dose3 = sum(Age15_24_dose3),
+					Age15_17_dose4 = sum(Age15_17_dose4),
+					Age18_24_dose4 = sum(Age18_24_dose4),
+					Age15_24_dose4 = sum(Age15_24_dose4),
+					Age15_17_dose5 = sum(Age15_17_dose5),
+					Age18_24_dose5 = sum(Age18_24_dose5),
+					Age15_24_dose5 = sum(Age15_24_dose5),
 					pop_week_15_24 = mean(pop_week_15_24),
 					deces_covid_0_24 = sum(deces_covid_0_24),
 					deces_covid_10_19 = sum(deces_covid_10_19),
@@ -8555,6 +8746,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 					Age25_49_dose1 = sum(Age25_49_dose1),
 					Age25_49_dose2 = sum(Age25_49_dose2),
 					Age25_49_dose3 = sum(Age25_49_dose3),
+					Age25_49_dose4 = sum(Age25_49_dose4),
+					Age25_49_dose5 = sum(Age25_49_dose5),
 					pop_week_25_49 = mean(pop_week_25_49),
 					deces_covid_25_34 = sum(deces_covid_25_34),
 					deces_covid_35_44 = sum(deces_covid_35_44),
@@ -8567,6 +8760,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 					Age50_59_dose1 = sum(Age50_59_dose1),
 					Age50_59_dose2 = sum(Age50_59_dose2),
 					Age50_59_dose3 = sum(Age50_59_dose3),
+					Age50_59_dose4 = sum(Age50_59_dose4),
+					Age50_59_dose5 = sum(Age50_59_dose5),
 					pop_week_50_59 = mean(pop_week_50_59),
 					deces_covid_50_59 = sum(deces_covid_50_59),
 					deces_covid_55_64 = sum(deces_covid_55_64),
@@ -8576,6 +8771,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 					Age60_69_dose1 = sum(Age60_69_dose1),
 					Age60_69_dose2 = sum(Age60_69_dose2),
 					Age60_69_dose3 = sum(Age60_69_dose3),
+					Age60_69_dose4 = sum(Age60_69_dose4),
+					Age60_69_dose5 = sum(Age60_69_dose5),
 					pop_week_60_69 = mean(pop_week_60_69),
 					deces_covid_60_69 = sum(deces_covid_60_69),
 					deces_covid_65_74 = sum(deces_covid_65_74),
@@ -8584,6 +8781,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 					Age70_79_dose1 = sum(Age70_79_dose1),
 					Age70_79_dose2 = sum(Age70_79_dose2),
 					Age70_79_dose3 = sum(Age70_79_dose3),
+					Age70_79_dose4 = sum(Age70_79_dose4),
+					Age70_79_dose5 = sum(Age70_79_dose5),
 					pop_week_70_79 = mean(pop_week_70_79),
 					deces_covid_70_79 = sum(deces_covid_70_79),
 					deces_covid_75_84 = sum(deces_covid_75_84),
@@ -8592,6 +8791,8 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 					`Age80+_dose1` = sum(`Age80+_dose1`),
 					`Age80+_dose2` = sum(`Age80+_dose2`),
 					`Age80+_dose3` = sum(`Age80+_dose3`),
+					`Age80+_dose4` = sum(`Age80+_dose4`),
+					`Age80+_dose5` = sum(`Age80+_dose5`),
 					pop_week_ge80 = mean(pop_week_ge80),
 					deces_covid_80plus = sum(deces_covid_80plus),
 					deces_covid_85plus = sum(deces_covid_85plus),
@@ -9352,13 +9553,13 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 #### Generer le graphique et le png associé : Deces année coupée en juin ####
 #_______________________________________________________________________________
 
-source("src/analyses/world/eu/es/deces/Hebdo/es_deces_hebdo_std_ete_ete_cumul.R")
+source("src/analyses/world/eu/es/deces/hebdo/es_deces_hebdo_std_ete_ete_cumul.R")
 
 #_______________________________________________________________________________
 #### Generer le graphique et le png associé : Deces cumulés par année et tranche d'âge ####
 #_______________________________________________________________________________
 
-source("src/analyses/world/eu/es/deces/Hebdo/es_deces_hebdo_std_janvier_decembre_cumul.R")
+source("src/analyses/world/eu/es/deces/hebdo/es_deces_hebdo_std_janvier_decembre_cumul.R")
 
 #_______________________________________________________________________________
 #### Generer le graphique et le png associé : Deces et Deces standardises ####

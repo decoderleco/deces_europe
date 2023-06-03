@@ -150,6 +150,7 @@ a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_
 										numSemaineDepuis2013 >= 339 &  numSemaineDepuis2013 <= 390 ~ "2019-2020",
 										numSemaineDepuis2013 >= 391 &  numSemaineDepuis2013 <= 442 ~ "2020-2021",
 										numSemaineDepuis2013 >= 443 &  numSemaineDepuis2013 <= 494 ~ "2021-2022",
+										numSemaineDepuis2013 >= 495 &  numSemaineDepuis2013 <= 556 ~ "2022-2023"
 								)) %>% 
 						select(geo, annee_coupee_ete, numSemaineDepuis2013,
 								deces_standardises_si_pop_2020_total = deces_standardises_si_pop_2020,
@@ -172,6 +173,7 @@ a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_
 				temp20192020 <- temp %>% filter(annee_coupee_ete =="2019-2020") 
 				temp20202021 <- temp %>% filter(annee_coupee_ete =="2020-2021") 
 				temp20212022 <- temp %>% filter(annee_coupee_ete =="2021-2022") 
+				temp20222023 <- temp %>% filter(annee_coupee_ete =="2022-2023") 
 				
 				
 				# Trier par numéro de semaine
@@ -184,6 +186,7 @@ a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_
 				order(temp20192020$numSemaineDepuis2013)
 				order(temp20202021$numSemaineDepuis2013)
 				order(temp20212022$numSemaineDepuis2013)
+				order(temp20222023$numSemaineDepuis2013)
 				
 				
 				# Ajouter une colonne numSemaineAnnee
@@ -196,6 +199,7 @@ a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_
 				temp20192020$numSemaineAnnee <- 1:nrow(temp20192020)
 				temp20202021$numSemaineAnnee <- 1:nrow(temp20202021)
 				temp20212022$numSemaineAnnee <- 1:nrow(temp20212022)
+				temp20222023$numSemaineAnnee <- 1:nrow(temp20222023)
 				
 				# Y a-t-il des données pour 2013
 				
@@ -222,6 +226,7 @@ a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_
 				temp2 <- rbind(temp2, temp20192020)
 				temp2 <- rbind(temp2, temp20202021)
 				temp2 <- rbind(temp2, temp20212022)
+				temp2 <- rbind(temp2, temp20222023)
 				
 				
 				# Ajouter des colonnes avec le cumul des décès std hebdo, pour chaque tranche d'âge, en re-démarrant à 0 à chaque changement d'année
