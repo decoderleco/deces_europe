@@ -310,7 +310,7 @@ if (!shallForceDownload && exists(varName)) {
 									deces_code_lieu = cog, deces_pays = libcog))
 	
 	if (shallDeleteVars) rm(communes_deduplique)
-	if (shallDeleteVars) rm(fr_insee_departements)
+
 	if (shallDeleteVars) rm(fr_insee_regions)
 	if (shallDeleteVars) rm(fr_insee_pays)
 	
@@ -1693,6 +1693,197 @@ pngFileRelPath <- paste0(repertoire, "/Taux_mortalite_age_nb.png")
 
 dev.print(device = png, file = pngFileRelPath, width = 1000)
 
+##----------------------------------------------------------------------------##
+#
+# Recuperation des donnees de l'ATIH
+#
+##----------------------------------------------------------------------------##
+
+# source: https://www.scansante.fr/applications/taux-de-recours-tous-champs
+# période: 2017 à 2021
+# type de taux: taux standardisés et nombre de patients
+# niveau géographique: département
+# fichier "applications_taux-de-recours-tous-champs.xls" dans "Sources/Atih"
+# retravaillé à la main pour obtenir "Atih.csv"
+
+#récupération du fichier atih
+atih <- read.csv("data/csv/atih.csv")
+atih<-atih %>% left_join(fr_insee_departements) %>% select(-reg,-cheflieu,-tncc,-ncc,-nccenr)
+
+#création du fichier de décès par département
+deces_annee_departement <- b__fr_gouv_deces_quotidiens %>% filter(deces_annee >=2017)
+deces_annee_departement <- deces_annee_departement %>% group_by(deces_annee, deces_num_dept) %>% 
+  summarise(n = n())
+deces_annee_departement <- deces_annee_departement %>% rename(dep=deces_num_dept,annee=deces_annee,nombre_deces=n)  
+
+#jointure entre décès et hospitalisations
+comparaison_hopsi_deces <- deces_annee_departement %>% left_join(atih) %>% 
+  select(-tauxPatients) %>% filter(annee<=2021)
+comparaison_hopsi_deces_precedent <- comparaison_hopsi_deces %>% mutate(annee=annee+1) %>% 
+  rename(nombre_deces_precedent=nombre_deces, nombre_patients_precedent=nombre_patients) %>% 
+  filter(annee!=2023) %>% select(-libelle)
+comparaison_hopsi_deces <- comparaison_hopsi_deces %>% left_join(comparaison_hopsi_deces_precedent) 
+
+#calculs d'indicateurs
+comparaison_hopsi_deces <- comparaison_hopsi_deces %>% 
+  mutate(evolution_deces=nombre_deces - nombre_deces_precedent, 
+         evolution_patients = nombre_patients - nombre_patients_precedent,
+         part_evolution_deces=(nombre_deces - nombre_deces_precedent)/nombre_deces_precedent,
+         part_evolution_patients=(nombre_patients - nombre_patients_precedent)/nombre_patients_precedent)
+comparaison_hopsi_deces <- comparaison_hopsi_deces %>% mutate(deces_par_patient = nombre_deces/nombre_patients)
+
+#ajout d'une colonne des décès et hospitalisations de 2017 pour centrer et réduire selon 2017
+
+comparaison_hopsi_deces_2017 <- comparaison_hopsi_deces %>% filter(annee==2017) %>% 
+  select(dep,nombre_deces,nombre_patients) %>% mutate(nombre_deces_2017=nombre_deces, nombre_patients_2017=nombre_patients)
+comparaison_hopsi_deces_2017 <- comparaison_hopsi_deces_2017 %>% ungroup() %>% select(-annee,-nombre_deces,-nombre_patients)
+comparaison_hopsi_deces <- comparaison_hopsi_deces %>% left_join(comparaison_hopsi_deces_2017)
+comparaison_hopsi_deces <- comparaison_hopsi_deces %>% mutate(deces_norm = (nombre_deces-nombre_deces_2017)/nombre_deces_2017,
+patients_norm=(nombre_patients-nombre_patients_2017)/nombre_patients_2017)
+
+#sélection France métropolitaine
+comparaison_hopsi_deces_metro <- comparaison_hopsi_deces %>% filter(dep<=96)
+
+#caclul des corrélations de spearman
+with(comparaison_hopsi_deces_metro,cor.test(deces_norm,patients_norm,method="spearman"))
+with(comparaison_hopsi_deces_metro %>% filter(annee!=2020),cor.test(deces_norm,patients_norm,method="spearman"))
+with(comparaison_hopsi_deces_metro %>% filter(annee==2020),cor.test(deces_norm,patients_norm,method="spearman"))
+
+comparaison_hopsi_deces_metro$annee<-as.character(comparaison_hopsi_deces_metro$annee)
+
+repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/ATIH"))
+
+#boîte à moustache france métro
+deces<-ggplot(comparaison_hopsi_deces_metro,aes(x=annee,y=deces_norm))+
+  geom_boxplot() +
+  ggtitle("Nombre de décès en base 2017", subtitle = "par département")
+
+deces
+
+pngFileRelPath <- paste0(repertoire, "/BAM_deces.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+patients<-ggplot(comparaison_hopsi_deces_metro,aes(x=annee,y=patients_norm))+
+  geom_boxplot()+
+  ggtitle("Nombre de patients en base 2017", subtitle = "par département")
+
+patients
+
+pngFileRelPath <- paste0(repertoire, "/BAM_patients.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+ratio<-ggplot(comparaison_hopsi_deces_metro,aes(x=annee,y=deces_par_patient))+
+  geom_boxplot()+
+  ggtitle("Ratio décès/patients en base 2017", subtitle = "par département")
+ratio
+
+pngFileRelPath <- paste0(repertoire, "/BAM_ratio_deces_patients.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+comparaison_hopsi_deces_metro_2020<-comparaison_hopsi_deces_metro %>% filter(annee=="2020")
+
+#france qui soigne
+mediane_soin <- median(comparaison_hopsi_deces_metro_2020$patients_norm)
+premier_quartile_soin <- quantile(comparaison_hopsi_deces_metro_2020$patients_norm,0.25)
+troisième_quartile_soin <- quantile(comparaison_hopsi_deces_metro_2020$patients_norm,0.75)
+
+france_qui_soigne<-comparaison_hopsi_deces_metro_2020 %>% filter(patients_norm>=troisième_quartile_soin) %>% 
+  ungroup() %>% select(dep) %>% left_join(comparaison_hopsi_deces_metro) %>% mutate(typo="soigne")
+france_qui_tue<-comparaison_hopsi_deces_metro_2020 %>% filter(patients_norm<=premier_quartile_soin) %>% 
+  ungroup() %>% select(dep) %>% left_join(comparaison_hopsi_deces_metro) %>% mutate(typo="ne soigne pas")
+
+france_metro_typo <- france_qui_soigne %>% rbind(france_qui_tue)
+
+
+#boîte à moustache france qui soigne/tue
+deces<-ggplot(france_metro_typo,aes(x=annee,y=deces_norm))+
+  geom_boxplot(aes(fill = typo))+
+  ggtitle("Nombre de décès en base 2017", subtitle = "selon le type de département")
+
+deces
+
+pngFileRelPath <- paste0(repertoire, "/BAM_deces_typo.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+patients<-ggplot(france_metro_typo,aes(x=annee,y=patients_norm))+
+  geom_boxplot(aes(fill = typo)) +
+  ggtitle("Nombre de patients en base 2017", subtitle = "selon le type de département")
+
+patients
+
+pngFileRelPath <- paste0(repertoire, "/BAM_patients_typo.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+
+ratio<-ggplot(france_metro_typo,aes(x=annee,y=deces_par_patient))+
+  geom_boxplot(aes(fill = typo)) +
+  ggtitle("Ratio décès/patients en base 2017", subtitle = "selon le type de département")
+
+ratio
+
+pngFileRelPath <- paste0(repertoire, "/BAM_ratio_deces_patients_typo.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+
+#carte des départements
+
+carte_departements <- readOGR(dsn="./data/geo/GEOFLA_2-2_DEPARTEMENT_SHP_LAMB93_FXX_2016-06-28/GEOFLA_2-2_DEPARTEMENT_SHP_LAMB93_FXX_2016-06-28/GEOFLA/1_DONNEES_LIVRAISON_2021-02-00129/GEOFLA_2-2_SHP_LAMB93_FR-ED161/DEPARTEMENT",  layer="DEPARTEMENT")
+
+
+idx <- match(carte_departements$CODE_DEPT, comparaison_hopsi_deces_metro_2020$dep)
+concordance_deces <- comparaison_hopsi_deces_metro_2020[idx, "deces_norm"]
+carte_departements$deces_norm <- concordance_deces
+
+couleurs <- colorRampPalette(c('white', 'red'))
+couleurs_inverse <- colorRampPalette(c('red', 'white'))
+
+spplot(carte_departements, "deces_norm",col.regions=couleurs(30),  
+       main=list(label="Evolution du nombre de deces en 2020 par rapport à 2017",cex=.8))
+
+pngFileRelPath <- paste0(repertoire, "/carte_deces.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+idx <- match(carte_departements$CODE_DEPT, comparaison_hopsi_deces_metro_2020$dep)
+concordance_patients <- comparaison_hopsi_deces_metro_2020[idx, "patients_norm"]
+carte_departements$patients_norm <- concordance_patients
+
+spplot(carte_departements, "patients_norm",col.regions=couleurs_inverse(30),  
+       main=list(label="Evolution du nombre de patients en 2020 par rapport à 2017",cex=.8))
+
+
+pngFileRelPath <- paste0(repertoire, "/carte_patients.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+
+france_metro_typo_2020<-france_metro_typo %>% filter(annee=="2020") %>% 
+mutate(typo=case_when(typo=="soigne" ~ 1,
+                      TRUE~ -1)) 
+france_metro_typo_2020<-france_metro_typo_2020 %>% select(dep,typo)
+comparaison_hopsi_deces_metro_2020<-comparaison_hopsi_deces_metro_2020 %>% 
+  left_join(france_metro_typo_2020)
+comparaison_hopsi_deces_metro_2020<-comparaison_hopsi_deces_metro_2020 %>% 
+  mutate(typo=case_when(is.na(typo)~ 0,
+                        TRUE~ typo))
+
+idx <- match(carte_departements$CODE_DEPT, comparaison_hopsi_deces_metro_2020$dep)
+
+concordance_typo <- comparaison_hopsi_deces_metro_2020[idx, "typo"]
+carte_departements$typo <- concordance_typo
+
+couleur_typo=colorRampPalette(c("red","green"))
+
+spplot(carte_departements,  "typo",
+       main=list(label="Typologie de soin",cex=.8))
+
+
 
 if (shallDeleteVars) rm(date_min)
 if (shallDeleteVars) rm(date_max)
@@ -1714,5 +1905,6 @@ if (shallDeleteVars) rm(vaccination)
 if (shallDeleteVars) rm(grippe_2015)
 if (shallDeleteVars) rm(grippe_2017)
 if (shallDeleteVars) rm(graphique_epidemie)
+if (shallDeleteVars) rm(fr_insee_departements)
 
 message("Terminé 040_deces_francais.R")
