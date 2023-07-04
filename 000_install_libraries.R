@@ -17,12 +17,16 @@ install.packages("readr")
 install.packages("lsr")
 install.packages("formattable") 
 install.packages("RColorBrewer")
+install.packages("insee")
+install.packages("rvest")
+install.packages("weights")
 
 install.packages("tinytex")
 install.packages("curl")
 install.packages("gsl")
 
 install.packages("igraph")
+install.packages("ggforce")
 install.packages("Rtools")
 
 install.packages("pyramid")

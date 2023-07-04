@@ -24,6 +24,7 @@ library(readr)
 library(lsr)
 library(igraph)
 library(dplyr)
+library(ggforce)
 
 
 #------------------------------------------------------------------------------#
@@ -1695,7 +1696,7 @@ dev.print(device = png, file = pngFileRelPath, width = 1000)
 
 ##----------------------------------------------------------------------------##
 #
-# Recuperation des donnees de l'ATIH
+#### Recuperation des donnees de l'ATIH ####
 #
 ##----------------------------------------------------------------------------##
 
@@ -1790,13 +1791,20 @@ mediane_soin <- median(comparaison_hopsi_deces_metro_2020$patients_norm)
 premier_quartile_soin <- quantile(comparaison_hopsi_deces_metro_2020$patients_norm,0.25)
 troisième_quartile_soin <- quantile(comparaison_hopsi_deces_metro_2020$patients_norm,0.75)
 
-france_qui_soigne<-comparaison_hopsi_deces_metro_2020 %>% filter(patients_norm>=troisième_quartile_soin) %>% 
+france_qui_soigne<-comparaison_hopsi_deces_metro_2020 %>% 
+  filter(patients_norm>=troisième_quartile_soin) %>% 
   ungroup() %>% select(dep) %>% left_join(comparaison_hopsi_deces_metro) %>% mutate(typo="soigne")
-france_qui_tue<-comparaison_hopsi_deces_metro_2020 %>% filter(patients_norm<=premier_quartile_soin) %>% 
+france_qui_tue<-comparaison_hopsi_deces_metro_2020 %>% 
+  filter(patients_norm<=premier_quartile_soin) %>% 
   ungroup() %>% select(dep) %>% left_join(comparaison_hopsi_deces_metro) %>% mutate(typo="ne soigne pas")
+france_médiane<-comparaison_hopsi_deces_metro_2020 %>% 
+  filter(patients_norm>premier_quartile_soin & patients_norm<troisième_quartile_soin) %>% 
+  ungroup() %>% select(dep) %>% left_join(comparaison_hopsi_deces_metro) %>% mutate(typo="médiane")
+france_metro_typo <- france_qui_soigne %>% rbind(france_qui_tue) %>% rbind(france_médiane)
 
-france_metro_typo <- france_qui_soigne %>% rbind(france_qui_tue)
-
+france_metro_typo<-france_metro_typo %>% mutate(annee_graphique = case_when(typo=="soigne"~ as.double(annee)-0.2,
+                                                                            typo=="ne soigne pas"~ as.double(annee)+0.2,
+                                                                            TRUE~as.double(annee)))
 
 #boîte à moustache france qui soigne/tue
 deces<-ggplot(france_metro_typo,aes(x=annee,y=deces_norm))+
@@ -1829,6 +1837,208 @@ ratio
 pngFileRelPath <- paste0(repertoire, "/BAM_ratio_deces_patients_typo.png")
 
 dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+
+france_metro_typo_groupe<-france_metro_typo %>% filter(annee!="2017") %>% group_by(typo,annee_graphique) %>% 
+  summarise(moyenne_deces = mean(deces_norm),
+            ecart_type_deces = sd(deces_norm),
+            moyenne_soin = mean(patients_norm),
+            ecart_type_soin= sd(patients_norm))
+
+
+
+ggplot(france_metro_typo_groupe, aes(x0=annee_graphique, y0=moyenne_deces)) +
+  geom_circle(aes(r = ecart_type_deces,fill=typo))+ 
+  scale_fill_manual(values = c("#666666", "#CC0000", "#006633"))+
+  theme_minimal() +
+  theme(legend.position = "top")+
+  geom_vline(xintercept = 2017.5)+
+  geom_vline(xintercept = 2018.5)+
+  geom_vline(xintercept = 2019.5)+
+  geom_vline(xintercept = 2020.5)+
+  geom_hline(yintercept = 0) + 
+  theme(axis.text.x = element_text(face = "bold", color = "black", 
+                                                                size = 25),
+        axis.text.y = element_text(face = "bold", color = "blue", 
+                                   size = 25, angle = 45),
+        legend.text = element_text(color = "black", size = 20),
+        plot.title = element_text( size = 25, face = "bold"),
+        plot.subtitle = element_text(size = 20),
+        plot.caption = element_text(size = 15, face = "italic"))+
+  labs(fill = "")+ 
+  labs(title = "Evolution du nombre de décès par département",
+       subtitle = "par rapport à 2017",
+       caption = "Data source: Insee")
+
+pngFileRelPath <- paste0(repertoire, "/Ronds_deces.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+
+ggplot(france_metro_typo_groupe, aes(x0=annee_graphique, y0=moyenne_soin)) +
+  geom_circle(aes(r = ecart_type_soin,fill=typo))+ 
+  scale_fill_manual(values = c("#666666", "#CC0000", "#006633"))+
+  theme_minimal() +
+  theme(legend.position = "top")+
+  geom_vline(xintercept = 2017.5)+
+  geom_vline(xintercept = 2018.5)+
+  geom_vline(xintercept = 2019.5)+
+  geom_vline(xintercept = 2020.5)+
+  geom_hline(yintercept = 0)+ 
+  theme(axis.text.x = element_text(face = "bold", color = "black", 
+                                   size = 25),
+        axis.text.y = element_text(face = "bold", color = "blue", 
+                                   size = 25, angle = 45),
+        legend.text = element_text(color = "black", size = 20),
+        plot.title = element_text( size = 25, face = "bold"),
+        plot.subtitle = element_text(size = 20),
+        plot.caption = element_text(size = 15, face = "italic"))+
+  labs(fill = "")+ 
+  labs(title = "Evolution du nombre de patients par département",
+                        subtitle = "par rapport à 2017",
+                        caption = "Data source: ATIH")
+
+pngFileRelPath <- paste0(repertoire, "/Ronds_soins.png")
+
+dev.print(device = png, file = pngFileRelPath, width = 1000)
+
+
+
+#### essai code ATIH Sylvain ####
+
+library(insee) 
+library(rvest)
+library(weights)
+
+# Évolution du taux de mortalité standardisé de 2020 par rapport à la moyenne des trois années précédantes.
+# Usage de la bibliothèque insee. Sa documentation se trouve ici: https://cran.r-project.org/web/packages/insee/insee.pdf
+EvoMortStd = 
+  get_idbank_list("DECES-MORTALITE") |> 
+  subset(
+    subset =
+      FREQ == "A" & 
+      INDICATEUR == "TAUX_MORTALITE_STANDARDISE" & 
+      grepl("^D", REF_AREA) & 
+      AGE == "65-", 
+    select = 
+      "idbank"
+  ) |> 
+  # convertir le data.frame en character
+  unlist() |> 
+  # sélectionner la période pertinente des tableaux
+  get_insee_idbank(
+    startPeriod = 2017,
+    endPeriod = 2020
+  ) |> 
+  # sélectionner les valeurs pertinentes
+  subset(select = "OBS_VALUE") |> 
+  # convertir le data.frame en numeric
+  unlist() |> 
+  unname() |>
+  # fonction pour calculer le taux de croissance de la dernière année par rapport à la moyenne des trois années précédentes
+  (function(data = _) {
+    sapply(
+      seq( 1, length(data), by = 4),
+      function(start) {
+        ( data[start] - mean(data[(start+1):(start+3)]) ) / mean(data[(start+1):(start+3)]) 
+      }
+    ) 
+  })() |>
+  print()
+
+# Nombre de personnes de plus de 60 ans par département fois 100
+PondPop60 = get_idbank_list("TCRED-ESTIMATIONS-POPULATION") |>
+  subset(
+    subset = 
+      grepl("^D", REF_AREA) & 
+      SEXE == "0" & 
+      grepl("00-$|60-$", AGE),
+    select = 
+      "idbank"
+  ) |> 
+  unlist() |> 
+  get_insee_idbank(startPeriod = 2020, endPeriod = 2020) |> 
+  (\(data) {data[order(data$REF_AREA), ] })() |> 
+  subset(select = "OBS_VALUE") |> 
+  unlist() |> 
+  unname() |>
+  (\(data) { 
+    sapply(
+      seq(1, length(data), by = 2), 
+      \(start) { 
+        (data[start]) * data[start+1] 
+      }
+    ) 
+  })() |>
+  print()
+
+# évolution du taux de patients
+# période: 2017 à 2020
+# type de taux: taux standardisés
+# niveau géographique: département
+
+# usage de la bibliothèque rvest: https://www.rdocumentation.org/packages/rvest/versions/1.0.3
+
+# convertir les caractères de chiffres en nombres
+clean_numeric = 
+  \(x) {
+    x = gsub(",", ".", x) |> 
+      gsub(" ", "", x=_) |>
+      as.numeric() |>
+      suppressWarnings()
+  }
+
+html_page =
+  read_html("https://www.scansante.fr/applications/taux-de-recours-tous-champs/submit?snatnav=&mbout=part1&champ=tous+champs&unite=patients&version=v2021&taux=stand&tgeo=dep")
+
+EvoTxPat =
+  html_page |>
+  (\(data) {html_table(data)[[3]]})() |>
+  # nettoyage:
+  (\(df) {
+    names(df) = paste(names(df), df[1, ], sep = " ")
+    df[, -1] = lapply(df[, -1], clean_numeric)
+    df |> tail(-1) |> head(-3)
+  })() |>
+  # calcul:
+  (\(df) {
+    sapply(1:nrow(df), \(i) {
+      (df[i, 5] - rowMeans(df[i, 2:4])) / rowMeans(df[i, 2:4])
+    } ) |> 
+      unlist()
+  })() |> 
+  unname() |>
+  print()
+
+# Corrélation entre l'évolution de la mortalité standardisée et l'évolution du taux de recours aux soins hospitaliers, par département, 2020 par rapport à la moyenne 2017-2019, pondérée la population des plus de 60 ans dans chaque département
+# usage de la bibliothèque weights: https://www.rdocumentation.org/packages/rvest/versions/1.0.3
+wtd.cor(EvoMortStd, EvoTxPat, weight = PondPop60) |>
+  print()
+with(html_page,cor.test(EvoMortStd,EvoTxPat,method="spearman"))|>
+  print()
+with(html_page,cor.test(EvoMortStd,EvoTxPat,method="pearson"))|>
+  print()
+
+repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV,"/Registre/ATIH"))
+# Créer le fichier PNG
+png(paste0(repertoire,"/EvoMortStdVsEvoTxPat.png"))
+# Dessiner le nuage de points
+plot(
+  x = EvoTxPat,
+  y = EvoMortStd,
+  cex = PondPop60/10000000,
+  main = "Δ Mortalité standardisée vs Δ recours aux soins, 2020",
+  xlab = "Δ recours aux soins",
+  ylab = "Δ mortalité standardisée"
+)
+# Ajuster la régression linéaire et ajouter la ligne de tendance:
+lm(EvoMortStd ~ EvoTxPat, weights = PondPop60) |>
+  abline(col = "red")
+# Fermer le fichier PNG
+dev.off()
+
+
+
 
 
 #carte des départements
