@@ -1,6 +1,17 @@
-# Commencer par installer tous les packages pour tous les scripts (eurostat et ses copains...)
+# Télécharger et installer tous les packages dans R_LIBS_SITE
 #
-# Ce fichier n'est à executer qu'une seule fois
+# Ce fichier n'est à executer qu'une seule fois (sauf en cas d'erreur ou il faut le relancer plusieurs fois
+# car il compile certaine packages qui deviennent alors disponibles)
+
+# Option pour éviter le warning : the 'wininet' method is deprecated for http
+options(download.file.method = "auto")
+
+# Fonction install_github()
+install.packages("remotes")
+install.packages("devtools")
+
+# Pour EuroStat
+install.packages("glue")
 
 # Installer le package eurostat et ses copains
 install.packages("eurostat")
@@ -8,7 +19,7 @@ install.packages("maptools")
 install.packages("rgdal")
 install.packages("maps");
 install.packages("leaflet");
-install.packages(("questionr"));
+install.packages("questionr");
 install.packages("ggplot2");
 install.packages("rnaturalearth")
 install.packages("rnaturalearthdata")
@@ -44,16 +55,19 @@ install.packages("knitr")
 install.packages("rmarkdown")
 install.packages("markdown")
 
-# Gestion des Exceptions
-install.packages("devtools")
-library(devtools)
-
-# TODO TW : L'instruction ci-dessous nécessite l'exécution de 005 !
-install_github("aryoda/tryCatchLog")
-
 # Conversion semaine en date et inversément
 install.packages('ISOweek')
 
-library(knitr)
-library(rmarkdown)
-library(markdown)
+
+
+
+# Charger devtools pour disposer de install_github
+library("devtools")
+
+# L'instruction ci-dessous nécessite le chargement préalable de devtools et la méthode wininet
+options(download.file.method = "wininet")
+install_github("aryoda/tryCatchLog")
+
+
+options(download.file.method = "auto")
+
