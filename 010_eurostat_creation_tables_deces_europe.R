@@ -1,3 +1,4 @@
+# Attacher les Packages contenus dans les Library pour définir les namespaces
 library(maptools)
 library(rgdal)
 library(tidyr)
@@ -12,7 +13,7 @@ library(lubridate)
 library(sf)
 library(rnaturalearth)
 library(rgeos)
-library("rnaturalearthdata")
+library(rnaturalearthdata)
 library(readr)
 library(lsr)
 library(reshape2)
@@ -1955,7 +1956,7 @@ if (shallDeleteVars) rm(numSemaineDepuis2013_for_eu_lockdown_end)
 a__vaccination_age  <- a__f_downloadIfNeeded(
   sourceType = K_SOURCE_TYPE_CSV, 
   UrlOrEuroStatNameToDownload = "https://opendata.ecdc.europa.eu/covid19/vaccine_tracker/csv/data.csv",
-  repertoire = file.path(K_DIR_EXT_DATA_EUROPE,"vaccination__age"),
+  repertoire = file.path(K_DIR_EXT_DATA_EUROPE,"ecdc"),
   var = a__vaccination_age)
 
 a__vaccination_age <- a__vaccination_age %>% 
