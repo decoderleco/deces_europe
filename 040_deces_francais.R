@@ -19,7 +19,7 @@ library(lubridate)
 library(sf)
 library(rnaturalearth)
 library(rgeos)
-library("rnaturalearthdata")
+library(rnaturalearthdata)
 library(readr)
 library(lsr)
 library(igraph)
@@ -367,6 +367,9 @@ if (!shallForceDownload && exists(varName)) {
 	
 		# RAF
 	}
+	
+	if (shallDeleteVars) rm(nb_erreurs)
+	
 	
 	# Trier par date de décès pour que ce soit plus facile à lire
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
@@ -1000,6 +1003,10 @@ today_period <- a__f_get_period(today(), nb_months_by_period, date_min)
 # Filtrer pour ne conserver que les périodes antérieures à la période d'aujourd'hui
 data_a_tracer <- data_a_tracer %>%
 		filter(deces_period < today_period)
+
+if (shallDeleteVars) rm(today_period)
+if (shallDeleteVars) rm(nb_months_by_period)
+
 
 # Sauvegarder le CSV
 write.csv2(data_a_tracer, file='gen/csv/deces_par_tranchedage_et_annee.csv')
@@ -2116,5 +2123,7 @@ if (shallDeleteVars) rm(grippe_2015)
 if (shallDeleteVars) rm(grippe_2017)
 if (shallDeleteVars) rm(graphique_epidemie)
 if (shallDeleteVars) rm(fr_insee_departements)
+if (shallDeleteVars) rm(deces_par_mois_age_des_0an)
+if (shallDeleteVars) rm(deces_par_mois_naissance_des_0an)
 
 message("Terminé 040_deces_francais.R")
