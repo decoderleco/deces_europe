@@ -430,7 +430,7 @@ deces_dep_jour <- deces_dep_jour %>%
 # Ajouter le nom des départements
 
 # Lire le fichier des departements-regions
-nom_departement <- read.csv("data/csv/departements-region.csv", sep=",", header = TRUE)
+nom_departement <- read.csv("data/csv/departements-region.csv", fileEncoding="UTF-8" , sep=",", header = TRUE)
 
 # Ajouter les colonnes dep_name et region_name
 deces_dep_jour <- deces_dep_jour %>%
