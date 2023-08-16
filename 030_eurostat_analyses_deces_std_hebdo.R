@@ -907,7 +907,7 @@ for (pays in c('autriche','belgique','croatie','danmark','espagne',
 "
   write(paste(html_header, widget_format_table_spearman, sep=""), paste0("gen/html/table_spearman_",pays,".html"))
   write(paste(html_header, widget_format_table_wilcoxon, sep=""), paste0("gen/html/table_wilcoxon_",pays,".html"))
-  table_spearman_en_15_24 <- table_spearman_en_cours %>% filter(`tranche d'âge` == "15-24")
+  table_spearman_en_15_24 <- table_spearman_en_cours %>% filter(`tranche d'age` == "15-24")
   
    }
 
@@ -967,7 +967,7 @@ for (pays in c('AT','BE','CY','HR','DK',
   pos_pvalue_2019 <- c(ifelse(res15_24_2019$p.value<0.05,TRUE,FALSE),ifelse(res25_49_2019$p.value<0.05,TRUE,FALSE),ifelse(res60_69_2019$p.value<0.05,TRUE,FALSE),ifelse(res50_59_2019$p.value<0.05,TRUE,FALSE),ifelse(resge80_2019$p.value<0.05,TRUE,FALSE))
   
   table_temp<-data.frame(list(pays_concerne,tranches_dages,estimateur_2021,pvalue_2021,pos_pvalue_2021,estimateur_2020,pvalue_2020,pos_pvalue_2020,estimateur_2019,pvalue_2019,pos_pvalue_2019))
-  colnames(table_temp)<-c("geo","tranche d'âge","estimateur de Spearman 2021","p-value de Spearman 2021","significativité 2021","estimateur de Spearman 2020","p-value de Spearman 2020","significativité 2020","estimateur de Spearman 2019","p-value de Spearman 2019","significativité 2019")
+  colnames(table_temp)<-c("geo","tranche d'age","estimateur de Spearman 2021","p-value de Spearman 2021","significativité 2021","estimateur de Spearman 2020","p-value de Spearman 2020","significativité 2020","estimateur de Spearman 2019","p-value de Spearman 2019","significativité 2019")
   
   
   if(length(table_spearman_age)==0){
@@ -1301,7 +1301,7 @@ for (pays in c('AT','BE','CY','HR','DK',
     ecart_dose2_deces<-c(ecart_dose2_deces_15_24,ecart_dose2_deces_25_49,ecart_dose2_deces_50_59,ecart_dose2_deces_60_69,ecart_dose2_deces_70_79,ecart_dose2_deces_ge80)
     ecart_dose3_deces<-c(ecart_dose3_deces_15_24,ecart_dose3_deces_25_49,ecart_dose3_deces_50_59,ecart_dose3_deces_60_69,ecart_dose3_deces_70_79,ecart_dose3_deces_ge80)
     table_temp<-data.frame(list(pays_concerne,tranches_dages,dates_debut,dates_max_deces,dates_max_dose1,dates_max_dose2,dates_max_dose3,ecart_dose1_deces,ecart_dose2_deces,ecart_dose3_deces))
-    colnames(table_temp)<-c("geo","tranche d'âge","date de début","date du max de décès 2021","date du max de dose 1","date du max de dose 2","date du max de dose 3","ecart dose 1 - décès","ecart dose 2 - décès","ecart dose 3 - décès")
+    colnames(table_temp)<-c("geo","tranche d'age","date de début","date du max de décès 2021","date du max de dose 1","date du max de dose 2","date du max de dose 3","ecart dose 1 - décès","ecart dose 2 - décès","ecart dose 3 - décès")
     
     
     if(length(dates_debuts_tous_pays)==0){
