@@ -16,7 +16,7 @@ options(encoding = "UTF-8")
 
 ################################################################################
 #
-# Bibliothèques
+# Charger les Packages contenus dans les Library et définir les namespaces
 #
 ################################################################################
 
@@ -29,6 +29,7 @@ library(tryCatchLog)
 #Charger la librairie rlang pour les fonctions sur les environnements de variables R
 library(rlang)
 
+library(sp)
 library(maptools)
 library(rgdal)
 library(tidyr)
@@ -43,7 +44,7 @@ library(lubridate)
 library(sf)
 library(rnaturalearth)
 library(rgeos)
-library("rnaturalearthdata")
+library(rnaturalearthdata)
 library(readr)
 library(lsr)
 library(reshape2)

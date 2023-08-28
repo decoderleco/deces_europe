@@ -4057,7 +4057,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 						pvalue <- c(res15_24$p.value,res25_49$p.value,res50_59$p.value,res60_69$p.value,res70_79$p.value,resge80$p.value)
 						
 						table_temp<-data.frame(list(pays_concerne,tranches_dages,décalage,estimateur,pvalue))
-						colnames(table_temp)<-c("geo","tranche d'âge","décalage","estimateur de Spearman","p-value de Spearman")
+						colnames(table_temp)<-c("geo","tranche d'age","décalage","estimateur de Spearman","p-value de Spearman")
 						
 						if(length(test_spearman)==0){
 							test_spearman<-table_temp
@@ -4204,7 +4204,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 									numSemainePic1,
 									numSemainePic2))
 					
-					colnames(test_wilcoxon) <- c("geo","tranche d'âge",
+					colnames(test_wilcoxon) <- c("geo","tranche d'age",
 							"surmortalite 2021","surmortalite 2020","p-value de Wilcoxon 2021-2020",
 							"correspondance entre pics de mortalité et de vaccination",
 							"nombre de semaines étudiées",
@@ -6754,7 +6754,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 						pvalue <- c(res15_24$p.value,res25_49$p.value,res50_59$p.value,res60_69$p.value,res70_79$p.value,resge80$p.value)
 						
 						table_temp<-data.frame(list(pays_concerne,tranches_dages,décalage,estimateur,pvalue))
-						colnames(table_temp)<-c("geo","tranche d'âge","décalage","estimateur de Spearman","p-value de Spearman")
+						colnames(table_temp)<-c("geo","tranche d'age","décalage","estimateur de Spearman","p-value de Spearman")
 						
 						if(length(test_spearman)==0){
 							test_spearman<-table_temp
@@ -6868,7 +6868,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 									numSemaineDose3,
 									numSemainePic1,
 									numSemainePic2))
-					colnames(test_wilcoxon)<-c("geo","tranche d'âge",
+					colnames(test_wilcoxon)<-c("geo","tranche d'age",
 							"surmortalite 2021","surmortalite 2020","p-value de Wilcoxon 2021-2020",
 							"correspondance entre pics de mortalité et de vaccination",
 							"nombre de semaines étudiées",

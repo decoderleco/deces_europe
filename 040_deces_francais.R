@@ -19,7 +19,7 @@ library(lubridate)
 library(sf)
 library(rnaturalearth)
 library(rgeos)
-library("rnaturalearthdata")
+library(rnaturalearthdata)
 library(readr)
 library(lsr)
 library(igraph)
@@ -368,6 +368,9 @@ if (!shallForceDownload && exists(varName)) {
 		# RAF
 	}
 	
+	if (shallDeleteVars) rm(nb_erreurs)
+	
+	
 	# Trier par date de décès pour que ce soit plus facile à lire
 	b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>%
 			arrange(deces_date_complete, 
@@ -427,7 +430,7 @@ deces_dep_jour <- deces_dep_jour %>%
 # Ajouter le nom des départements
 
 # Lire le fichier des departements-regions
-nom_departement <- read.csv("data/csv/departements-region.csv", sep=",", header = TRUE)
+nom_departement <- read.csv("data/csv/departements-region.csv", fileEncoding="UTF-8" , sep=",", header = TRUE)
 
 # Ajouter les colonnes dep_name et region_name
 deces_dep_jour <- deces_dep_jour %>%
@@ -1000,6 +1003,10 @@ today_period <- a__f_get_period(today(), nb_months_by_period, date_min)
 # Filtrer pour ne conserver que les périodes antérieures à la période d'aujourd'hui
 data_a_tracer <- data_a_tracer %>%
 		filter(deces_period < today_period)
+
+if (shallDeleteVars) rm(today_period)
+if (shallDeleteVars) rm(nb_months_by_period)
+
 
 # Sauvegarder le CSV
 write.csv2(data_a_tracer, file='gen/csv/deces_par_tranchedage_et_annee.csv')
@@ -2116,5 +2123,7 @@ if (shallDeleteVars) rm(grippe_2015)
 if (shallDeleteVars) rm(grippe_2017)
 if (shallDeleteVars) rm(graphique_epidemie)
 if (shallDeleteVars) rm(fr_insee_departements)
+if (shallDeleteVars) rm(deces_par_mois_age_des_0an)
+if (shallDeleteVars) rm(deces_par_mois_naissance_des_0an)
 
 message("Terminé 040_deces_francais.R")
