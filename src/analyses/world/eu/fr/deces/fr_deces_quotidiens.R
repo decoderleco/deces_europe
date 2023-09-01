@@ -82,7 +82,7 @@ a__f_plot_fr_deces_quotidiens_par_region <- function(fichier, nomRegion) {
 	a__f_createDir(repertoire)
 	
 	#Nom du fichier png à générer
-	pngFileRelPath <- paste0(repertoire, nomRegion, ".png")
+	pngFileRelPath <- paste0(repertoire, iconv(nomRegion, to="ASCII//TRANSLIT//IGNORE"), ".png")
 	
 	# Message
 	cat(paste0("Creation image (", pngFileRelPath,")\n"))
