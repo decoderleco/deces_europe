@@ -70,7 +70,7 @@ a__f_nettoyer_partie_date <- function(
 
 # Date à partir de laquelle on va faire les analyses (il faut la mettre à jour si on rajoute des données antérieures à 2018)
 # Les décès antérieurs à cette date ne seront pas pris en compte
-K_DEBUT_DATES_DECES_A_ANALYSER <- "2014-01-01"
+K_DEBUT_DATES_DECES_A_ANALYSER <- "2010-01-01"
 
 
 
@@ -485,7 +485,7 @@ if (shallDeleteVars) rm(deces_dep_jour)
 # b__fr_gouv_deces_quotidiens <- b__fr_gouv_deces_quotidiens %>% filter(deces_num_dept==974)
 
 deces_par_jour_age <- b__fr_gouv_deces_quotidiens %>% 
-		# Depuis 2018
+		# Depuis la date de début
 		filter(deces_date_complete >= K_DEBUT_DATES_DECES_A_ANALYSER) %>%
 		# Grouper
 		group_by(age_deces_millesime,
@@ -535,7 +535,7 @@ deces_par_jour_age <- deces_par_jour_age %>%
 
 #------------------------------------------------------------------------------#
 #
-#### Deces Quotidiens depuis 2018 par Tranche d'age ####
+#### Deces Quotidiens depuis la date spécifiée en début de programme par Tranche d'age ####
 #
 #------------------------------------------------------------------------------#
 
@@ -1061,16 +1061,37 @@ dev.print(device = png, file = pngFileRelPath, width = 1000)
 
 if(!file.exists('gen/csv/deces_par_jour_age_stand_complet.csv')){
   message("le fichier des décès par jour standardisés n'existe pas, on le créé")
+
+#récupération données de population France métro
+    
+fr_insee_population_france_metro <- read.csv2(file.path("https://www.insee.fr/fr/outil-interactif/5014911/data/FRMetro/donnees_pyramide_act.csv"),sep =";")
+fr_insee_population_france_metro <- fr_insee_population_france_metro %>% group_by(ANNEE,AGE) %>% 
+  summarise(POP=sum(POP))
+fr_insee_population_france_metro <- ungroup(fr_insee_population_france_metro)
   
-fr_insee_population <- read_csv(file.path("data/csv/population_par_age_France_2014-2022.csv"))
-fr_insee_population <- fr_insee_population %>% 
-  mutate(annee_suivante = if_else(annee==2022,2022,annee + 1)) %>% 
-  mutate(population=as.double(population))
+fr_insee_population_france_metro <- fr_insee_population_france_metro %>% 
+  mutate(annee_suivante = if_else(ANNEE==2023,2023,ANNEE + 1)) %>% 
+  mutate(population=as.double(POP)) %>% 
+  mutate(age=AGE,annee=ANNEE) %>% 
+  select(-ANNEE,-POP,-AGE)
+
+#récupération données de population France
+
+fr_insee_population_france<- read.csv2(file.path("https://www.insee.fr/fr/outil-interactif/5014911/data/FR/donnees_pyramide_act.csv"),sep =";")
+fr_insee_population_france <- fr_insee_population_france %>% group_by(ANNEE,AGE) %>% 
+  summarise(POP=sum(POP))
+fr_insee_population_france <- ungroup(fr_insee_population_france)
+
+fr_insee_population_france <- fr_insee_population_france %>% 
+  mutate(annee_suivante = if_else(ANNEE==2023,2023,ANNEE + 1)) %>% 
+  mutate(population=as.double(POP)) %>% 
+  mutate(age=AGE,annee=ANNEE) %>% 
+  select(-ANNEE,-POP,-AGE)
 
 #regroupement des plus de 100 ans
 deces_par_jour_age_stand <- deces_par_jour_age %>% 
   select(age,deces_date_complete,nbDeces) %>% 
-  mutate(age=if_else(age>99,100,as.double(age))) %>% 
+  mutate(age=if_else(age>98,99,as.double(age))) %>% 
   group_by(age,deces_date_complete) %>% 
   summarise(nbDeces=sum(nbDeces))
 
@@ -1101,21 +1122,18 @@ deces_par_jour_age_stand_complet <- calendrier %>%
   select(-jointure)
 
 deces_par_jour_age_stand_complet <- deces_par_jour_age_stand_complet %>% 
-  left_join(fr_insee_population)
+  left_join(fr_insee_population_france)
 
 deces_par_jour_age_stand_complet <- deces_par_jour_age_stand_complet %>% 
   mutate(nb_jour_annee = if_else(annee %in% c(2012,2016,2020,2024),366,365))
 
 #jointure avec l'année suivante
-pop_annee_suivante <- fr_insee_population %>% 
+pop_annee_suivante <- fr_insee_population_france %>% 
   select(age,annee,population) %>% 
   rename(annee_suivante=annee,population_annee_suivante=population)
 
 deces_par_jour_age_stand_complet <- ungroup(deces_par_jour_age_stand_complet)
 pop_annee_suivante <- ungroup(pop_annee_suivante)
-
-pop_annee_suivante <- pop_annee_suivante %>% 
-  filter(annee_suivante!=2014)
 
 deces_par_jour_age_stand_complet <- deces_par_jour_age_stand_complet %>% 
   left_join(pop_annee_suivante, by=c("age","annee_suivante"))
@@ -1146,7 +1164,8 @@ deces_par_jour_age_stand_complet<-deces_par_jour_age_stand_complet %>%
 write.csv2(deces_par_jour_age_stand_complet, file='gen/csv/deces_par_jour_age_stand_complet.csv')
 rm(ages)
 rm(calendrier)
-rm(fr_insee_population)
+rm(fr_insee_population_france)
+rm(fr_insee_population_france_metro)
 rm(pop_annee_suivante)
 rm(population_jour_2020)
 rm(deces_par_jour_age_stand)
@@ -2102,7 +2121,98 @@ couleur_typo=colorRampPalette(c("red","green"))
 spplot(carte_departements,  "typo",
        main=list(label="Typologie de soin",cex=.8))
 
+#------------------------------#
+#### modèles par trimestres ####
+#------------------------------#
+deces_par_jour_age_stand_complet<- read.csv2(file.path("gen/csv/deces_par_jour_age_stand_complet.csv"),sep=";")
 
+deces_par_jour_age_stand_complet<-deces_par_jour_age_stand_complet %>% 
+  mutate(trimestre = case_when(substr(deces_date_complete,6,6)>=1 ~ 4,
+  substr(deces_date_complete,7,7)>6 ~ 3,
+  substr(deces_date_complete,7,7)>3 ~ 2,
+  TRUE ~ 1))
+
+deces_par_trimestre_age <- deces_par_jour_age_stand_complet %>% group_by(trimestre, annee, age) %>% 
+  summarise(nbDeces=sum(nbDeces),
+            population_trimestre=mean(population_jour),
+            deces_standard_2020=sum(deces_standard_2020),
+            nbr_jour=n())
+
+deces_par_trimestre_age <- ungroup(deces_par_trimestre_age)
+
+#faire des trimestres à 90 jours, calculer mortalité et log de la mortalité
+deces_par_trimestre_age <- deces_par_trimestre_age %>% 
+  mutate(nbDeces90jours = nbDeces * 90 / nbr_jour) %>% 
+  mutate(logmortalite = log(nbDeces90jours/population_trimestre))
+
+donnees_provisoires<-NULL
+donnees_finales<-NULL
+
+for (Trimestre in 1:4){
+  for (Age in 0:99) {
+    donnees_modele<-deces_par_trimestre_age %>% 
+      filter(annee<=2019,age==Age,trimestre==Trimestre)
+      model = lm(logmortalite ~ annee, data=donnees_modele)
+      donnees_provisoires <-deces_par_trimestre_age %>% 
+        filter(age==Age,trimestre==Trimestre) %>% 
+        mutate(projection_log_deces=model$coefficients[1]+annee*model$coefficients[2]) %>% 
+      donnees_finales <- donnees_finales %>% rbind(donnees_provisoires)
+  }}
+donnees_finales<-donnees_finales %>% mutate(projection_deces=exp(projection_log_deces)*population_trimestre)
+
+donnees_finales<-donnees_finales %>% mutate(tranchesAge=case_when(age==0 ~ "0 ans",
+                                                                  age<5 ~ "1 - 4 ans",
+                                                                  age<12 ~ "5 - 11 ans",
+                                                                  age<18 ~ "12 - 17 ans",
+                                                                  age<50 ~ "18 - 49 ans",
+                                                                  age<65 ~ "50 - 64 ans",
+                                                                  age<80 ~ "65 - 79 ans",
+                                                                  TRUE ~ "80 ans et plus"))
+
+donnees_finales_tranche_age<-donnees_finales %>% group_by(annee,trimestre, tranchesAge) %>% 
+  summarise(population_trimestre=sum(population_trimestre),
+            deces_standard_2020=sum(deces_standard_2020),
+            nbDeces=sum(nbDeces),
+            projection_deces=sum(projection_deces)) %>% 
+  mutate(annee_trimestre = annee + 0.25 * trimestre -0.25)
+
+#calcul des intervalles de confiances
+test<-donnees_finales_tranche_age %>% group_by(trimestre, tranchesAge) %>% 
+  summarise(ecart_type = sd(nbDeces-projection_deces))
+
+donnees_finales_tranche_age<-donnees_finales_tranche_age %>% left_join(test)
+donnees_finales_tranche_age<-donnees_finales_tranche_age %>% 
+  mutate(intervalle_bas=projection_deces-1.5*ecart_type,
+         intervalle_haut=projection_deces+1.5*ecart_type)
+
+#graphiques
+
+repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_trimestriels")
+
+for (trage in (c("0 ans",
+                "1 - 4 ans",
+                "5 - 11 ans",
+                "12 - 17 ans",
+                "18 - 49 ans",
+                "50 - 64 ans",
+                "65 - 79 ans",
+                "80 ans et plus"))){
+
+p<-ggplot(donnees_finales_tranche_age %>% filter(tranchesAge==trage),aes(x = annee_trimestre))+
+  geom_col(aes( y=nbDeces), fill = "#3399FF")+
+  geom_line(aes( y=projection_deces), color = "#330066",size = 1.5,linetype = "longdash")+
+  geom_line(aes( y=intervalle_haut), color = "#CC3333",size = 1,linetype = "longdash")+ 
+  theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+        axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+ scale_x_continuous(breaks=seq(2010, 2023, 1))+ labs(
+   title    = paste0("Nombre de décès par trimestre en France des ",trage),
+   subtitle = "Projection de la tendance log-linéaire de 2010-2019",
+   x        = "Trimestre",
+   y        = "Nombre de décès",
+   caption  = "Décès à l'état civil et population par âge Insee")
+  print(p)
+  dev.print(device = png, file = paste0(repertoire,"deces_trimestriels_",str_replace_all(trage," ",""),".png"), width = 1000)
+}
 
 if (shallDeleteVars) rm(date_min)
 if (shallDeleteVars) rm(date_max)
@@ -2127,5 +2237,23 @@ if (shallDeleteVars) rm(graphique_epidemie)
 if (shallDeleteVars) rm(fr_insee_departements)
 if (shallDeleteVars) rm(deces_par_mois_age_des_0an)
 if (shallDeleteVars) rm(deces_par_mois_naissance_des_0an)
+
+if (shallDeleteVars) rm(carte_departements)
+if (shallDeleteVars) rm(comparaison_hopsi_deces)
+if (shallDeleteVars) rm(comparaison_hopsi_deces_2017)
+if (shallDeleteVars) rm(comparaison_hopsi_deces_metro)
+if (shallDeleteVars) rm(comparaison_hopsi_deces_metro_2020)
+if (shallDeleteVars) rm(comparaison_hopsi_deces_precedent)
+if (shallDeleteVars) rm(concordance_deces)
+if (shallDeleteVars) rm(concordance_patients)
+if (shallDeleteVars) rm(concordance_typo)
+if (shallDeleteVars) rm(france_médiane)
+if (shallDeleteVars) rm(france_metro_typo)
+if (shallDeleteVars) rm(france_metro_typo_2020)
+if (shallDeleteVars) rm(france_metro_typo_groupe)
+if (shallDeleteVars) rm(france_qui_soigne)
+if (shallDeleteVars) rm(france_qui_tue)
+if (shallDeleteVars) rm(atih)
+
 
 message("Terminé 040_deces_francais.R")
