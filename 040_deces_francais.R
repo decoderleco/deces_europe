@@ -25,6 +25,7 @@ library(lsr)
 library(igraph)
 library(dplyr)
 library(ggforce)
+library(gridExtra)
 
 
 #------------------------------------------------------------------------------#
@@ -2126,6 +2127,7 @@ spplot(carte_departements,  "typo",
 #------------------------------#
 deces_par_jour_age_stand_complet<- read.csv2(file.path("gen/csv/deces_par_jour_age_stand_complet.csv"),sep=";")
 
+
 deces_par_jour_age_stand_complet<-deces_par_jour_age_stand_complet %>% 
   mutate(trimestre = case_when(substr(deces_date_complete,6,6)>=1 ~ 4,
   substr(deces_date_complete,7,7)>6 ~ 3,
@@ -2136,7 +2138,7 @@ deces_par_trimestre_age <- deces_par_jour_age_stand_complet %>% group_by(trimest
   summarise(nbDeces=sum(nbDeces),
             population_trimestre=mean(population_jour),
             deces_standard_2020=sum(deces_standard_2020),
-            nbr_jour=n())
+            nbr_jour=dplyr::n())
 
 deces_par_trimestre_age <- ungroup(deces_par_trimestre_age)
 
@@ -2153,9 +2155,10 @@ for (Trimestre in 1:4){
     donnees_modele<-deces_par_trimestre_age %>% 
       filter(annee<=2019,age==Age,trimestre==Trimestre)
       model = lm(logmortalite ~ annee, data=donnees_modele)
+      
       donnees_provisoires <-deces_par_trimestre_age %>% 
         filter(age==Age,trimestre==Trimestre) %>% 
-        mutate(projection_log_deces=model$coefficients[1]+annee*model$coefficients[2]) %>% 
+        mutate(projection_log_deces=model$coefficients[1]+annee*model$coefficients[2]) 
       donnees_finales <- donnees_finales %>% rbind(donnees_provisoires)
   }}
 donnees_finales<-donnees_finales %>% mutate(projection_deces=exp(projection_log_deces)*population_trimestre)
@@ -2164,8 +2167,8 @@ donnees_finales<-donnees_finales %>% mutate(tranchesAge=case_when(age==0 ~ "0 an
                                                                   age<5 ~ "1 - 4 ans",
                                                                   age<12 ~ "5 - 11 ans",
                                                                   age<18 ~ "12 - 17 ans",
-                                                                  age<50 ~ "18 - 49 ans",
-                                                                  age<65 ~ "50 - 64 ans",
+                                                                  age<40 ~ "18 - 39 ans",
+                                                                  age<65 ~ "40 - 64 ans",
                                                                   age<80 ~ "65 - 79 ans",
                                                                   TRUE ~ "80 ans et plus"))
 
@@ -2177,24 +2180,84 @@ donnees_finales_tranche_age<-donnees_finales %>% group_by(annee,trimestre, tranc
   mutate(annee_trimestre = annee + 0.25 * trimestre -0.25)
 
 #calcul des intervalles de confiances
-test<-donnees_finales_tranche_age %>% group_by(trimestre, tranchesAge) %>% 
+test<-donnees_finales_tranche_age %>% filter(annee<=2019) %>% group_by(trimestre, tranchesAge) %>% 
   summarise(ecart_type = sd(nbDeces-projection_deces))
 
 donnees_finales_tranche_age<-donnees_finales_tranche_age %>% left_join(test)
 donnees_finales_tranche_age<-donnees_finales_tranche_age %>% 
   mutate(intervalle_bas=projection_deces-1.5*ecart_type,
-         intervalle_haut=projection_deces+1.5*ecart_type)
+         intervalle_haut=projection_deces+1.5*ecart_type,
+         residus = nbDeces-projection_deces,
+         surmortalite = if_else(nbDeces-intervalle_haut>0,nbDeces-intervalle_haut,0),
+         sousmortalite = if_else(nbDeces-intervalle_bas<0,nbDeces-intervalle_bas,0))
+
+#ajout données vaccination
+
+vaccination <- read.csv2(file.path("inst/extdata/world/eu/fr/gouv/vacsi/fr_gouv_vacsi.csv"))
+
+vaccination <- vaccination %>% 
+  mutate(tranchesAge = case_when(clage_vacsi==0 ~"Tous âges",
+                                 clage_vacsi==4 ~"1 - 4 ans",
+                                 clage_vacsi==9 ~"5 - 11 ans",
+                                 clage_vacsi==11 ~"5 - 11 ans",
+                                 clage_vacsi==17 ~"12 - 17 ans",
+                                 clage_vacsi==24 ~"18 - 39 ans",
+                                 clage_vacsi==29 ~"18 - 39 ans",
+                                 clage_vacsi==39 ~"18 - 39 ans",
+                                 clage_vacsi==49 ~"40 - 64 ans",
+                                 clage_vacsi==59 ~"40 - 64 ans",
+                                 clage_vacsi==64 ~"40 - 64 ans",
+                                 clage_vacsi==69 ~"65 - 79 ans",
+                                 clage_vacsi==74 ~"65 - 79 ans",
+                                 clage_vacsi==79 ~"65 - 79 ans",
+                                 clage_vacsi==80 ~"80 ans et plus"
+  ))%>% 
+  mutate(n_dose1 = ifelse(is.na(n_dose1), 0, n_dose1)) %>%
+  mutate(n_complet = ifelse(is.na(n_complet), 0, n_complet))%>% 
+  mutate(n_rappel = ifelse(is.na(n_rappel),0,n_rappel))%>% 
+  mutate(n_2_rappel = ifelse(is.na(n_2_rappel),0,n_2_rappel))%>% 
+  mutate(n_3_rappel = ifelse(is.na(n_3_rappel),0,n_3_rappel))%>% 
+  mutate(n_rappel_biv = ifelse(is.na(n_rappel_biv),0,n_rappel_biv)) %>% 
+  mutate(annee=substr(jour,1,4),trimestre = case_when(substr(jour,6,6)>=1 ~ 4,
+                                                      substr(jour,7,7)>6 ~ 3,
+                                                      substr(jour,7,7)>3 ~ 2,
+                                                      TRUE ~ 1))
+vaccination<-vaccination %>% group_by(tranchesAge,annee,trimestre) %>% 
+  summarise(n_dose1=sum(n_dose1),
+            n_complet=sum(n_complet),
+            n_rappel=sum(n_rappel),
+            n_2_rappel=sum(n_2_rappel),
+            n_3_rappel=sum(n_3_rappel),
+            n_rappel_biv=sum(n_rappel_biv))
+
+vaccination <- vaccination %>% 
+  mutate(annee = as.integer(annee)) %>% 
+  mutate(annee_trimestre = annee + 0.25 * trimestre -0.25)
+  
+vaccination<-ungroup(vaccination)
+vaccination<-vaccination %>% select(-annee,-trimestre)
+
+donnees_finales_tranche_age <- donnees_finales_tranche_age %>% 
+  left_join(vaccination)
+
+donnees_finales_tranche_age<-donnees_finales_tranche_age%>% 
+  mutate(n_dose1 = ifelse(is.na(n_dose1), 0, n_dose1)) %>%
+  mutate(n_complet = ifelse(is.na(n_complet), 0, n_complet))%>% 
+  mutate(n_rappel = ifelse(is.na(n_rappel),0,n_rappel))%>% 
+  mutate(n_2_rappel = ifelse(is.na(n_2_rappel),0,n_2_rappel))%>% 
+  mutate(n_3_rappel = ifelse(is.na(n_3_rappel),0,n_3_rappel))%>% 
+  mutate(n_rappel_biv = ifelse(is.na(n_rappel_biv),0,n_rappel_biv))
 
 #graphiques
 
-repertoire <- paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_trimestriels")
+repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_trimestriels"))
 
 for (trage in (c("0 ans",
                 "1 - 4 ans",
                 "5 - 11 ans",
                 "12 - 17 ans",
-                "18 - 49 ans",
-                "50 - 64 ans",
+                "18 - 39 ans",
+                "40 - 64 ans",
                 "65 - 79 ans",
                 "80 ans et plus"))){
 
@@ -2211,7 +2274,34 @@ p<-ggplot(donnees_finales_tranche_age %>% filter(tranchesAge==trage),aes(x = ann
    y        = "Nombre de décès",
    caption  = "Décès à l'état civil et population par âge Insee")
   print(p)
-  dev.print(device = png, file = paste0(repertoire,"deces_trimestriels_",str_replace_all(trage," ",""),".png"), width = 1000)
+  dev.print(device = png, file = paste0(repertoire,"/deces_trimestriels_",str_replace_all(trage," ",""),".png"), width = 1000)
+  
+  residus<-ggplot(donnees_finales_tranche_age %>% filter(tranchesAge==trage),aes(x = annee_trimestre))+
+    geom_col(aes( y=surmortalite + sousmortalite), fill = "#3399FF")+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    scale_x_continuous(breaks=seq(2010, 2023, 1))+ labs(
+      title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre en France des ",trage),
+      subtitle = "Projection de la tendance log-linéaire de 2010-2019",
+      x        = "Trimestre",
+      y        = "Nombre de décès",
+      caption  = "Décès à l'état civil et population par âge Insee")
+ 
+  vax<-ggplot(donnees_finales_tranche_age %>% filter(tranchesAge==trage),aes(x = annee_trimestre))+
+    geom_col(aes( y=n_dose1 + n_complet + n_rappel + n_2_rappel + n_3_rappel +n_rappel_biv), fill = "#3399FF")+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    scale_x_continuous(breaks=seq(2010, 2023, 1))+ labs(
+      title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre en France pour les ",trage),
+      subtitle = "",
+      x        = "Trimestre",
+      y        = "Nombre de doses",
+      caption  = "Données VAC-SI Ministère de la Santé")
+  
+  a<-grid.arrange(residus, vax,
+                  ncol=1, nrow=2)
+  ggsave(paste0(repertoire,"/deces_trimestriels_residus_",str_replace_all(trage," ",""),".png"), width = 11, height = 8, plot = a)
+
 }
 
 if (shallDeleteVars) rm(date_min)

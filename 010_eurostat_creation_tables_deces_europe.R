@@ -2993,11 +2993,11 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
 				new_cases_var = new_cases - new_cases_prec,
 				new_vaccinations_var = new_vaccinations - new_vaccinations_prec)
 
-##----------------------------------------------------------------------------##
+##-------------------------------------------------------------------------------------##
 #
-# Insertion d'une régression linéaire des décès hebdomadaires basée sur 2013-2018
+#### Insertion d'une régression linéaire des décès hebdomadaires basée sur 2013-2018 #### 
 #
-##----------------------------------------------------------------------------##
+##-------------------------------------------------------------------------------------##
 
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
   mutate(semaine = str_sub(time,6,8),
@@ -3005,7 +3005,7 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- b__es_deces_week_s
 
 
 annees_13_18 <- ungroup(b__es_deces_week_standardises_si_pop_2020_owid_vaccination) %>% 
-  filter(!(str_sub(time,1,4)=="2020"|str_sub(time,1,4)=="2021"|str_sub(time,1,4)=="2019"))%>%
+  filter(!(str_sub(time,1,4)=="2019"|str_sub(time,1,4)=="2020"|str_sub(time,1,4)=="2021"|str_sub(time,1,4)=="2022"|str_sub(time,1,4)=="2023"|str_sub(time,1,4)=="2024"))%>%
   select(semaine,annee,geo,
          deces_tot_15_24,
          deces_tot_25_49,

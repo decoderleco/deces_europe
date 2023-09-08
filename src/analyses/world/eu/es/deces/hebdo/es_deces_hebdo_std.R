@@ -3406,16 +3406,10 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 #### Generer le graphique et le png associé : deces_hebdo_std_vaccination_interp ####
 #____________________________________________________________________________________
 a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pays_semaine) {
-	
 	# ATTENTION : Pour voir les variables dans le debugger, il faut commenter le tryCatchLog
 	tryLog( {
 				
-				start <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderStart")
-				end <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderEnd")
-				premier_conf_start <- base::min(start$numSemaineDepuis2013)
-				dernier_conf_start <- base::max(start$numSemaineDepuis2013)
-				premier_conf_end <- base::min(end$numSemaineDepuis2013)
-				dernier_conf_end <- base::max(end$numSemaineDepuis2013)
+
 				
 				# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
 				# qui a étépassé dans le parametre region
@@ -3424,6 +3418,20 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				# Recuperer le nom du pays qui est après "es_deces_standard_pays_semaine_"
 				startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
 				nomPays <- str_sub(nomVar, startIndex)
+				
+				if(nomPays !="synchro" && nomPays != "europe"){
+				start <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderStart")
+				end <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderEnd")
+				premier_conf_start <- base::min(start$numSemaineDepuis2013)
+				dernier_conf_start <- base::max(start$numSemaineDepuis2013)
+				premier_conf_end <- base::min(end$numSemaineDepuis2013)
+				dernier_conf_end <- base::max(end$numSemaineDepuis2013)
+				}else{
+				  premier_conf_start <- 314
+				  dernier_conf_start <- 314
+				  premier_conf_end <- 314
+				  dernier_conf_end <- 314
+				}
 				
 				# Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
 				maxWeekTime <- es_deces_standard_pays_semaine %>%
@@ -3435,9 +3443,13 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				
 				
 				#créer les tables à comparer et notamment la moyenne 2013-2019
-				essai <- ungroup(es_deces_standard_pays_semaine) %>% 
-						mutate(semaine = str_sub(time,6,8) , annee = as.numeric(str_sub(time,1,4)))%>% 
-						select(numSemaineDepuis2013,semaine,annee,
+				essai <- ungroup(es_deces_standard_pays_semaine)
+				if(nomPays !="synchro" && nomPays != "europe"){
+				  essai <- essai %>% mutate(semaine = str_sub(time,6,8))
+				}else{
+				  essai <- essai %>% mutate(semaine = numSemaineDepuis2013%%53)
+				}
+				essai <- essai %>% select(numSemaineDepuis2013,semaine,
 								deces_standardises_si_pop_2020_15_24,
 								deces_standardises_si_pop_2020_25_49,
 								deces_standardises_si_pop_2020_50_59,
@@ -6111,12 +6123,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 	# ATTENTION : Pour voir les variables dans le debugger, il faut commenter le tryCatchLog
 	tryLog( {
 				
-				start <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderStart")
-				end <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderEnd")
-				premier_conf_start <- base::min(start$numSemaineDepuis2013)
-				dernier_conf_start <- base::max(start$numSemaineDepuis2013)
-				premier_conf_end <- base::min(end$numSemaineDepuis2013)
-				dernier_conf_end <- base::max(end$numSemaineDepuis2013)
+
 				
 				# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
 				# qui a étépassé dans le parametre region
@@ -6126,6 +6133,20 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 				startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
 				nomPays <- str_sub(nomVar, startIndex)
 				
+				if(nomPays != "synchro"){
+				start <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderStart")
+				end <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderEnd")
+				premier_conf_start <- base::min(start$numSemaineDepuis2013)
+				dernier_conf_start <- base::max(start$numSemaineDepuis2013)
+				premier_conf_end <- base::min(end$numSemaineDepuis2013)
+				dernier_conf_end <- base::max(end$numSemaineDepuis2013)
+				}else{
+				  premier_conf_start <- -1000
+				  dernier_conf_start <- -1000
+				  premier_conf_end <- -1000
+				  dernier_conf_end <- -1000
+				}
+
 				# Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
 				maxWeekTime <- es_deces_standard_pays_semaine %>%
 						ungroup %>%
@@ -6134,7 +6155,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 						select(time)
 				maxWeekTime <- maxWeekTime[1, 1]
 				
-				
+
 				#créer les tables à comparer et notamment la moyenne 2013-2019
 				essai <- ungroup(es_deces_standard_pays_semaine) %>% 
 						mutate(semaine = str_sub(time,6,8) , annee = as.numeric(str_sub(time,1,4)))%>% 
@@ -6243,7 +6264,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 								cumul_ge80_dose2=cumsum(replace_na(`Age80+_dose2`,0)),
 								part_atteinte_ge80_dose1=cumul_ge80_dose1/pop_week_ge80)
 				
-				
+	
 				#Calculer les moyennes mobiles
 				date_debut_donnees <- base::min(essai$numSemaineDepuis2013)-1
 				
@@ -6345,7 +6366,9 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 							filter(barre_vax_ge80=="barre dépassée")
 					
 					date_debut_2021_ge80 = base::min(temp$numSemaineDepuis2013)
-					
+			
+			
+							
 					#Calculer la surmortalité depuis le début de la vaccination pour toutes les tranches d'âge, la date de chacun des pics dose1, 2, 3 et de mortalité
 					
 					#15-24
@@ -9801,3 +9824,374 @@ a__f_plot_es_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_se
 	if (shallDeleteVars) rm(list = c(nomVar), envir = globalenv())
 }
 
+#____________________________________________________________________________________
+#### Generer le graphique et le png associé : deces_trimestriel ####
+#____________________________________________________________________________________
+a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
+  
+  # deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+  # qui a étépassé dans le parametre region
+  nomVar <- deparse(substitute(es_deces_standard_pays_semaine))
+  
+  # Recuperer le nom du pays qui est après "es_deces_standard_pays_semaine_"
+  startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
+  nomPays <- str_sub(nomVar, startIndex)
+  
+  
+  #recupération des données utiles
+  
+  essai <- ungroup(es_deces_standard_pays_semaine)
+  if(nomPays !="synchro"){
+    essai <- essai %>% mutate(semaine = str_sub(time,6,8), annee = as.numeric(str_sub(time,1,4)))
+  }else{
+    essai <- essai %>% mutate(semaine = numSemaineDepuis2013%%53,annee=floor(numSemaineDepuis2013/53+2013))
+  }
+  essai <- essai %>% 
+    select(semaine,annee,
+           deces_standardises_si_pop_2020_15_24,
+           deces_standardises_si_pop_2020_25_49,
+           deces_standardises_si_pop_2020_50_59,
+           deces_standardises_si_pop_2020_60_69,
+           deces_standardises_si_pop_2020_70_79,
+           deces_standardises_si_pop_2020_ge80,
+           predit_stand_15_24,
+           predit_stand_25_49,
+           predit_stand_50_59,
+           predit_stand_60_69,
+           predit_stand_70_79,
+           predit_stand_plus_80,
+           Age15_17,
+           Age18_24,
+           Age25_49,
+           Age50_59,
+           Age60_69,
+           Age70_79,
+           `Age80+`)%>% 
+    mutate(Age15_24 = Age15_17 + Age18_24) %>% 
+    mutate(trimestre = case_when(semaine<14 ~ 1,
+                                 semaine<27 ~ 2,
+                                 semaine<40~3,
+                                 TRUE~4))
+  #groupement par trimestre
+  donnees_trimestre <- essai %>% group_by(annee,trimestre) %>% 
+    summarise(deces_standardises_si_pop_2020_15_24=sum(deces_standardises_si_pop_2020_15_24),
+              deces_standardises_si_pop_2020_25_49=sum(deces_standardises_si_pop_2020_25_49),
+              deces_standardises_si_pop_2020_50_59=sum(deces_standardises_si_pop_2020_50_59),
+              deces_standardises_si_pop_2020_60_69=sum(deces_standardises_si_pop_2020_60_69),
+              deces_standardises_si_pop_2020_70_79=sum(deces_standardises_si_pop_2020_70_79),
+              deces_standardises_si_pop_2020_ge80=sum(deces_standardises_si_pop_2020_ge80),
+              predit_stand_15_24=sum(predit_stand_15_24),
+              predit_stand_25_49=sum(predit_stand_25_49),
+              predit_stand_50_59=sum(predit_stand_50_59),
+              predit_stand_60_69=sum(predit_stand_60_69),
+              predit_stand_70_79=sum(predit_stand_70_79),
+              predit_stand_plus_80=sum(predit_stand_plus_80),
+              Age15_24=sum(Age15_24),
+              Age25_49=sum(Age25_49),
+              Age50_59=sum(Age50_59),
+              Age60_69=sum(Age60_69),
+              Age70_79=sum(Age70_79),
+              `Age80+`=sum(`Age80+`),
+              nbr_semaine=dplyr::n())
+  
+  #gestion des trimestres à 14 semaines
+  donnees_trimestre <- donnees_trimestre %>% 
+    mutate(deces_standardises_si_pop_2020_15_24=(deces_standardises_si_pop_2020_15_24/nbr_semaine)*13,
+           deces_standardises_si_pop_2020_25_49=(deces_standardises_si_pop_2020_25_49/nbr_semaine)*13,
+           deces_standardises_si_pop_2020_50_59=(deces_standardises_si_pop_2020_50_59/nbr_semaine)*13,
+           deces_standardises_si_pop_2020_60_69=(deces_standardises_si_pop_2020_60_69/nbr_semaine)*13,
+           deces_standardises_si_pop_2020_70_79=(deces_standardises_si_pop_2020_70_79/nbr_semaine)*13,
+           deces_standardises_si_pop_2020_ge80=(deces_standardises_si_pop_2020_ge80/nbr_semaine)*13,
+           predit_stand_15_24=(predit_stand_15_24/nbr_semaine)*13,
+           predit_stand_25_49=(predit_stand_25_49/nbr_semaine)*13,
+           predit_stand_50_59=(predit_stand_50_59/nbr_semaine)*13,
+           predit_stand_60_69=(predit_stand_60_69/nbr_semaine)*13,
+           predit_stand_70_79=(predit_stand_70_79/nbr_semaine)*13,
+           predit_stand_plus_80=(predit_stand_plus_80/nbr_semaine)*13,
+           annee_trimestre = annee + 0.25 * trimestre -0.25)
+  
+  # calcul des ecarts-types
+  variance<-donnees_trimestre %>% filter(annee<=2018)  %>% filter(annee>=2013) %>% 
+  group_by(trimestre) %>% 
+    summarise(ecart_type_15_24 = sd(deces_standardises_si_pop_2020_15_24-predit_stand_15_24),
+              ecart_type_25_49 = sd(deces_standardises_si_pop_2020_25_49-predit_stand_25_49),
+              ecart_type_50_59 = sd(deces_standardises_si_pop_2020_50_59-predit_stand_50_59),
+              ecart_type_60_69 = sd(deces_standardises_si_pop_2020_60_69-predit_stand_60_69),
+              ecart_type_70_79 = sd(deces_standardises_si_pop_2020_70_79-predit_stand_70_79),
+              ecart_type_plus_80 = sd(deces_standardises_si_pop_2020_ge80-predit_stand_plus_80)) 
+
+  donnees_trimestre <- donnees_trimestre %>% left_join(variance)
+  
+  donnees_trimestre <- donnees_trimestre %>%
+    mutate(surmortalite_15_24 = if_else(deces_standardises_si_pop_2020_15_24-predit_stand_15_24-1.5*ecart_type_15_24>0,
+                                        deces_standardises_si_pop_2020_15_24-predit_stand_15_24-1.5*ecart_type_15_24,
+                                        0),
+           sousmortalite_15_24 = if_else(deces_standardises_si_pop_2020_15_24-predit_stand_15_24+1.5*ecart_type_15_24<0,
+                                         deces_standardises_si_pop_2020_15_24-predit_stand_15_24+1.5*ecart_type_15_24,
+                                         0),
+           surmortalite_25_49 = if_else(deces_standardises_si_pop_2020_25_49-predit_stand_25_49-1.5*ecart_type_25_49>0,
+                                        deces_standardises_si_pop_2020_25_49-predit_stand_25_49-1.5*ecart_type_25_49,
+                                        0),
+           sousmortalite_25_49 = if_else(deces_standardises_si_pop_2020_25_49-predit_stand_25_49+1.5*ecart_type_25_49<0,
+                                         deces_standardises_si_pop_2020_25_49-predit_stand_25_49+1.5*ecart_type_25_49,
+                                         0),
+           surmortalite_50_59 = if_else(deces_standardises_si_pop_2020_50_59-predit_stand_50_59-1.5*ecart_type_50_59>0,
+                                        deces_standardises_si_pop_2020_50_59-predit_stand_50_59-1.5*ecart_type_50_59,
+                                        0),
+           sousmortalite_50_59 = if_else(deces_standardises_si_pop_2020_50_59-predit_stand_50_59+1.5*ecart_type_50_59<0,
+                                         deces_standardises_si_pop_2020_50_59-predit_stand_50_59+1.5*ecart_type_50_59,
+                                         0),
+           surmortalite_60_69 = if_else(deces_standardises_si_pop_2020_60_69-predit_stand_60_69-1.5*ecart_type_60_69>0,
+                                        deces_standardises_si_pop_2020_60_69-predit_stand_60_69-1.5*ecart_type_60_69,
+                                        0),
+           sousmortalite_60_69 = if_else(deces_standardises_si_pop_2020_60_69-predit_stand_60_69+1.5*ecart_type_60_69<0,
+                                         deces_standardises_si_pop_2020_60_69-predit_stand_60_69+1.5*ecart_type_60_69,
+                                         0),
+           surmortalite_70_79 = if_else(deces_standardises_si_pop_2020_70_79-predit_stand_70_79-1.5*ecart_type_70_79>0,
+                                        deces_standardises_si_pop_2020_70_79-predit_stand_70_79-1.5*ecart_type_70_79,
+                                        0),
+           sousmortalite_70_79 = if_else(deces_standardises_si_pop_2020_70_79-predit_stand_70_79+1.5*ecart_type_70_79<0,
+                                         deces_standardises_si_pop_2020_70_79-predit_stand_70_79+1.5*ecart_type_70_79,
+                                         0),
+           surmortalite_plus_80 = if_else(deces_standardises_si_pop_2020_ge80-predit_stand_plus_80-1.5*ecart_type_plus_80>0,
+                                        deces_standardises_si_pop_2020_ge80-predit_stand_plus_80-1.5*ecart_type_plus_80,
+                                        0),
+           sousmortalite_plus_80 = if_else(deces_standardises_si_pop_2020_ge80-predit_stand_plus_80+1.5*ecart_type_plus_80<0,
+                                         deces_standardises_si_pop_2020_ge80-predit_stand_plus_80+1.5*ecart_type_plus_80,
+                                         0))
+  
+  #
+  ##### Graphique 1 : Situation des 15_24 ans #####
+  #
+  
+  # Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Trimestre/15-24/")
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  histo_deces <- ggplot(donnees_trimestre) +
+    geom_col(aes(x = annee_trimestre, y = surmortalite_15_24 + sousmortalite_15_24)) +
+    scale_x_continuous(breaks=seq(2013, 2023, 1))+
+    labs(
+      title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre des 15-24 ans ",nomPays),
+      subtitle = "Projection de la tendance linéaire de la mortalité standardisée 2013-2018",
+      x        = "Trimestre",
+      y        = "Différence entre décès observés et attendus",
+      caption  = "Source : Décès et population par âge Eurostat")
+  
+  vax<-ggplot(donnees_trimestre,aes(x = annee_trimestre))+
+    geom_col(aes( y=Age15_24), fill = "#3399FF")+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    scale_x_continuous(breaks=seq(2010, 2023, 1))+ labs(
+      title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre pour les 15-24 ans ",nomPays),
+      subtitle = "",
+      x        = "Trimestre",
+      y        = "Nombre de doses",
+      caption  = "Source : Ourworldindata")
+  
+  a<-grid.arrange(histo_deces, vax,
+                  ncol=1, nrow=2)
+  ggsave(paste0(repertoire,"deces_trimestriels_residus_15_24_ans",nomPays,".png"), width = 11, height = 8, plot = a)
+  
+  #
+  ##### Graphique 2 : Situation des 25_49 ans #####
+  #
+  
+  # Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Trimestre/25-49/")
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  histo_deces <- ggplot(donnees_trimestre) +
+    geom_col(aes(x = annee_trimestre, y = surmortalite_25_49 + sousmortalite_25_49)) +
+    scale_x_continuous(breaks=seq(2013, 2023, 1))+
+    labs(
+      title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre des 25-49 ans ",nomPays),
+      subtitle = "Projection de la tendance linéaire de la mortalité standardisée 2013-2018",
+      x        = "Trimestre",
+      y        = "Différence entre décès observés et attendus",
+      caption  = "Source : Décès et population par âge Eurostat")
+  
+  vax<-ggplot(donnees_trimestre,aes(x = annee_trimestre))+
+    geom_col(aes( y=Age25_49), fill = "#3399FF")+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    scale_x_continuous(breaks=seq(2010, 2023, 1))+ labs(
+      title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre pour les 25-49 ans ",nomPays),
+      subtitle = "",
+      x        = "Trimestre",
+      y        = "Nombre de doses",
+      caption  = "Source : Ourworldindata")
+  
+  a<-grid.arrange(histo_deces, vax,
+                  ncol=1, nrow=2)
+  ggsave(paste0(repertoire,"deces_trimestriels_residus_25_49_ans",nomPays,".png"), width = 11, height = 8, plot = a)
+  
+  #
+  ##### Graphique 3 : Situation des 50_59 ans #####
+  #
+  
+  # Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Trimestre/50-59/")
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  histo_deces <- ggplot(donnees_trimestre) +
+    geom_col(aes(x = annee_trimestre, y = surmortalite_50_59 + sousmortalite_50_59)) +
+    scale_x_continuous(breaks=seq(2013, 2023, 1))+
+    labs(
+      title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre des 50-59 ans ",nomPays),
+      subtitle = "Projection de la tendance linéaire de la mortalité standardisée 2013-2018",
+      x        = "Trimestre",
+      y        = "Différence entre décès observés et attendus",
+      caption  = "Source : Décès et population par âge Eurostat")
+  
+  vax<-ggplot(donnees_trimestre,aes(x = annee_trimestre))+
+    geom_col(aes( y=Age50_59), fill = "#3399FF")+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    scale_x_continuous(breaks=seq(2010, 2023, 1))+ labs(
+      title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre pour les 50-59 ans ",nomPays),
+      subtitle = "",
+      x        = "Trimestre",
+      y        = "Nombre de doses",
+      caption  = "Source : Ourworldindata")
+  
+  a<-grid.arrange(histo_deces, vax,
+                  ncol=1, nrow=2)
+  ggsave(paste0(repertoire,"deces_trimestriels_residus_50_59_ans",nomPays,".png"), width = 11, height = 8, plot = a)
+  
+  #
+  ##### Graphique 4 : Situation des 60_69 ans #####
+  #
+  
+  # Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Trimestre/60-69/")
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  histo_deces <- ggplot(donnees_trimestre) +
+    geom_col(aes(x = annee_trimestre, y = surmortalite_60_69 + sousmortalite_60_69)) +
+    scale_x_continuous(breaks=seq(2013, 2023, 1))+
+    labs(
+      title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre des 60-69 ans ",nomPays),
+      subtitle = "Projection de la tendance linéaire de la mortalité standardisée 2013-2018",
+      x        = "Trimestre",
+      y        = "Différence entre décès observés et attendus",
+      caption  = "Source : Décès et population par âge Eurostat")
+  
+  vax<-ggplot(donnees_trimestre,aes(x = annee_trimestre))+
+    geom_col(aes( y=Age60_69), fill = "#3399FF")+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    scale_x_continuous(breaks=seq(2010, 2023, 1))+ labs(
+      title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre pour les 60-69 ans ",nomPays),
+      subtitle = "",
+      x        = "Trimestre",
+      y        = "Nombre de doses",
+      caption  = "Source : Ourworldindata")
+  
+  a<-grid.arrange(histo_deces, vax,
+                  ncol=1, nrow=2)
+  ggsave(paste0(repertoire,"deces_trimestriels_residus_60_69_ans",nomPays,".png"), width = 11, height = 8, plot = a)
+  
+  #
+  ##### Graphique 5 : Situation des 70_79 ans #####
+  #
+  
+  # Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Trimestre/70-79/")
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  histo_deces <- ggplot(donnees_trimestre) +
+    geom_col(aes(x = annee_trimestre, y = surmortalite_70_79 + sousmortalite_70_79)) +
+    scale_x_continuous(breaks=seq(2013, 2023, 1))+
+    labs(
+      title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre des 70-79 ans ",nomPays),
+      subtitle = "Projection de la tendance linéaire de la mortalité standardisée 2013-2018",
+      x        = "Trimestre",
+      y        = "Différence entre décès observés et attendus",
+      caption  = "Source : Décès et population par âge Eurostat")
+  
+  vax<-ggplot(donnees_trimestre,aes(x = annee_trimestre))+
+    geom_col(aes( y=Age70_79), fill = "#3399FF")+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    scale_x_continuous(breaks=seq(2010, 2023, 1))+ labs(
+      title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre pour les 70-79 ans ",nomPays),
+      subtitle = "",
+      x        = "Trimestre",
+      y        = "Nombre de doses",
+      caption  = "Source : Ourworldindata")
+  
+  a<-grid.arrange(histo_deces, vax,
+                  ncol=1, nrow=2)
+  ggsave(paste0(repertoire,"deces_trimestriels_residus_70_79_ans",nomPays,".png"), width = 11, height = 8, plot = a)
+  
+  #
+  ##### Graphique 6 : Situation des plus de 80 ans #####
+  #
+  
+  # Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Trimestre/plus80/")
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire,"compare_", nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  histo_deces <- ggplot(donnees_trimestre) +
+    geom_col(aes(x = annee_trimestre, y = surmortalite_plus_80 + sousmortalite_plus_80)) +
+    scale_x_continuous(breaks=seq(2013, 2023, 1))+
+    labs(
+      title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre des plus de 80 ans ",nomPays),
+      subtitle = "Projection de la tendance linéaire de la mortalité standardisée 2013-2018",
+      x        = "Trimestre",
+      y        = "Différence entre décès observés et attendus",
+      caption  = "Source : Décès et population par âge Eurostat")
+  
+  vax<-ggplot(donnees_trimestre,aes(x = annee_trimestre))+
+    geom_col(aes( y=`Age80+`), fill = "#3399FF")+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    scale_x_continuous(breaks=seq(2010, 2023, 1))+ labs(
+      title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre pour les plus de 80 ans ",nomPays),
+      subtitle = "",
+      x        = "Trimestre",
+      y        = "Nombre de doses",
+      caption  = "Source : Ourworldindata")
+  
+  a<-grid.arrange(histo_deces, vax,
+                  ncol=1, nrow=2)
+  ggsave(paste0(repertoire,"deces_trimestriels_residus_plus_80_ans",nomPays,".png"), width = 11, height = 8, plot = a)
+  
+  }
