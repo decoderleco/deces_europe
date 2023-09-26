@@ -1985,7 +1985,7 @@ if (shallDeleteVars) rm(numSemaineDepuis2013_for_eu_lockdown_end)
 
 ##----------------------------------------------------------------------------##
 #
-# Recuperation des donnees de vaccination par age
+##### Recuperation des donnees de vaccination par age ####
 #
 ##----------------------------------------------------------------------------##
 
@@ -3128,7 +3128,7 @@ b__es_deces_week_standardises_si_pop_2020_owid_vaccination<-b__es_deces_week_sta
 #Faire la régression sur les décès standards
 
 annees_13_18 <- ungroup(b__es_deces_week_standardises_si_pop_2020_owid_vaccination) %>% 
-  filter(!(str_sub(time,1,4)=="2020"|str_sub(time,1,4)=="2021"|str_sub(time,1,4)=="2019"))%>%
+  filter(!(str_sub(time,1,4)=="2019"|str_sub(time,1,4)=="2020"|str_sub(time,1,4)=="2021"|str_sub(time,1,4)=="2022"|str_sub(time,1,4)=="2023"|str_sub(time,1,4)=="2024"))%>%
   filter(geo!="UK") %>% 
   select(semaine,annee,geo,
          deces_standardises_si_pop_2020_15_24,

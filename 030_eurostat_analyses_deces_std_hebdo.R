@@ -672,7 +672,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination(es_deces_standard_pays_semaine_suis
 es_deces_standard_pays_semaine_europe <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
   filter(geo %in% c('AT','BE','CY','HR','DK',
                     'ES','EE','FI','FR','EL','HU',
-                    'IS','IT','LU','MT','NO',
+                    'IS','IT','LU','MT','NO','NL',
                     'PL','PT','SE')&numSemaineDepuis2013<=490) %>%
   select(numSemaineDepuis2013,semaine,annee,time,
          deces_tot_15_24,
@@ -1015,7 +1015,7 @@ dates_debuts_tous_pays <- data.frame()
 
 for (pays in c('AT','BE','CY','HR','DK',
             'ES','EE','FI','FR','EL','HU',
-            'IS','IT','LU','MT','NO',
+            'IS','IT','LU','MT','NL','NO',
             'PL','PT','SE')){
   
   table_pays_finale <- data.frame()
@@ -1678,6 +1678,7 @@ a__f_plot_es_deces_trim(es_deces_standard_pays_semaine_italie)
 a__f_plot_es_deces_trim(es_deces_standard_pays_semaine_luxembourg)
 a__f_plot_es_deces_trim(es_deces_standard_pays_semaine_malte)
 a__f_plot_es_deces_trim(es_deces_standard_pays_semaine_norvege)
+a__f_plot_es_deces_trim(es_deces_standard_pays_semaine_paysbas)
 a__f_plot_es_deces_trim(es_deces_standard_pays_semaine_pologne)
 a__f_plot_es_deces_trim(es_deces_standard_pays_semaine_portugal)
 a__f_plot_es_deces_trim(es_deces_standard_pays_semaine_suede)
@@ -1686,7 +1687,7 @@ a__f_plot_es_deces_trim(es_deces_standard_pays_semaine_suede)
 es_deces_standard_pays_semaine_europe <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
   filter(geo %in% c('AT','BE','CY','HR','DK',
                     'ES','EE','FI','FR','EL','HU',
-                    'IS','IT','LU','MT','NO',
+                    'IS','IT','LU','MT','NL','NO',
                     'PL','PT','SE')& numSemaineDepuis2013<=536) %>%
   group_by(numSemaineDepuis2013) %>% 
   summarise(semaine=base::min(semaine,na.rm=TRUE),
