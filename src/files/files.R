@@ -149,10 +149,12 @@ a__f_downloadIfNeeded <- function(sourceType = K_SOURCE_TYPE_CSV,
 					
 					downloadedDatas <- downloadedDatas %>%
 							# Reordonner les colonnes
-							select(geo, sex, age, time, everything()) %>%
+							select(geo, sex, age, TIME_PERIOD, everything()) %>%
 							# Trier les lignes selon les colonnes
-							arrange(geo, sex, age, time)
+							arrange(geo, sex, age, TIME_PERIOD)
 					
+					downloadedDatas <- downloadedDatas %>% rename(time=TIME_PERIOD)
+				
 					downloaded = TRUE
 					
 				} else {

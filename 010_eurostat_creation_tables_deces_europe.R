@@ -90,10 +90,10 @@ a__original_es_proj <- read.csv("data/csv/proj_19np__custom_2224172_linear.csv")
 # Initialiser avec les données d'origine d'EuroStat
 es_pjan <- a__original_es_pjan_le2020
 
-# Renommer la colonne "values" en "population" et supprimer la colonne "unit"
+# Renommer la colonne "values" en "population" et supprimer la colonne "unit" et freq
 es_pjan <- es_pjan %>%
   dplyr::rename(population = values) %>% 
-  select(-unit)
+  select(-unit,-freq)
 
 # Filtrer :
 #  les totaux : sexe T (T = M+F) et age
@@ -215,7 +215,7 @@ b__es_deces_et_pop_par_annee <- a__original_es_deces_annuel_le2020
 # Filtrer age
 b__es_deces_et_pop_par_annee <- b__es_deces_et_pop_par_annee %>%
   dplyr::rename(deces=values) %>% 
-		select(-unit) %>%
+		select(-unit,-freq) %>%
 		filter( sex != "T",
 				age != "TOTAL", 
 				age != "UNK")

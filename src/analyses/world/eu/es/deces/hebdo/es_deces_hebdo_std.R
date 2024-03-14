@@ -214,8 +214,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	text(287, 0, "2018", cex=1.2)
 	text(339, 0, "2019", cex=1.2)
 	text(391, 0, "2020", cex=1.2)
-	text(440, 0, "2021", cex=1.2)
-	text(492, 0, "2022", cex=1.2)
+	text(443, 0, "2021", cex=1.2)
+	text(495, 0, "2022", cex=1.2)
+	text(547, 0, "2023", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -352,8 +353,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		text(287, base::min(essai$deces_standardises_si_pop_2020_15_24), "2018", cex=1.2)
 		text(339, base::min(essai$deces_standardises_si_pop_2020_15_24), "2019", cex=1.2)
 		text(391, base::min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
-		text(440, base::min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
-		text(492, base::min(essai$deces_standardises_si_pop_2020_15_24), "2022", cex=1.2)
+		text(443, base::min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
+		text(495, base::min(essai$deces_standardises_si_pop_2020_15_24), "2022", cex=1.2)
+		text(547, base::min(essai$deces_standardises_si_pop_2020_15_24), "2023", cex=1.2)
 		
 		# Superposer la moyenne mobile
 		par(new=T)
@@ -484,8 +486,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		text(287, base::min(essai$deces_standardises_si_pop_2020_25_49), "2018", cex=1.2)
 		text(339, base::min(essai$deces_standardises_si_pop_2020_25_49), "2019", cex=1.2)
 		text(391, base::min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
-		text(440, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
-		text(492, base::min(essai$deces_standardises_si_pop_2020_25_49), "2022", cex=1.2)
+		text(443, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
+		text(495, base::min(essai$deces_standardises_si_pop_2020_25_49), "2022", cex=1.2)
+		text(547, base::min(essai$deces_standardises_si_pop_2020_25_49), "2023", cex=1.2)
 		
 		#text(26, 22000, nomPays, cex=1.2)
 		
@@ -619,8 +622,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	text(287, base::min(essai$deces_standardises_si_pop_2020_50_59), "2018", cex=1.2)
 	text(339, base::min(essai$deces_standardises_si_pop_2020_50_59), "2019", cex=1.2)
 	text(391, base::min(essai$deces_standardises_si_pop_2020_50_59), "2020", cex=1.2)
-	text(440, base::min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
-	text(492, base::min(essai$deces_standardises_si_pop_2020_50_59), "2022", cex=1.2)
+	text(443, base::min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
+	text(495, base::min(essai$deces_standardises_si_pop_2020_50_59), "2022", cex=1.2)
+	text(547, base::min(essai$deces_standardises_si_pop_2020_50_59), "2023", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -753,8 +757,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	text(287, base::min(essai$deces_standardises_si_pop_2020_60_69), "2018", cex=1.2)
 	text(339, base::min(essai$deces_standardises_si_pop_2020_60_69), "2019", cex=1.2)
 	text(391, base::min(essai$deces_standardises_si_pop_2020_60_69), "2020", cex=1.2)
-	text(440, base::min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
-	text(492, base::min(essai$deces_standardises_si_pop_2020_60_69), "2022", cex=1.2)
+	text(443, base::min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
+	text(495, base::min(essai$deces_standardises_si_pop_2020_60_69), "2022", cex=1.2)
+	text(547, base::min(essai$deces_standardises_si_pop_2020_60_69), "2023", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -887,8 +892,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	text(287, base::min(essai$deces_standardises_si_pop_2020_70_79), "2018", cex=1.2)
 	text(339, base::min(essai$deces_standardises_si_pop_2020_70_79), "2019", cex=1.2)
 	text(391, base::min(essai$deces_standardises_si_pop_2020_70_79), "2020", cex=1.2)
-	text(440, base::min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
-	text(492, base::min(essai$deces_standardises_si_pop_2020_70_79), "2022", cex=1.2)
+	text(443, base::min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
+	text(495, base::min(essai$deces_standardises_si_pop_2020_70_79), "2022", cex=1.2)
+	text(547, base::min(essai$deces_standardises_si_pop_2020_70_79), "2023", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -1023,8 +1029,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	text(287, base::min(essai$deces_standardises_si_pop_2020_ge80), "2018", cex=1.2)
 	text(339, base::min(essai$deces_standardises_si_pop_2020_ge80), "2019", cex=1.2)
 	text(391, base::min(essai$deces_standardises_si_pop_2020_ge80), "2020", cex=1.2)
-	text(440, base::min(essai$deces_standardises_si_pop_2020_ge80), "2021", cex=1.2)
-	text(492, base::min(essai$deces_standardises_si_pop_2020_ge80), "2022", cex=1.2)
+	text(443, base::min(essai$deces_standardises_si_pop_2020_ge80), "2021", cex=1.2)
+	text(495, base::min(essai$deces_standardises_si_pop_2020_ge80), "2022", cex=1.2)
+	text(547, base::min(essai$deces_standardises_si_pop_2020_ge80), "2023", cex=1.2)
 	
 	#text(26, 22000, nomPays, cex=1.2)
 	
@@ -1167,9 +1174,10 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 		  geom_text(x=287, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2018",size=6)+
 		  geom_text(x=339, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2019",size=6)+
 		  geom_text(x=391, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2020",size=6)+
-		  geom_text(x=440, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2021",size=6)+
-		  geom_text(x=492, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2022",size=6)+
-		 
+		  geom_text(x=443, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2021",size=6)+
+		  geom_text(x=495, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2022",size=6)+
+		  geom_text(x=547, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2023",size=6)+
+		  
 		  geom_text(x=base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013+26),
 		            y=(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_15_24[1]+
 		                 es_deces_standard_pays_semaine$deces_standardises_si_pop_2020_25_49[1]+
@@ -1270,8 +1278,9 @@ a__f_plot_es_deces_hebdo_std_moyenne_mobile <- function(es_deces_standard_pays_s
 	    geom_text(x=287, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2018",size=6)+
 	    geom_text(x=339, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2019",size=6)+
 	    geom_text(x=391, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2020",size=6)+
-	    geom_text(x=440, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2021",size=6)+
-	    geom_text(x=492, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2022",size=6)+
+	    geom_text(x=443, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2021",size=6)+
+	    geom_text(x=495, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2022",size=6)+
+	    geom_text(x=547, y=base::max(es_deces_standard_pays_semaine$deces_standardises_si_pop_2020), label="2023",size=6)+
 	    
 	    geom_text(x=base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013+26),
 	              y=(
@@ -2033,7 +2042,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 							paste0(
 									"surmortalité depuis le début de la vaccination en 2021 : ",
 									floor(surmortalite_15_24_2021),"  (",floor(part_surmortalite_15_24_2021),"%)",
-									"          (soit ",floor(surmortalite_15_24_2021/base::max(essai_court$cumul_15_24_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+									"          (soit ",floor(surmortalite_15_24_2021/base::max(essai_court$cumul_15_24_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 									"  \n même période en 2020 : ",
 									floor(surmortalite_15_24_2020),
 									"           même période en 2019 : ",
@@ -2347,7 +2356,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 								"surmortalité depuis le début de la vaccination en 2021 : ",
 								floor(surmortalite_25_49_2021),
 								"  (",floor(part_surmortalite_25_49_2021),"%)",
-								"          (soit ",floor(surmortalite_25_49_2021/base::max(essai_court$cumul_25_49_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+								"          (soit ",floor(surmortalite_25_49_2021/base::max(essai_court$cumul_25_49_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 								"  \n même période en 2020 : ",
 								floor(surmortalite_25_49_2020),
 								"           même période en 2019 : ",
@@ -2596,7 +2605,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 								"surmortalité depuis le début de la vaccination en 2021 : ",
 								floor(surmortalite_50_59_2021),
 								"  (",floor(part_surmortalite_50_59_2021),"%)",
-								"          (soit ",floor(surmortalite_50_59_2021/base::max(essai_court$cumul_50_59_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+								"          (soit ",floor(surmortalite_50_59_2021/base::max(essai_court$cumul_50_59_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 								"  \n même période en 2020 : ",
 								floor(surmortalite_50_59_2020),
 								"           même période en 2019 : ",
@@ -2847,7 +2856,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 								"surmortalité depuis le début de la vaccination en 2021 : ",
 								floor(surmortalite_60_69_2021),
 								"  (",floor(part_surmortalite_60_69_2021),"%)",
-								"          (soit ",floor(surmortalite_60_69_2021/base::max(essai_court$cumul_60_69_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+								"          (soit ",floor(surmortalite_60_69_2021/base::max(essai_court$cumul_60_69_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 								"  \n même période en 2020 : ",
 								floor(surmortalite_60_69_2020),
 								"           même période en 2019 : ",
@@ -3096,7 +3105,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 								"surmortalité depuis le début de la vaccination en 2021 : ",
 								floor(surmortalite_70_79_2021),
 								"  (",floor(part_surmortalite_70_79_2021),"%)",
-								"          (soit ",floor(surmortalite_70_79_2021/base::max(essai_court$cumul_70_79_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+								"          (soit ",floor(surmortalite_70_79_2021/base::max(essai_court$cumul_70_79_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 								"  \n même période en 2020 : ",
 								floor(surmortalite_70_79_2020),
 								"           même période en 2019 : ",
@@ -3319,7 +3328,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				geom_text(x=floor(date_debut_2021_ge80), y=base::max(essai_court$diff_deces_tot_predit_stand_ge80), label="début vaccination", color="#336666")+
 				xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",floor(surmortalite_ge80_2021),
 								"  (",floor(part_surmortalite_ge80_2021),"%)",
-								"          (soit ",floor(surmortalite_ge80_2021/base::max(essai_court$cumul_ge80_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+								"          (soit ",floor(surmortalite_ge80_2021/base::max(essai_court$cumul_ge80_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 								"  \n même période en 2020 : ",floor(surmortalite_ge80_2020),
 								"           même période en 2019 : ",floor(surmortalite_ge80_2019)))+
 				ylab("Différence entre décès constatés \n et décès attendus")+
@@ -4357,7 +4366,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 										paste0(
 												"surmortalité depuis le début de la vaccination en 2021 : ",
 												floor(surmortalite_15_24_2021),"  (",floor(part_surmortalite_15_24_2021),"%)",
-												"          (soit ",floor(surmortalite_15_24_2021/base::max(essai_court$cumul_15_24_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+												"          (soit ",floor(surmortalite_15_24_2021/base::max(essai_court$cumul_15_24_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 												"  \n même période en 2020 : ",
 												floor(surmortalite_15_24_2020),
 												"           même période en 2019 : ",
@@ -4672,7 +4681,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 											"surmortalité depuis le début de la vaccination en 2021 : ",
 											floor(surmortalite_25_49_2021),
 											"  (",floor(part_surmortalite_25_49_2021),"%)",
-											"          (soit ",floor(surmortalite_25_49_2021/base::max(essai_court$cumul_25_49_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+											"          (soit ",floor(surmortalite_25_49_2021/base::max(essai_court$cumul_25_49_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 											"  \n même période en 2020 : ",
 											floor(surmortalite_25_49_2020),
 											"           même période en 2019 : ",
@@ -4922,7 +4931,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 											"surmortalité depuis le début de la vaccination en 2021 : ",
 											floor(surmortalite_50_59_2021),
 											"  (",floor(part_surmortalite_50_59_2021),"%)",
-											"          (soit ",floor(surmortalite_50_59_2021/base::max(essai_court$cumul_50_59_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+											"          (soit ",floor(surmortalite_50_59_2021/base::max(essai_court$cumul_50_59_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 											"  \n même période en 2020 : ",
 											floor(surmortalite_50_59_2020),
 											"           même période en 2019 : ",
@@ -5174,7 +5183,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 											"surmortalité depuis le début de la vaccination en 2021 : ",
 											floor(surmortalite_60_69_2021),
 											"  (",floor(part_surmortalite_60_69_2021),"%)",
-											"          (soit ",floor(surmortalite_60_69_2021/base::max(essai_court$cumul_60_69_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+											"          (soit ",floor(surmortalite_60_69_2021/base::max(essai_court$cumul_60_69_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 											"  \n même période en 2020 : ",
 											floor(surmortalite_60_69_2020),
 											"           même période en 2019 : ",
@@ -5424,7 +5433,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 											"surmortalité depuis le début de la vaccination en 2021 : ",
 											floor(surmortalite_70_79_2021),
 											"  (",floor(part_surmortalite_70_79_2021),"%)",
-											"          (soit ",floor(surmortalite_70_79_2021/base::max(essai_court$cumul_70_79_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+											"          (soit ",floor(surmortalite_70_79_2021/base::max(essai_court$cumul_70_79_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 											"  \n même période en 2020 : ",
 											floor(surmortalite_70_79_2020),
 											"           même période en 2019 : ",
@@ -5647,7 +5656,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							geom_text(x=floor(date_debut_2021_ge80), y=base::max(essai_court$diff_ge80), label="début vaccination", color="#336666")+
 							xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",floor(surmortalite_ge80_2021),
 											"  (",floor(part_surmortalite_ge80_2021),"%)",
-											"          (soit ",floor(surmortalite_ge80_2021/base::max(essai_court$cumul_ge80_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+											"          (soit ",floor(surmortalite_ge80_2021/base::max(essai_court$cumul_ge80_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 											"  \n même période en 2020 : ",floor(surmortalite_ge80_2020),
 											"           même période en 2019 : ",floor(surmortalite_ge80_2019)))+
 							ylab("Différence entre décès constatés \n et décès attendus")+
@@ -7032,7 +7041,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 										paste0(
 												"surmortalité depuis le début de la vaccination en 2021 : ",
 												floor(surmortalite_15_24_2021),"  (",floor(part_surmortalite_15_24_2021),"%)",
-												"          (soit ",floor(surmortalite_15_24_2021/base::max(essai_court$cumul_15_24_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+												"          (soit ",floor(surmortalite_15_24_2021/base::max(essai_court$cumul_15_24_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 												"  \n même période en 2020 : ",
 												floor(surmortalite_15_24_2020),
 												"           même période en 2019 : ",
@@ -7335,7 +7344,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 											"surmortalité depuis le début de la vaccination en 2021 : ",
 											floor(surmortalite_25_49_2021),
 											"  (",floor(part_surmortalite_25_49_2021),"%)",
-											"          (soit ",floor(surmortalite_25_49_2021/base::max(essai_court$cumul_25_49_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+											"          (soit ",floor(surmortalite_25_49_2021/base::max(essai_court$cumul_25_49_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 											"  \n même période en 2020 : ",
 											floor(surmortalite_25_49_2020),
 											"           même période en 2019 : ",
@@ -7574,7 +7583,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 											"surmortalité depuis le début de la vaccination en 2021 : ",
 											floor(surmortalite_50_59_2021),
 											"  (",floor(part_surmortalite_50_59_2021),"%)",
-											"          (soit ",floor(surmortalite_50_59_2021/base::max(essai_court$cumul_50_59_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+											"          (soit ",floor(surmortalite_50_59_2021/base::max(essai_court$cumul_50_59_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 											"  \n même période en 2020 : ",
 											floor(surmortalite_50_59_2020),
 											"           même période en 2019 : ",
@@ -7815,7 +7824,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 											"surmortalité depuis le début de la vaccination en 2021 : ",
 											floor(surmortalite_60_69_2021),
 											"  (",floor(part_surmortalite_60_69_2021),"%)",
-											"          (soit ",floor(surmortalite_60_69_2021/base::max(essai_court$cumul_60_69_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+											"          (soit ",floor(surmortalite_60_69_2021/base::max(essai_court$cumul_60_69_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 											"  \n même période en 2020 : ",
 											floor(surmortalite_60_69_2020),
 											"           même période en 2019 : ",
@@ -8054,7 +8063,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 											"surmortalité depuis le début de la vaccination en 2021 : ",
 											floor(surmortalite_70_79_2021),
 											"  (",floor(part_surmortalite_70_79_2021),"%)",
-											"          (soit ",floor(surmortalite_70_79_2021/base::max(essai_court$cumul_70_79_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+											"          (soit ",floor(surmortalite_70_79_2021/base::max(essai_court$cumul_70_79_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 											"  \n même période en 2020 : ",
 											floor(surmortalite_70_79_2020),
 											"           même période en 2019 : ",
@@ -8269,7 +8278,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 							geom_text(x=floor(date_debut_2021_ge80), y=base::max(essai_court$diff_ge80), label="début vaccination", color="#336666")+
 							xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",floor(surmortalite_ge80_2021),
 											"  (",floor(part_surmortalite_ge80_2021),"%)",
-											"          (soit ",floor(surmortalite_ge80_2021/base::max(essai_court$cumul_ge80_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+											"          (soit ",floor(surmortalite_ge80_2021/base::max(essai_court$cumul_ge80_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 											"  \n même période en 2020 : ",floor(surmortalite_ge80_2020),
 											"           même période en 2019 : ",floor(surmortalite_ge80_2019)))+
 							ylab("Différence entre décès constatés \n et décès attendus")+
@@ -8985,7 +8994,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 					geom_text(x=194, y=base::min(essai_nouv$diff_15_24), label="2020")+
 					geom_text(x=220, y=base::min(essai_nouv$diff_15_24), label="2021")+
 					xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",floor(surmortalite_15_24_2021),
-									"          (soit ",floor(surmortalite_15_24_2021/base::max(essai_nouv$cumul_15_24_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+									"          (soit ",floor(surmortalite_15_24_2021/base::max(essai_nouv$cumul_15_24_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 									"  \n même période en 2020 : ",floor(surmortalite_15_24_2020),
 									"           même période en 2019 : ",floor(surmortalite_15_24_2019)))+
 					ylab("Différence décès constatés \n décès attendus")+
@@ -9092,7 +9101,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 				geom_vline(xintercept = floor(date_debut_2021_25_49/2), colour="#336666", linetype = "longdash")+
 				geom_text(x=floor(date_debut_2021_25_49/2), y=base::max(essai_nouv$diff_25_49), label="début vaccination", color="#336666")+
 				xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",floor(surmortalite_25_49_2021),
-								"          (soit ",floor(surmortalite_25_49_2021/base::max(essai_nouv$cumul_25_49_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+								"          (soit ",floor(surmortalite_25_49_2021/base::max(essai_nouv$cumul_25_49_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 								"  \n même période en 2020 : ",floor(surmortalite_25_49_2020),
 								"           même période en 2019 : ",floor(surmortalite_25_49_2019)))+
 				ylab("Différence entre décès constatés \n et décès attendus")+
@@ -9192,7 +9201,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 				geom_vline(xintercept = floor(date_debut_2021_50_59/2), colour="#336666", linetype = "longdash")+
 				geom_text(x=floor(date_debut_2021_50_59/2), y=base::max(essai_nouv$diff_50_59), label="début vaccination", color="#336666")+
 				xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",floor(surmortalite_50_59_2021),
-								"          (soit ",floor(surmortalite_50_59_2021/base::max(essai_nouv$cumul_50_59_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+								"          (soit ",floor(surmortalite_50_59_2021/base::max(essai_nouv$cumul_50_59_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 								"  \n même période en 2020 : ",floor(surmortalite_50_59_2020),
 								"           même période en 2019 : ",floor(surmortalite_50_59_2019)))+
 				ylab("Différence entre décès constatés \n et décès attendus")+
@@ -9294,7 +9303,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 				geom_vline(xintercept = floor(date_debut_2021_60_69/2), colour="#336666", linetype = "longdash")+
 				geom_text(x=floor(date_debut_2021_60_69/2), y=base::max(essai_nouv$diff_60_69), label="début vaccination", color="#336666")+
 				xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",floor(surmortalite_60_69_2021),
-								"          (soit ",floor(surmortalite_60_69_2021/base::max(essai_nouv$cumul_60_69_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+								"          (soit ",floor(surmortalite_60_69_2021/base::max(essai_nouv$cumul_60_69_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 								"  \n même période en 2020 : ",floor(surmortalite_60_69_2020),
 								"           même période en 2019 : ",floor(surmortalite_60_69_2019)))+
 				ylab("Différence entre décès constatés \n et décès attendus")+
@@ -9398,7 +9407,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 				geom_text(x=floor(date_debut_2021_70_79/2), y=base::max(essai_nouv$diff_70_79), label="début vaccination", color="#336666")+
 				xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",
 								floor(surmortalite_70_79_2021),
-								"          (soit ",floor(surmortalite_70_79_2021/base::max(essai_nouv$cumul_70_79_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+								"          (soit ",floor(surmortalite_70_79_2021/base::max(essai_nouv$cumul_70_79_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 								"  \n même période en 2020 : ",floor(surmortalite_70_79_2020),
 								"           même période en 2019 : ",floor(surmortalite_70_79_2019)))+
 				ylab("Différence entre décès constatés \n et décès attendus")+
@@ -9500,7 +9509,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 				geom_vline(xintercept = floor(date_debut_2021_ge80/2), colour="#336666", linetype = "longdash")+
 				geom_text(x=floor(date_debut_2021_ge80/2), y=base::max(essai_nouv$diff_ge80), label="début vaccination", color="#336666")+
 				xlab(paste0("surmortalité depuis le début de la vaccination en 2021 : ",floor(surmortalite_ge80_2021),
-								"          (soit ",floor(surmortalite_ge80_2021/base::max(essai_nouv$cumul_ge80_dose2,na.rm=TRUE)*100000)," pour 100 000 double dose)",
+								"          (soit ",floor(surmortalite_ge80_2021/base::max(essai_nouv$cumul_ge80_dose2,na.rm=TRUE)*100000)," pour 100 000 doubles doses)",
 								"  \n même période en 2020 : ",floor(surmortalite_ge80_2020),
 								"           même période en 2019 : ",floor(surmortalite_ge80_2019)))+
 				ylab("Différence entre décès constatés \n et décès attendus")+

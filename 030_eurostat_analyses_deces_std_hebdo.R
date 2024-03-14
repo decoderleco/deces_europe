@@ -224,7 +224,7 @@ g<-ggplot(data = france_suede_portugal) +
   geom_area(aes(x = numSemaineDepuis2013, 
                 y = deces_france),
             color="#CC0000",fill="#CC0000",size=1,alpha=1/2) +
-  geom_vline(xintercept = seq(from=0, to=500, by = 52),linetype = "dashed",color="steelblue")+
+  geom_vline(xintercept = seq(from=0, to=550, by = 52),linetype = "dashed",color="steelblue")+
   theme(axis.title.x = element_blank(), 
         axis.text.x = element_blank(),
         axis.title.y = element_text(color="#000000", size=20 ),
@@ -241,6 +241,7 @@ g<-ggplot(data = france_suede_portugal) +
   geom_text(x=391, y=1000, label="2020",size=10)+
   geom_text(x=443, y=1000, label="2021",size=10)+
   geom_text(x=495, y=1000, label="2022",size=10)+
+  geom_text(x=547, y=1000, label="2023",size=10)+
   annotate(geom = "text", x = 50, y = 30000, label = "Portugal", color = "#006600",
            angle = 0, size = 15)+
   annotate(geom = "text", x = 50, y = 28000, label = "Suède", color = "#0066CC",
@@ -266,7 +267,7 @@ g<-ggplot(data = france_suede_portugal) +
   geom_area(aes(x = numSemaineDepuis2013, 
                 y = deces_france),
             color="#000000",fill="#000000",size=1,alpha=1/2) +
-  geom_vline(xintercept = seq(from=0, to=500, by = 52),linetype = "dashed",color="steelblue")+
+  geom_vline(xintercept = seq(from=0, to=550, by = 52),linetype = "dashed",color="steelblue")+
   theme(axis.title.x = element_blank(), 
         axis.text.x = element_blank(),
         axis.title.y = element_text(color="#000000", size=20 ),
@@ -281,7 +282,9 @@ g<-ggplot(data = france_suede_portugal) +
   geom_text(x=287, y=1000, label="2018",size=10)+
   geom_text(x=339, y=1000, label="2019",size=10)+
   geom_text(x=391, y=1000, label="2020",size=10)+
-  geom_text(x=440, y=1000, label="2021",size=10)+
+  geom_text(x=443, y=1000, label="2021",size=10)+
+  geom_text(x=495, y=1000, label="2022",size=10)+
+  geom_text(x=547, y=1000, label="2023",size=10)+
   annotate(geom = "text", x = 50, y = 30000, label = "Portugal", color = "#999999",
            angle = 0, size = 15)+
   annotate(geom = "text", x = 50, y = 28000, label = "Suède", color = "#666666",
