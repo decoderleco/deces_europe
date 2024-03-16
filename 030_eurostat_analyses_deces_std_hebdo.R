@@ -224,7 +224,7 @@ g<-ggplot(data = france_suede_portugal) +
   geom_area(aes(x = numSemaineDepuis2013, 
                 y = deces_france),
             color="#CC0000",fill="#CC0000",size=1,alpha=1/2) +
-  geom_vline(xintercept = seq(from=0, to=550, by = 52),linetype = "dashed",color="steelblue")+
+  geom_vline(xintercept = seq(from=0, to=600, by = 52),linetype = "dashed",color="steelblue")+
   theme(axis.title.x = element_blank(), 
         axis.text.x = element_blank(),
         axis.title.y = element_text(color="#000000", size=20 ),
@@ -267,7 +267,7 @@ g<-ggplot(data = france_suede_portugal) +
   geom_area(aes(x = numSemaineDepuis2013, 
                 y = deces_france),
             color="#000000",fill="#000000",size=1,alpha=1/2) +
-  geom_vline(xintercept = seq(from=0, to=550, by = 52),linetype = "dashed",color="steelblue")+
+  geom_vline(xintercept = seq(from=0, to=600, by = 52),linetype = "dashed",color="steelblue")+
   theme(axis.title.x = element_blank(), 
         axis.text.x = element_blank(),
         axis.title.y = element_text(color="#000000", size=20 ),

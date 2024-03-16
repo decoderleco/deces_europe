@@ -187,7 +187,7 @@ a__f_cumul_and_plot_es_deces_hebdo_std <- function(es_deces_standard_pays_semain
 					deces_standardises_si_pop_2020_50_59,deces_standardises_si_pop_2020_60_69,
 					deces_standardises_si_pop_2020_70_79,deces_standardises_si_pop_2020_ge80) %>% 
 			mutate(annee = as.numeric(str_sub(time,1,4)), 
-					semaine = as.numeric(str_sub(time,6,8)))
+					semaine = as.numeric(strftime(time, format = "%V")))
 	
 	temp <- ungroup(temp)
 	order(temp$time)

@@ -1351,7 +1351,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	
 #créer les tables à comparer et notamment la moyenne 2013-2019
 	essai <- ungroup(es_deces_standard_pays_semaine) %>% 
-			mutate(semaine = str_sub(time,6,8) , annee = as.numeric(str_sub(time,1,4)))%>% 
+			mutate(semaine = as.numeric(strftime(time, format = "%V")) , annee = as.numeric(str_sub(time,1,4)))%>% 
 			select(numSemaineDepuis2013,semaine,annee,
 					deces_standardises_si_pop_2020_15_24,
 					deces_standardises_si_pop_2020_25_49,
@@ -1976,6 +1976,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		text(391, base::min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
 		text(443, base::min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
 		text(495, base::min(essai$deces_standardises_si_pop_2020_15_24), "2022", cex=1.2)
+		text(547, base::min(essai$deces_standardises_si_pop_2020_15_24), "2023", cex=1.2)
 		
 		#text(26, 22000, nomPays, cex=1.2)
 		
@@ -2038,6 +2039,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 			  geom_text(x = 495,
 			            y = base::min(essai_court$diff_deces_tot_predit_stand_15_24),
 			            label = "2022") +
+			  geom_text(x = 547,
+			            y = base::min(essai_court$diff_deces_tot_predit_stand_15_24),
+			            label = "2023") +
 					xlab(
 							paste0(
 									"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -2095,6 +2099,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 			  geom_text(x = 495,
 			            y = base::min(essai$diff_deces_tot_predit_stand_15_24),
 			            label = "2022") +
+			  geom_text(x = 547,
+			            y = base::min(essai$diff_deces_tot_predit_stand_15_24),
+			            label = "2023") +
 					ggtitle(
 							paste0(
 									"Ecart des décès hebdomadaires des 15-24 ans par rapport à l'attendu ",
@@ -2231,6 +2238,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		text(391, base::min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
 		text(440, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
 		text(492, base::min(essai$deces_standardises_si_pop_2020_25_49), "2022", cex=1.2)
+		text(547, base::min(essai$deces_standardises_si_pop_2020_25_49), "2023", cex=1.2)
 		
 		#text(26, 22000, nomPays, cex=1.2)
 		
@@ -2351,6 +2359,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		  geom_text(x = 495,
 		            y = base::min(essai$diff_deces_tot_predit_stand_25_49),
 		            label = "2022") +
+		  geom_text(x = 547,
+		            y = base::min(essai$diff_deces_tot_predit_stand_25_49),
+		            label = "2023") +
 				xlab(
 						paste0(
 								"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -2408,6 +2419,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		  geom_text(x = 495,
 		            y = base::min(essai$diff_deces_tot_predit_stand_25_49),
 		            label = "2022") +
+		  geom_text(x = 547,
+		            y = base::min(essai$diff_deces_tot_predit_stand_25_49),
+		            label = "2023") +
 				ggtitle(
 						paste0(
 								"Ecart des décès hebdomadaires des 25-49 ans par rapport à l'attendu ",
@@ -2537,6 +2551,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	text(391, base::min(essai$deces_standardises_si_pop_2020_50_59), "2020", cex=1.2)
 	text(440, base::min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
 	text(492, base::min(essai$deces_standardises_si_pop_2020_50_59), "2022", cex=1.2)
+	text(547, base::min(essai$deces_standardises_si_pop_2020_50_59), "2023", cex=1.2)
 	
 #text(26, 22000, nomPays, cex=1.2)
 	
@@ -2600,6 +2615,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		  geom_text(x = 495,
 		            y = base::min(essai$diff_deces_tot_predit_stand_50_59),
 		            label = "2022") +
+		  geom_text(x = 547,
+		            y = base::min(essai$diff_deces_tot_predit_stand_50_59),
+		            label = "2023") +
 				xlab(
 						paste0(
 								"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -2658,6 +2676,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		  geom_text(x = 495,
 		            y = base::min(essai$diff_deces_tot_predit_stand_50_59),
 		            label = "2022") +
+		  geom_text(x = 547,
+		            y = base::min(essai$diff_deces_tot_predit_stand_50_59),
+		            label = "2023") +
 				ggtitle(
 						paste0(
 								"Ecart des décès hebdomadaires des 50-59 ans par rapport à l'attendu ",
@@ -2787,6 +2808,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	text(391, base::min(essai$deces_standardises_si_pop_2020_60_69), "2020", cex=1.2)
 	text(440, base::min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
 	text(492, base::min(essai$deces_standardises_si_pop_2020_60_69), "2022", cex=1.2)
+	text(547, base::min(essai$deces_standardises_si_pop_2020_60_69), "2023", cex=1.2)
 	
 #text(26, 22000, nomPays, cex=1.2)
 	
@@ -2851,6 +2873,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		  geom_text(x = 495,
 		            y = base::min(essai$diff_deces_tot_predit_stand_60_69),
 		            label = "2022") +
+		  geom_text(x = 547,
+		            y = base::min(essai$diff_deces_tot_predit_stand_60_69),
+		            label = "2023") +
 				xlab(
 						paste0(
 								"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -2908,6 +2933,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		  geom_text(x = 495,
 		            y = base::min(essai$diff_deces_tot_predit_stand_60_69),
 		            label = "2022") +
+		  geom_text(x = 547,
+		            y = base::min(essai$diff_deces_tot_predit_stand_60_69),
+		            label = "2023") +
 				ggtitle(
 						paste0(
 								"Ecart des décès hebdomadaires des 60-69 ans par rapport à l'attendu ",
@@ -3036,6 +3064,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	text(391, base::min(essai$deces_standardises_si_pop_2020_70_79), "2020", cex=1.2)
 	text(440, base::min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
 	text(492, base::min(essai$deces_standardises_si_pop_2020_70_79), "2022", cex=1.2)
+	text(547, base::min(essai$deces_standardises_si_pop_2020_70_79), "2023", cex=1.2)
 	
 #text(26, 22000, nomPays, cex=1.2)
 	
@@ -3099,7 +3128,10 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 						label = "2021") +
 		  geom_text(x = 495,
 		            y = base::min(essai$diff_deces_tot_predit_stand_70_79),
-		            label = "2021") +
+		            label = "2022") +
+		  geom_text(x = 547,
+		            y = base::min(essai$diff_deces_tot_predit_stand_70_79),
+		            label = "2023") +
 				xlab(
 						paste0(
 								"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -3158,6 +3190,9 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		  geom_text(x = 495,
 		            y = base::min(essai$diff_deces_tot_predit_stand_70_79),
 		            label = "2022") +
+		  geom_text(x = 547,
+		            y = base::min(essai$diff_deces_tot_predit_stand_70_79),
+		            label = "2023") +
 				ggtitle(
 						paste0(
 								"Ecart des décès hebdomadaires des 70-79 ans par rapport à l'attendu ",
@@ -3287,6 +3322,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	text(391, base::min(essai$deces_standardises_si_pop_2020_ge80), "2020", cex=1.2)
 	text(440, base::min(essai$deces_standardises_si_pop_2020_ge80), "2021", cex=1.2)
 	text(492, base::min(essai$deces_standardises_si_pop_2020_ge80), "2022", cex=1.2)
+	text(547, base::min(essai$deces_standardises_si_pop_2020_ge80), "2023", cex=1.2)
 	
 #text(26, 22000, nomPays, cex=1.2)
 	
@@ -3428,6 +3464,8 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
 				nomPays <- str_sub(nomVar, startIndex)
 				
+				print("test1")
+				
 				if(nomPays !="synchro" && nomPays != "europe"){
 				start <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderStart")
 				end <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderEnd")
@@ -3441,7 +3479,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				  premier_conf_end <- 314
 				  dernier_conf_end <- 314
 				}
-				
+				print("test2")
 				# Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
 				maxWeekTime <- es_deces_standard_pays_semaine %>%
 						ungroup %>%
@@ -3449,12 +3487,12 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 						distinct() %>%
 						select(time)
 				maxWeekTime <- maxWeekTime[1, 1]
-				
+				print("test3")
 				
 				#créer les tables à comparer et notamment la moyenne 2013-2019
 				essai <- ungroup(es_deces_standard_pays_semaine)
 				if(nomPays !="synchro" && nomPays != "europe"){
-				  essai <- essai %>% mutate(semaine = str_sub(time,6,8))
+				  essai <- essai %>% mutate(semaine = (as.numeric(strftime(time, format = "%V"))))
 				}else{
 				  essai <- essai %>% mutate(semaine = numSemaineDepuis2013%%53)
 				}
@@ -4299,6 +4337,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					text(391, base::min(essai$deces_standardises_si_pop_2020_15_24), "2020", cex=1.2)
 					text(443, base::min(essai$deces_standardises_si_pop_2020_15_24), "2021", cex=1.2)
 					text(495, base::min(essai$deces_standardises_si_pop_2020_15_24), "2022", cex=1.2)
+					text(547, base::min(essai$deces_standardises_si_pop_2020_15_24), "2023", cex=1.2)
 					
 					#text(26, 22000, nomPays, cex=1.2)
 					
@@ -4362,6 +4401,9 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 						  geom_text(x = 495,
 						            y = base::min(essai_court$diff_15_24),
 						            label = "2022") +
+						  geom_text(x = 547,
+						            y = base::min(essai_court$diff_15_24),
+						            label = "2023") +
 								xlab(
 										paste0(
 												"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -4419,6 +4461,9 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 						  geom_text(x = 495,
 						            y = base::min(essai$diff_15_24),
 						            label = "2022") +
+						  geom_text(x = 547,
+						            y = base::min(essai$diff_15_24),
+						            label = "2023") +
 								ggtitle(
 										paste0(
 												"Ecart des décès hebdomadaires des 15-24 ans par rapport à l'attendu ",
@@ -4555,6 +4600,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					text(391, base::min(essai$deces_standardises_si_pop_2020_25_49), "2020", cex=1.2)
 					text(443, base::min(essai$deces_standardises_si_pop_2020_25_49), "2021", cex=1.2)
 					text(495, base::min(essai$deces_standardises_si_pop_2020_25_49), "2022", cex=1.2)
+					text(547, base::min(essai$deces_standardises_si_pop_2020_25_49), "2023", cex=1.2)
 					
 					#text(26, 22000, nomPays, cex=1.2)
 					
@@ -4676,6 +4722,9 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					  geom_text(x = 495,
 					            y = base::min(essai$diff_25_49),
 					            label = "2022") +
+					  geom_text(x = 547,
+					            y = base::min(essai$diff_25_49),
+					            label = "2023") +
 							xlab(
 									paste0(
 											"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -4733,6 +4782,9 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					  geom_text(x = 495,
 					            y = base::min(essai$diff_25_49),
 					            label = "2022") +
+					  geom_text(x = 547,
+					            y = base::min(essai$diff_25_49),
+					            label = "2023") +
 							ggtitle(
 									paste0(
 											"Ecart des décès hebdomadaires des 25-49 ans par rapport à l'attendu ",
@@ -4862,6 +4914,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				text(391, base::min(essai$deces_standardises_si_pop_2020_50_59), "2020", cex=1.2)
 				text(443, base::min(essai$deces_standardises_si_pop_2020_50_59), "2021", cex=1.2)
 				text(495, base::min(essai$deces_standardises_si_pop_2020_50_59), "2022", cex=1.2)
+				text(547, base::min(essai$deces_standardises_si_pop_2020_50_59), "2023", cex=1.2)
 				
 				#text(26, 22000, nomPays, cex=1.2)
 				
@@ -4926,6 +4979,9 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					  geom_text(x = 495,
 					            y = base::min(essai$diff_50_59),
 					            label = "2022") +
+					  geom_text(x = 547,
+					            y = base::min(essai$diff_50_59),
+					            label = "2023") +
 							xlab(
 									paste0(
 											"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -4984,6 +5040,9 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					  geom_text(x = 495,
 					            y = base::min(essai$diff_50_59),
 					            label = "2022") +
+					  geom_text(x = 547,
+					            y = base::min(essai$diff_50_59),
+					            label = "2023") +
 							ggtitle(
 									paste0(
 											"Ecart des décès hebdomadaires des 50-59 ans par rapport à l'attendu ",
@@ -5113,6 +5172,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				text(391, base::min(essai$deces_standardises_si_pop_2020_60_69), "2020", cex=1.2)
 				text(443, base::min(essai$deces_standardises_si_pop_2020_60_69), "2021", cex=1.2)
 				text(495, base::min(essai$deces_standardises_si_pop_2020_60_69), "2022", cex=1.2)
+				text(547, base::min(essai$deces_standardises_si_pop_2020_50_59), "2023", cex=1.2)
 				
 				#text(26, 22000, nomPays, cex=1.2)
 				
@@ -5178,6 +5238,9 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					  geom_text(x = 495,
 					            y = base::min(essai$diff_60_69),
 					            label = "2022") +
+					  geom_text(x = 547,
+					            y = base::min(essai$diff_60_69),
+					            label = "2023") +
 							xlab(
 									paste0(
 											"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -5235,6 +5298,9 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					  geom_text(x = 495,
 					            y = base::min(essai$diff_60_69),
 					            label = "2022") +
+					  geom_text(x = 547,
+					            y = base::min(essai$diff_60_69),
+					            label = "2023") +
 							ggtitle(
 									paste0(
 											"Ecart des décès hebdomadaires des 60-69 ans par rapport à l'attendu ",
@@ -5363,6 +5429,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				text(391, base::min(essai$deces_standardises_si_pop_2020_70_79), "2020", cex=1.2)
 				text(443, base::min(essai$deces_standardises_si_pop_2020_70_79), "2021", cex=1.2)
 				text(495, base::min(essai$deces_standardises_si_pop_2020_70_79), "2022", cex=1.2)
+				text(547, base::min(essai$deces_standardises_si_pop_2020_70_79), "2023", cex=1.2)
 				
 				#text(26, 22000, nomPays, cex=1.2)
 				
@@ -5428,6 +5495,9 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					  geom_text(x = 495,
 					            y = base::min(essai$diff_70_79),
 					            label = "2022") +
+					  geom_text(x = 547,
+					            y = base::min(essai$diff_70_79),
+					            label = "2023") +
 							xlab(
 									paste0(
 											"surmortalité depuis le début de la vaccination en 2021 : ",
@@ -5486,6 +5556,9 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					  geom_text(x = 495,
 					            y = base::min(essai$diff_70_79),
 					            label = "2022") +
+					  geom_text(x = 547,
+					            y = base::min(essai$diff_70_79),
+					            label = "2023") +
 							ggtitle(
 									paste0(
 											"Ecart des décès hebdomadaires des 70-79 ans par rapport à l'attendu ",
@@ -6172,7 +6245,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 
 				#créer les tables à comparer et notamment la moyenne 2013-2019
 				essai <- ungroup(es_deces_standard_pays_semaine) %>% 
-						mutate(semaine = str_sub(time,6,8) , annee = as.numeric(str_sub(time,1,4)))%>% 
+						mutate(semaine = as.numeric(strftime(time, format = "%V")) , annee = as.numeric(str_sub(time,1,4)))%>% 
 						select(numSemaineDepuis2013,semaine,annee,
 								deces_tot_15_24,
 								deces_tot_25_49,
@@ -8391,7 +8464,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 	
 	#créer les tables à comparer et notamment la moyenne 2013-2019
 	essai <- ungroup(es_deces_standard_pays_semaine) %>% 
-			mutate(semaine = str_sub(time,6,8) , annee = as.numeric(str_sub(time,1,4)))%>% 
+			mutate(semaine = as.numeric(strftime(time, format = "%V")) , annee = as.numeric(str_sub(time,1,4)))%>% 
 			select(zone,numSemaineDepuis2013,semaine,annee,time,
 					deces_tot_15_24,
 					deces_tot_25_49,
@@ -9856,7 +9929,7 @@ a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
   
   essai <- ungroup(es_deces_standard_pays_semaine)
   if(nomPays !="synchro"){
-    essai <- essai %>% mutate(semaine = str_sub(time,6,8), annee = as.numeric(str_sub(time,1,4)))
+    essai <- essai %>% mutate(semaine = as.numeric(strftime(time, format = "%V")), annee = as.numeric(str_sub(time,1,4)))
   }else{
     essai <- essai %>% mutate(semaine = numSemaineDepuis2013%%53,annee=floor(numSemaineDepuis2013/53+2013))
   }

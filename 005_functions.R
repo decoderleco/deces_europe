@@ -49,6 +49,7 @@ library(readr)
 library(lsr)
 library(reshape2)
 library(purrr)
+library(aweek)
 
 ################################################################################
 #

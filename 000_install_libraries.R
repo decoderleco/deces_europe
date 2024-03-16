@@ -57,7 +57,7 @@ install.packages("markdown")
 
 # Conversion semaine en date et inversément
 install.packages('ISOweek')
-
+install.packages('aweek')
 
 
 
