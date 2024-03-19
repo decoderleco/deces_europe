@@ -3464,7 +3464,6 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
 				nomPays <- str_sub(nomVar, startIndex)
 				
-				print("test1")
 				
 				if(nomPays !="synchro" && nomPays != "europe"){
 				start <- es_deces_standard_pays_semaine %>% filter(Response_measure=="StayHomeOrderStart")
@@ -3479,7 +3478,6 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				  premier_conf_end <- 314
 				  dernier_conf_end <- 314
 				}
-				print("test2")
 				# Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
 				maxWeekTime <- es_deces_standard_pays_semaine %>%
 						ungroup %>%
@@ -3487,7 +3485,6 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 						distinct() %>%
 						select(time)
 				maxWeekTime <- maxWeekTime[1, 1]
-				print("test3")
 				
 				#créer les tables à comparer et notamment la moyenne 2013-2019
 				essai <- ungroup(es_deces_standard_pays_semaine)
@@ -9671,146 +9668,11 @@ source("src/analyses/world/eu/es/deces/hebdo/es_deces_hebdo_std_ete_ete_cumul.R"
 
 source("src/analyses/world/eu/es/deces/hebdo/es_deces_hebdo_std_janvier_decembre_cumul.R")
 
-#_______________________________________________________________________________
-#### Generer le graphique et le png associé : Deces et Deces standardises ####
-#_______________________________________________________________________________
-a__f_plot_es_deces_annuel_vs_deces_std <- function(nomPays) {
-	
-	
-	# Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
-	repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Annuel/Deces_vs_Deces_std/")
-	a__f_createDir(repertoire)
-	
-	
-	essai <- ungroup(b__es_deces_et_pop_par_annee_agequinq) %>%
-			filter(geo == nomPays) %>%
-			dplyr::rename(annee=time)
-	
-	libelle_pays <- essai$location[1]
-	
-	essai <- essai %>% 
-			mutate(moins65=case_when(agequinq=='Y_LT5'~ '2 - moins de 65 ans',
-							agequinq=='Y5-9'~ '2 - moins de 65 ans',
-							agequinq=='Y10-14'~'2 - moins de 65 ans',
-							agequinq=='Y15-19'~'2 - moins de 65 ans',
-							agequinq=='Y20-24'~'2 - moins de 65 ans',
-							agequinq=='Y25-29'~'2 - moins de 65 ans',
-							agequinq=='Y30-34'~'2 - moins de 65 ans',
-							agequinq=='Y35-39'~'2 - moins de 65 ans',
-							agequinq=='Y40-44'~'2 - moins de 65 ans',
-							agequinq=='Y45-49'~'2 - moins de 65 ans',
-							agequinq=='Y50-54'~'2 - moins de 65 ans',
-							agequinq=='Y55-59'~'2 - moins de 65 ans',
-							agequinq=='Y60-64'~'2 - moins de 65 ans',
-							TRUE ~ '1 - plus de 65 ans'))
-	
-	#Synthtetiser par pays et recensement, les population, pop2020, deces-theo_2020...
-	essai <- essai %>%
-			filter(!is.na(population)) %>%
-			group_by(geo, annee, moins65) %>%
-			summarise(population=sum(population), 
-					pop2020=sum(pop2020), 
-					deces=sum(deces), 
-					deces2020=sum(deces2020), 
-					deces_theo_si_pop_2020=sum(deces_theo_si_pop_2020), 
-					deces_theo_du_pays_si_pop_FR_2020=sum(deces_theo_du_pays_si_pop_FR_2020))
-	
-	
-	
-	#Nom du fichier png à générer
-	pngFileRelPath <- paste0(repertoire, libelle_pays, "_DC.png")
-	pngFileRelPath_std <- paste0(repertoire, libelle_pays, "_DC_std.png")
-	
-	# Message
-	cat(paste0("Creation image (", pngFileRelPath,")\n"))
-	
-	tempjeune <- essai %>%  filter(annee=="2020-01-01" & moins65 =='2 - moins de 65 ans')
-	DC2020jeune <- tempjeune$deces
-	DC2020stdjeune <- tempjeune$deces_theo_si_pop_2020
-	
-	tempvieux <- essai %>%  filter(annee=="2020-01-01" & moins65 =='1 - plus de 65 ans')
-	DC2020vieux <- tempvieux$deces
-	DC2020stdvieux <- tempvieux$deces_theo_si_pop_2020
-	
-	#_______________________________________________________________________________
-	#
-	#### Graphe des décès toutes causes ####
-	#
-	#_______________________________________________________________________________
-	
-	barplot_deces <- ggplot(data = essai, aes(x=annee, y=deces, fill = moins65)) +
-			
-			geom_bar(stat="identity")+
-			
-			labs(title = paste0("Décès annuels de ", libelle_pays),
-					caption = "Source des données : Eurostat", x="", y="nombre de décès")+
-			
-			theme_bw() + 
-			theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),legend.position = "top")+
-			
-			
-			scale_fill_manual("legend", values = c("1 - plus de 65 ans" = "steelblue", '2 - moins de 65 ans'= "steelblue1")) + 
-			#scale_y_continuous(labels = a__f_spaceThousandsSeparator) +
-			
-			# Ligne rouge horizontale des décès 2020
-			geom_hline(yintercept = DC2020jeune + DC2020vieux, linetype="dashed", color = "red")
-	
-	#
-	# Dessiner le graphe
-	#
-	
-	plot(barplot_deces)
-	
-	#
-	# Sauvegarder le graphique
-	#
-	ggsave(pngFileRelPath, width = 11, height = 8, plot = barplot_deces)	  
-	
-	#_______________________________________________________________________________
-	#
-	#### Graphe des décès toutes causes standardisés ####
-	#
-	#_______________________________________________________________________________
-	
-	barplot_decestheo <- ggplot(data=essai, 
-					aes(x=annee, y=deces_theo_si_pop_2020, fill = moins65)) +
-			
-			geom_bar(stat="identity") +
-			
-			labs(title = paste0("Décès annuels standardisés de ", libelle_pays),
-					subtitle = paste0("selon la population de ",libelle_pays ," de 2020"),
-					caption = "Source des données : Eurostat", x="", y="nombre de décès standaridsés")+
-			
-			theme_bw() + 
-			theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),
-					plot.subtitle = element_text(hjust = 0.5, color = "#0066CC", size = 12, face = "bold"),legend.position = "top")+ 
-			
-			
-			scale_fill_manual("legend", values = c("1 - plus de 65 ans" = "steelblue",'2 - moins de 65 ans'= "steelblue1")) +
-			#scale_y_continuous(labels = a__f_spaceThousandsSeparator) +
-			
-			# Ligne rouge horizontale des décès std 2020
-			geom_hline(yintercept = DC2020stdjeune + DC2020stdvieux, linetype="dashed", color = "red")
-	
-	#
-	# Dessiner le graphe
-	#
-	
-	plot(barplot_decestheo)
-	
-	#
-	# Sauvegarder le graphique
-	#
-	
-	ggsave(pngFileRelPath_std, width = 11, height = 8, plot = barplot_decestheo)	
-	
-}
 
 #_______________________________________________________________________________
-#### Generer le graphique et le png associé : Deces vs Deces COVID ####
+#### Generer le graphique et le png associé : Deces hebdo vs Deces COVID ####
 #_______________________________________________________________________________
-a__f_plot_es_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_semaine, 
-		ylim_max) {
+a__f_plot_es_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_semaine) {
 	
 	# deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
 	# qui a étépassé dans le parametre region
@@ -9830,79 +9692,82 @@ a__f_plot_es_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_se
 	# Message
 	cat(paste0("Creation image (", pngFileRelPath,")\n"))
 	
+	# Déterminer le plus grand numéro de semaine, puis le time (2021W27) associé pour l'afficher dans le titre
+	maxWeekTime <- es_deces_standard_pays_semaine %>%
+	  ungroup %>%
+	  filter(numSemaineDepuis2013 == base::max(numSemaineDepuis2013)) %>%
+	  distinct() %>%
+	  select(time)
+	maxWeekTime <- maxWeekTime[1, 1]
 	
-	essai <- es_deces_standard_pays_semaine %>%
-			filter(numSemaineDepuis2013>250)
+	# Récupérer le vecteur des confinements
+	debut_confinement <- 	es_deces_standard_pays_semaine %>%
+	  filter(Response_measure=='StayHomeOrderStart') %>% 
+	  select(geo, numSemaineDepuis2013)
 	
-	#
-	par(mar=c(4, 4, 3, 5))
+	fin_confinement <- 	es_deces_standard_pays_semaine %>%
+	  filter(Response_measure=='StayHomeOrderEnd') %>% 
+	  select(geo, numSemaineDepuis2013)
 	
-	# Courbe des décès toutes causes
-	plot(essai$numSemaineDepuis2013, 
-			essai$deces_tot, 
-			pch=16, 
-			cex=0, 
-			axes=F, 
-			xlab="week", 
-			ylab="", 
-			ylim=c(0, ylim_max), 
-			type="o", 
-			col="black", 
-			main=paste0("Situation de la ",nomPays))
+	Vdebut_confinement <-debut_confinement[['numSemaineDepuis2013']]
+	Vfin_confinement <-fin_confinement[['numSemaineDepuis2013']]
 	
-	# pour encadrer le graphique
-	box() 
 	
-	axis(PLOT_AXIS_SIDE_LEFT, ylim=c(0, ylim_max), col="red")
+	es_deces_standard_pays_semaine <- es_deces_standard_pays_semaine %>%
+			filter(numSemaineDepuis2013>262)
 	
-	mtext("Nombre de décès toutes causes standardisés à la population 2020", side=2, line=3)
-	mtext("Nombre de décès déclarés Covid-19 standardisés à la population 2020", side=2, line=2, col="red")
-	mtext("                                                                   Source : Eurostat décès hebdomadaires et population + OurWorldInData", side=1, col="black", line=2.5)
+	es_deces_standard_pays_semaine <- mutate_at(es_deces_standard_pays_semaine, c("new_deaths"), ~replace(., is.na(.), 0))
 	
-	# Lignes verticales
-	abline(v=c(53, 105, 158, 210, 262, 314, 366, 419, 471), col="blue", lty=3)
-	
-	text(26,  0, "2013", cex=1.2)
-	text(78,  0, "2014", cex=1.2)
-	text(130, 0, "2015", cex=1.2)
-	text(183, 0, "2016", cex=1.2)
-	text(235, 0, "2017", cex=1.2)
-	text(287, 0, "2018", cex=1.2)
-	text(339, 0, "2019", cex=1.2)
-	text(391, 0, "2020", cex=1.2)
-	text(440, 0, "2021", cex=1.2)
-	
-	#text(26, 22000, nomPays, cex=1.2)
-	
-	# Superposer décès COVID
-	par(new=T)
-	plot(essai$numSemaineDepuis2013, 
-			essai$new_deaths, 
-			pch=16, 
-			axes=F, 
-			cex=0, 
-			ylim=c(0, ylim_max), 
-			xlab="", 
-			#lwd=3,  
-			ylab="", 
-			type="o", 
-			col="red") 
-	
-	# Superposer la différence
-	par(new=T)
-	plot(essai$numSemaineDepuis2013, 
-			essai$deces_tot - essai$new_deaths, 
-			pch=16, 
-			axes=F, 
-			cex=0, 
-			ylim=c(0, ylim_max), 
-			xlab="", 
-			lwd=2,  
-			ylab="", 
-			type="o", 
-			col="blue") 
-	
-	mtext("Décès non Covid-19 à la population 2020 (= Diff entre décès déclarés Covid-19 et décès toutes causes)", side = PLOT_AXIS_SIDE_RIGHT, col="blue", line=2.5)
+	g<-ggplot(data = es_deces_standard_pays_semaine) + 
+	  geom_area(aes(x = numSemaineDepuis2013, 
+	                y = deces_tot-new_deaths),color="#000099",fill="#000099",size=1,alpha=0.60) + 
+	  geom_area(aes(x = numSemaineDepuis2013, 
+	                y = deces_tot),
+	            color="#3366CC",fill="#3366CC",size=1,alpha=1/4)+
+	  annotate("rect",
+	           xmin = Vdebut_confinement[1],
+	           xmax = Vfin_confinement[1],
+	           ymin = 0,
+	           ymax = base::max(es_deces_standard_pays_semaine$deces_tot),
+	           alpha = .2,
+	           fill = "orange") +
+	  annotate("rect",
+	           xmin = Vdebut_confinement[2],
+	           xmax = Vfin_confinement[2],
+	           ymin = 0,
+	           ymax = base::max(es_deces_standard_pays_semaine$deces_tot),
+	           alpha = .2,
+	           fill = "orange")+
+	  annotate("rect",
+	           xmin = Vdebut_confinement[3],
+	           xmax = Vfin_confinement[3],
+	           ymin = 0,
+	           ymax = base::max(es_deces_standard_pays_semaine$deces_tot),
+	           alpha = .2,
+	           fill = "orange")+
+	  geom_vline(xintercept = seq(from=262, to=600, by = 52),linetype = "dashed",color="steelblue")+
+	  ylab("Nombre de décès")+
+	  theme(axis.title.x = element_blank(), 
+	        axis.text.x = element_blank(),
+	        axis.title.y = element_text(color="#000000", size=20 ),
+	        plot.title = element_text(color="#003366", size=25 ),
+	        axis.text.y =  element_text(color="#000000", size=15 , angle =45))+
+	  geom_text(x=287, y=base::max(es_deces_standard_pays_semaine$deces_tot), label="2018",size=6)+
+	  geom_text(x=339, y=base::max(es_deces_standard_pays_semaine$deces_tot), label="2019",size=6)+
+	  geom_text(x=391, y=base::max(es_deces_standard_pays_semaine$deces_tot), label="2020",size=6)+
+	  geom_text(x=443, y=base::max(es_deces_standard_pays_semaine$deces_tot), label="2021",size=6)+
+	  geom_text(x=495, y=base::max(es_deces_standard_pays_semaine$deces_tot), label="2022",size=6)+
+	  geom_text(x=547, y=base::max(es_deces_standard_pays_semaine$deces_tot), label="2023",size=6)+
+	  
+	  geom_text(x=base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013+26),
+	            y=(es_deces_standard_pays_semaine$deces_tot[1]), 
+	            label="Covid", color = '#3366CC',		size = 6)+
+	  geom_text(x=base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013+26),
+	            y=(es_deces_standard_pays_semaine$deces_tot[1]/2), 
+	            label="Hors Covid", color = "#000099",		size = 6)+
+	  ggtitle(paste0(str_to_title(nomPays)," : décès hebdomadaires selon le statut Covid déclaré"))+
+	  xlim(base::min(es_deces_standard_pays_semaine$numSemaineDepuis2013), base::max(es_deces_standard_pays_semaine$numSemaineDepuis2013))
+	print(g)
 	
 	dev.print(device = png, file = pngFileRelPath, width = 1000)
 	
@@ -9910,6 +9775,81 @@ a__f_plot_es_deces_hebdo_std_vs_decesCovid <- function(es_deces_standard_pays_se
 	# Supprimer la variable de GlovaEnv correspondant à region car on n'en a plus besoin
 	if (shallDeleteVars) rm(list = c(nomVar), envir = globalenv())
 }
+
+
+#_______________________________________________________________________________
+#### Generer le graphique et le png associé : Deces Annuels vs Deces COVID ####
+#_______________________________________________________________________________
+a__f_plot_es_deces_annuels_vs_decesCovid <- function(es_deces_standard_pays_semaine) {
+  
+  # deparse(subsituteregion)) permet d'obtenir lenom (ous forme de string) de la variable 
+  # qui a étépassé dans le parametre region
+  nomVar <- deparse(substitute(es_deces_standard_pays_semaine))
+  
+  # Recuperer le nom du pays qui est après "es_deces_standard_pays_semaine_"
+  startIndex <- nchar("es_deces_standard_pays_semaine_") + 1
+  nomPays <- str_sub(nomVar, startIndex)
+  
+  # Comme es_deces_standard_pays_semaine ne correspond qu'à un seul pays, toutes les zones sont identiques. On prend la 1ère
+  repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/owid/Deces_vs_Deces_Covid/Annuel/")
+  a__f_createDir(repertoire)
+  
+  #Nom du fichier png à générer
+  pngFileRelPath <- paste0(repertoire, nomPays, ".png")
+  
+  # Message
+  cat(paste0("Creation image (", pngFileRelPath,")\n"))
+  
+  
+  essai <- es_deces_standard_pays_semaine %>%
+    mutate(annee=year(as.Date(time))) %>% 
+    select(annee,geo,new_deaths,deces_tot) %>% 
+    group_by(annee,geo) %>% 
+    summarise(new_deaths=sum(new_deaths),
+              deces_tot=sum(deces_tot))
+    
+    deces_hors_covid <- essai %>%
+      mutate(deces = deces_tot-new_deaths, type = "2 - Hors covid") %>% 
+      select(annee, geo, deces, type)
+    
+    deces_covid <- essai %>% select(annee,geo,new_deaths)%>% 
+      dplyr::rename(deces=new_deaths) %>% 
+      mutate(type = "1 - Covid")%>% 
+      select(annee, geo, deces, type)
+    
+    
+    essai<-deces_covid %>% rbind(deces_hors_covid)
+  
+  #création du graphe
+    
+    barplot_deces <- ggplot(data = essai, aes(x=annee, y=deces, fill = type)) +
+      
+      geom_bar(stat="identity")+
+      
+      labs(title = paste0("Décès annuels de ", nomPays),
+           subtitle = "Données annuelles approximées par la concaténation des données hebdomadaire",
+           caption = "Source des données : Eurostat", x="", y="nombre de décès")+
+      
+      theme_bw() + 
+      theme(plot.title = element_text(hjust = 0.5, color = "#0066CC", size = 16, face = "bold"),legend.position = "top")+
+      
+      
+      scale_fill_manual("legend", values = c("1 - Covid" = "steelblue", '2 - Hors covid'= "steelblue1"))
+      
+    #
+    # Dessiner le graphe
+    #
+    
+    plot(barplot_deces)
+    
+    #
+    # Sauvegarder le graphique
+    #
+    ggsave(pngFileRelPath, width = 11, height = 8, plot = barplot_deces)	  
+    
+}
+
+
 
 #____________________________________________________________________________________
 #### Generer le graphique et le png associé : deces_trimestriel ####

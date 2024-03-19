@@ -2153,7 +2153,7 @@ if (shallDeleteVars) rm(owid_covid_Europe_geo_week)
 
 ##----------------------------------------------------------------------------##
 #
-# Recuperation des donnees ined sur les décès Covid par âge
+#### Recuperation des donnees ined sur les décès Covid par âge ####
 #
 ##----------------------------------------------------------------------------##
 
@@ -2165,12 +2165,11 @@ b__ined_covid_data <- read.csv("data/csv/Cum_deaths_by_age_sex.csv") %>%
                          country_code == "PRT"~"PT",
                          country_code == "SWE"~"SE",
                          TRUE~substr(country_code, 1, 2)),
-         death_reference_date = as.Date(death_reference_date),
-         week=isoweek(death_reference_date),
-        year = isoyear(death_reference_date),
-        time = case_when(week<10 ~ paste0(year,"W0",week),
-                         TRUE~paste0(year,"W",week))) %>% 
-  select(geo,time,age_group,cum_death_both,year,week) %>% 
+         death_reference_date = as.Date(death_reference_date,"%d/%m/%Y")) %>% 
+  mutate(time=week2date(date2week(death_reference_date, floor_day = TRUE)),
+         week=isoweek(time),
+         year=year(time)) %>% 
+  select(geo,time,age_group,cum_death_both,week,year) %>% 
   mutate(cum_death_both = case_when(is.na(cum_death_both)~as.integer(0),
                                     TRUE~cum_death_both))
 
@@ -2183,12 +2182,7 @@ b__ined_covid_data_group<-b__ined_covid_data %>%
 #décumuler les données
 
 b__ined_covid_data_group_prec<-b__ined_covid_data_group %>% 
-  mutate(time = case_when(week<9 ~ paste0(year,"W0",week+1),
-                          week<52 ~ paste0(year,"W",week+1),
-                          week==52 & year==2020 ~ "2020W53",
-                          week==52 & year==2021 ~ "2022W01",
-                          week==53 ~ paste0(year+1,"W01"),
-                       TRUE~paste0(year,"W",week)),
+  mutate(time = time+7,
          cum_death_both_prec = cum_death_both) %>% 
   select(-cum_death_both,-year,-week)
 
@@ -2489,36 +2483,36 @@ b__ined_covid_data_regroupe <- b__ined_covid_data_group_0_24 %>%
   full_join(b__ined_covid_data_group_moins70)
   
 b__ined_covid_data_regroupe <- b__ined_covid_data_regroupe %>% 
-  mutate(deces_covid_moins60 = case_when(geo=="DK"& time=="2020W14" ~ as.integer(4),
-                                         geo=="DK"& time=="2020W15" ~ as.integer(3),
+  mutate(deces_covid_moins60 = case_when(geo=="DK"& time==week2date("2020-W14-1") ~ as.integer(4),
+                                         geo=="DK"& time==week2date("2020-W15-1") ~ as.integer(3),
                                          geo=="DK"& !is.na(deces_covid_50_59) ~ deces_covid_0_9 + deces_covid_10_19 + deces_covid_20_29+deces_covid_30_39+deces_covid_40_49+deces_covid_50_59,
                                          TRUE ~ deces_covid_moins60))%>% 
-  mutate(deces_covid_60_69 = case_when(geo=="DK"& time=="2020W14" ~ as.integer(20),
-                                       geo=="DK"& time=="2020W15" ~ as.integer(13),
+  mutate(deces_covid_60_69 = case_when(geo=="DK"& time==week2date("2020-W14-1") ~ as.integer(20),
+                                       geo=="DK"& time==week2date("2020-W15-1") ~ as.integer(13),
                                          TRUE ~ deces_covid_60_69)) %>% 
   select(-deces_covid_moins70)
 
 b__ined_covid_data_regroupe <- b__ined_covid_data_regroupe %>% 
-  mutate(deces_covid_moins60 = case_when(geo=="DE"& time=="2020W14" ~ as.integer(47),
-                                        geo=="DE"& time=="2020W18" ~ as.integer(42),
-                                        geo=="DE"& time=="2020W39"~as.integer(7),
+  mutate(deces_covid_moins60 = case_when(geo=="DE"& time==week2date("2020-W14-1") ~ as.integer(47),
+                                        geo=="DE"& time==week2date("2020-W18-1") ~ as.integer(42),
+                                        geo=="DE"& time==week2date("2020-W39-1")~as.integer(7),
                                         geo=="DE"& !is.na(deces_covid_50_59) ~ deces_covid_0_9 + deces_covid_10_19 + deces_covid_20_29+deces_covid_30_39+deces_covid_40_49+deces_covid_50_59,
                                          TRUE ~ deces_covid_moins60)) %>% 
-  mutate(deces_covid_60_69 = case_when(geo=="DE"& time=="2020W39" ~ as.integer(4),
+  mutate(deces_covid_60_69 = case_when(geo=="DE"& time==week2date("2020-W39-1") ~ as.integer(4),
                                        TRUE ~ deces_covid_60_69)) %>% 
-  mutate(deces_covid_70_79 = case_when(geo=="DE"& time=="2020W39" ~ as.integer(12),
+  mutate(deces_covid_70_79 = case_when(geo=="DE"& time==week2date("2020-W39-1") ~ as.integer(12),
                                        TRUE ~ deces_covid_70_79)) %>% 
-  mutate(deces_covid_80_89 = case_when(geo=="DE"& time=="2020W39" ~ as.integer(17),
+  mutate(deces_covid_80_89 = case_when(geo=="DE"& time==week2date("2020-W39-1") ~ as.integer(17),
                                        TRUE ~ deces_covid_80_89)) %>%
-  mutate(deces_covid_90_99 = case_when(geo=="DE"& time=="2020W39" ~ as.integer(7),
+  mutate(deces_covid_90_99 = case_when(geo=="DE"& time==week2date("2020-W39-1") ~ as.integer(7),
                                        TRUE ~ deces_covid_90_99)) %>%
-  mutate(deces_covid_100plus = case_when(geo=="DE"& time=="2020W39" ~ as.integer(0),
+  mutate(deces_covid_100plus = case_when(geo=="DE"& time==week2date("2020-W39-1") ~ as.integer(0),
                                        TRUE ~ deces_covid_100plus)) %>% 
-  mutate(deces_covid_100plus = case_when(geo=="DE"& time=="2020W18" ~ as.integer(0),
+  mutate(deces_covid_100plus = case_when(geo=="DE"& time==week2date("2020-W18-1") ~ as.integer(0),
                                          TRUE ~ deces_covid_100plus)) %>%
-  mutate(deces_covid_90_99 = case_when(geo=="DE"& time=="2020W18" ~ as.integer(236),
+  mutate(deces_covid_90_99 = case_when(geo=="DE"& time==week2date("2020-W18-1")  ~ as.integer(236),
                                          TRUE ~ deces_covid_90_99)) %>% 
-  mutate(deces_covid_90plus = case_when(geo=="DE"& time=="2020W49" ~ as.integer(557),
+  mutate(deces_covid_90plus = case_when(geo=="DE"& time==week2date("2020-W49-1") ~ as.integer(557),
                                        TRUE ~ deces_covid_90plus)) %>% 
   mutate(deces_covid_80plus = case_when(geo=="DE"&!is.na(deces_covid_100plus) ~ deces_covid_100plus + deces_covid_90_99+deces_covid_80_89,
                                         TRUE ~ deces_covid_80plus))
@@ -2530,32 +2524,32 @@ b__ined_covid_data_regroupe <- b__ined_covid_data_regroupe %>%
                                         TRUE~deces_covid_85plus))
 
 b__ined_covid_data_regroupe <- b__ined_covid_data_regroupe %>% 
-  mutate(deces_covid_0_9 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
-                                     geo=="PT"& time=="2020W48" ~ as.integer(0),
+  mutate(deces_covid_0_9 = case_when(geo=="PT"& time==week2date("2020-W34-1")  ~ as.integer(0),
+                                     geo=="PT"& time==week2date("2020-W48-1") ~ as.integer(0),
                                         TRUE~deces_covid_0_9)) %>% 
-  mutate(deces_covid_10_19 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
-                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+  mutate(deces_covid_10_19 = case_when(geo=="PT"& time==week2date("2020-W34-1") ~ as.integer(0),
+                                       geo=="PT"& time==week2date("2020-W48-1")~ as.integer(0),
                                      TRUE~deces_covid_10_19)) %>%
-  mutate(deces_covid_20_29 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
-                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+  mutate(deces_covid_20_29 = case_when(geo=="PT"& time==week2date("2020-W34-1") ~ as.integer(0),
+                                       geo=="PT"& time==week2date("2020-W48-1") ~ as.integer(0),
                                        TRUE~deces_covid_20_29)) %>% 
-  mutate(deces_covid_30_39 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
-                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+  mutate(deces_covid_30_39 = case_when(geo=="PT"& time==week2date("2020-W34-1") ~ as.integer(0),
+                                       geo=="PT"& time==week2date("2020-W48-1") ~ as.integer(0),
                                        TRUE~deces_covid_30_39)) %>% 
-  mutate(deces_covid_40_49 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
-                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+  mutate(deces_covid_40_49 = case_when(geo=="PT"& time==week2date("2020-W34-1") ~ as.integer(0),
+                                       geo=="PT"& time==week2date("2020-W48-1") ~ as.integer(0),
                                        TRUE~deces_covid_40_49)) %>% 
-  mutate(deces_covid_50_59 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
-                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+  mutate(deces_covid_50_59 = case_when(geo=="PT"& time==week2date("2020-W34-1") ~ as.integer(0),
+                                       geo=="PT"& time==week2date("2020-W48-1") ~ as.integer(0),
                                        TRUE~deces_covid_50_59)) %>% 
-  mutate(deces_covid_60_69 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
-                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+  mutate(deces_covid_60_69 = case_when(geo=="PT"& time==week2date("2020-W34-1") ~ as.integer(0),
+                                       geo=="PT"& time==week2date("2020-W48-1") ~ as.integer(0),
                                        TRUE~deces_covid_60_69)) %>% 
-  mutate(deces_covid_70_79 = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
-                                       geo=="PT"& time=="2020W48" ~ as.integer(0),
+  mutate(deces_covid_70_79 = case_when(geo=="PT"& time==week2date("2020-W34-1")~ as.integer(0),
+                                       geo=="PT"& time==week2date("2020-W48-1") ~ as.integer(0),
                                        TRUE~deces_covid_70_79)) %>% 
-  mutate(deces_covid_80plus = case_when(geo=="PT"& time=="2020W34" ~ as.integer(0),
-                                        geo=="PT"& time=="2020W48" ~ as.integer(0),
+  mutate(deces_covid_80plus = case_when(geo=="PT"& time==week2date("2020-W34-1") ~ as.integer(0),
+                                        geo=="PT"& time==week2date("2020-W48-1") ~ as.integer(0),
                                        TRUE~deces_covid_80plus)) 
 
 rm(b__ined_covid_data_group_0_24)
@@ -2597,6 +2591,9 @@ rm(b__ined_covid_data_group_moins70)
 rm(b__ined_covid_data)
 rm(b__ined_covid_data_group)
 rm(b__ined_covid_data_group_prec)
+
+b__ined_covid_data_regroupe <- b__ined_covid_data_regroupe %>% mutate(time = as.character(time))
+
 
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <-b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>% 
   left_join(b__ined_covid_data_regroupe)
