@@ -1512,7 +1512,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede','europe','synchro')){  
+			'pologne','portugal','rtcheque','suede','europe','synchro')){  
 		
 		essai <- essai %>% 
 				mutate(barre_vax_15_24 = case_when(
@@ -2014,7 +2014,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 				'malte',
 				'norvege',
 				'pologne',
-				'portugal',
+				'portugal','rtcheque',
 				'suede','europe','synchro'
 		)) {
 			
@@ -2133,7 +2133,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 		if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 				'espagne','estonie','finlande','france','grece','hongrie',
 				'islande','italie','luxembourg','malte','norvege',
-				'pologne','portugal','suede','europe','synchro')){
+				'pologne','portugal','rtcheque','suede','europe','synchro')){
 			
 			courbes_vaccins<-ggplot(essai_court)+
 					theme(axis.text.x = element_blank()) +
@@ -2335,7 +2335,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 			'malte',
 			'norvege',
 			'pologne',
-			'portugal',
+			'portugal','rtcheque',
 			'suede','europe','synchro'
 	)) {
 		histo_deces <- ggplot(essai_court) +
@@ -2453,7 +2453,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede','europe','synchro')){
+			'pologne','portugal','rtcheque','suede','europe','synchro')){
 		
 		courbes_vaccins<-ggplot(essai_court)+
 				theme(axis.text.x = element_blank()) +
@@ -2591,7 +2591,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 			'malte',
 			'norvege',
 			'pologne',
-			'portugal',
+			'portugal','rtcheque',
 			'suede','europe','synchro'
 	)) {
 		histo_deces <- ggplot(essai_court) +
@@ -2710,7 +2710,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede','europe','synchro')){
+			'pologne','portugal','rtcheque','suede','europe','synchro')){
 		
 		courbes_vaccins<-ggplot(essai_court)+
 				theme(axis.text.x = element_blank()) +
@@ -2849,7 +2849,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 			'malte',
 			'norvege',
 			'pologne',
-			'portugal',
+			'portugal','rtcheque',
 			'suede','europe','synchro'
 	)) {
 		histo_deces <- ggplot(essai_court) +
@@ -2967,7 +2967,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede','europe','synchro')){
+			'pologne','portugal','rtcheque','suede','europe','synchro')){
 		
 		courbes_vaccins<-ggplot(essai_court)+
 				theme(axis.text.x = element_blank()) +
@@ -3105,7 +3105,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 			'malte',
 			'norvege',
 			'pologne',
-			'portugal',
+			'portugal','rtcheque',
 			'suede','europe','synchro'
 	)) {
 		histo_deces <- ggplot(essai_court) +
@@ -3224,7 +3224,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede','europe','synchro')){
+			'pologne','portugal','rtcheque','suede','europe','synchro')){
 		
 		courbes_vaccins<-ggplot(essai_court)+
 				theme(axis.text.x = element_blank()) +
@@ -3349,7 +3349,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede','europe','synchro')){
+			'pologne','portugal','rtcheque','suede','europe','synchro')){
 		histo_deces<-ggplot(essai_court)+
 				theme(axis.text.x = element_blank()) +
 				geom_col(aes(x=numSemaineDepuis2013,y=diff_deces_tot_predit_stand_ge80,fill=posge80))+
@@ -3405,7 +3405,7 @@ a__f_plot_es_deces_hebdo_std_vaccination <- function(es_deces_standard_pays_sema
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede','europe','synchro')){
+			'pologne','portugal','rtcheque','suede','europe','synchro')){
 		courbes_vaccins<-ggplot(essai_court)+
 				theme(axis.text.x = element_blank()) +
 				geom_line(aes(x=numSemaineDepuis2013,y=(`Age80+`)/pop_week_ge80),col="#999999",size=2, linetype = "dotted")+
@@ -3635,7 +3635,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege','paysbas',
-						'pologne','portugal','suede','europe','synchro')){  
+						'pologne','portugal','rtcheque','suede','europe','synchro')){  
 					
 					essai <- essai %>% 
 							mutate(barre_vax_15_24 = case_when(
@@ -4374,6 +4374,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 							'paysbas',
 							'pologne',
 							'portugal',
+							'rtcheque',
 							'suede','europe','synchro'
 					)) {
 						
@@ -4492,7 +4493,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 					if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 							'espagne','estonie','finlande','france','grece','hongrie',
 							'islande','italie','luxembourg','malte','norvege','paysbas',
-							'pologne','portugal','suede','europe','synchro')){
+							'pologne','portugal','rtcheque','suede','europe','synchro')){
 						
 						courbes_vaccins<-ggplot(essai_court)+
 								theme(axis.text.x = element_blank()) +
@@ -4696,6 +4697,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 						'norvege',
 						'pologne',
 						'portugal',
+						'rtcheque',
 						'suede','europe','synchro'
 				)) {
 					histo_deces <- ggplot(essai_court) +
@@ -4813,7 +4815,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege','paysbas',
-						'pologne','portugal','suede','europe','synchro')){
+						'pologne','portugal','rtcheque','suede','europe','synchro')){
 					
 					courbes_vaccins<-ggplot(essai_court)+
 							theme(axis.text.x = element_blank()) +
@@ -4952,7 +4954,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 						'norvege',
 						'paysbas',
 						'pologne',
-						'portugal',
+						'portugal','rtcheque',
 						'suede','europe','synchro'
 				)) {
 					histo_deces <- ggplot(essai_court) +
@@ -5071,7 +5073,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege','paysbas',
-						'pologne','portugal','suede','europe','synchro')){
+						'pologne','portugal','rtcheque','suede','europe','synchro')){
 					
 					courbes_vaccins<-ggplot(essai_court)+
 							theme(axis.text.x = element_blank()) +
@@ -5211,7 +5213,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 						'norvege',
 						'paysbas',
 						'pologne',
-						'portugal',
+						'portugal','rtcheque',
 						'suede','europe','synchro'
 				)) {
 					histo_deces <- ggplot(essai_court) +
@@ -5329,7 +5331,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege','paysbas',
-						'pologne','portugal','suede','europe','synchro')){
+						'pologne','portugal','rtcheque','suede','europe','synchro')){
 					
 					courbes_vaccins<-ggplot(essai_court)+
 							theme(axis.text.x = element_blank()) +
@@ -5468,7 +5470,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 						'norvege',
 						'paysbas',
 						'pologne',
-						'portugal',
+						'portugal','rtcheque',
 						'suede','europe','synchro'
 				)) {
 					histo_deces <- ggplot(essai_court) +
@@ -5587,7 +5589,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege','paysbas',
-						'pologne','portugal','suede','europe','synchro')){
+						'pologne','portugal','rtcheque','suede','europe','synchro')){
 					
 					courbes_vaccins<-ggplot(essai_court)+
 							theme(axis.text.x = element_blank()) +
@@ -5711,7 +5713,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege','paysbas',
-						'pologne','portugal','suede','europe','synchro')){
+						'pologne','portugal','rtcheque','suede','europe','synchro')){
 					histo_deces<-ggplot(essai_court)+
 							theme(axis.text.x = element_blank()) +
 							geom_col(aes(x=numSemaineDepuis2013,y=diff_ge80,fill=posge80))+
@@ -5767,7 +5769,7 @@ a__f_plot_es_deces_hebdo_std_interp_vaccination <- function(es_deces_standard_pa
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege','paysbas',
-						'pologne','portugal','suede','europe','synchro')){
+						'pologne','portugal','rtcheque','suede','rtcheque','europe','synchro')){
 					courbes_vaccins<-ggplot(essai_court)+
 							theme(axis.text.x = element_blank()) +
 							geom_line(aes(x=numSemaineDepuis2013,y=(`Age80+`)/pop_week_ge80),col="#999999",size=2, linetype = "dotted")+
@@ -6385,7 +6387,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege',
-						'pologne','portugal','suede','europe','synchro')){  
+						'pologne','portugal','rtcheque','suede','europe','synchro')){  
 					
 					essai <- essai %>% 
 							mutate(barre_vax_15_24 = case_when(
@@ -7085,7 +7087,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 							'malte',
 							'norvege',
 							'pologne',
-							'portugal',
+							'portugal','rtcheque',
 							'suede','europe','synchro'
 					)) {
 						
@@ -7192,7 +7194,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 					if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 							'espagne','estonie','finlande','france','grece','hongrie',
 							'islande','italie','luxembourg','malte','norvege',
-							'pologne','portugal','suede','europe','synchro')){
+							'pologne','portugal','rtcheque','suede','europe','synchro')){
 						
 						courbes_vaccins<-ggplot(essai_court)+
 								theme(axis.text.x = element_blank()) +
@@ -7388,7 +7390,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 						'malte',
 						'norvege',
 						'pologne',
-						'portugal',
+						'portugal','rtcheque',
 						'suede','europe','synchro'
 				)) {
 					histo_deces <- ggplot(essai_court) +
@@ -7494,7 +7496,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege',
-						'pologne','portugal','suede','europe','synchro')){
+						'pologne','portugal','rtcheque','suede','europe','synchro')){
 					
 					courbes_vaccins<-ggplot(essai_court)+
 							theme(axis.text.x = element_blank()) +
@@ -7627,7 +7629,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 						'malte',
 						'norvege',
 						'pologne',
-						'portugal',
+						'portugal','rtcheque',
 						'suede','europe','synchro'
 				)) {
 					histo_deces <- ggplot(essai_court) +
@@ -7734,7 +7736,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege',
-						'pologne','portugal','suede','europe','synchro')){
+						'pologne','portugal','rtcheque','suede','europe','synchro')){
 					
 					courbes_vaccins<-ggplot(essai_court)+
 							theme(axis.text.x = element_blank()) +
@@ -7868,7 +7870,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 						'malte',
 						'norvege',
 						'pologne',
-						'portugal',
+						'portugal','rtcheque',
 						'suede','europe','synchro'
 				)) {
 					histo_deces <- ggplot(essai_court) +
@@ -7974,7 +7976,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege',
-						'pologne','portugal','suede','europe','synchro')){
+						'pologne','portugal','rtcheque','suede','europe','synchro')){
 					
 					courbes_vaccins<-ggplot(essai_court)+
 							theme(axis.text.x = element_blank()) +
@@ -8107,7 +8109,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 						'malte',
 						'norvege',
 						'pologne',
-						'portugal',
+						'portugal','rtcheque',
 						'suede','europe','synchro'
 				)) {
 					histo_deces <- ggplot(essai_court) +
@@ -8214,7 +8216,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege',
-						'pologne','portugal','suede','europe','synchro')){
+						'pologne','portugal','rtcheque','suede','europe','synchro')){
 					
 					courbes_vaccins<-ggplot(essai_court)+
 							theme(axis.text.x = element_blank()) +
@@ -8334,7 +8336,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege',
-						'pologne','portugal','suede','europe','synchro')){
+						'pologne','portugal','rtcheque','suede','europe','synchro')){
 					histo_deces<-ggplot(essai_court)+
 							theme(axis.text.x = element_blank()) +
 							geom_col(aes(x=numSemaineDepuis2013,y=diff_ge80,fill=posge80))+
@@ -8388,7 +8390,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination <- function(es_deces_standard_pays_
 				if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 						'espagne','estonie','finlande','france','grece','hongrie',
 						'islande','italie','luxembourg','malte','norvege',
-						'pologne','portugal','suede','europe','synchro')){
+						'pologne','portugal','rtcheque','suede','europe','synchro')){
 					courbes_vaccins<-ggplot(essai_court)+
 							theme(axis.text.x = element_blank()) +
 							geom_line(aes(x=numSemaineDepuis2013,y=(`Age80+`)/pop_week_ge80),col="#999999",size=2, linetype = "dotted")+
@@ -8601,7 +8603,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede')){  
+			'pologne','portugal','rtcheque','suede')){  
 		
 		essai <- essai %>% 
 				mutate(barre_vax_15_24 = case_when(
@@ -8939,7 +8941,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede')){
+			'pologne','portugal','rtcheque','suede')){
 		
 		vaccinations_nouv <- essai_nouv %>% 
 				select( Age25_49,
@@ -9051,7 +9053,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 		if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 				'espagne','estonie','finlande','france','grece','hongrie',
 				'islande','italie','luxembourg','malte','norvege',
-				'pologne','portugal','suede')){
+				'pologne','portugal','rtcheque','suede')){
 			
 			histo_deces<-ggplot(essai_nouv)+
 					geom_col(aes(x=groupe_semaine,y=diff_15_24,fill=pos15_24))+
@@ -9107,7 +9109,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 		if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 				'espagne','estonie','finlande','france','grece','hongrie',
 				'islande','italie','luxembourg','malte','norvege',
-				'pologne','portugal','suede')){
+				'pologne','portugal','rtcheque','suede')){
 			courbes_vaccins<-ggplot(essai_nouv)+
 					geom_line(aes(x=groupe_semaine,y=(Age15_17_dose1+Age18_24_dose1)/pop_week_15_24),col="#0066CC")+
 					geom_line(aes(x=groupe_semaine,y=(Age15_17_dose2+Age18_24_dose2)/pop_week_15_24),col="#003399")+
@@ -9158,7 +9160,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede')){
+			'pologne','portugal','rtcheque','suede')){
 		
 		histo_deces<-ggplot(essai_nouv)+
 				geom_col(aes(x=groupe_semaine,y=diff_25_49,fill=pos25_49))+
@@ -9212,7 +9214,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede')){
+			'pologne','portugal','rtcheque','suede')){
 		courbes_vaccins<-ggplot(essai_nouv)+
 				geom_line(aes(x=groupe_semaine,y=Age25_49_dose1/pop_week_25_49),col="#0066CC")+
 				geom_line(aes(x=groupe_semaine,y=Age25_49_dose2/pop_week_25_49),col="#003399")+
@@ -9258,7 +9260,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede')){
+			'pologne','portugal','rtcheque','suede')){
 		
 		histo_deces<-ggplot(essai_nouv)+
 				geom_col(aes(x=groupe_semaine,y=diff_50_59,fill=pos50_59))+
@@ -9314,7 +9316,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede')){ 
+			'pologne','portugal','rtcheque','suede')){ 
 		courbes_vaccins<-ggplot(essai_nouv)+
 				geom_line(aes(x=groupe_semaine,y=Age50_59_dose1/pop_week_50_59),col="#0066CC")+
 				geom_line(aes(x=groupe_semaine,y=Age50_59_dose2/pop_week_50_59),col="#003399")+
@@ -9360,7 +9362,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede')){ 
+			'pologne','portugal','rtcheque','suede')){ 
 		
 		histo_deces<-ggplot(essai_nouv)+
 				geom_col(aes(x=groupe_semaine,y=diff_60_69,fill=pos60_69))+
@@ -9416,7 +9418,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede')){
+			'pologne','portugal','rtcheque','suede')){
 		courbes_vaccins<-ggplot(essai_nouv)+
 				geom_line(aes(x=groupe_semaine,y=Age60_69_dose1/pop_week_60_69),col="#0066CC")+
 				geom_line(aes(x=groupe_semaine,y=Age60_69_dose2/pop_week_60_69),col="#003399")+
@@ -9463,7 +9465,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede')){
+			'pologne','portugal','rtcheque','suede')){
 		
 		histo_deces<-ggplot(essai_nouv)+
 				geom_col(aes(x=groupe_semaine,y=diff_70_79,fill=pos70_79))+
@@ -9520,7 +9522,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede')){
+			'pologne','portugal','rtcheque','suede')){
 		courbes_vaccins<-ggplot(essai_nouv)+
 				geom_line(aes(x=groupe_semaine,y=Age70_79_dose1/pop_week_70_79),col="#0066CC")+
 				geom_line(aes(x=groupe_semaine,y=Age70_79_dose2/pop_week_70_79),col="#003399")+
@@ -9567,7 +9569,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede')){
+			'pologne','portugal','rtcheque','suede')){
 		histo_deces<-ggplot(essai_nouv)+
 				geom_col(aes(x=groupe_semaine,y=diff_ge80,fill=posge80))+
 				scale_fill_manual(values = c("darkgreen", "red"))+
@@ -9619,7 +9621,7 @@ a__f_plot_es_deces_hebdo_compare_vaccination_regroupe <- function(es_deces_stand
 	if(nomPays %in% c('autriche','belgique','chypre','croatie','danmark',
 			'espagne','estonie','finlande','france','grece','hongrie',
 			'islande','italie','luxembourg','malte','norvege',
-			'pologne','portugal','suede')){
+			'pologne','portugal','rtcheque','suede')){
 		courbes_vaccins<-ggplot(essai_nouv)+
 				geom_line(aes(x=groupe_semaine,y=`Age80+_dose1`/pop_week_ge80),col="#0066CC")+
 				geom_line(aes(x=groupe_semaine,y=`Age80+_dose2`/pop_week_ge80),col="#003399")+
