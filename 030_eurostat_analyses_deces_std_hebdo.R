@@ -1017,7 +1017,7 @@ saveRDS(table_spearman_age, file="gen/rds/table_spearman_age.RDS")
 table_finale <- data.frame()
 dates_debuts_tous_pays <- data.frame()
 
-for (pays in c('AT','BE','CY','HR','DK',
+for (pays in c('AT','BE','CY','CZ','HR','DK',
             'ES','EE','FI','FR','EL','HU',
             'IS','IT','LU','MT','NL','NO',
             'PL','PT','SE')){
