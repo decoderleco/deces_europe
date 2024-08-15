@@ -5,8 +5,6 @@
 #------------------------------------------#
 
 library(pyramid)
-library(maptools)
-library(rgdal)
 library(maps)
 library(eurostat)
 library(dplyr)
@@ -17,7 +15,6 @@ library(ggplot2)
 library(lubridate)
 library(sf)
 library(rnaturalearth)
-library(rgeos)
 library(rnaturalearthdata)
 library(readr)
 library(lsr)

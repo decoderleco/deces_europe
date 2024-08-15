@@ -272,8 +272,7 @@ ggsave(paste0(repertoire, "/Eurostat_Deces_2021_Typologie.png"), plot=p, width =
 # values = population dans cette tranche d'âge à la date time
 
 a__original_pib_habitant_spa<- get_eurostat("tec00114") %>% 
-		filter(time=="2020-01-01") %>%
-		mutate(time=as.Date(time)) %>% 
+		filter(TIME_PERIOD==as.Date("2020-01-01")) %>%
 		mutate(categoriePIB = case_when(values>=90 & values <=109 ~ "3 - Situation intermédaire",
 						values>=75 & values <=89 ~ "4 - Pauvreté monétaire",
 						values>=110 & values <=125 ~ "2 - Richesse monétaire",
@@ -314,7 +313,6 @@ ggsave(paste0(repertoire, "/Eurostat_PIB_hab_2020_Typologie.png"), plot=p, width
 if (shallDeleteVars) rm(worldmap_a_tracer)
 if (shallDeleteVars) rm(worldmap)
 if (shallDeleteVars) rm(p)
-if (shallDeleteVars) rm(deces_complet_annuel_analysable1990)
 if (shallDeleteVars) rm(rang_annees)
 if (shallDeleteVars) rm(rang_annees_2021)
 if (shallDeleteVars) rm(annee_comparaison_2020)

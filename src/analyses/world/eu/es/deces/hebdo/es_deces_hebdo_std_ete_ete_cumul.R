@@ -151,7 +151,7 @@ a__f_cumul_and_plot_es_deces_hebdo_std_annee_juin <- function(es_deces_standard_
 										numSemaineDepuis2013 >= 391 &  numSemaineDepuis2013 <= 442 ~ "2020-2021",
 										numSemaineDepuis2013 >= 443 &  numSemaineDepuis2013 <= 494 ~ "2021-2022",
 										numSemaineDepuis2013 >= 495 &  numSemaineDepuis2013 <= 546 ~ "2022-2023",
-										numSemaineDepuis2013 >= 547 &  numSemaineDepuis2013 <= 558 ~ "2023-2024"
+										numSemaineDepuis2013 >= 547 &  numSemaineDepuis2013 <= 598 ~ "2023-2024"
 								)) %>% 
 						select(geo, annee_coupee_ete, numSemaineDepuis2013,
 								deces_standardises_si_pop_2020_total = deces_standardises_si_pop_2020,

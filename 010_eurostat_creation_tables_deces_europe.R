@@ -1,6 +1,5 @@
 # Attacher les Packages contenus dans les Library pour définir les namespaces
-library(maptools)
-library(rgdal)
+
 library(tidyr)
 library(maps)
 library(eurostat)
@@ -12,7 +11,6 @@ library(ggplot2)
 library(lubridate)
 library(sf)
 library(rnaturalearth)
-library(rgeos)
 library(rnaturalearthdata)
 library(readr)
 library(lsr)
@@ -118,15 +116,9 @@ es_pjan_2021 <- es_pjan_2021 %>% inner_join(a__original_es_proj) %>%
 #la projection 2021 - 2022, pareil pour 2023 et 2024
 
 
-proj_2022 <- a__original_es_proj %>% filter(time=="2022-01-01")
 proj_2023 <- a__original_es_proj %>% filter(time=="2023-01-01")
 proj_2024 <- a__original_es_proj %>% filter(time=="2024-01-01")
 proj_2025 <- a__original_es_proj %>% filter(time=="2025-01-01")
-
-proj_2022_2023 <- proj_2023 %>% mutate(time=time-years(1)) %>% 
-  dplyr::rename(population_proj_suivante = population_proj) %>% 
-  left_join (proj_2022) %>% 
-  mutate(evol_pop2022_2023=(population_proj_suivante-population_proj)/population_proj)
 
 proj_2023_2024 <- proj_2024 %>% mutate(time=time-years(1)) %>% 
   dplyr::rename(population_proj_suivante = population_proj) %>% 
@@ -138,19 +130,22 @@ proj_2024_2025 <- proj_2025 %>% mutate(time=time-years(1)) %>%
   left_join (proj_2024) %>% 
   mutate(evol_pop2024_2025=(population_proj_suivante-population_proj)/population_proj)
 
-es_pjan_2023 <- es_pjan %>% filter(time=="2022-01-01") %>% 
-  left_join(proj_2022_2023) %>% 
-  mutate(population_finale = ifelse(is.na(evol_pop2022_2023),population,population + evol_pop2022_2023*population),
-         time=time+years(1))
+es_pjan_2023 <- es_pjan %>% filter(time=="2023-01-01")
   
 es_pjan_2024 <- es_pjan_2023 %>% 
-  select (geo,sex,age,time,population_finale) %>% 
-  dplyr::rename(population = population_finale) %>% 
   left_join(proj_2023_2024) %>% 
   mutate(population_finale = ifelse(is.na(evol_pop2023_2024),population,population + evol_pop2023_2024*population),
          time=time+years(1))
 
-es_pjan_2023 <- es_pjan_2023 %>% 
+es_pjan_2025 <- es_pjan_2024 %>% 
+  select(geo,age,sex,time,population_finale) %>% 
+  dplyr::rename(population=population_finale) %>% 
+  left_join(proj_2024_2025) %>% 
+  mutate(population_finale = ifelse(is.na(evol_pop2024_2025),population,population + evol_pop2024_2025*population),
+         time=time+years(1))
+
+
+es_pjan_2025 <- es_pjan_2025 %>% 
   select (geo,sex,age,time,population_finale) %>% 
   dplyr::rename(population = population_finale)
 
@@ -158,8 +153,10 @@ es_pjan_2024 <- es_pjan_2024 %>%
   select (geo,sex,age,time,population_finale) %>% 
   dplyr::rename(population = population_finale)
 
+
 es_pjan <- es_pjan %>% 
-  rbind(es_pjan_2024)
+  rbind(es_pjan_2024) %>% 
+  rbind(es_pjan_2025)
 
 if (shallDeleteVars) rm(es_pjan_2021)
 if (shallDeleteVars) rm(es_pjan_2023)
@@ -1306,7 +1303,7 @@ nbSemainesParAnneeDepuis2013 <- count(numSemainesDepuis2013Complet, annee) %>%
 
 # Forcer 52 semaines en 2021,2022,2023
 nbSemainesParAnneeDepuis2013 <- nbSemainesParAnneeDepuis2013 %>%
-		mutate(nbSemainesDansAnnee = if_else(annee %in% c(2021,2022,2023), 
+		mutate(nbSemainesDansAnnee = if_else(annee %in% c(2021,2022,2023,2024,2025), 
 						as.integer(52),
 						nbSemainesDansAnnee))
 
