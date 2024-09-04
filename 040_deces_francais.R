@@ -1523,37 +1523,37 @@ deces_jeunes_groupe <- deces_jeunes %>%
 deces_jeunes_groupe <- deces_jeunes_groupe %>% filter(numjour!=244)
 
 deces_jeunes_groupe <- deces_jeunes_groupe %>%
-  mutate(cumul_dc_2014_2015 = cumsum(nbDeces2014_2015),
-         cumul_dc_std_2014_2015=cumsum(deces_standard_2020_2014_2015),
-         cumul_dc_2015_2016 = cumsum(nbDeces2015_2016),
-         cumul_dc_std_2015_2016=cumsum(deces_standard_2020_2015_2016),
-         cumul_dc_2016_2017 = cumsum(nbDeces2016_2017),
-         cumul_dc_std_2016_2017=cumsum(deces_standard_2020_2016_2017),
-         cumul_dc_2017_2018 = cumsum(nbDeces2017_2018),
-         cumul_dc_std_2017_2018=cumsum(deces_standard_2020_2017_2018),
-         cumul_dc_2018_2019 = cumsum(nbDeces2018_2019),
-         cumul_dc_std_2018_2019=cumsum(deces_standard_2020_2018_2019),
-         cumul_dc_2019_2020 = cumsum(nbDeces2019_2020),
-         cumul_dc_std_2019_2020=cumsum(deces_standard_2020_2019_2020),
-         cumul_dc_2020_2021 = cumsum(nbDeces2020_2021),
-         cumul_dc_std_2020_2021=cumsum(deces_standard_2020_2020_2021),
-         cumul_dc_2021_2022 = cumsum(nbDeces2021_2022),
-         cumul_dc_std_2021_2022=cumsum(deces_standard_2020_2021_2022),
-         cumul_dc_2022_2023 = cumsum(nbDeces2022_2023),
-         cumul_dc_std_2022_2023=cumsum(deces_standard_2020_2022_2023)
+  mutate(cumul_dc_2014_2015 = cumsum(replace_na(nbDeces2014_2015,0)),
+         cumul_dc_std_2014_2015=cumsum(replace_na(deces_standard_2020_2014_2015,0)),
+         cumul_dc_2015_2016 = cumsum(replace_na(nbDeces2015_2016,0)),
+         cumul_dc_std_2015_2016=cumsum(replace_na(deces_standard_2020_2015_2016,0)),
+         cumul_dc_2016_2017 = cumsum(replace_na(nbDeces2016_2017,0)),
+         cumul_dc_std_2016_2017=cumsum(replace_na(deces_standard_2020_2016_2017,0)),
+         cumul_dc_2017_2018 = cumsum(replace_na(nbDeces2017_2018,0)),
+         cumul_dc_std_2017_2018=cumsum(replace_na(deces_standard_2020_2017_2018,0)),
+         cumul_dc_2018_2019 = cumsum(replace_na(nbDeces2018_2019,0)),
+         cumul_dc_std_2018_2019=cumsum(replace_na(deces_standard_2020_2018_2019,0)),
+         cumul_dc_2019_2020 = cumsum(replace_na(nbDeces2019_2020,0)),
+         cumul_dc_std_2019_2020=cumsum(replace_na(deces_standard_2020_2019_2020,0)),
+         cumul_dc_2020_2021 = cumsum(replace_na(nbDeces2020_2021,0)),
+         cumul_dc_std_2020_2021=cumsum(replace_na(deces_standard_2020_2020_2021,0)),
+         cumul_dc_2021_2022 = cumsum(replace_na(nbDeces2021_2022,0)),
+         cumul_dc_std_2021_2022=cumsum(replace_na(deces_standard_2020_2021_2022,0)),
+         cumul_dc_2022_2023 = cumsum(replace_na(nbDeces2022_2023,0)),
+         cumul_dc_std_2022_2023=cumsum(replace_na(deces_standard_2020_2022_2023,0))
   )
          
 
 p<-ggplot(deces_jeunes_groupe,
           aes(x=deces_date_complete))+
-  geom_area(aes(y=cumsum(deces_jeunes_groupe$deces_standard_2020_2015_2016)), color='#999999',fill="#999999", alpha=1/4)+
-  geom_line(aes(y=cumsum(deces_jeunes_groupe$deces_standard_2020_2017_2018)), color='#999999',size=1)+
-  geom_line(aes(y=cumsum(deces_jeunes_groupe$deces_standard_2020_2018_2019)), color='#999999',size=1)+
-  geom_area(aes(y=cumsum(deces_jeunes_groupe$deces_standard_2020_2014_2015)), color='#99FF66',size=1,fill="#99FF66", alpha=1/4)+
-  geom_area(aes(y=cumsum(deces_jeunes_groupe$deces_standard_2020_2016_2017)), color='#3399FF',size=1,fill="#3399FF", alpha=1/4)+
-  geom_area(aes(y=cumsum(deces_jeunes_groupe$deces_standard_2020_2019_2020)), color='#660000',size=1,fill="#660000", alpha=1/4)+
-  geom_area(aes(y=cumsum(deces_jeunes_groupe$deces_standard_2020_2020_2021)), color='#CC0000',size=1,fill="#CC0000", alpha=1/4)+
-  geom_area(aes(y=cumsum(deces_jeunes_groupe$deces_standard_2020_2021_2022)), color='#FF3366',fill="#FF3366", alpha=1/4)+
+  geom_area(aes(y=cumsum(replace_na(deces_jeunes_groupe$deces_standard_2020_2015_2016,0))), color='#999999',fill="#999999", alpha=1/4)+
+  geom_line(aes(y=cumsum(replace_na(deces_jeunes_groupe$deces_standard_2020_2017_2018,0))), color='#999999',size=1)+
+  geom_line(aes(y=cumsum(replace_na(deces_jeunes_groupe$deces_standard_2020_2018_2019,0))), color='#999999',size=1)+
+  geom_area(aes(y=cumsum(replace_na(deces_jeunes_groupe$deces_standard_2020_2014_2015,0))), color='#99FF66',size=1,fill="#99FF66", alpha=1/4)+
+  geom_area(aes(y=cumsum(replace_na(deces_jeunes_groupe$deces_standard_2020_2016_2017,0))), color='#3399FF',size=1,fill="#3399FF", alpha=1/4)+
+  geom_area(aes(y=cumsum(replace_na(deces_jeunes_groupe$deces_standard_2020_2019_2020,0))), color='#660000',size=1,fill="#660000", alpha=1/4)+
+  geom_area(aes(y=cumsum(replace_na(deces_jeunes_groupe$deces_standard_2020_2020_2021,0))), color='#CC0000',size=1,fill="#CC0000", alpha=1/4)+
+  geom_area(aes(y=cumsum(replace_na(deces_jeunes_groupe$deces_standard_2020_2021_2022,0))), color='#FF3366',fill="#FF3366", alpha=1/4)+
   geom_line(aes(y=(deces_standard_2020_2022_2023)), color='#000000',size=1)+
   annotate(geom="text", x=as.Date("2015-09-30"), y=800, label="saison 2014-2015",
            color='#99FF66',size=10)+
