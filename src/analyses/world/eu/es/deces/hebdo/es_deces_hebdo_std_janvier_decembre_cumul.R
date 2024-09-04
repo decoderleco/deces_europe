@@ -51,11 +51,12 @@ a__f_plot_es_deces_hebdo_std_get_line_colors <- function(df_annee_semaine, colNa
 	## lineColors <- rep('#CCCCCC', base::max(nbOfYears, 8))
 	lineColors <- rep('#CCCCCC', nbOfYears)
 	
-	# Définir les couleurs pour les années récentes
-	lineColors[nbOfYears - 0] = '#FF6600' # ORange
-	lineColors[nbOfYears - 1] = '#3399FF' # Bleu
-	lineColors[nbOfYears - 2] = '#00CC66' # Vert
-	lineColors[nbOfYears - 3] = '#CC0033' # Rouge foncé
+	# Définir les couleurs pour les années récentes '#FF6600' # ORange
+	lineColors[nbOfYears - 4] = '#CC0033' # Rouge foncé
+	lineColors[nbOfYears - 3] = '#FF6600' # ORange
+	lineColors[nbOfYears - 2] = '#FFFF00' # Jaune
+	lineColors[nbOfYears - 1] = '#00CC66' # Vert
+	lineColors[nbOfYears - 0] = '#3399FF' # Bleu
 	
 	## print(lastYear)
 	## print(deathMaxYear)
