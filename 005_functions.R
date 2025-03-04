@@ -156,3 +156,4 @@ source("src/analyses/world/eu/es/deces/hebdo/es_deces_hebdo_std.R")
 source("src/analyses/world/eu/fr/deces/fr_deces_quotidiens.R")
 source("src/analyses/world/eu/fr/meteo/meteo.R")
 
+

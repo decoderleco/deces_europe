@@ -115,31 +115,20 @@ es_pjan_2021 <- es_pjan_2021 %>% inner_join(a__original_es_proj) %>%
 #On décide de prendre comme population 2022, la population constatée 2021 évoluée de l'évolution de
 #la projection 2021 - 2022, pareil pour 2023 et 2024
 
+es_pjan_2024 <- es_pjan %>% filter(time=="2024-01-01")
 
-proj_2023 <- a__original_es_proj %>% filter(time=="2023-01-01")
 proj_2024 <- a__original_es_proj %>% filter(time=="2024-01-01")
 proj_2025 <- a__original_es_proj %>% filter(time=="2025-01-01")
 
-proj_2023_2024 <- proj_2024 %>% mutate(time=time-years(1)) %>% 
-  dplyr::rename(population_proj_suivante = population_proj) %>% 
-  left_join (proj_2023) %>% 
-  mutate(evol_pop2023_2024=(population_proj_suivante-population_proj)/population_proj)
 
 proj_2024_2025 <- proj_2025 %>% mutate(time=time-years(1)) %>% 
   dplyr::rename(population_proj_suivante = population_proj) %>% 
   left_join (proj_2024) %>% 
   mutate(evol_pop2024_2025=(population_proj_suivante-population_proj)/population_proj)
 
-es_pjan_2023 <- es_pjan %>% filter(time=="2023-01-01")
-  
-es_pjan_2024 <- es_pjan_2023 %>% 
-  left_join(proj_2023_2024) %>% 
-  mutate(population_finale = ifelse(is.na(evol_pop2023_2024),population,population + evol_pop2023_2024*population),
-         time=time+years(1))
 
 es_pjan_2025 <- es_pjan_2024 %>% 
-  select(geo,age,sex,time,population_finale) %>% 
-  dplyr::rename(population=population_finale) %>% 
+  select(geo,age,sex,time,population) %>% 
   left_join(proj_2024_2025) %>% 
   mutate(population_finale = ifelse(is.na(evol_pop2024_2025),population,population + evol_pop2024_2025*population),
          time=time+years(1))
@@ -149,16 +138,12 @@ es_pjan_2025 <- es_pjan_2025 %>%
   select (geo,sex,age,time,population_finale) %>% 
   dplyr::rename(population = population_finale)
 
-es_pjan_2024 <- es_pjan_2024 %>% 
-  select (geo,sex,age,time,population_finale) %>% 
-  dplyr::rename(population = population_finale)
-
 
 es_pjan <- es_pjan %>% 
-  rbind(es_pjan_2024) %>% 
   rbind(es_pjan_2025)
 
 if (shallDeleteVars) rm(es_pjan_2021)
+if (shallDeleteVars) rm(es_pjan_2025)
 if (shallDeleteVars) rm(es_pjan_2023)
 if (shallDeleteVars) rm(es_pjan_2024)
 if (shallDeleteVars) rm(proj_2023_2024)
@@ -601,8 +586,8 @@ if (shallDeleteVars) rm(es_deces_2023_ge85_by_geo_sex)
 
 ##----------------------------------------------------------------------------##
 #
-#### Recuperer les deces 2022 grace au fichier par semaine d'EuroStat ####
-# et le concaténer aux deces annuel qui ne va que jusqu'en 2020
+#### Recuperer les deces 2024 grace au fichier par semaine d'EuroStat ####
+# et le concaténer aux deces annuel qui ne va que jusqu'en 2022
 #
 ##----------------------------------------------------------------------------##
 
@@ -611,51 +596,51 @@ es_deces_week <- a__original_es_deces_week
 
 es_deces_week$time <- as.character(a__original_es_deces_week$time)
 
-#isoler l'année 2022
-es_deces_week_2022 <- es_deces_week %>%
-  filter(str_sub(time, 1, 4) == "2022") 
+#isoler l'année 2024
+es_deces_week_2024 <- es_deces_week %>%
+  filter(str_sub(time, 1, 4) == "2024") 
 
-# Creer une colonne deces2022 Corriges : On ne prend que 2/7 pour la semaine 01, car le 01/01/2022 est un samedi
-es_deces_week_2022 <- es_deces_week_2022 %>%
-  mutate(deces2022Corriges = if_else(as.numeric(strftime(time, format = "%V")) == "01",
-                                     floor(values*2/7),
+# Creer une colonne deces2024 Corriges : On ne prend que 7/7 pour la semaine 01, car le 01/01/2024 est un lundi
+es_deces_week_2024 <- es_deces_week_2024 %>%
+  mutate(deces2024Corriges = if_else(as.numeric(strftime(time, format = "%V")) == "01",
+                                     floor(values*7/7),
                                      values))
 
-# Corriger la colonne deces2022Corriges : On ne prend que 6/7 pour la semaine 52, car le 31/12/2022 est un samedi
-es_deces_week_2022 <- es_deces_week_2022 %>%
-  mutate(deces2022Corriges=if_else(as.numeric(strftime(time, format = "%V")) == "52",
-                                   floor(deces2022Corriges*6/7),
-                                   deces2022Corriges))
+# Corriger la colonne deces2024Corriges : On ne prend que 3/7 pour la semaine 52, car le 31/12/2024 est un mercredi
+es_deces_week_2024 <- es_deces_week_2024 %>%
+  mutate(deces2024Corriges=if_else(as.numeric(strftime(time, format = "%V")) == "52",
+                                   floor(deces2024Corriges*3/7),
+                                   deces2024Corriges))
 
 
-#Regrouper par age, sexe, geo et mettre ça dans deces2022 (= deces 2022 par age, sexe, pays)
-es_deces_2022_tot_by_agequinq_sex_geo <- es_deces_week_2022 %>%
+#Regrouper par age, sexe, geo et mettre ça dans deces2024 (= deces 2024 par age, sexe, pays)
+es_deces_2024_tot_by_agequinq_sex_geo <- es_deces_week_2024 %>%
   group_by(geo, sex, age) %>%
-  summarise(deces2022 = sum(deces2022Corriges))
+  summarise(deces2024 = sum(deces2024Corriges))
 
-if (shallDeleteVars) rm(es_deces_week_2022)
+if (shallDeleteVars) rm(es_deces_week_2024)
 
 #renommer la colonne age en agequinq, car c'est des tranches de 5 ans
-es_deces_2022_tot_by_agequinq_sex_geo <- es_deces_2022_tot_by_agequinq_sex_geo %>%
+es_deces_2024_tot_by_agequinq_sex_geo <- es_deces_2024_tot_by_agequinq_sex_geo %>%
   dplyr::rename(agequinq = age)
 
-#Memoriser les deces 2022 des plus de 85 ans
-es_deces_2022_tot_ge85 <- es_deces_2022_tot_by_agequinq_sex_geo %>%
+#Memoriser les deces 2024 des plus de 85 ans
+es_deces_2024_tot_ge85 <- es_deces_2024_tot_by_agequinq_sex_geo %>%
   filter(agequinq %in% c("Y_GE90", "Y85-89"))
 
 # Synthetiser par pays, sexe et indiquer que tout ça, ce sont les > 85
-es_deces_2022_ge85_by_geo_sex <- es_deces_2022_tot_ge85 %>%
+es_deces_2024_ge85_by_geo_sex <- es_deces_2024_tot_ge85 %>%
   group_by(geo, sex) %>%
-  summarise(deces2022=sum(deces2022)) %>%
+  summarise(deces2024=sum(deces2024)) %>%
   mutate(agequinq="Y_GE85")
 
-if (shallDeleteVars) rm(es_deces_2022_tot_ge85)
+if (shallDeleteVars) rm(es_deces_2024_tot_ge85)
 
 #Ajouter les lignes des plus de 85 ans (on a donc à la fois les tranches Y_GE90 et Y_GE85 (qui inclut aussi le Y_GE90)
-es_deces_2022_tot_ge85_ge90 <- bind_rows(es_deces_2022_tot_by_agequinq_sex_geo, 
-                                         es_deces_2022_ge85_by_geo_sex)
+es_deces_2024_tot_ge85_ge90 <- bind_rows(es_deces_2024_tot_by_agequinq_sex_geo, 
+                                         es_deces_2024_ge85_by_geo_sex)
 
-if (shallDeleteVars) rm(es_deces_2022_ge85_by_geo_sex)
+if (shallDeleteVars) rm(es_deces_2024_ge85_by_geo_sex)
 
 
 ##----------------------------------------------------------------------------##
@@ -665,13 +650,13 @@ if (shallDeleteVars) rm(es_deces_2022_ge85_by_geo_sex)
 ##----------------------------------------------------------------------------##
 
 
-#ajout des deces 2021 et 2022 qui viennent d'être calculés aux deces annuels
+#ajout des deces 2023 et 2024 qui viennent d'être calculés aux deces annuels
 
 # Filtrer les lignes des Totaux
 es_deces_et_pop_2023_par_agequinq_for_bind_rows <- es_deces_2023_tot_ge85_ge90 %>%
   filter(sex != "T" & agequinq != "TOTAL" & agequinq != "UNK")
 
-es_deces_et_pop_2022_par_agequinq_for_bind_rows <- es_deces_2022_tot_ge85_ge90 %>%
+es_deces_et_pop_2024_par_agequinq_for_bind_rows <- es_deces_2024_tot_ge85_ge90 %>%
   filter(sex != "T" & agequinq != "TOTAL" & agequinq != "UNK")
 
 # Indiquer que ces deces sont ceux du recensement 2023
@@ -680,17 +665,17 @@ es_deces_et_pop_2023_par_agequinq_for_bind_rows <- es_deces_et_pop_2023_par_ageq
          deces = deces2023) %>% 
   select(-deces2023)
 
-es_deces_et_pop_2022_par_agequinq_for_bind_rows <- es_deces_et_pop_2022_par_agequinq_for_bind_rows %>%
-  mutate(time = as.Date("2022-01-01"),
-         deces = deces2022) %>% 
-  select(-deces2022)
+es_deces_et_pop_2024_par_agequinq_for_bind_rows <- es_deces_et_pop_2024_par_agequinq_for_bind_rows %>%
+  mutate(time = as.Date("2024-01-01"),
+         deces = deces2024) %>% 
+  select(-deces2024)
 
 #synthetiser
 es_deces_et_pop_2023_par_agequinq_for_bind_rows <- es_deces_et_pop_2023_par_agequinq_for_bind_rows %>%
   group_by(geo, sex, agequinq, time) %>% 
   summarise(deces = sum(deces))
 
-es_deces_et_pop_2022_par_agequinq_for_bind_rows <- es_deces_et_pop_2022_par_agequinq_for_bind_rows %>%
+es_deces_et_pop_2024_par_agequinq_for_bind_rows <- es_deces_et_pop_2024_par_agequinq_for_bind_rows %>%
   group_by(geo, sex, agequinq, time) %>% 
   summarise(deces = sum(deces))
 
@@ -706,43 +691,50 @@ es_pop2023_by_agequinq <- b__es_deces_et_pop_par_annee_agequinq %>%
 es_pjan_quinq_2023 <- es_pjan_quinq %>%
   filter(time == "2023-01-01")
 
-# Récupérer la pop 2022
-es_pjan_quinq_2022 <- es_pjan_quinq %>%
-  filter(time == "2022-01-01")
+# Récupérer la pop 2024
+es_pjan_quinq_2024 <- es_pjan_quinq %>%
+  filter(time == "2024-01-01")
 
 # Ajouter les colonnes population et pop2020 correspondant à 2020
 es_deces_et_pop_2023_par_agequinq_for_bind_rows <- es_deces_et_pop_2023_par_agequinq_for_bind_rows %>%
   left_join(es_pop2023_by_agequinq) %>%
   filter(!is.na(pop2020)) 
-es_deces_et_pop_2022_par_agequinq_for_bind_rows <- es_deces_et_pop_2022_par_agequinq_for_bind_rows %>%
+es_deces_et_pop_2024_par_agequinq_for_bind_rows <- es_deces_et_pop_2024_par_agequinq_for_bind_rows %>%
   left_join(es_pop2023_by_agequinq) %>%
   filter(!is.na(pop2020)) 
 
-# Ajouter les colonnes population et pop2023 correspondant à 2023 et 2022
+# Ajouter les colonnes population et pop2023 correspondant à 2023 et 2024
 es_deces_et_pop_2023_par_agequinq_for_bind_rows <- es_deces_et_pop_2023_par_agequinq_for_bind_rows %>%
   left_join(es_pjan_quinq_2023) 
 
-es_deces_et_pop_2022_par_agequinq_for_bind_rows <- es_deces_et_pop_2022_par_agequinq_for_bind_rows %>%
-  left_join(es_pjan_quinq_2022)
+es_deces_et_pop_2024_par_agequinq_for_bind_rows <- es_deces_et_pop_2024_par_agequinq_for_bind_rows %>%
+  left_join(es_pjan_quinq_2024)
 
-#remplir les blancs de  2023 et 2022 avec 2020 (il reste surtout l'arménie)
+#remplir les blancs de  2023 et 2024 avec 2020 (il reste surtout l'arménie)
 es_deces_et_pop_2023_par_agequinq_for_bind_rows <- es_deces_et_pop_2023_par_agequinq_for_bind_rows %>%
   mutate(population=ifelse(is.na(population),pop2020,population))
-es_deces_et_pop_2022_par_agequinq_for_bind_rows <- es_deces_et_pop_2022_par_agequinq_for_bind_rows %>%
+es_deces_et_pop_2024_par_agequinq_for_bind_rows <- es_deces_et_pop_2024_par_agequinq_for_bind_rows %>%
   mutate(population=ifelse(is.na(population),pop2020,population))
 
-#sélectionner les pays pour lesquels il n'y a pas de données annuelles 2022
-selection_2022 <- b__es_deces_et_pop_par_annee_agequinq %>% 
-  filter(time=="2022-01-01",sex=="M",agequinq=="Y65-69")
-es_deces_et_pop_2022_par_agequinq_for_bind_rows <- es_deces_et_pop_2022_par_agequinq_for_bind_rows %>% 
-  filter(!(geo %in% selection_2022$geo))
+#sélectionner les pays pour lesquels il n'y a pas de données annuelles 2023
+selection_2023 <- b__es_deces_et_pop_par_annee_agequinq %>% 
+  filter(time=="2023-01-01",sex=="M",agequinq=="Y65-69")
+es_deces_et_pop_2023_par_agequinq_for_bind_rows <- es_deces_et_pop_2023_par_agequinq_for_bind_rows %>% 
+  filter(!(geo %in% selection_2023$geo))
+
+#sélectionner les pays pour lesquels il n'y a pas de données annuelles 2024
+selection_2024 <- b__es_deces_et_pop_par_annee_agequinq %>% 
+  filter(time=="2024-01-01",sex=="M",agequinq=="Y65-69")
+es_deces_et_pop_2024_par_agequinq_for_bind_rows <- es_deces_et_pop_2024_par_agequinq_for_bind_rows %>% 
+  filter(!(geo %in% selection_2024$geo))
+
 
 if (shallDeleteVars) rm(selection_2023)
 
-#Ajouter les données 2023 et 2022
+#Ajouter les données 2023 et 2024
 b__es_deces_et_pop_par_annee_agequinq <- b__es_deces_et_pop_par_annee_agequinq %>%
   bind_rows(es_deces_et_pop_2023_par_agequinq_for_bind_rows) %>%
-  bind_rows(es_deces_et_pop_2022_par_agequinq_for_bind_rows) %>% 
+  bind_rows(es_deces_et_pop_2024_par_agequinq_for_bind_rows) %>% 
   # trier les lignes selon les colonnes suivantes
   arrange(geo, sex, agequinq, time)
 
@@ -753,19 +745,19 @@ b__es_deces_et_pop_par_annee_agequinq <- b__es_deces_et_pop_par_annee_agequinq %
 
 if (shallDeleteVars) rm(es_deces_et_pop_annuel_by_agequinq)
 if (shallDeleteVars) rm(es_deces_2023_tot_ge85_ge90)
-if (shallDeleteVars) rm(es_deces_2022_tot_ge85_ge90)
+if (shallDeleteVars) rm(es_deces_2024_tot_ge85_ge90)
 if (shallDeleteVars) rm(es_pop2023_by_agequinq)
 if (shallDeleteVars) rm(es_deces_et_pop_2023_par_agequinq_for_bind_rows)
-if (shallDeleteVars) rm(es_deces_et_pop_2022_par_agequinq_for_bind_rows)
+if (shallDeleteVars) rm(es_deces_et_pop_2024_par_agequinq_for_bind_rows)
 
 #
-##### Gestion de l'Allemagne pour laquelle il manque les donnees sexuees et des moins de 40 ans en 2023 et 2022 #####
+##### Gestion de l'Allemagne pour laquelle il manque les donnees sexuees et des moins de 40 ans en 2023 et 2024 #####
 #
 
 #extraire les données de l'Allemagne
 es_deces_2023_tot_DE <- es_deces_2023_tot_by_agequinq_sex_geo %>%
   filter(geo == "DE")
-es_deces_2022_tot_DE <- es_deces_2022_tot_by_agequinq_sex_geo %>%
+es_deces_2024_tot_DE <- es_deces_2024_tot_by_agequinq_sex_geo %>%
   filter(geo == "DE")
 
 #recuperation de la repartition de deces des moins de 40 en 2019 en Allemagne
@@ -783,10 +775,10 @@ es_deces_complet_DE <- es_deces_complet_DE %>%
   select(-population,-deces,-time)
 
 #récupération de la pop 2023 allemande
-es_pjan_quinq_de_2023_2022 <- es_pjan_quinq_2023 %>% rbind(es_pjan_quinq_2022) %>%  filter(geo=="DE"&time>="2023-01-01")
-es_deces_complet_DE <-  es_pjan_quinq_de_2023_2022 %>% left_join(es_deces_complet_DE)
+es_pjan_quinq_de_2023_2024 <- es_pjan_quinq_2023 %>% rbind(es_pjan_quinq_2024) %>%  filter(geo=="DE"&time>="2023-01-01")
+es_deces_complet_DE <-  es_pjan_quinq_de_2023_2024 %>% left_join(es_deces_complet_DE)
 
-if (shallDeleteVars) rm(es_pjan_quinq_2022)
+if (shallDeleteVars) rm(es_pjan_quinq_2024)
 
 #extraire les moins de 40 ans
 es_deces_complet_DE_lt40 <- es_deces_complet_DE %>%
@@ -803,7 +795,7 @@ es_deces_complet_DE_lt40 <- es_deces_complet_DE_lt40 %>%
 #supprimer les UNKnown et TOTAL
 es_deces_2023_tot_DE <- es_deces_2023_tot_DE %>%
   filter(agequinq!="UNK", agequinq != "TOTAL")
-es_deces_2022_tot_DE <- es_deces_2022_tot_DE %>%
+es_deces_2024_tot_DE <- es_deces_2024_tot_DE %>%
   filter(agequinq!="UNK", agequinq != "TOTAL")
 
 #concatener les F dans les M et remplacer les T
@@ -819,26 +811,26 @@ es_deces_2023_tot_DE <- es_deces_2023_tot_DE_M %>%
 
 es_deces_2023_tot_DE<-es_deces_2023_tot_DE %>% 
   select(-deces2023)%>% 
-  left_join(es_pjan_quinq_de_2023_2022)
+  left_join(es_pjan_quinq_de_2023_2024)
 
-es_deces_2022_tot_DE_M <- es_deces_2022_tot_DE %>%
-  mutate (sex="M", deces = deces2022/2)
+es_deces_2024_tot_DE_M <- es_deces_2024_tot_DE %>%
+  mutate (sex="M", deces = deces2024/2)
 
-es_deces_2022_tot_DE_F <- es_deces_2022_tot_DE %>%
-  mutate (sex="F", deces = deces2022/2)
+es_deces_2024_tot_DE_F <- es_deces_2024_tot_DE %>%
+  mutate (sex="F", deces = deces2024/2)
 
-es_deces_2022_tot_DE <- es_deces_2022_tot_DE_M %>%
-  rbind(es_deces_2022_tot_DE_F) %>% mutate(time=as.Date("2022-01-01"))
+es_deces_2024_tot_DE <- es_deces_2024_tot_DE_M %>%
+  rbind(es_deces_2024_tot_DE_F) %>% mutate(time=as.Date("2024-01-01"))
 
-es_deces_2022_tot_DE<-es_deces_2022_tot_DE %>% 
-  select(-deces2022)%>% 
-  left_join(es_pjan_quinq_de_2023_2022)
+es_deces_2024_tot_DE<-es_deces_2024_tot_DE %>% 
+  select(-deces2024)%>% 
+  left_join(es_pjan_quinq_de_2023_2024)
 
-if (shallDeleteVars) rm(es_pjan_quinq_de_2023_2022)
+if (shallDeleteVars) rm(es_pjan_quinq_de_2023_2024)
 
 #concaténer les lignes à ajouter
-es_deces_2023_2022_tot_DE <- es_deces_2023_tot_DE %>%
-  rbind(es_deces_2022_tot_DE) %>% 
+es_deces_2023_2024_tot_DE <- es_deces_2023_tot_DE %>%
+  rbind(es_deces_2024_tot_DE) %>% 
   rbind(es_deces_complet_DE_lt40)
 
 if (shallDeleteVars) rm(es_deces_complet_DE_lt40)
@@ -853,14 +845,14 @@ es_deces_2019_complet_DE <- b__es_deces_et_pop_par_annee_agequinq %>%
 
 
 # Joindre la colonne pop2020
-es_deces_2023_2022_tot_DE <- es_deces_2023_2022_tot_DE %>%
+es_deces_2023_2024_tot_DE <- es_deces_2023_2024_tot_DE %>%
   left_join(es_deces_2019_complet_DE)
 
-es_deces_2022_tot_DE <- es_deces_2023_2022_tot_DE %>% filter(time =="2022-01-01")
+es_deces_2024_tot_DE <- es_deces_2023_2024_tot_DE %>% filter(time =="2024-01-01")
 
-#Ajouter les lignes de l'Allemagne 2023 et 2022
+#Ajouter les lignes de l'Allemagne 2023 et 2024
 b__es_deces_et_pop_par_annee_agequinq <- b__es_deces_et_pop_par_annee_agequinq %>%
-  rbind(es_deces_2022_tot_DE)
+  rbind(es_deces_2023_2024_tot_DE)
 
 if (shallDeleteVars) rm(es_deces_complet_DE)
 if (shallDeleteVars) rm(es_deces_2019_complet_DE)
@@ -869,12 +861,12 @@ if (shallDeleteVars) rm(es_deces_2023_tot_by_agequinq_sex_geo)
 if (shallDeleteVars) rm(es_deces_2023_tot_DE)
 if (shallDeleteVars) rm(es_pjan_quinq_2023)
 
-if (shallDeleteVars) rm(es_deces_2023_2022_tot_DE)
+if (shallDeleteVars) rm(es_deces_2023_2024_tot_DE)
 
-if (shallDeleteVars) rm(es_deces_2022_tot_DE)
-if (shallDeleteVars) rm(es_deces_2022_tot_DE_F)
-if (shallDeleteVars) rm(es_deces_2022_tot_DE_M)
-if (shallDeleteVars) rm(es_deces_2022_tot_by_agequinq_sex_geo)
+if (shallDeleteVars) rm(es_deces_2024_tot_DE)
+if (shallDeleteVars) rm(es_deces_2024_tot_DE_F)
+if (shallDeleteVars) rm(es_deces_2024_tot_DE_M)
+if (shallDeleteVars) rm(es_deces_2024_tot_by_agequinq_sex_geo)
 
 if (shallDeleteVars) rm()
 if (shallDeleteVars) rm()

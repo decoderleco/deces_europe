@@ -96,7 +96,8 @@ if (!shallForceDownload && exists(varName)) {
 	# Liste des URLs des fichiers de patients décédés
 	
 	urls_listes_deces <- c(
-	    '2024-t1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20240415-085836/deces-2024-t1.txt',
+	    '2025-m1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20250210-095518/deces-2025-m01.txt',
+	    '2024' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20250210-094840/deces-2024.txt',
 	    '2023' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20240219-094712/deces-2023.txt',
 	    '2022' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20230209-094802/deces-2022.txt',
 			'2021' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20220112-114131/deces-2021.txt',
@@ -1068,7 +1069,7 @@ fr_insee_population_france_metro <- fr_insee_population_france_metro %>% group_b
 fr_insee_population_france_metro <- ungroup(fr_insee_population_france_metro)
   
 fr_insee_population_france_metro <- fr_insee_population_france_metro %>% 
-  mutate(annee_suivante = if_else(ANNEE==2024,2024,ANNEE + 1)) %>% 
+  mutate(annee_suivante = if_else(ANNEE==2025,2025,ANNEE + 1)) %>% 
   mutate(population=as.double(POP)) %>% 
   mutate(age=AGE,annee=ANNEE) %>% 
   select(-ANNEE,-POP,-AGE)
@@ -1081,7 +1082,7 @@ fr_insee_population_france <- fr_insee_population_france %>% group_by(ANNEE,AGE)
 fr_insee_population_france <- ungroup(fr_insee_population_france)
 
 fr_insee_population_france <- fr_insee_population_france %>% 
-  mutate(annee_suivante = if_else(ANNEE==2024,2024,ANNEE + 1)) %>% 
+  mutate(annee_suivante = if_else(ANNEE==2025,2025,ANNEE + 1)) %>% 
   mutate(population=as.double(POP)) %>% 
   mutate(age=AGE,annee=ANNEE) %>% 
   select(-ANNEE,-POP,-AGE)
@@ -1240,6 +1241,13 @@ deces_par_jour_2022_2023 <- deces_par_jour_age_stand_complet %>%
   dplyr::rename(deces_standard_2020_2022_2023=deces_standard_2020) %>%
   select(numjour,age,nbDeces2022_2023,deces_standard_2020_2022_2023)
 
+deces_par_jour_2023_2024 <- deces_par_jour_age_stand_complet %>% 
+  filter(deces_date_complete>"2023-06-30"&deces_date_complete<"2024-07-01")%>% 
+  mutate(numjour=if_else(deces_date_complete>="2024-03-01",numjour-3467,numjour-3468))%>% 
+  dplyr::rename(nbDeces2023_2024=nbDeces) %>% 
+  dplyr::rename(deces_standard_2020_2023_2024=deces_standard_2020) %>%
+  select(numjour,age,nbDeces2023_2024,deces_standard_2020_2023_2024)
+
 deces_complet_graphique <- deces_par_jour_2015_2016 %>% 
   left_join(deces_par_jour_2014_2015) %>% 
   left_join(deces_par_jour_2016_2017) %>% 
@@ -1248,7 +1256,8 @@ deces_complet_graphique <- deces_par_jour_2015_2016 %>%
   left_join(deces_par_jour_2019_2020) %>% 
   left_join(deces_par_jour_2020_2021) %>% 
   left_join(deces_par_jour_2021_2022)%>% 
-  left_join(deces_par_jour_2022_2023)
+  left_join(deces_par_jour_2022_2023)%>% 
+  left_join(deces_par_jour_2023_2024)
 
 deces_complet_graphique <- deces_complet_graphique %>% 
   mutate(tranche_age=if_else(age<65,"0-64 ans","65 ans et plus"))
@@ -1272,7 +1281,9 @@ deces_complet_graphique_groupe <- deces_complet_graphique %>%
             nbDeces2021_2022=sum(nbDeces2021_2022),
             deces_standard_2020_2021_2022=sum(deces_standard_2020_2021_2022),
             nbDeces2022_2023=sum(nbDeces2022_2023),
-            deces_standard_2020_2022_2023=sum(deces_standard_2020_2022_2023)
+            deces_standard_2020_2022_2023=sum(deces_standard_2020_2022_2023),
+            nbDeces2023_2024=sum(nbDeces2023_2024),
+            deces_standard_2020_2023_2024=sum(deces_standard_2020_2023_2024)
   ) %>% mutate(deces_date_complete=as.Date(deces_date_complete))
 
 deces_complet_graphique_groupe[deces_complet_graphique_groupe==0]=NA
@@ -1292,17 +1303,20 @@ p<-ggplot(deces_complet_graphique_groupe_jeune,
   geom_area(aes(y=(deces_standard_2020_2019_2020)), color='#660000',size=1,fill="#660000", alpha=1/4)+
   geom_area(aes(y=(deces_standard_2020_2020_2021)), color='#CC0000',size=1,fill="#CC0000", alpha=1/4)+
   geom_area(aes(y=(deces_standard_2020_2021_2022)), color='#FF3366',size=1,fill="#FF3366", alpha=1/4)+
-  geom_line(aes(y=(deces_standard_2020_2022_2023)), color='#000000',size=1)+
+  geom_area(aes(y=(deces_standard_2020_2022_2023)), color='#FF3399',size=1,fill="#FF3399", alpha=1/4)+
+  geom_line(aes(y=(deces_standard_2020_2023_2024)), color='#000000',size=1)+
   annotate(geom="text", x=as.Date("2015-09-30"), y=100, label="saison 2014-2015",
           color='#99FF66',size=10)+
   annotate(geom="text", x=as.Date("2015-09-30"), y=70, label="saison 2016-2017",
            color='#3399FF',size=10)+
-  annotate(geom="text", x=as.Date("2016-04-30"), y=100, label="saison 2019-2020",
+  annotate(geom="text", x=as.Date("2015-09-30"), y=40, label="saison 2019-2020",
            color='#660000',size=10)+
-  annotate(geom="text", x=as.Date("2016-04-30"), y=70, label="saison 2020-2021",
+  annotate(geom="text", x=as.Date("2016-04-30"), y=100, label="saison 2020-2021",
            color='#CC0000',size=10)+
-  annotate(geom="text", x=as.Date("2016-04-30"), y=40, label="saison 2021-2022",
+  annotate(geom="text", x=as.Date("2016-04-30"), y=70, label="saison 2021-2022",
            color='#FF3366',size=10)+
+  annotate(geom="text", x=as.Date("2016-04-30"), y=40, label="saison 2022-2023",
+           color='#FF3399',size=10)+
   scale_x_date(date_labels = "%B")+
   theme(axis.text.x = element_text(angle=45, hjust = 1))+
   ggtitle("Décès quotidiens standardisés en population 2020 par saison \n Moins de 65 ans") +
@@ -1384,17 +1398,20 @@ p<-ggplot(deces_complet_graphique_groupe_vieux,
   geom_area(aes(y=(deces_standard_2020_2019_2020)), color='#660000',size=1,fill="#660000", alpha=1/4)+
   geom_area(aes(y=(deces_standard_2020_2020_2021)), color='#CC0000',size=1,fill="#CC0000", alpha=1/4)+
   geom_area(aes(y=(deces_standard_2020_2021_2022)), color='#FF3366',size=1,fill="#FF3366", alpha=1/4)+
-  geom_line(aes(y=(deces_standard_2020_2022_2023)), color='#000000',size=1)+
-  annotate(geom="text", x=as.Date("2015-09-30"), y=800, label="saison 2014-2015",
+  geom_area(aes(y=(deces_standard_2020_2022_2023)), color='#FF3399',size=1,fill="#FF3399", alpha=1/4)+
+  geom_line(aes(y=(deces_standard_2020_2023_2024)), color='#000000',size=1)+
+  annotate(geom="text", x=as.Date("2015-09-30"), y=100, label="saison 2014-2015",
            color='#99FF66',size=10)+
-  annotate(geom="text", x=as.Date("2015-09-30"), y=500, label="saison 2016-2017",
+  annotate(geom="text", x=as.Date("2015-09-30"), y=70, label="saison 2016-2017",
            color='#3399FF',size=10)+
-  annotate(geom="text", x=as.Date("2016-04-30"), y=800, label="saison 2019-2020",
+  annotate(geom="text", x=as.Date("2015-09-30"), y=40, label="saison 2019-2020",
            color='#660000',size=10)+
-  annotate(geom="text", x=as.Date("2016-04-30"), y=500, label="saison 2020-2021",
+  annotate(geom="text", x=as.Date("2016-04-30"), y=100, label="saison 2020-2021",
            color='#CC0000',size=10)+
-  annotate(geom="text", x=as.Date("2016-04-30"), y=200, label="saison 2021-2022",
+  annotate(geom="text", x=as.Date("2016-04-30"), y=70, label="saison 2021-2022",
            color='#FF3366',size=10)+
+  annotate(geom="text", x=as.Date("2016-04-30"), y=40, label="saison 2022-2023",
+           color='#FF3399',size=10)+
   scale_x_date(date_labels = "%B")+
   theme(axis.text.x = element_text(angle=45, hjust = 1))+
   ggtitle("Décès quotidiens standardisés en population 2020 par saison \n Plus de 65 ans") +
@@ -1514,7 +1531,9 @@ deces_jeunes_groupe <- deces_jeunes %>%
             nbDeces2021_2022=sum(nbDeces2021_2022),
             deces_standard_2020_2021_2022=sum(deces_standard_2020_2021_2022),
             nbDeces2022_2023=sum(nbDeces2022_2023),
-            deces_standard_2020_2022_2023=sum(deces_standard_2020_2022_2023)
+            deces_standard_2020_2022_2023=sum(deces_standard_2020_2022_2023),
+            nbDeces2023_2024=sum(nbDeces2023_2024),
+            deces_standard_2020_2023_2024=sum(deces_standard_2020_2023_2024)
   ) %>% mutate(deces_date_complete=as.Date(deces_date_complete))
 
 deces_jeunes_groupe <- deces_jeunes_groupe %>% filter(numjour!=244)
@@ -1537,7 +1556,9 @@ deces_jeunes_groupe <- deces_jeunes_groupe %>%
          cumul_dc_2021_2022 = cumsum(replace_na(nbDeces2021_2022,0)),
          cumul_dc_std_2021_2022=cumsum(replace_na(deces_standard_2020_2021_2022,0)),
          cumul_dc_2022_2023 = cumsum(replace_na(nbDeces2022_2023,0)),
-         cumul_dc_std_2022_2023=cumsum(replace_na(deces_standard_2020_2022_2023,0))
+         cumul_dc_std_2022_2023=cumsum(replace_na(deces_standard_2020_2022_2023,0)),
+         cumul_dc_2023_2024 = cumsum(replace_na(nbDeces2023_2024,0)),
+         cumul_dc_std_2023_2024=cumsum(replace_na(deces_standard_2020_2023_2024,0))
   )
          
 
@@ -1551,17 +1572,20 @@ p<-ggplot(deces_jeunes_groupe,
   geom_area(aes(y=cumsum(replace_na(deces_jeunes_groupe$deces_standard_2020_2019_2020,0))), color='#660000',size=1,fill="#660000", alpha=1/4)+
   geom_area(aes(y=cumsum(replace_na(deces_jeunes_groupe$deces_standard_2020_2020_2021,0))), color='#CC0000',size=1,fill="#CC0000", alpha=1/4)+
   geom_area(aes(y=cumsum(replace_na(deces_jeunes_groupe$deces_standard_2020_2021_2022,0))), color='#FF3366',fill="#FF3366", alpha=1/4)+
-  geom_line(aes(y=(deces_standard_2020_2022_2023)), color='#000000',size=1)+
+  geom_area(aes(y=cumsum(replace_na(deces_jeunes_groupe$deces_standard_2020_2022_2023,0))), color='#FF3399',fill="#FF3399", alpha=1/4)+
+  geom_line(aes(y=(deces_standard_2020_2023_2024)), color='#000000',size=1)+
   annotate(geom="text", x=as.Date("2015-09-30"), y=800, label="saison 2014-2015",
            color='#99FF66',size=10)+
   annotate(geom="text", x=as.Date("2015-09-30"), y=500, label="saison 2016-2017",
            color='#3399FF',size=10)+
-  annotate(geom="text", x=as.Date("2016-04-30"), y=800, label="saison 2019-2020",
+  annotate(geom="text", x=as.Date("2015-09-30"), y=200, label="saison 2019-2020",
            color='#660000',size=10)+
-  annotate(geom="text", x=as.Date("2016-04-30"), y=500, label="saison 2020-2021",
+  annotate(geom="text", x=as.Date("2016-04-30"), y=800, label="saison 2020-2021",
            color='#CC0000',size=10)+
   annotate(geom="text", x=as.Date("2016-04-30"), y=200, label="saison 2021-2022",
            color='#FF3366',size=10)+
+  annotate(geom="text", x=as.Date("2016-04-30"), y=200, label="saison 2022-2023",
+           color='#FF3399',size=10)+
   scale_x_date(date_labels = "%B")+
   theme(axis.text.x = element_text(angle=45, hjust = 1))+
   ggtitle("Décès quotidiens standardisés cumulés en population 2020 par saison \n 15-34 ans") +
@@ -2145,7 +2169,7 @@ deces_par_jour_age_stand_complet<- read.csv2(file.path("gen/csv/deces_par_jour_a
 
 #filter selon les données complètes uniquement
 deces_par_jour_age_stand_complet<-deces_par_jour_age_stand_complet %>% 
-  filter(annee<=2023)
+  filter(annee<=2024)
 
 
 deces_par_jour_age_stand_complet<-deces_par_jour_age_stand_complet %>% 

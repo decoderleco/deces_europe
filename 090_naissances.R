@@ -559,11 +559,16 @@ for(paysencours in nomdespays ){
     TRUE~ "autre"))
   }
   
+  essai<- essai %>% mutate(etat_vax_simple = case_when(
+    TIME_PERIOD==DATEPIC~ "1 - pic vax",
+    TIME_PERIOD>=DATEPIC %m+% months(9)~ "2 - pic vax +9",
+    TRUE~ "autre"))
+
+  
   essai<-essai %>% filter(TIME_PERIOD>=as.Date("2018-01-01"))
   naissances <- ggplot(essai) +
-    geom_col(aes(x =TIME_PERIOD, y = naissances_corrigées,fill=etat_vax)) +
-    scale_fill_manual(values = c("#999999", "#FF99CC","#FF0000","lightpink1","lightpink3","lightpink4")) +
-    geom_line(aes(x = TIME_PERIOD, y = predit_nais_13_18),color = "#0066CC", size = 1) +
+    geom_col(aes(x =TIME_PERIOD, y = naissances_corrigées,fill=etat_vax_simple)) +
+    scale_fill_manual(values = c("#000000","#333333","#999999")) +
     geom_line(aes(x = TIME_PERIOD, y = predit_nais_17_19),color = "#339900", size = 1) +
     theme(legend.position="bottom")+
     ylab("Nombre de naissances mensuelles") +
@@ -572,7 +577,7 @@ for(paysencours in nomdespays ){
         "Nombre de naissances mensuelles constatées corrigées de la pyramide des âges  ",
         str_to_title(paysencours)
       ),
-         subtitle = "Projection 2013-2018 en bleu et 2017-2019 en vert",
+         subtitle = "ligne de projection 2017-2019",
          caption = "source: Eurostat")+
     scale_x_date(date_labels = "%Y")
   

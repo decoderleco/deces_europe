@@ -51,6 +51,7 @@ a__original_medicam <- a__f_loadCsvIfNeeded(var = a__original_medicam,
 
 medicam_vaccins_grippes <- a__original_medicam %>%
 		filter(Nom_vaccin %in% c("AGRIPPAL",
+		        "EFLUELDA",
 						"FLUARIX",
 						"FLUARIXTETRA",
 						"FLUENZ TETRA SUSPENSION POUR PULVERISATION NASALE",
@@ -76,7 +77,13 @@ medicam_vaccins_grippes <- medicam_vaccins_grippes %>%
 		# Remplacer les NA dans la colonne nombre_de_boites par 0
 		mutate(nombre_de_boites = ifelse(is.na(nombre_de_boites), 0, nombre_de_boites)) %>%
 		# Convertir les dates string en Date
-		mutate(mois_annee=as.Date(mois_annee, format="%d.%m.%y"))
+		mutate(mois_annee=as.Date(mois_annee, format="%d.%m.%y")) %>% 
+   # convertir les totaux en int  
+   mutate(nombre_de_boites=as.integer(nombre_de_boites))
+
+
+vaccins_grippes_groupes<-medicam_vaccins_grippes %>% group_by(mois_annee) %>% 
+  summarise(nombre_de_boites=sum(nombre_de_boites))
 
 # Nombre de boites de vaccin pour la grippe (toutes marques confondues) par mois
 # nombre_vaccins_grippes <- vaccins_grippes %>%
@@ -84,29 +91,30 @@ medicam_vaccins_grippes <- medicam_vaccins_grippes %>%
 #                           summarise(nombre_de_boites=sum(nombre_de_boites))
 
 print(ggplot(medicam_vaccins_grippes, 
-				aes(x = mois_annee, 
-						y = nombre_de_boites))+
-		
-		# Nb de boites empilée (Colorier les colonnes en fonction du nom du vaccin)
-
-		geom_col(aes(fill = Nom_vaccin), 
-				# La largeur des colonnes est de 27
-				width = 27)+ 
-		
-		ggtitle("Nombre de vaccins contre la Grippe, distribués en pharmacie par mois") +
-		
-		theme(legend.position="bottom") +
-		
-		labs(caption="Source : Medicam
+             aes(x = mois_annee, 
+                 y = nombre_de_boites))+
+        
+        # Nb de boites empilée (Colorier les colonnes en fonction du nom du vaccin)
+        
+        geom_col(aes(fill = Nom_vaccin), 
+                 # La largeur des colonnes est de 27
+                 width = 27)+ 
+        
+        ggtitle("Nombre de vaccins contre la Grippe, distribués en pharmacie par mois") +
+        
+        theme(legend.position="bottom") +
+        
+        labs(caption="Source : Medicam
 						https://assurance-maladie.ameli.fr/etudes-et-donnees/medicaments-type-prescripteur-medicam-2021") +
-		
-		
-		ylab("nombre de vaccins")+
-		
-		xlab("mois") + 
-		scale_x_date(labels = date_format("%m/%y"), breaks = date_breaks("year")) +
-		theme(axis.text.x = element_text(angle=45))
+        
+        
+        ylab("nombre de vaccins")+
+        
+        xlab("mois") + 
+        scale_x_date(labels = date_format("%m/%y"), breaks = date_breaks("year")) +
+        theme(axis.text.x = element_text(angle=45))
 )
+
 
 repertoire <- paste0(K_DIR_GEN_IMG_FR_AMELIE, "/Medicam")
 a__f_createDir(repertoire)
@@ -159,6 +167,30 @@ dev.print(device = png, file = paste0(repertoire, "/Medicam_Vaccins_Grippe_Distr
 if (shallDeleteVars) rm(medicam_vaccins_grippes)
 if (shallDeleteVars) rm(medicam_vaccins_grippes_par_annee)
 
+### comparaison grippe Covid France
+
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- a__f_loadRdsIfNeeded(var = b__es_deces_week_standardises_si_pop_2020_owid_vaccination,
+                                                                                   rdsRelFilePath = "gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS") 
+
+es_deces_standard_pays_semaine_france <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  filter(geo == "FR") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-4)
+
+es_deces_standard_pays_semaine_france <- es_deces_standard_pays_semaine_france %>% 
+  
+  mutate(nombre_vaccins_covid = Age60_69 + Age70_79 + `Age80+`) %>% 
+  mutate(annee= year(time)) %>% 
+  select(annee,pop_week_ge60,deces_tot_plus_60,nombre_vaccins_covid)
+
+es_deces_standard_pays_semaine_france <- es_deces_standard_pays_semaine_france %>% 
+  group_by(annee) %>% 
+  summarise(nombre_vaccins_covid=sum(nombre_vaccins_covid),deces_tot_plus_60=sum(deces_tot_plus_60),pop_week_ge60=mean(pop_week_ge60))
+
+medicam_vaccins_grippes_par_annee <- medicam_vaccins_grippes_par_annee %>% 
+  group_by(annee) %>% 
+  summarise(nombre_de_boites=sum(nombre_de_boites))
+
+rm(b__es_deces_week_standardises_si_pop_2020_owid_vaccination)
 
 ################################################################################
 #
@@ -180,6 +212,8 @@ cat("Charger les fichiers de délivrance de médicaments par les pharmacies 2019
 a__original_open_medic_2019 <- a__f_loadCsvIfNeeded(var = a__original_open_medic_2019,
 		csvRelFilePath = "data/csv/OPEN_MEDIC_2019.csv", 
 		sep = ";")
+
+a__original_open_medic_2019 <- read.csv("data/csv/test.csv",sep = ";",dec = ",",quote = "\"" )
 
 om_open_medic_2019 <- a__original_open_medic_2019
 

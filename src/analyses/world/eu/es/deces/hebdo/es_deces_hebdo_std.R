@@ -10235,7 +10235,10 @@ a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
   
   histo_deces <- ggplot(donnees_trimestre) +
     geom_col(aes(x = annee_trimestre, y = surmortalite_15_24 + sousmortalite_15_24)) +
-    scale_x_continuous(breaks=seq(2013, 2024, 1))+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    
+    scale_x_continuous(breaks=seq(2013, 2025, 1))+
     labs(
       title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre des 15-24 ans ",nomPays),
       subtitle = "Projection de la tendance linéaire de la mortalité standardisée 2013-2018",
@@ -10247,12 +10250,13 @@ a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
     geom_col(aes( y=Age15_24), fill = "#3399FF")+
     theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
           axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
-    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+    scale_x_continuous(breaks=seq(2013, 2025, 1))+ labs(
       title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre pour les 15-24 ans ",nomPays),
       subtitle = "",
       x        = "Trimestre",
       y        = "Nombre de doses",
-      caption  = "Source : Ourworldindata")
+      caption  = "Source : Ourworldindata")+
+   expand_limits(x = c(2013,2025), y = 0)
   
   a<-grid.arrange(histo_deces, vax,
                   ncol=1, nrow=2)
@@ -10274,7 +10278,10 @@ a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
   
   histo_deces <- ggplot(donnees_trimestre) +
     geom_col(aes(x = annee_trimestre, y = surmortalite_25_49 + sousmortalite_25_49)) +
-    scale_x_continuous(breaks=seq(2013, 2024, 1))+
+    scale_x_continuous(breaks=seq(2013, 2025, 1))+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    
     labs(
       title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre des 25-49 ans ",nomPays),
       subtitle = "Projection de la tendance linéaire de la mortalité standardisée 2013-2018",
@@ -10286,12 +10293,13 @@ a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
     geom_col(aes( y=Age25_49), fill = "#3399FF")+
     theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
           axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
-    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+    scale_x_continuous(breaks=seq(2013, 2025, 1))+ labs(
       title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre pour les 25-49 ans ",nomPays),
       subtitle = "",
       x        = "Trimestre",
       y        = "Nombre de doses",
-      caption  = "Source : Ourworldindata")
+      caption  = "Source : Ourworldindata")+
+    expand_limits(x = c(2013,2025), y = 0)
   
   a<-grid.arrange(histo_deces, vax,
                   ncol=1, nrow=2)
@@ -10313,7 +10321,10 @@ a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
   
   histo_deces <- ggplot(donnees_trimestre) +
     geom_col(aes(x = annee_trimestre, y = surmortalite_50_59 + sousmortalite_50_59)) +
-    scale_x_continuous(breaks=seq(2013, 2024, 1))+
+    scale_x_continuous(breaks=seq(2013, 2025, 1))+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    
     labs(
       title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre des 50-59 ans ",nomPays),
       subtitle = "Projection de la tendance linéaire de la mortalité standardisée 2013-2018",
@@ -10325,12 +10336,13 @@ a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
     geom_col(aes( y=Age50_59), fill = "#3399FF")+
     theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
           axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
-    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+    scale_x_continuous(breaks=seq(2013, 2025, 1))+ labs(
       title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre pour les 50-59 ans ",nomPays),
       subtitle = "",
       x        = "Trimestre",
       y        = "Nombre de doses",
-      caption  = "Source : Ourworldindata")
+      caption  = "Source : Ourworldindata")+
+    expand_limits(x = c(2013,2025), y = 0)
   
   a<-grid.arrange(histo_deces, vax,
                   ncol=1, nrow=2)
@@ -10352,7 +10364,10 @@ a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
   
   histo_deces <- ggplot(donnees_trimestre) +
     geom_col(aes(x = annee_trimestre, y = surmortalite_60_69 + sousmortalite_60_69)) +
-    scale_x_continuous(breaks=seq(2013, 2024, 1))+
+    scale_x_continuous(breaks=seq(2013, 2025, 1))+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    
     labs(
       title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre des 60-69 ans ",nomPays),
       subtitle = "Projection de la tendance linéaire de la mortalité standardisée 2013-2018",
@@ -10364,12 +10379,13 @@ a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
     geom_col(aes( y=Age60_69), fill = "#3399FF")+
     theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
           axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
-    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+    scale_x_continuous(breaks=seq(2013, 2025, 1))+ labs(
       title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre pour les 60-69 ans ",nomPays),
       subtitle = "",
       x        = "Trimestre",
       y        = "Nombre de doses",
-      caption  = "Source : Ourworldindata")
+      caption  = "Source : Ourworldindata")+
+    expand_limits(x = c(2013,2025), y = 0)
   
   a<-grid.arrange(histo_deces, vax,
                   ncol=1, nrow=2)
@@ -10391,7 +10407,10 @@ a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
   
   histo_deces <- ggplot(donnees_trimestre) +
     geom_col(aes(x = annee_trimestre, y = surmortalite_70_79 + sousmortalite_70_79)) +
-    scale_x_continuous(breaks=seq(2013, 2024, 1))+
+    scale_x_continuous(breaks=seq(2013, 2025, 1))+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    
     labs(
       title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre des 70-79 ans ",nomPays),
       subtitle = "Projection de la tendance linéaire de la mortalité standardisée 2013-2018",
@@ -10403,12 +10422,13 @@ a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
     geom_col(aes( y=Age70_79), fill = "#3399FF")+
     theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
           axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
-    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+    scale_x_continuous(breaks=seq(2013, 2025, 1))+ labs(
       title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre pour les 70-79 ans ",nomPays),
       subtitle = "",
       x        = "Trimestre",
       y        = "Nombre de doses",
-      caption  = "Source : Ourworldindata")
+      caption  = "Source : Ourworldindata")+
+    expand_limits(x = c(2013,2025), y = 0)
   
   a<-grid.arrange(histo_deces, vax,
                   ncol=1, nrow=2)
@@ -10430,7 +10450,10 @@ a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
   
   histo_deces <- ggplot(donnees_trimestre) +
     geom_col(aes(x = annee_trimestre, y = surmortalite_plus_80 + sousmortalite_plus_80)) +
-    scale_x_continuous(breaks=seq(2013, 2024, 1))+
+    scale_x_continuous(breaks=seq(2013, 2025, 1))+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    
     labs(
       title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre des plus de 80 ans ",nomPays),
       subtitle = "Projection de la tendance linéaire de la mortalité standardisée 2013-2018",
@@ -10442,12 +10465,13 @@ a__f_plot_es_deces_trim <- function(es_deces_standard_pays_semaine) {
     geom_col(aes( y=`Age80+`), fill = "#3399FF")+
     theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
           axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
-    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+    scale_x_continuous(breaks=seq(2013, 2025, 1))+ labs(
       title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre pour les plus de 80 ans ",nomPays),
       subtitle = "",
       x        = "Trimestre",
       y        = "Nombre de doses",
-      caption  = "Source : Ourworldindata")
+      caption  = "Source : Ourworldindata")+
+    expand_limits(x = c(2013,2025), y = 0)
   
   a<-grid.arrange(histo_deces, vax,
                   ncol=1, nrow=2)

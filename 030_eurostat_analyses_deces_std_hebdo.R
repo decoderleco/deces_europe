@@ -239,6 +239,7 @@ g<-ggplot(data = france_suede_portugal) +
   geom_text(x=443, y=1000, label="2021",size=10)+
   geom_text(x=495, y=1000, label="2022",size=10)+
   geom_text(x=547, y=1000, label="2023",size=10)+
+  geom_text(x=599, y=1000, label="2024",size=10)+
   annotate(geom = "text", x = 50, y = 30000, label = "Portugal", color = "#006600",
            angle = 0, size = 15)+
   annotate(geom = "text", x = 50, y = 28000, label = "Suède", color = "#0066CC",
@@ -282,6 +283,7 @@ g<-ggplot(data = france_suede_portugal) +
   geom_text(x=443, y=1000, label="2021",size=10)+
   geom_text(x=495, y=1000, label="2022",size=10)+
   geom_text(x=547, y=1000, label="2023",size=10)+
+  geom_text(x=599, y=1000, label="2023",size=10)+
   annotate(geom = "text", x = 50, y = 30000, label = "Portugal", color = "#999999",
            angle = 0, size = 15)+
   annotate(geom = "text", x = 50, y = 28000, label = "Suède", color = "#666666",
