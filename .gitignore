@@ -5,5 +5,4 @@
 /.Rhistory
 /inst/
 /gen/
-*.csv
-*.CSV
+/data
