@@ -38,7 +38,7 @@ install.packages("gsl")
 
 install.packages("igraph")
 install.packages("ggforce")
-install.packages("Rtools")
+
 
 install.packages("pyramid")
 install.packages("reshape2")

@@ -96,7 +96,8 @@ if (!shallForceDownload && exists(varName)) {
 	# Liste des URLs des fichiers de patients décédés
 	
 	urls_listes_deces <- c(
-	    '2025-m1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20250210-095518/deces-2025-m01.txt',
+	  '2025-t2' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20250710-111150/deces-2025-t2.txt',
+	    '2025-t1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20250409-075652/deces-2025-t1.txt',
 	    '2024' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20250210-094840/deces-2024.txt',
 	    '2023' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20240219-094712/deces-2023.txt',
 	    '2022' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20230209-094802/deces-2022.txt',
@@ -2112,7 +2113,7 @@ dev.off()
 
 #carte des départements
 
-carte_departements <- readOGR(dsn="./data/geo/GEOFLA_2-2_DEPARTEMENT_SHP_LAMB93_FXX_2016-06-28/GEOFLA_2-2_DEPARTEMENT_SHP_LAMB93_FXX_2016-06-28/GEOFLA/1_DONNEES_LIVRAISON_2021-02-00129/GEOFLA_2-2_SHP_LAMB93_FR-ED161/DEPARTEMENT",  layer="DEPARTEMENT")
+carte_departements <- st_read(dsn="./data/geo/GEOFLA_2-2_DEPARTEMENT_SHP_LAMB93_FXX_2016-06-28/GEOFLA_2-2_DEPARTEMENT_SHP_LAMB93_FXX_2016-06-28/GEOFLA/1_DONNEES_LIVRAISON_2021-02-00129/GEOFLA_2-2_SHP_LAMB93_FR-ED161/DEPARTEMENT",  layer="DEPARTEMENT")
 
 
 idx <- match(carte_departements$CODE_DEPT, comparaison_hopsi_deces_metro_2020$dep)
@@ -2132,11 +2133,15 @@ dev.print(device = png, file = pngFileRelPath, width = 1000)
 idx <- match(carte_departements$CODE_DEPT, comparaison_hopsi_deces_metro_2020$dep)
 concordance_patients <- comparaison_hopsi_deces_metro_2020[idx, "patients_norm"]
 carte_departements$patients_norm <- concordance_patients
-
-spplot(carte_departements, "patients_norm",col.regions=couleurs_inverse(30),  
-       main=list(label="Evolution du nombre de patients en 2020 par rapport à 2017",cex=.8))
+carte_departements$patients_norm <- carte_departements$patients_norm$patients_norm
 
 
+ggplot(carte_departements) +
+  geom_sf(aes(fill = patients_norm)) +
+  scale_fill_gradientn(colors = couleurs_inverse(30)) +
+  labs(title = "Evolution du nombre de patients en 2020 par rapport à 2017",
+       fill = "Patients (2020 vs 2017)") +
+  theme_minimal(base_size = 10)
 pngFileRelPath <- paste0(repertoire, "/carte_patients.png")
 
 dev.print(device = png, file = pngFileRelPath, width = 1000)
@@ -2156,11 +2161,16 @@ idx <- match(carte_departements$CODE_DEPT, comparaison_hopsi_deces_metro_2020$de
 
 concordance_typo <- comparaison_hopsi_deces_metro_2020[idx, "typo"]
 carte_departements$typo <- concordance_typo
+carte_departements$typo <- carte_departements$typo$typo
+carte_departements$typo <- as.factor(carte_departements$typo)
 
 couleur_typo=colorRampPalette(c("red","green"))
 
-spplot(carte_departements,  "typo",
-       main=list(label="Typologie de soin",cex=.8))
+ggplot(carte_departements) +
+  geom_sf(aes(fill = typo)) +
+  scale_fill_brewer(palette = "Set3") +   # palette qualitative
+  labs(title = "Typologie de soin", fill = "Typologie") +
+  theme_minimal(base_size = 10)
 
 #------------------------------#
 #### modèles par trimestres ####
@@ -2347,6 +2357,191 @@ p<-ggplot(donnees_finales_tranche_age %>% filter(tranchesAge==trage),aes(x = ann
   ggsave(paste0(repertoire,"/deces_trimestriels_residus_",str_replace_all(trage," ",""),".png"), width = 11, height = 8, plot = a)
 
 }
+
+#------------------------------#
+#### modèles par mois ####
+#------------------------------#
+deces_par_jour_age_stand_complet<- read.csv2(file.path("gen/csv/deces_par_jour_age_stand_complet.csv"),sep=";")
+
+deces_par_jour_age_stand_complet<-deces_par_jour_age_stand_complet %>% 
+  mutate(mois_deces = substr(deces_date_complete,6,7))
+
+deces_par_mois_age <- deces_par_jour_age_stand_complet %>% group_by(mois_deces, annee, age) %>% 
+  summarise(nbDeces=sum(nbDeces),
+            population_mois=mean(population_jour),
+            deces_standard_2020=sum(deces_standard_2020))
+
+deces_par_mois_age <- ungroup(deces_par_mois_age)
+deces_par_mois_age <- deces_par_mois_age %>% mutate(mois_deces=as.integer(mois_deces))
+
+#calculer mortalité et log de la mortalité
+
+#Il faut régler les rares cas à 0 décès dans le mois.
+
+deces_par_mois_age <- deces_par_mois_age %>% 
+  mutate(logmortalite = case_when(nbDeces==0 ~ log((nbDeces+0.1)/population_mois),
+                                  TRUE ~ log(nbDeces/population_mois)))
+
+donnees_provisoires<-NULL
+donnees_finales<-NULL
+
+for (Mois in 1:12){
+  for (Age in 0:99) {
+    donnees_modele<-deces_par_mois_age %>% 
+      filter(annee<=2019,age==Age, mois_deces==Mois)
+    model = lm(logmortalite ~ annee, data=donnees_modele)
+    
+    donnees_provisoires <-deces_par_mois_age %>% 
+      filter(age==Age,mois_deces==Mois) %>% 
+      mutate(projection_log_deces=model$coefficients[1]+annee*model$coefficients[2]) 
+    donnees_finales <- donnees_finales %>% rbind(donnees_provisoires)
+   
+  }}
+donnees_finales<-donnees_finales %>% mutate(projection_deces=exp(projection_log_deces)*population_mois)
+
+donnees_finales<-donnees_finales %>% mutate(tranchesAge=case_when(age==0 ~ "0 ans",
+                                                                  age<5 ~ "1 - 4 ans",
+                                                                  age<12 ~ "5 - 11 ans",
+                                                                  age<18 ~ "12 - 17 ans",
+                                                                  age<40 ~ "18 - 39 ans",
+                                                                  age<65 ~ "40 - 64 ans",
+                                                                  age<80 ~ "65 - 79 ans",
+                                                                  TRUE ~ "80 ans et plus"))
+
+donnees_finales_tranche_age<-donnees_finales %>% group_by(annee,mois_deces, tranchesAge) %>% 
+  summarise(population_mois=sum(population_mois),
+            deces_standard_2020=sum(deces_standard_2020),
+            nbDeces=sum(nbDeces),
+            projection_deces=sum(projection_deces)) %>% 
+  mutate(annee_mois= annee + (1/12) * mois_deces - (1/12))
+
+#calcul des intervalles de confiances
+test<-donnees_finales_tranche_age %>% filter(annee<=2019) %>% group_by(mois_deces, tranchesAge) %>% 
+  summarise(ecart_type = sd(nbDeces-projection_deces))
+
+donnees_finales_tranche_age<-donnees_finales_tranche_age %>% left_join(test)
+donnees_finales_tranche_age<-donnees_finales_tranche_age %>% 
+  mutate(intervalle_bas=projection_deces-1.5*ecart_type,
+         intervalle_haut=projection_deces+1.5*ecart_type,
+         residus = nbDeces-projection_deces,
+         surmortalite = if_else(nbDeces-intervalle_haut>0,nbDeces-intervalle_haut,0),
+         sousmortalite = if_else(nbDeces-intervalle_bas<0,nbDeces-intervalle_bas,0))
+
+
+#ajout données vaccination
+
+vaccination <- read.csv2(file.path("inst/extdata/world/eu/fr/gouv/vacsi/fr_gouv_vacsi.csv"))
+
+vaccination <- vaccination %>% 
+  mutate(tranchesAge = case_when(clage_vacsi==0 ~"Tous âges",
+                                 clage_vacsi==4 ~"1 - 4 ans",
+                                 clage_vacsi==9 ~"5 - 11 ans",
+                                 clage_vacsi==11 ~"5 - 11 ans",
+                                 clage_vacsi==17 ~"12 - 17 ans",
+                                 clage_vacsi==24 ~"18 - 39 ans",
+                                 clage_vacsi==29 ~"18 - 39 ans",
+                                 clage_vacsi==39 ~"18 - 39 ans",
+                                 clage_vacsi==49 ~"40 - 64 ans",
+                                 clage_vacsi==59 ~"40 - 64 ans",
+                                 clage_vacsi==64 ~"40 - 64 ans",
+                                 clage_vacsi==69 ~"65 - 79 ans",
+                                 clage_vacsi==74 ~"65 - 79 ans",
+                                 clage_vacsi==79 ~"65 - 79 ans",
+                                 clage_vacsi==80 ~"80 ans et plus"
+  ))%>% 
+  mutate(n_dose1 = ifelse(is.na(n_dose1), 0, n_dose1)) %>%
+  mutate(n_complet = ifelse(is.na(n_complet), 0, n_complet))%>% 
+  mutate(n_rappel = ifelse(is.na(n_rappel),0,n_rappel))%>% 
+  mutate(n_2_rappel = ifelse(is.na(n_2_rappel),0,n_2_rappel))%>% 
+  mutate(n_3_rappel = ifelse(is.na(n_3_rappel),0,n_3_rappel))%>% 
+  mutate(n_rappel_biv = ifelse(is.na(n_rappel_biv),0,n_rappel_biv)) %>% 
+  mutate(annee=substr(jour,1,4),mois = substr(jour,6,7))
+
+
+vaccination<-vaccination %>% group_by(tranchesAge,annee,mois) %>% 
+  summarise(n_dose1=sum(n_dose1),
+            n_complet=sum(n_complet),
+            n_rappel=sum(n_rappel),
+            n_2_rappel=sum(n_2_rappel),
+            n_3_rappel=sum(n_3_rappel),
+            n_rappel_biv=sum(n_rappel_biv))
+
+vaccination <- vaccination %>% 
+  mutate(annee = as.integer(annee)) %>% 
+  mutate(mois = as.integer(mois)) %>% 
+  mutate(annee_mois= annee + (1/12) * mois -(1/12))
+
+vaccination<-ungroup(vaccination)
+vaccination<-vaccination %>% select(-annee,-mois)
+
+donnees_finales_tranche_age <- donnees_finales_tranche_age %>% 
+  left_join(vaccination)
+
+donnees_finales_tranche_age<-donnees_finales_tranche_age%>% 
+  mutate(n_dose1 = ifelse(is.na(n_dose1), 0, n_dose1)) %>%
+  mutate(n_complet = ifelse(is.na(n_complet), 0, n_complet))%>% 
+  mutate(n_rappel = ifelse(is.na(n_rappel),0,n_rappel))%>% 
+  mutate(n_2_rappel = ifelse(is.na(n_2_rappel),0,n_2_rappel))%>% 
+  mutate(n_3_rappel = ifelse(is.na(n_3_rappel),0,n_3_rappel))%>% 
+  mutate(n_rappel_biv = ifelse(is.na(n_rappel_biv),0,n_rappel_biv))
+
+
+#graphiques
+
+repertoire <- a__f_createDir(paste0(K_DIR_GEN_IMG_FR_GOUV, "/Registre/Deces_mensuels"))
+
+for (trage in (c("0 ans",
+                 "1 - 4 ans",
+                 "5 - 11 ans",
+                 "12 - 17 ans",
+                 "18 - 39 ans",
+                 "40 - 64 ans",
+                 "65 - 79 ans",
+                 "80 ans et plus"))){
+  
+  p<-ggplot(donnees_finales_tranche_age %>% filter(tranchesAge==trage),aes(x = annee_mois))+
+    geom_col(aes( y=nbDeces), fill = "#3399FF")+
+    geom_line(aes( y=projection_deces), color = "#330066",size = 0.5,linetype = "longdash")+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+      title    = paste0("Nombre de décès par mois en France des ",trage),
+      subtitle = "Projection de la tendance log-linéaire de 2010-2019",
+      x        = "Trimestre",
+      y        = "Nombre de décès",
+      caption  = "Décès à l'état civil et population par âge Insee")
+  print(p)
+  dev.print(device = png, file = paste0(repertoire,"/Deces_mensuels_",str_replace_all(trage," ",""),".png"), width = 1000)
+
+  residus<-ggplot(donnees_finales_tranche_age %>% filter(tranchesAge==trage),aes(x = annee_mois))+
+    geom_col(aes( y=surmortalite + sousmortalite), fill = "#3399FF")+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+      title    = paste0("Ecart entre le nombre de décès observés et attendus par mois en France des ",trage),
+      subtitle = "Projection de la tendance log-linéaire de 2010-2019",
+      x        = "Mois",
+      y        = "Nombre de décès",
+      caption  = "Décès à l'état civil et population par âge Insee")
+  
+  vax<-ggplot(donnees_finales_tranche_age %>% filter(tranchesAge==trage),aes(x = annee_mois))+
+    geom_col(aes( y=n_dose1 + n_complet + n_rappel + n_2_rappel + n_3_rappel +n_rappel_biv), fill = "#3399FF")+
+    theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
+          axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
+    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+      title    = paste0("Nombre de vaccins AntiCovid-19 distribués par mois en France pour les ",trage),
+      subtitle = "",
+      x        = "Mois",
+      y        = "Nombre de doses",
+      caption  = "Données VAC-SI Ministère de la Santé")
+  
+  a<-grid.arrange(residus, vax,
+                  ncol=1, nrow=2)
+  ggsave(paste0(repertoire,"/deces_mensuels_residus_",str_replace_all(trage," ",""),".png"), width = 11, height = 8, plot = a)
+  
+  }
+
+
 
 if (shallDeleteVars) rm(date_min)
 if (shallDeleteVars) rm(date_max)
