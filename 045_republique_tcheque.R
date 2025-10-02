@@ -114,6 +114,12 @@ rtc_pop <- rtc_pop %>%
     dose2_date = ifelse(!is.na(dose2_iso), ISOweek::ISOweek2date(dose1_iso), NA)
   )
 
+# regroup id born before 1920 (more than 100 YO)
+rtc_pop <- rtc_pop %>%
+  mutate(
+    birth_start = if_else(birth_start < 1920, 1920, birth_start)
+  )
+
 #### Create database to work on mortality ####
 
 #### Step 1: Prepare vaccination and death events ####
@@ -269,3 +275,88 @@ ggplot(death_long, aes(x = week, y = deaths, fill = vacc_status)) +
   ) +
   theme_minimal() +
   theme(strip.text = element_text(size = 8))
+
+##### Compare death & vaccine - plot data ####
+
+# Step 1: Convert dates to week start
+vacc_weekly <- vacc_events %>%
+  mutate(week = floor_date(date, "week")) %>%
+  group_by(birth_start, week) %>%
+  summarise(new_vaccinated = sum(new_vaccinated), .groups = "drop")
+
+death_weekly <- death_events %>%
+  mutate(week = floor_date(date, "week")) %>%
+  group_by(birth_start, week) %>%
+  summarise(new_deaths = c(deaths_vaccinated + deaths_unvaccinated), .groups = "drop")
+
+# Fusion 
+trend_data <- full_join(vacc_weekly, death_weekly, by = c("birth_start", "week")) %>%
+  replace_na(list(new_vaccinated = 0, new_deaths = 0))
+
+# Step 2: Plot
+ggplot(trend_data, aes(x = week)) +
+  geom_area(aes(y = new_vaccinated), fill = "steelblue", alpha = 0.6) +
+  geom_line(aes(y = new_deaths * 10), color = "red", size = 0.8) +
+  facet_wrap(~ birth_start, scales = "free_y") +
+  labs(
+    title = "Weekly vaccinations and deaths by age group",
+    y = "New vaccinated (area) / Deaths x10 (line)",
+    x = "Week"
+  ) +
+  theme_minimal()
+
+##### Compare death & vaccine - Spearman ####
+
+# Function to compute Spearman correlations at different lags
+compute_corrs <- function(df) {
+  results <- lapply(c(-1, 0, 1, 2), function(lag) {
+    
+    tmp <- if (lag < 0) {
+      df %>% mutate(deaths_lag = dplyr::lead(new_deaths, -lag))
+    } else if (lag > 0) {
+      df %>% mutate(deaths_lag = dplyr::lag(new_deaths, lag))
+    } else {
+      df %>% mutate(deaths_lag = new_deaths)
+    }
+    
+    tmp <- tmp %>% filter(!is.na(deaths_lag))
+    
+    cor_val <- suppressWarnings(cor(tmp$new_vaccinated, tmp$deaths_lag, method = "spearman"))
+    
+    tibble(lag = lag, cor = cor_val)
+  })
+  
+  bind_rows(results)
+}
+
+# Apply by age group
+corr_results <- trend_data %>%
+  group_by(birth_start) %>%
+  group_modify(~ compute_corrs(.x)) %>%
+  ungroup()
+
+# Plot: correlations by age group and lag
+ggplot(corr_results, aes(x = factor(lag), y = cor, fill = cor)) +
+  geom_col() +
+  facet_wrap(~ birth_start) +
+  scale_fill_gradient2(low = "red", mid = "white", high = "blue", midpoint = 0) +
+  labs(
+    title = "Spearman correlation between vaccinations and deaths",
+    x = "Lag (weeks)",
+    y = "Spearman correlation"
+  ) +
+  theme_minimal()
+
+##### Use CCF to compare ####
+# Example
+one_group <- trend_data %>%
+  filter(birth_start == 1945) %>%
+  arrange(week)
+
+# Extract data
+x <- one_group$new_vaccinated
+y <- one_group$new_deaths
+
+# Cross-correlation from -4 to +4 weeks
+ccf_res <- ccf(x, y, lag.max = 20, plot = TRUE, na.action = na.omit,
+               main = "Cross-correlation Vaccinations vs Deaths (age group 1945)")
