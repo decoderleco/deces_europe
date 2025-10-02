@@ -360,3 +360,51 @@ y <- one_group$new_deaths
 # Cross-correlation from -4 to +4 weeks
 ccf_res <- ccf(x, y, lag.max = 20, plot = TRUE, na.action = na.omit,
                main = "Cross-correlation Vaccinations vs Deaths (age group 1945)")
+
+#### Compare with eurostat (execute 010 at least once before) ####
+
+b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- a__f_loadRdsIfNeeded(var = b__es_deces_week_standardises_si_pop_2020_owid_vaccination,
+                                                                                   rdsRelFilePath = "gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS")
+
+es_deces_standard_pays_semaine_rtcheque <- b__es_deces_week_standardises_si_pop_2020_owid_vaccination %>%
+  filter(geo == "CZ") %>% 
+  filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-4)
+
+# Filter data from 2020-01-01
+es_deces_filtered <- es_deces_standard_pays_semaine_rtcheque %>%
+  filter(as.Date(time) >= as.Date("2020-01-01"))
+
+# Plot stacked area of weekly deaths by age group
+g <- ggplot(es_deces_filtered) +
+  # <15 + 15-24 + 25-49
+  geom_area(aes(x = as.Date(time), 
+                y = deces_tot_moins15 + deces_tot_15_24 + deces_tot_25_49),
+            color = "#000099", fill = "#000099", size = 1, alpha = 0.25) +
+  # Add 50-59
+  geom_area(aes(x = as.Date(time), 
+                y = deces_tot_moins15 + deces_tot_15_24 + deces_tot_25_49 + deces_tot_50_59),
+            color = "#0000CC", fill = "#0000CC", size = 1, alpha = 0.25) +
+  # Add 60-69
+  geom_area(aes(x = as.Date(time), 
+                y = deces_tot_moins15 + deces_tot_15_24 + deces_tot_25_49 + deces_tot_50_59 + deces_tot_60_69),
+            color = "#0000FF", fill = "#0000FF", size = 1, alpha = 0.25) +
+  # Add 70-79
+  geom_area(aes(x = as.Date(time), 
+                y = deces_tot_moins15 + deces_tot_15_24 + deces_tot_25_49 + deces_tot_50_59 +
+                  deces_tot_60_69 + deces_tot_70_79),
+            color = "#3366CC", fill = "#3366CC", size = 1, alpha = 0.25) +
+  # Add 80+
+  geom_area(aes(x = as.Date(time), 
+                y = deces_tot_moins15 + deces_tot_15_24 + deces_tot_25_49 + deces_tot_50_59 +
+                  deces_tot_60_69 + deces_tot_70_79 + deces_tot_plus_80),
+            color = "#6699FF", fill = "#6699FF", size = 1, alpha = 0.25) +
+  
+  # Labels and theme
+  ylab("Number of deaths") +
+  xlab("Week") +
+  ggtitle("Weekly deaths by age group (Czech Republic, Eurostat)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Print plot
+print(g)
