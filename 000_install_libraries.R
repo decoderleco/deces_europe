@@ -47,6 +47,8 @@ install.packages("plyr")
 install.packages("tidyr")
 install.packages("rapport")
 
+install.packages("zoo")
+
 #Pour létude de la météo
 install.packages("mgcv")
 

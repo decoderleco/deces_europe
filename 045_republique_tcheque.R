@@ -651,11 +651,30 @@ compute_corrs <- function(df) {
       df %>% mutate(deaths_lag = new_deaths)
     }
     
-    tmp <- tmp %>% filter(!is.na(deaths_lag))
+    tmp <- tmp %>% filter(!is.na(deaths_lag) & !is.na(new_vaccinated))
     
-    cor_val <- suppressWarnings(cor(tmp$new_vaccinated, tmp$deaths_lag, method = "spearman"))
+    if (nrow(tmp) < 3) {  # pas assez de points pour Spearman
+      return(tibble(
+        lag = lag,
+        cor = NA_real_,
+        p_value = NA_real_,
+        signif = ""
+      ))
+    }
     
-    tibble(lag = lag, cor = cor_val)
+    test <- suppressWarnings(cor.test(tmp$new_vaccinated, tmp$deaths_lag, method = "spearman"))
+    
+    tibble(
+      lag = lag,
+      cor = test$estimate,
+      p_value = test$p.value,
+      signif = case_when(
+        test$p.value < 0.001 ~ "***",
+        test$p.value < 0.01  ~ "**",
+        test$p.value < 0.05  ~ "*",
+        TRUE                 ~ ""
+      )
+    )
   })
   
   bind_rows(results)
@@ -664,12 +683,18 @@ compute_corrs <- function(df) {
 # Apply by age group
 corr_results <- trend_data %>%
   group_by(birth_start) %>%
-  group_modify(~ compute_corrs(.x)) %>%
+  group_modify(~ {
+    tmp <- compute_corrs(.x)
+    tmp <- tmp %>% mutate(n = nrow(.x))  # nb de points dans le groupe
+    tmp
+  }) %>%
   ungroup()
 
 # Plot: correlations by age group and lag
 ggplot(corr_results, aes(x = factor(lag), y = cor, fill = cor)) +
   geom_col() +
+  geom_text(aes(label = signif, y = cor + 0.05), size = 4) +   # étoiles de significativité
+  geom_text(aes(label = paste0("n=", n), y = cor + 0.15), size = 3, color = "darkgrey") +  # taille de l'échantillon
   facet_wrap(~ birth_start) +
   scale_fill_gradient2(low = "red", mid = "white", high = "blue", midpoint = 0) +
   labs(
@@ -696,3 +721,168 @@ y <- one_group$new_deaths
 ccf_res <- ccf(x, y, lag.max = 20, plot = TRUE, na.action = na.omit,
                main = "Cross-correlation Vaccinations vs Deaths (age group 1945)")
 
+                  ## == == == == == == == == == == == == == == == ==
+                  ##### Calculate relative risk of vaccination ####
+                  ## == == == == == == == == == == == == == == == == 
+
+
+check_weekly_summary <- weekly_summary %>%
+  mutate(ratio_vaccinated = deaths_vaccinated/n_vaccinated,
+         ratio_unvaccinated = deaths_unvaccinated/n_unvaccinated) %>% 
+  mutate(comparaison = ratio_vaccinated-ratio_unvaccinated)
+
+check_weekly_summary %>%
+  group_by(birth_start) %>%
+  summarise(
+    n_positive = sum(comparaison > 0, na.rm = TRUE),
+    n_negative = sum(comparaison < 0, na.rm = TRUE),
+    n_equal    = sum(comparaison == 0, na.rm = TRUE)
+  )
+
+
+                                  ## == == == == == ==
+                                  ###### ESMR ######
+                                  ## == == == == == ==
+
+# parameter
+window_weeks <- 3
+
+weekly_window <- weekly_summary %>%
+  arrange(birth_start, date) %>%
+  group_by(birth_start) %>%
+  mutate(
+    deaths_vacc_w = zoo::rollapply(deaths_vaccinated, width = window_weeks, FUN = sum, align = "right", fill = NA, na.rm = TRUE),
+    deaths_unvacc_w = zoo::rollapply(deaths_unvaccinated, width = window_weeks, FUN = sum, align = "right", fill = NA, na.rm = TRUE),
+    pop_vacc_mean = zoo::rollapply(n_vaccinated, width = window_weeks, FUN = mean, align = "right", fill = NA, na.rm = TRUE),
+    pop_unvacc_mean = zoo::rollapply(n_unvaccinated, width = window_weeks, FUN = mean, align = "right", fill = NA, na.rm = TRUE)
+  ) %>%
+  ungroup() %>%
+  filter(!is.na(deaths_vacc_w) & !is.na(deaths_unvacc_w))
+
+# taux par 100k person-weeks
+weekly_window <- weekly_window %>%
+  mutate(
+    rate_vacc = deaths_vacc_w / pop_vacc_mean * 1e5,
+    rate_unvacc = deaths_unvacc_w / pop_unvacc_mean * 1e5,
+    rate_ratio = rate_vacc / rate_unvacc
+  )
+
+
+ggplot(weekly_window, aes(x = date, y = rate_ratio, color = factor(birth_start))) +
+  geom_line(size = 1) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "black") +
+  labs(
+    title = paste0("Evolution du risque relatif (ESMR) par tranche d'âge sur ", window_weeks, " semaines"),
+    x = "Date",
+    y = "Rate Ratio (ESMR)",
+    color = "Tranche d'âge"
+  ) +
+  theme_minimal()
+
+                                ## == == == == == ==
+                                ###### RR brut ######
+                                ## == == == == == ==
+
+weekly_window <- weekly_summary %>%
+  arrange(date) %>%
+  group_by(birth_start) %>%
+  mutate(
+    deaths_vacc_w = zoo::rollapply(deaths_vaccinated, width = 4, FUN = sum, align = "right", fill = NA, na.rm = TRUE),
+    deaths_unvacc_w = zoo::rollapply(deaths_unvaccinated, width = 4, FUN = sum, align = "right", fill = NA, na.rm = TRUE),
+    pop_vacc_mean = zoo::rollapply(n_vaccinated, width = 4, FUN = mean, align = "right", fill = NA, na.rm = TRUE),
+    pop_unvacc_mean = zoo::rollapply(n_unvaccinated, width = 4, FUN = mean, align = "right", fill = NA, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+weekly_global <- weekly_window %>%
+  group_by(date) %>%
+  summarise(
+    deaths_vacc_w = sum(deaths_vacc_w, na.rm = TRUE),
+    deaths_unvacc_w = sum(deaths_unvacc_w, na.rm = TRUE),
+    pop_vacc_mean = sum(pop_vacc_mean, na.rm = TRUE),
+    pop_unvacc_mean = sum(pop_unvacc_mean, na.rm = TRUE)
+  )
+
+weekly_global <- weekly_global %>%
+  filter(!is.na(deaths_vacc_w) & !is.na(deaths_unvacc_w)) %>%
+  mutate(
+    rate_vacc = deaths_vacc_w / pop_vacc_mean * 1e5,      # taux par 100k personnes
+    rate_unvacc = deaths_unvacc_w / pop_unvacc_mean * 1e5,
+    rate_ratio = rate_vacc / rate_unvacc
+  )
+
+weekly_global <- weekly_global %>%
+  rowwise() %>%
+  mutate(
+    rr_ci_lower = (deaths_vacc_w / pop_vacc_mean) / (deaths_unvacc_w / pop_unvacc_mean) * 0.95,
+    rr_ci_upper = (deaths_vacc_w / pop_vacc_mean) / (deaths_unvacc_w / pop_unvacc_mean) * 1.05
+  ) %>%
+  ungroup()
+
+
+ggplot(weekly_global, aes(x = date, y = rate_ratio)) +
+  geom_line(color = "steelblue", size = 1) +
+  geom_line(aes(y = rr_ci_lower), linetype = "dashed", color = "darkblue") +
+  geom_line(aes(y = rr_ci_upper), linetype = "dashed", color = "darkblue") +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "black") +
+  labs(
+    title = "Risque relatif global (toutes tranches d’âge confondues)",
+    x = "Date",
+    y = "Rate Ratio (RR)"
+  ) +
+  theme_minimal()
+
+
+                                    ## == == == == == ==
+                                    ###### ASMR ######
+                                    ## == == == == == ==
+
+
+
+
+standard_pop <- weekly_summary %>%
+  group_by(birth_start) %>%
+  summarise(pop_std = mean(n_vaccinated + n_unvaccinated, na.rm = TRUE)) %>%
+  ungroup()
+
+weekly_window <- weekly_summary %>%
+  arrange(birth_start, date) %>%
+  group_by(birth_start) %>%
+  mutate(
+    deaths_vacc_w =  zoo::rollapply(deaths_vaccinated, width = 4, FUN = sum, align = "right", fill = NA, na.rm = TRUE),
+    deaths_unvacc_w =  zoo::rollapply(deaths_unvaccinated, width = 4, FUN = sum, align = "right", fill = NA, na.rm = TRUE),
+    pop_vacc_mean =  zoo::rollapply(n_vaccinated, width = 4, FUN = mean, align = "right", fill = NA, na.rm = TRUE),
+    pop_unvacc_mean =  zoo::rollapply(n_unvaccinated, width = 4, FUN = mean, align = "right", fill = NA, na.rm = TRUE)
+  ) %>%
+  ungroup() %>%
+  filter(!is.na(deaths_vacc_w) & !is.na(deaths_unvacc_w)) %>%
+  left_join(standard_pop, by = "birth_start") %>%
+  mutate(
+    rate_vacc_std = (deaths_vacc_w / pop_vacc_mean) * pop_std,
+    rate_unvacc_std = (deaths_unvacc_w / pop_unvacc_mean) * pop_std
+  )
+
+pop_total <- sum(standard_pop$pop_std)
+
+asmr_global <- weekly_window %>%
+  mutate(
+    rate_vacc_tranche = (deaths_vacc_w / pop_vacc_mean) * (pop_std / pop_total),
+    rate_unvacc_tranche = (deaths_unvacc_w / pop_unvacc_mean) * (pop_std / pop_total)
+  ) %>%
+  group_by(date) %>%
+  summarise(
+    asmr_vacc = sum(rate_vacc_tranche, na.rm = TRUE),
+    asmr_unvacc = sum(rate_unvacc_tranche, na.rm = TRUE)
+  ) %>%
+  mutate(rate_ratio = asmr_vacc / asmr_unvacc)
+
+
+ggplot(asmr_global, aes(x = date, y = rate_ratio)) +
+  geom_line(color = "steelblue", size = 1) +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "black") +
+  labs(
+    title = "Risque relatif global standardisé (ASMR) vaccinés vs non-vaccinés",
+    x = "Date",
+    y = "Rate Ratio (ASMR)"
+  ) +
+  theme_minimal()
