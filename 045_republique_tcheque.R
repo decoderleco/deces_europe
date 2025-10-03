@@ -18,7 +18,9 @@ library(ggforce)
 library(gridExtra)
 library(ISOweek)
 
-#### Download Czech database and rename columns ####
+                            ## == == == == == == == == == == == == == == == == 
+                            #### Download Czech database and rename columns ####
+                            ## == == == == == == == == == == == == == == == ==
 
 rtc_pop <- a__f_downloadIfNeeded(
   sourceType = K_SOURCE_TYPE_CSV,
@@ -85,14 +87,16 @@ rtc_pop <- rtc_pop %>%
     DCCI = DCCI  # comorbidity index at positivity, numeric
   )
 
-##### change week date in ISo date #####
+                              ## == == == == == == == == == == == == 
+                              ##### change week date in ISo date #####
+                              ## == == == == == == == == == == == == 
 
 rtc_pop <- rtc_pop %>%
   mutate(
     birth_start = as.integer(substr(birth_year, 1, 4)),
     
     # add W for weeks not NA
-    death_iso = ifelse(!is.na(death), paste0(substr(death, 1, 4), "-W", substr(death, 6, 7)), NA),
+    death_iso = ifelse(!is.na(date_of_death_registry), paste0(substr(date_of_death_registry, 1, 4), "-W", substr(date_of_death_registry, 6, 7)), NA),
     dose1_iso = ifelse(!is.na(date_dose1), paste0(substr(date_dose1, 1, 4), "-W", substr(date_dose1, 6, 7)), NA),
     dose2_iso = ifelse(!is.na(date_dose2), paste0(substr(date_dose2, 1, 4), "-W", substr(date_dose2, 6, 7)), NA)
   
@@ -157,11 +161,17 @@ correspondants <- inf3 %>% select(birth_year, sex) %>% left_join(inf2,
   by = c("birth_year", "sex")
 )
 
+rm(inf1,inf2,inf3,correspondants)
+
 # => NO CORRESPONDANT WITH death_date and only one wihtout. SEEMS that lines are not duplicated !
 
-##### Czech data ####
+                            ## == == == == == == 
+                            ##### Czech data ####
+                            ## == == == == == == 
 
-###### Czech population by age group #####
+                      ## == == == == == == == == == == == == 
+                      ###### Czech population by age group #####
+                      ## == == == == == == == == == == == == 
 
 age_summary_rtc_pop_max <- rtc_pop %>%
   count(age_group_max, name = "n_max") %>%
@@ -183,8 +193,9 @@ ggplot(age_summary_rtc_pop, aes(x = age_group, y = n_max)) +
   ) +
   theme_minimal(base_size = 14)
 
-
-###### Czech death by age group #####
+                            ## == == == == == == == == == == == == 
+                            ###### Czech death by age group #####
+                            ## == == == == == == == == == == == == 
 
 # Step 1: select death
 death_rtc_pop <- rtc_pop %>% filter(!is.na(death_date))
@@ -193,7 +204,7 @@ death_rtc_pop <- rtc_pop %>% filter(!is.na(death_date))
 death_rtc_pop <- death_rtc_pop %>% 
   mutate(age_death = case_when(
     is.na(birth_year) ~ NA,
-    TRUE ~ as.numeric(format(as.Date(death_date), "%Y")) - 2 - as.numeric(substr(birth_year, 1, 4))))
+    TRUE ~ as.numeric(format(as.Date(death_date), "%Y")) - as.numeric(substr(birth_year, 1, 4))))
 
 death_rtc_pop <- death_rtc_pop %>% 
   mutate(age_death_group = case_when(
@@ -219,15 +230,15 @@ death_summary_rtc_pop$age_death_group <- factor(death_summary_rtc_pop$age_death_
 colors <- c(
   "Unknown" = "black",
   "<15"   = "#000099",
-  "15-24" = "#0000CC",
-  "25-49" = "#0000FF",
-  "50-59" = "#3366CC",
-  "60-69" = "#6699FF",
-  "70-79" = "#99CCFF",
-  "80+"   = "#CCCCFF"
+  "15-24" = "#000099",
+  "25-49" = "#000099",
+  "50-59" = "#0000CC",
+  "60-69" = "#0000FF",
+  "70-79" = "#3366CC",
+  "80+"   = "#6699FF"
 )
 
-# Graphique empilé
+# Step 4: Plot stacked area
 ggplot(death_summary_rtc_pop, aes(x = as.Date(death_date), y = n_deaths, fill = age_death_group)) +
   geom_area(position = "stack", color = "black", size = 0.2, alpha = 0.25) +
   scale_fill_manual(values = colors, name = "Groupe d'âge") +
@@ -239,23 +250,21 @@ ggplot(death_summary_rtc_pop, aes(x = as.Date(death_date), y = n_deaths, fill = 
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+ggsave(
+  filename = file.path(K_DIR_GEN_IMG_RTCHEQUE, "rtc_death.png"),
+  plot = last_plot(),
+  width = 10, height = 6, dpi = 300
+)
+
+            ## == == == == == == == == == == == == == == == == == == == == ==
+            #### Compare with eurostat (execute 010 at least once before) ####
+            ## == == == == == == == == == == == == == == == == == == == == ==
+
+                              ## == == == == == ==
+                              ##### Eurostat #####
+                              ## == == == == == == 
 
 
-# Step 4: Plot stacked area
-ggplot(death_summary_rtc_pop, aes(x = as.Date(death_date), y = n_deaths, fill = age_death_group)) +
-  geom_area(position = "stack", alpha = 0.6, color = "black", size = 0.2) +
-  labs(
-    x = "Semaine de décès",
-    y = "Nombre de décès",
-    title = "Décès hebdomadaires par groupe d'âge (RTC)"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-
-#### Compare with eurostat (execute 010 at least once before) ####
-
-##### Eurostat #####
 
 b__es_deces_week_standardises_si_pop_2020_owid_vaccination <- a__f_loadRdsIfNeeded(var = b__es_deces_week_standardises_si_pop_2020_owid_vaccination,
                                                                                    rdsRelFilePath = "gen/rds/Eurostat_owid_deces_standard_pays_semaine.RDS")
@@ -264,7 +273,12 @@ es_deces_standard_pays_semaine_rtcheque <- b__es_deces_week_standardises_si_pop_
   filter(geo == "CZ") %>% 
   filter(numSemaineDepuis2013<=base::max(numSemaineDepuis2013)-4)
 
-###### Eurostat population by age group ######
+                        ## == == == == == == == == == == == == == == 
+                        ###### Eurostat population by age group ######
+                        ## == == == == == == == == == == == == == == 
+
+
+
 # Filter data from 2020
 eurostat_pop_2020<- es_deces_standard_pays_semaine_rtcheque %>%
   filter(as.Date(time) == as.Date("2020-01-06")) %>% 
@@ -366,14 +380,16 @@ ggsave(
   width = 10, height = 6, dpi = 300
 )
 
-###### Eurostat deaths ######
+                            ## == == == == == == == == 
+                            ###### Eurostat deaths ######
+                            ## == == == == == == == == 
 
 # Filter data from 2020-01-01
 es_deces_filtered <- es_deces_standard_pays_semaine_rtcheque %>%
   filter(as.Date(time) >= as.Date("2020-01-01"))
 
 # Plot stacked area of weekly deaths by age group
-g <- ggplot(es_deces_filtered) +
+ggplot(es_deces_filtered) +
   # <15 + 15-24 + 25-49
   geom_area(aes(x = as.Date(time), 
                 y = deces_tot_moins15 + deces_tot_15_24 + deces_tot_25_49),
@@ -404,22 +420,31 @@ g <- ggplot(es_deces_filtered) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-# Print plot
-print(g)
+ggsave(
+  filename = file.path(K_DIR_GEN_IMG_RTCHEQUE, "eurostat_death.png"),
+  plot = last_plot(),
+  width = 10, height = 6, dpi = 300
+)
 
 
 
+                            ## == == == == == == == == == == == == == ==
+                            #### Create database to work on mortality ####
+                            ## == == == == == == == == == == == == == ==
+                            
+                        ## == == == == == == == == == == == == == == ==
+                        ##### Step 1: Prepare vaccination and death events ####
+                        ## == == == == == == == == == == == == == == == 
 
-#### Create database to work on mortality ####
-
-#### Step 1: Prepare vaccination and death events ####
-# Keep only necessary info
+# Keep only necessary info / stop analysis in 2024
 events <- rtc_pop %>%
   select(id, birth_start, dose1_date, death_date) %>%
   mutate(
     dose1_date = as.Date(dose1_date),
     death_date = as.Date(death_date)
-  )
+  ) %>% 
+  filter(is.na(dose1_date)|dose1_date<as.Date("2024-01-01")) %>% 
+  filter(is.na(death_date)|death_date<as.Date("2024-01-01")) 
 
 # Vaccination events (entry into "vaccinated")
 vacc_events <- events %>%
@@ -442,7 +467,10 @@ death_events <- events %>%
          deaths_vaccinated = vaccinated,
          deaths_unvaccinated = unvaccinated)
 
-#### Step 2: Build daily timeline ####
+                            ## == == == == == == == == == == == == 
+                            ##### Step 2: Build daily timeline ####
+                            ## == == == == == == == == == == == == 
+
 timeline <- bind_rows(
   vacc_events %>% select(birth_start, date),
   death_events %>% select(birth_start, date)
@@ -458,7 +486,10 @@ timeline <- bind_rows(
   unnest(all_dates) %>%
   rename(date = all_dates)
 
-#### Step 3: Merge events into timeline and compute cumulative counts ####
+      ## == == == == == == == == == == == == == == == == == == == == == == == == 
+      ##### Step 3: Merge events into timeline and compute cumulative counts ####
+      ## == == == == == == == == == == == == == == == == == == == == == == == == 
+
 daily_summary <- timeline %>%
   left_join(vacc_events, by = c("birth_start", "date")) %>%
   left_join(death_events, by = c("birth_start", "date")) %>%
@@ -481,7 +512,10 @@ daily_summary <- timeline %>%
          n_vaccinated, n_unvaccinated,
          deaths_vaccinated, deaths_unvaccinated)
 
-#####Plot the vaccination ####
+                        ## == == == == == == == == == == == ==
+                        #####Plot the vaccination ####
+                        ## == == == == == == == == == == == ==
+
 # Aggregate by ISO week
 weekly_summary <- daily_summary %>%
   mutate(week = floor_date(date, "week")) %>%
@@ -535,7 +569,11 @@ ggplot(vacc_weekly, aes(x = week, y = new_vaccinated)) +
   theme_minimal() +
   theme(strip.text = element_text(size = 8))
 
-##### Plot the deaths #####
+                            ## == == == == == == == ==
+                            ##### Plot the deaths #####
+                            ## == == == == == == == == 
+
+
 # Step 1: Convert dates to week start
 death_events <- death_events %>%
   mutate(week = floor_date(date, "week"))  # Monday of each week
@@ -566,7 +604,9 @@ ggplot(death_long, aes(x = week, y = deaths, fill = vacc_status)) +
   theme_minimal() +
   theme(strip.text = element_text(size = 8))
 
-##### Compare death & vaccine - plot data ####
+                      ## == == == == == == == == == == == == == == ==
+                      ##### Compare death & vaccine - plot data ####
+                      ## == == == == == == == == == == == == == == ==
 
 # Step 1: Convert dates to week start
 vacc_weekly <- vacc_events %>%
@@ -595,7 +635,9 @@ ggplot(trend_data, aes(x = week)) +
   ) +
   theme_minimal()
 
-##### Compare death & vaccine - Spearman ####
+                ## == == == == == == == == == == == == == == ==
+                ##### Compare death & vaccine - Spearman ####
+                ## == == == == == == == == == == == == == == ==
 
 # Function to compute Spearman correlations at different lags
 compute_corrs <- function(df) {
@@ -637,7 +679,10 @@ ggplot(corr_results, aes(x = factor(lag), y = cor, fill = cor)) +
   ) +
   theme_minimal()
 
-##### Use CCF to compare ####
+                            ## == == == == == == == == ==
+                            ##### Use CCF to compare ####
+                            ## == == == == == == == == == 
+
 # Example
 one_group <- trend_data %>%
   filter(birth_start == 1945) %>%
