@@ -109,6 +109,7 @@ K_DIR_GEN_IMG_EUROSTAT <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROPE, 'Eurost
 K_DIR_GEN_IMG_FRANCE <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROPE, 'fr'))
 K_DIR_GEN_IMG_FR_GOUV <- a__f_createDir(file.path(K_DIR_GEN_IMG_FRANCE, 'gouv'))
 K_DIR_GEN_IMG_FR_AMELIE <- a__f_createDir(file.path(K_DIR_GEN_IMG_FRANCE, 'amelie'))
+K_DIR_GEN_IMG_RTCHEQUE <- a__f_createDir(file.path(K_DIR_GEN_IMG_EUROPE, 'rtcheque'))
 
 K_DIR_GEN_IMG_USA <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'usa'))
 K_DIR_GEN_IMG_OWID <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'owid'))
