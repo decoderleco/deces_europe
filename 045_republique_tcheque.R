@@ -816,6 +816,11 @@ ggplot(corr_results, aes(x = factor(lag), y = cor, fill = cor)) +
   ) +
   theme_minimal()
 
+ggsave(
+  filename = file.path(K_DIR_GEN_IMG_RTCHEQUE, "Spearman_vax_death.png"),
+  plot = last_plot(),
+  width = 10, height = 6, dpi = 300
+)
 
                   ## == == == == == == == == == == == == == == == ==
                   ##### Calculate relative risk of vaccination ####
