@@ -101,6 +101,7 @@ K_DIR_EXT_DATA_RTCHEQUE <- a__f_createDir(file.path(K_DIR_EXT_DATA_EUROPE, 'rtch
 
 
 K_DIR_GEN_IMG <- a__f_createDir("gen/images")
+K_DIR_GEN_RDS <- a__f_createDir("gen/rds")
 K_DIR_GEN_IMG_WORLD <- a__f_createDir(file.path(K_DIR_GEN_IMG, 'world'))
 
 K_DIR_GEN_IMG_EUROPE <- a__f_createDir(file.path(K_DIR_GEN_IMG_WORLD, 'eu'))
