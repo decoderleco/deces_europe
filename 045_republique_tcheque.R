@@ -24,9 +24,9 @@ library(ISOweek)
 
 # If the RDS file already exists → load it
 # Otherwise → run the preparation code and save it
-if (file.exists(paste0(K_DIR_GEN_RDS,"rtcheque_data.rds"))){
+if (file.exists(paste0(K_DIR_GEN_RDS,"/rtcheque_data.rds"))){
   message("📂 Loading existing RDS file...")
-  rtc_pop <- paste0(K_DIR_GEN_RDS,"rtcheque_data.rds")
+  rtc_pop <- readRDS(paste0(K_DIR_GEN_RDS,"/rtcheque_data.rds"))
 } else {
   message("⚙️ RDS file not found: running preparation pipeline...")
 
@@ -141,6 +141,22 @@ if (file.exists(paste0(K_DIR_GEN_RDS,"rtcheque_data.rds"))){
       dose7_date = ifelse(!is.na(dose7_iso), ISOweek::ISOweek2date(dose7_iso), NA)
     )
 
+  rtc_pop <- rtc_pop %>% select(-date_dose1,
+                                -date_dose2,
+                                -date_dose3,
+                                -date_dose4,
+                                -date_dose5,
+                                -date_dose6,
+                                -date_dose7,
+                                -death_iso,
+                                -dose1_iso,
+                                -dose2_iso,
+                                -dose3_iso,
+                                -dose4_iso,
+                                -dose5_iso,
+                                -dose6_iso,
+                                -dose7_iso)
+  
 # create age group to compare with Eurostat
 
   rtc_pop <- rtc_pop %>%
@@ -168,7 +184,7 @@ if (file.exists(paste0(K_DIR_GEN_RDS,"rtcheque_data.rds"))){
         age_2020_min >= 70 & age_2020_min <= 79 ~ "70-79",
         age_2020_min >= 80 ~ "80+")
       )
-  saveRDS(rtc_pop, file = paste0(K_DIR_GEN_RDS,"rtcheque_data.rds"))
+  saveRDS(rtc_pop, file = paste0(K_DIR_GEN_RDS,"/rtcheque_data.rds"))
   }
 
 
@@ -498,7 +514,7 @@ events <- rtc_pop %>%
 
 
 vacc_events <- events %>%
-  # Gather all dose dates into a single column
+  # Gather all dose dates into a single column (keep all doses)
   tidyr::pivot_longer(
     cols = starts_with("dose"),
     names_to = "dose",
@@ -516,7 +532,7 @@ first_dose <- events %>%
   summarise(new_vaccinated = n(), .groups = "drop") %>%
   rename(date = dose1_date)
 
-# Combine both
+# Combine and compute cumulative values
 vacc_events <- vacc_events %>%
   left_join(first_dose, by = c("birth_start", "date")) %>%
   mutate(
@@ -525,9 +541,38 @@ vacc_events <- vacc_events %>%
   arrange(birth_start, date) %>%
   group_by(birth_start) %>%
   mutate(
-    cumulative_vaccinated = cumsum(new_vaccinated)
+    # Cumulative vaccinated (first doses only)
+    cumulative_vaccinated = cumsum(new_vaccinated),
+    
+    # Total population in this age group
+    total_pop = n_distinct(events$id[events$birth_start == first(birth_start)]),
+    
+    # Remaining unvaccinated population
+    n_unvaccinated = total_pop - cumulative_vaccinated
   ) %>%
   ungroup()
+
+# 2nd dose
+dose2_events <- events %>%
+  filter(!is.na(dose2_date)) %>%
+  group_by(birth_start, dose2_date) %>%
+  summarise(new_vaccinated_dose2 = n(), .groups = "drop") %>%
+  rename(date = dose2_date)
+
+# 3rd dose
+dose3_events <- events %>%
+  filter(!is.na(dose3_date)) %>%
+  group_by(birth_start, dose3_date) %>%
+  summarise(new_vaccinated_dose3 = n(), .groups = "drop") %>%
+  rename(date = dose3_date)
+
+# 4th dose
+dose4_events <- events %>%
+  filter(!is.na(dose4_date)) %>%
+  group_by(birth_start, dose4_date) %>%
+  summarise(new_vaccinated_dose4 = n(), .groups = "drop") %>%
+  rename(date = dose4_date)
+
 
         ## == == == == == == == == == == == == == == == == == == == == == == ==
         ###### Death events with cumulative counts by vaccination status ######
@@ -567,6 +612,66 @@ death_events <- events %>%
     cum_deaths_unvaccinated = cumsum(deaths_unvaccinated),
     cum_deaths_total = cum_deaths_vaccinated + cum_deaths_unvaccinated
   ) %>%
+  ungroup()
+
+# deaths among people who had ONLY dose1 on or before death
+death_weekly_dose1 <- events %>%
+  filter(!is.na(death_date) & !is.na(dose1_date) & dose1_date <= death_date &
+           is.na(dose2_date) & is.na(dose3_date) & is.na(dose4_date)&
+           is.na(dose5_date) & is.na(dose6_date) & is.na(dose7_date)) %>%
+  group_by(birth_start, death_date) %>%
+  summarise(deaths_dose1 = n(), .groups = "drop") %>%
+  mutate(week = floor_date(death_date, "week", week_start = 1)) %>%
+  group_by(birth_start, week) %>%
+  summarise(deaths_dose1 = sum(deaths_dose1, na.rm = TRUE), .groups = "drop") %>%
+  arrange(birth_start, week) %>%
+  group_by(birth_start) %>%
+  mutate(cum_deaths_dose1 = cumsum(deaths_dose1)) %>%
+  ungroup()
+
+
+# deaths among people who had ONLY 2 DOSES on or before death
+death_weekly_dose2 <- events %>%
+  filter(!is.na(death_date) & !is.na(dose2_date) & dose2_date <= death_date &
+           is.na(dose3_date) & is.na(dose4_date)&
+           is.na(dose5_date) & is.na(dose6_date) & is.na(dose7_date)) %>%
+  group_by(birth_start, death_date) %>%
+  summarise(deaths_dose2 = n(), .groups = "drop") %>%
+  mutate(week = floor_date(death_date, "week", week_start = 1)) %>%
+  group_by(birth_start, week) %>%
+  summarise(deaths_dose2 = sum(deaths_dose2, na.rm = TRUE), .groups = "drop") %>%
+  arrange(birth_start, week) %>%
+  group_by(birth_start) %>%
+  mutate(cum_deaths_dose2 = cumsum(deaths_dose2)) %>%
+  ungroup()
+
+# deaths among people who had ONLY 3 DOSES on or before death
+death_weekly_dose3 <- events %>%
+  filter(!is.na(death_date) & !is.na(dose3_date) & dose3_date <= death_date &
+           is.na(dose4_date)&
+           is.na(dose5_date) & is.na(dose6_date) & is.na(dose7_date)) %>%
+  group_by(birth_start, death_date) %>%
+  summarise(deaths_dose3 = n(), .groups = "drop") %>%
+  mutate(week = floor_date(death_date, "week", week_start = 1)) %>%
+  group_by(birth_start, week) %>%
+  summarise(deaths_dose3 = sum(deaths_dose3, na.rm = TRUE), .groups = "drop") %>%
+  arrange(birth_start, week) %>%
+  group_by(birth_start) %>%
+  mutate(cum_deaths_dose3 = cumsum(deaths_dose3)) %>%
+  ungroup()
+
+# deaths among people who had ONLY 4 DOSES on or before death
+death_weekly_dose4 <- events %>%
+  filter(!is.na(death_date) & !is.na(dose4_date) & dose4_date <= death_date &
+           is.na(dose5_date) & is.na(dose6_date) & is.na(dose7_date)) %>%
+  group_by(birth_start, death_date) %>%
+  summarise(deaths_dose4 = n(), .groups = "drop") %>%
+  mutate(week = floor_date(death_date, "week", week_start = 1)) %>%
+  group_by(birth_start, week) %>%
+  summarise(deaths_dose4 = sum(deaths_dose4, na.rm = TRUE), .groups = "drop") %>%
+  arrange(birth_start, week) %>%
+  group_by(birth_start) %>%
+  mutate(cum_deaths_dose4 = cumsum(deaths_dose4)) %>%
   ungroup()
 
                             ## == == == == == == == == == == == == == == == == == == 
@@ -632,33 +737,121 @@ weekly_summary <- timeline_weekly %>%
     by = c("birth_start", "week")
   ) %>%
   
-  # Fill missing values and compute population estimates
+  # Fill missing values and compute population dynamics
   group_by(birth_start) %>%
   arrange(week) %>%
   mutate(
+    # Replace missing values by 0
     new_vaccinated = replace_na(new_vaccinated, 0),
     deaths_vaccinated = replace_na(deaths_vaccinated, 0),
     deaths_unvaccinated = replace_na(deaths_unvaccinated, 0),
     
-    # Cumulative sums (in case some weeks had missing data)
+    # Total population per age group (fixed reference)
+    total_pop = if (is.na(first(birth_start))) {
+      n_distinct(events$id[is.na(events$birth_start)])
+    } else {
+      n_distinct(events$id[events$birth_start == first(birth_start)])
+    },
+    
+    # Cumulative vaccinated (first doses) and deaths
     cum_vaccinated = cumsum(new_vaccinated),
     cum_deaths_vaccinated = cumsum(deaths_vaccinated),
     cum_deaths_unvaccinated = cumsum(deaths_unvaccinated),
     
-    # Total population in this age group
-    total_pop = n_distinct(events$id[events$birth_start == first(birth_start)]),
+    # Living vaccinated population
+    n_vaccinated = pmax(0, cum_vaccinated - cum_deaths_vaccinated),
     
-    # Estimated living vaccinated / unvaccinated each week
-    n_vaccinated = cum_vaccinated - cum_deaths_vaccinated,
-    n_unvaccinated = total_pop - cum_vaccinated - cum_deaths_unvaccinated
+    # Living unvaccinated population
+    n_unvaccinated = pmax(0, total_pop - cum_vaccinated - cum_deaths_unvaccinated)
   ) %>%
   ungroup() %>%
   select(
-    birth_start, week,
+    birth_start, week, total_pop,
     n_vaccinated, n_unvaccinated, new_vaccinated, 
     deaths_vaccinated, deaths_unvaccinated,
     total_vaccination, cumulative_vaccinated
   )
+
+#add dose 2 and 3
+make_cumulative <- function(df, colname) {
+  new_name <- colname
+  cum_name <- paste0("cumulative_", colname)
+  
+  df %>%
+    mutate(week = floor_date(date, "week", week_start = 1)) %>%
+    group_by(birth_start, week) %>%
+    summarise(new = sum(.data[[colname]], na.rm = TRUE), .groups = "drop") %>%
+    group_by(birth_start) %>%
+    arrange(week) %>%
+    mutate(cumulative = cumsum(new)) %>%
+    ungroup() %>%
+    rename(!!new_name := new, !!cum_name := cumulative)
+}
+
+dose2_weekly <- make_cumulative(dose2_events, "new_vaccinated_dose2") %>% 
+  rename(cumulative_vaccinated_dose2=cumulative_new_vaccinated_dose2)
+dose3_weekly <- make_cumulative(dose3_events, "new_vaccinated_dose3")%>% 
+  rename(cumulative_vaccinated_dose3=cumulative_new_vaccinated_dose3)
+dose4_weekly <- make_cumulative(dose4_events, "new_vaccinated_dose4")%>% 
+  rename(cumulative_vaccinated_dose4=cumulative_new_vaccinated_dose4)
+
+
+weekly_summary <- weekly_summary %>%
+  left_join(dose2_weekly, by = c("birth_start", "week")) %>%
+  left_join(dose3_weekly, by = c("birth_start", "week")) %>%
+  left_join(dose4_weekly, by = c("birth_start", "week")) %>%
+  left_join(death_weekly_dose2 %>% select(birth_start, week, deaths_dose2, cum_deaths_dose2),
+            by = c("birth_start", "week")) %>%
+  left_join(death_weekly_dose3 %>% select(birth_start, week, deaths_dose3, cum_deaths_dose3),
+            by = c("birth_start", "week")) %>%
+  left_join(death_weekly_dose4 %>% select(birth_start, week, deaths_dose4, cum_deaths_dose4),
+            by = c("birth_start", "week")) %>%
+  # remplacer NA par 0 sur les colonnes d'événements/cumul
+  mutate(across(
+    c(new_vaccinated_dose2, cumulative_vaccinated_dose2,
+      new_vaccinated_dose3, cumulative_vaccinated_dose3,
+      new_vaccinated_dose4, cumulative_vaccinated_dose4,
+      deaths_dose2, cum_deaths_dose2, 
+      deaths_dose3, cum_deaths_dose3,
+      deaths_dose4, cum_deaths_dose4),
+    ~ replace_na(., 0)
+  )) %>%
+  group_by(birth_start) %>%
+  arrange(week) %>%
+  mutate(
+    # population vivante ayant eu 2e / 3e dose (on retire les décès des personnes
+    # qui avaient déjà reçu la 2e / 3e dose au moment du décès)
+    n_dose2 = pmax(0, cumulative_vaccinated_dose2 - cum_deaths_dose2),
+    n_dose3 = pmax(0, cumulative_vaccinated_dose3 - cum_deaths_dose3),
+    n_dose4 = pmax(0, cumulative_vaccinated_dose4 - cum_deaths_dose4),
+  ) %>%
+  ungroup()
+
+
+                  ## == == == == == == == == == == == == == == == == == == == == == 
+                  ##### Step 4: Add standardisation (using first week as ref) ####
+                  ## == == == == == == == == == == == == == == == == == == == == == 
+
+
+weekly_summary <- weekly_summary %>%
+  group_by(birth_start) %>%
+  mutate(
+    # Ref population = population of first week
+    popref= first(total_pop),
+    
+    # Standardized deaths
+    deaths_vaccinated_stand = if_else(
+      n_vaccinated > 0,
+      (deaths_vaccinated / (n_vaccinated+deaths_vaccinated)) * popref,
+      NA_real_
+    ),
+    deaths_unvaccinated_stand = if_else(
+      n_unvaccinated > 0,
+      (deaths_unvaccinated / (n_unvaccinated+deaths_unvaccinated)) * popref,
+      NA_real_
+    )
+  ) %>%
+  ungroup()
 
                         ## == == == == == == == == == == == ==
                         ##### Plot the vaccination ####
@@ -668,7 +861,7 @@ weekly_summary <- timeline_weekly %>%
 
 ggplot(weekly_summary, aes(x = week)) +
   # Area for vaccinated (stacked on top)
-  geom_area(aes(y = n_unvaccinated + n_vaccinated, fill = "Vaccinated")) +
+  geom_area(aes(y = total_vaccinated_alive+n_unvaccinated, fill = "Vaccinated")) +
   # Area for unvaccinated (bottom layer)
   geom_area(aes(y = n_unvaccinated, fill = "Unvaccinated")) +
   facet_wrap(~ birth_start, scales = "free_y") +
@@ -727,8 +920,22 @@ ggplot(weekly_summary, aes(x = week)) +
                       ##### Compare death & vaccine - plot data ####
                       ## == == == == == == == == == == == == == == ==
 
-ggplot(weekly_summary, aes(x = week)) +
-  geom_line(aes(y = total_vaccination, color = "Total vaccinations"), size = 1) +
+weekly_summary_prepare <- weekly_summary %>% 
+  select(deaths_vaccinated, deaths_unvaccinated, total_vaccination,birth_start) %>% 
+  group_by(birth_start) %>%
+  summarise(deaths_vaccinated_max= max(deaths_vaccinated,na.rm = TRUE),
+            deaths_unvaccinated_max = max(deaths_unvaccinated,na.rm = TRUE),
+            total_vaccination_max = max(total_vaccination, na.rm = TRUE)) %>% 
+  select(birth_start,deaths_vaccinated_max,deaths_unvaccinated_max,total_vaccination_max) %>% 
+  ungroup()
+  
+weekly_summary_graph<- weekly_summary %>% 
+left_join(weekly_summary_prepare) %>% filter(!birth_start %in% c(1905, 1910, 2010, 2015, 2020) & !is.na(birth_start))
+
+
+ggplot(weekly_summary_graph, aes(x = week)) +
+  geom_line(aes(y = ((total_vaccination/total_vaccination_max)*(deaths_vaccinated_max+deaths_unvaccinated_max)), 
+                color = "Total vaccinations"), size = 1) +
   geom_line(aes(y = deaths_vaccinated + deaths_unvaccinated, color = "Deaths"), size = 1) +
   facet_wrap(~ birth_start, scales = "free_y") +
   labs(
@@ -737,22 +944,68 @@ ggplot(weekly_summary, aes(x = week)) +
     y = "Count",
     color = "Metric"
   ) +
-  scale_color_manual(values = c("New vaccinations" = "steelblue", "Deaths" = "red")) +
+  scale_color_manual(values = c("Total vaccinations" = "steelblue", "Deaths" = "red")) +
   theme_minimal() +
   theme(strip.text = element_text(size = 8))
+
+ggsave(
+  filename = file.path(K_DIR_GEN_IMG_RTCHEQUE, "total_Vaccination_total_death.png"),
+  plot = last_plot(),
+  width = 10, height = 6, dpi = 300
+)
+
+ggplot(weekly_summary_graph, aes(x = week)) +
+  geom_line(aes(y = ((total_vaccination/total_vaccination_max)*(deaths_unvaccinated_max)), 
+                color = "Total vaccinations"), size = 1) +
+  geom_line(aes(y = deaths_unvaccinated, color = "Deaths"), size = 1) +
+  facet_wrap(~ birth_start, scales = "free_y") +
+  labs(
+    title = "Weekly vaccinations and unvaccinated deaths by age group",
+    x = "Week (starting Monday)",
+    y = "Count",
+    color = "Metric"
+  ) +
+  scale_color_manual(values = c("Total vaccinations" = "steelblue", "Deaths" = "red")) +
+  theme_minimal() +
+  theme(strip.text = element_text(size = 8))
+
+ggsave(
+  filename = file.path(K_DIR_GEN_IMG_RTCHEQUE, "total_Vaccination_unvax_death.png"),
+  plot = last_plot(),
+  width = 10, height = 6, dpi = 300
+)
+
+ggplot(weekly_summary_graph, aes(x = week)) +
+  geom_line(aes(y = ((total_vaccination/total_vaccination_max)*(deaths_vaccinated_max)), 
+                color = "Total vaccinations"), size = 1) +
+  geom_line(aes(y = deaths_vaccinated, color = "Deaths"), size = 1) +
+  facet_wrap(~ birth_start, scales = "free_y") +
+  labs(
+    title = "Weekly vaccinations and vaccinated deaths by age group",
+    x = "Week (starting Monday)",
+    y = "Count",
+    color = "Metric"
+  ) +
+  scale_color_manual(values = c("Total vaccinations" = "steelblue", "Deaths" = "red")) +
+  theme_minimal() +
+  theme(strip.text = element_text(size = 8))
+
+ggsave(
+  filename = file.path(K_DIR_GEN_IMG_RTCHEQUE, "total_Vaccination_vax_death.png"),
+  plot = last_plot(),
+  width = 10, height = 6, dpi = 300
+)
 
                 ## == == == == == == == == == == == == == == ==
                 ##### Compare death & vaccine - Spearman ####
                 ## == == == == == == == == == == == == == == ==
 
 # Function to compute Spearman correlations at different lags using total weekly deaths and total_vaccination
-compute_corrs_weekly <- function(df) {
-  results <- lapply(c(-1, 0, 1, 2), function(lag) {
+compute_corrs_weekly <- function(df,deaths_one, deaths_two) {
+  results <- lapply(c(1, 2, 3, 4), function(lag) {
     
     tmp <- df %>%
-      mutate(
-        total_deaths = deaths_vaccinated + deaths_unvaccinated
-      )
+        mutate(total_deaths = .data[[deaths_one]] + .data[[deaths_two]])
     
     # Apply lag
     tmp <- if (lag < 0) {
@@ -792,11 +1045,47 @@ compute_corrs_weekly <- function(df) {
   bind_rows(results)
 }
 
-# Apply by age group
+                                      ## == == == == == == == 
+                                      ###### Total death #####
+                                      ## == == == == == == == 
+
 corr_results <- weekly_summary %>%
   group_by(birth_start) %>%
   group_modify(~ {
-    tmp <- compute_corrs_weekly(.x)
+    tmp <- compute_corrs_weekly(weekly_summary, "deaths_vaccinated", "deaths_unvaccinated") 
+    tmp <- tmp %>% mutate(n = nrow(.x))
+    tmp
+  }) %>%
+  ungroup()
+
+# Plot
+ggplot(corr_results, aes(x = factor(lag), y = cor, fill = cor)) +
+  geom_col() +
+  geom_text(aes(label = signif, y = cor + 0.05), size = 4) +
+  geom_text(aes(label = paste0("n=", n), y = cor + 0.15), size = 3, color = "darkgrey") +
+  facet_wrap(~ birth_start) +
+  scale_fill_gradient2(low = "red", mid = "white", high = "blue", midpoint = 0) +
+  labs(
+    title = "Spearman correlation between total vaccinations and total weekly deaths",
+    x = "Lag (weeks)",
+    y = "Spearman correlation"
+  ) +
+  theme_minimal()
+
+ggsave(
+  filename = file.path(K_DIR_GEN_IMG_RTCHEQUE, "Spearman_vax_total_death.png"),
+  plot = last_plot(),
+  width = 10, height = 6, dpi = 300
+)
+
+                                  ## == == == == == == ==
+                                  ###### Vax death #####
+                                  ## == == == == == == ==
+
+corr_results <- weekly_summary %>%
+  group_by(birth_start) %>%
+  group_modify(~ {
+    tmp <- compute_corrs_weekly(weekly_summary, "deaths_vaccinated", "deaths_vaccinated") 
     tmp <- tmp %>% mutate(n = nrow(.x))
     tmp
   }) %>%
@@ -817,10 +1106,45 @@ ggplot(corr_results, aes(x = factor(lag), y = cor, fill = cor)) +
   theme_minimal()
 
 ggsave(
-  filename = file.path(K_DIR_GEN_IMG_RTCHEQUE, "Spearman_vax_death.png"),
+  filename = file.path(K_DIR_GEN_IMG_RTCHEQUE, "Spearman_vax_vaxdeath.png"),
   plot = last_plot(),
   width = 10, height = 6, dpi = 300
 )
+
+                                      ## == == == == == == ==
+                                      ###### UnVax death #####
+                                      ## == == == == == == ==
+
+corr_results <- weekly_summary %>%
+  group_by(birth_start) %>%
+  group_modify(~ {
+    tmp <- compute_corrs_weekly(weekly_summary, "deaths_unvaccinated", "deaths_unvaccinated") 
+    tmp <- tmp %>% mutate(n = nrow(.x))
+    tmp
+  }) %>%
+  ungroup()
+
+# Plot
+ggplot(corr_results, aes(x = factor(lag), y = cor, fill = cor)) +
+  geom_col() +
+  geom_text(aes(label = signif, y = cor + 0.05), size = 4) +
+  geom_text(aes(label = paste0("n=", n), y = cor + 0.15), size = 3, color = "darkgrey") +
+  facet_wrap(~ birth_start) +
+  scale_fill_gradient2(low = "red", mid = "white", high = "blue", midpoint = 0) +
+  labs(
+    title = "Spearman correlation between total vaccinations and weekly deaths",
+    x = "Lag (weeks)",
+    y = "Spearman correlation"
+  ) +
+  theme_minimal()
+
+ggsave(
+  filename = file.path(K_DIR_GEN_IMG_RTCHEQUE, "Spearman_vax_unvaxdeath.png"),
+  plot = last_plot(),
+  width = 10, height = 6, dpi = 300
+)
+
+
 
                   ## == == == == == == == == == == == == == == == ==
                   ##### Calculate relative risk of vaccination ####
@@ -943,6 +1267,8 @@ ggplot(weekly_global, aes(x = week, y = rate_ratio)) +
                                     ###### Standardized death ######
                                     ## == == == == == == == == == ==
 
+
+
 weekly_rates <- weekly_summary %>%
   arrange(birth_start, week) %>%
   mutate(
@@ -1031,3 +1357,262 @@ ggsave(
   plot = last_plot(),
   width = 10, height = 6, dpi = 300
 )
+
+                              ## == == == == == == == == == ==
+                              ###### Standardized by age ######
+                              ## == == == == == == == == == ==
+
+
+# Step 1: reference population structure by age group
+weekly_summary_sum <- weekly_summary %>% 
+  select(week, deaths_vaccinated_stand, deaths_unvaccinated_stand, total_vaccination) %>% 
+  group_by(week) %>%
+  summarise(deaths_vaccinated_stand = sum(deaths_vaccinated_stand),
+            deaths_unvaccinated_stand = sum(deaths_unvaccinated_stand),
+            total_vaccination = sum(total_vaccination,na.rm = TRUE)
+  )
+
+
+# Step 2: Plot
+
+ggplot(weekly_summary_sum, aes(x = week)) +
+  geom_line(aes(y = deaths_vaccinated_stand, color = "Vaccinated")) +
+  geom_line(aes(y = deaths_unvaccinated_stand, color = "Unvaccinated")) +
+  geom_line(aes(y = total_vaccination/100, color = "Vaccinations")) +
+  scale_color_manual(values = c("Unvaccinated" = "#1b9e77", "Vaccinated" = "#d95f02","Vaccinations" = "red"))
+  labs(
+    title = "Standardized weekly deaths by vaccination status",
+    subtitle = "Age-standardized using first week population distribution",
+    x = "Week",
+    y = "Age-standardize Deaths",
+    color = "Group"
+  ) +
+  theme_minimal()
+  
+  
+  # ============================================================
+  #  Step 0 — Helper
+  # ============================================================
+  
+  make_cumulative <- function(df, colname) {
+    new_name <- colname
+    cum_name <- paste0("cumulative_", colname)
+    
+    df %>%
+      mutate(week = floor_date(date, "week", week_start = 1)) %>%
+      group_by(birth_start, week) %>%
+      summarise(new = sum(.data[[colname]], na.rm = TRUE), .groups = "drop") %>%
+      group_by(birth_start) %>%
+      arrange(week) %>%
+      mutate(cumulative = cumsum(new)) %>%
+      ungroup() %>%
+      rename(!!new_name := new, !!cum_name := cumulative)
+  }
+  
+  # ============================================================
+  #  Step 1 — Prepare base events
+  # ============================================================
+  
+  prepare_events <- function(rtc_pop, cutoff = "2024-01-01", max_doses = 7) {
+    message("Building base events...")
+    dose_cols <- paste0("dose", 1:max_doses, "_date")
+    
+    events <- rtc_pop %>%
+      select(id, birth_start, all_of(dose_cols), death_date) %>%
+      mutate(across(all_of(dose_cols), as.Date),
+             death_date = as.Date(death_date)) %>%
+      filter(if_any(all_of(c(dose_cols, "death_date")), ~ is.na(.) | . < as.Date(cutoff)))
+    
+    return(events)
+  }
+  
+  # ============================================================
+  #  Step 2 — Build vaccination events
+  # ============================================================
+  
+  build_vaccination_events <- function(events, max_doses = 7) {
+    message("Building vaccination events...")
+    dose_cols <- paste0("dose", 1:max_doses, "_date")
+    
+    vacc_list <- map(1:max_doses, function(i) {
+      col <- paste0("dose", i, "_date")
+      events %>%
+        filter(!is.na(.data[[col]])) %>%
+        group_by(birth_start, date = .data[[col]]) %>%
+        summarise(!!paste0("new_vaccinated_dose", i) := n(), .groups = "drop")
+    })
+    
+    vacc_events <- reduce(vacc_list, full_join, by = c("birth_start", "date")) %>%
+      arrange(birth_start, date) %>%
+      mutate(across(starts_with("new_vaccinated"), \(x) replace_na(x, 0)))
+    
+    return(vacc_events)
+  }
+  
+  # ============================================================
+  #  Step 3 — Build death events by dose
+  # ============================================================
+  
+  build_death_events <- function(events, max_doses = 7) {
+    message("Building death events...")
+    
+    # Identify dose columns dynamically
+    dose_cols <- paste0("dose", 1:max_doses, "_date")
+    
+    deaths <- events %>%
+      filter(!is.na(death_date)) %>%
+      rowwise() %>%
+      mutate(
+        # Find the last dose received before death (0 = unvaccinated)
+        last_dose_before_death = {
+          dose_dates <- c_across(all_of(dose_cols))
+          valid_doses <- which(!is.na(dose_dates) & dose_dates <= death_date)
+          if (length(valid_doses) == 0) 0 else max(valid_doses)
+        }
+      ) %>%
+      ungroup() %>%
+      mutate(
+        death_type = paste0("death_dose", last_dose_before_death),
+        date = as.Date(death_date)
+      ) %>%
+      count(birth_start, date, death_type, name = "n_deaths") %>%
+      pivot_wider(
+        names_from = death_type,
+        values_from = n_deaths,
+        values_fill = 0
+      ) %>%
+      arrange(birth_start, date) %>%
+      mutate(across(starts_with("death_dose"), \(x) replace_na(x, 0)))
+    
+    return(deaths)
+  }
+  
+  # ============================================================
+  #  Step 4 — Build weekly timeline
+  # ============================================================
+  
+  build_weekly_timeline <- function(events) {
+    message("Building timeline...")
+    timeline <- events %>%
+      select(birth_start, date = death_date) %>%
+      bind_rows(
+        events %>%
+          pivot_longer(starts_with("dose"), values_to = "date") %>%
+          select(birth_start, date)
+      ) %>%
+      filter(!is.na(date)) %>%
+      mutate(week = floor_date(date, "week", week_start = 1)) %>%
+      group_by(birth_start) %>%
+      summarise(all_weeks = list(seq(min(week), max(week), by = "1 week")), .groups = "drop") %>%
+      unnest(all_weeks) %>%
+      rename(week = all_weeks)
+    
+    return(timeline)
+  }
+  
+  # ============================================================
+  #  Step 5 — Merge all & compute populations
+  # ============================================================
+  
+  build_weekly_summary <- function(timeline, vacc_events, death_events, events, max_doses = 7) {
+    message("Building Weekly summary...")
+    
+    ## == == == == == == == == == == == == == == ==
+    ## Step 1: Convert vaccination and death events to weekly format
+    ## == == == == == == == == == == == == == == ==
+    
+    vacc_weekly <- vacc_events %>%
+      mutate(week = floor_date(date, "week", week_start = 1)) %>%
+      group_by(birth_start, week) %>%
+      summarise(across(starts_with("new_vaccinated"), \(x) sum(x, na.rm = TRUE)), .groups = "drop")
+    
+    death_weekly <- death_events %>%
+      mutate(week = floor_date(date, "week", week_start = 1)) %>%
+      group_by(birth_start, week) %>%
+      summarise(across(starts_with("death_"), \(x) sum(x, na.rm = TRUE)), .groups = "drop")
+    
+    ## == == == == == == == == == == == == == == ==
+    ## Step 2: Merge into timeline
+    ## == == == == == == == == == == == == == == ==
+    
+    weekly <- timeline %>%
+      left_join(vacc_weekly, by = c("birth_start", "week")) %>%
+      left_join(death_weekly, by = c("birth_start", "week")) %>%
+      arrange(birth_start, week) %>%
+      group_by(birth_start) %>%
+      mutate(
+        # Fill missing values with zeros
+        across(starts_with("new_vaccinated"), \(x) replace_na(x, 0)),
+        across(starts_with("death_"), \(x) replace_na(x, 0))
+      ) %>%
+      # Compute cumulative vaccination and death counts
+      mutate(
+        across(starts_with("new_vaccinated"), \(x) cumsum(x), .names = "cumulative_{.col}"),
+        across(starts_with("death_"), \(x) cumsum(x), .names = "cum_{.col}")
+      ) %>%
+      ungroup()
+    
+    ## == == == == == == == == == == == == == == ==
+    ## Step 3: Compute living population by exact dose count
+    ## == == == == == == == == == == == == == == ==
+    
+    for (i in 1:max_doses) {
+      cum_i_col <- paste0("cumulative_new_vaccinated_dose", i)
+      cum_ip1_col <- paste0("cumulative_new_vaccinated_dose", i + 1)
+      cum_death_i_col <- paste0("cum_death_dose", i)
+      
+      # Ensure columns exist (fill with 0 if missing)
+      if (!cum_i_col %in% names(weekly)) {
+        weekly[[cum_i_col]] <- 0
+      }
+      if (!cum_ip1_col %in% names(weekly)) {
+        weekly[[cum_ip1_col]] <- 0
+      }
+      if (!cum_death_i_col %in% names(weekly)) {
+        weekly[[cum_death_i_col]] <- 0
+      }
+      
+      # Exact dose i alive = (≥i doses) - (≥i+1 doses) - (deaths among exactly i)
+      weekly <- weekly %>%
+        mutate(
+          !!paste0("n_alive_dose_", i) := pmax(
+            0,
+            .data[[cum_i_col]] - .data[[cum_ip1_col]] - .data[[cum_death_i_col]]
+          )
+        )
+    }
+    
+    ## == == == == == == == == == == == == == == ==
+    ## Step 4: Compute totals (total vaccinated & unvaccinated)
+    ## == == == == == == == == == == == == == == ==
+    
+    
+    weekly <- weekly %>%
+      ungroup() %>%
+      mutate(
+        # Total population per cohort
+        total_pop = map_dbl(birth_start, ~ n_distinct(events$id[events$birth_start == .x])),
+        
+        # Total vaccinated (sum of alive people by dose)
+        total_vaccinated_alive = rowSums(select(., matches("^n_alive_dose_[0-9]+$")), na.rm = TRUE),
+        
+        # Deaths among unvaccinated (cumulative)
+        cum_death_unvaccinated = ifelse("cum_death_unvaccinated" %in% names(.),
+                                         cum_death_unvaccinated, 0),
+        
+        # Remaining unvaccinated population alive
+        n_unvaccinated = pmax(0, total_pop - total_vaccinated_alive - cum_death_unvaccinated)
+      )
+    
+    return(weekly)
+  }
+  
+  # ================================================================
+  # === MASTER PIPELINE ===
+  # ================================================================
+  events <- prepare_events(rtc_pop, cutoff = "2024-01-01", max_doses = 7)
+  vacc_events <- build_vaccination_events(events, max_doses = 7)
+  death_events <- build_death_events(events, max_doses = 7)
+  timeline <- build_weekly_timeline(events)
+  weekly_summary <- build_weekly_summary(timeline, vacc_events, death_events, events, max_doses = 7)
+  
