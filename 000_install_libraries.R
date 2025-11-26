@@ -49,6 +49,8 @@ install.packages("rapport")
 
 install.packages("zoo")
 
+install.packages("ggtext")
+
 #Pour létude de la météo
 install.packages("mgcv")
 
