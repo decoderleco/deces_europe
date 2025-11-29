@@ -1180,7 +1180,6 @@ stand_death_vax <- standardized_rates %>% left_join(df_vacc )  %>%
          std_mortality_death_dose0,
          std_mortality_death_dose1,
          std_mortality_death_dose2,
-         std_mortality_death_dose3,
          total_vacc) %>%
   pivot_longer(
     cols = starts_with("std_mortality_death_dose"),
