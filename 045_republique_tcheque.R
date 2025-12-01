@@ -799,7 +799,7 @@ compute_standardized_mortality <- function(weekly, max_doses = 7) {
           alive   <- weekly[[alive_col]][idx]
           refpop  <- weekly$total_pop[idx]
           
-          rate <- deaths / (alive+deaths)
+          rate <- deaths / (alive)
           
           # taux standardisé
           stand <- sum(refpop * rate, na.rm = TRUE)
