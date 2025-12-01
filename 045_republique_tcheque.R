@@ -773,6 +773,19 @@ build_weekly_summary <- function(timeline, vacc_events, death_events, events, ma
 compute_standardized_mortality <- function(weekly, max_doses = 7) {
   message("Computing standardized mortality rates...")
   
+  # Ajouter la population vivante de la semaine précédente par groupe d'âge
+  weekly <- weekly %>%
+    arrange(birth_start, week) %>%
+    group_by(birth_start) %>%
+    mutate(across(starts_with("n_alive_dose_"),
+                  ~lag(.), 
+                  .names = "{.col}_prev")) %>%
+    ungroup()
+  
+  weekly <- weekly %>%
+    mutate(across(ends_with("_prev"),
+                  ~ifelse(is.na(.), .[which(!is.na(.))[1]], .)))
+  
   # === Calcul correct (filtrage par semaine dans summarise) ===
   standardized <- weekly %>%
     group_by(week) %>%
@@ -786,6 +799,7 @@ compute_standardized_mortality <- function(weekly, max_doses = 7) {
           
           alive_col     <- paste0("n_alive_dose_", dose_id)
           alive_ref_col <- paste0("total_pop")
+          alive_prev_col <- paste0("n_alive_dose_", dose_id, "_prev")
           
           # Vérifications
           if (!(alive_col %in% names(weekly)))   return(NA_real_)
@@ -795,11 +809,13 @@ compute_standardized_mortality <- function(weekly, max_doses = 7) {
           this_week <- cur_group()$week
           idx <- weekly$week == this_week
           
+          
           deaths  <- weekly[[death_col]][idx]
           alive   <- weekly[[alive_col]][idx]
+          alive_prev   <- weekly[[alive_prev_col]][idx]
           refpop  <- weekly$total_pop[idx]
           
-          rate <- deaths / (alive)
+          rate <- 2* deaths / (alive+alive_prev)
           
           # taux standardisé
           stand <- sum(refpop * rate, na.rm = TRUE)
