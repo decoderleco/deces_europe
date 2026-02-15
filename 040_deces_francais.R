@@ -96,8 +96,7 @@ if (!shallForceDownload && exists(varName)) {
 	# Liste des URLs des fichiers de patients décédés
 	
 	urls_listes_deces <- c(
-	  '2025-t2' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20250710-111150/deces-2025-t2.txt',
-	    '2025-t1' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20250409-075652/deces-2025-t1.txt',
+	    '2025' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20260106-124733/deces-2025.txt',
 	    '2024' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20250210-094840/deces-2024.txt',
 	    '2023' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20240219-094712/deces-2023.txt',
 	    '2022' = 'https://static.data.gouv.fr/resources/fichier-des-personnes-decedees/20230209-094802/deces-2022.txt',
@@ -386,7 +385,7 @@ if (!shallForceDownload && exists(varName)) {
 	# Export pour Excel
 	#write.table(b__fr_gouv_deces_quotidiens, "gen/csv/fr_gouv_registre_deces_fr.csv", row.names=TRUE, sep=";", dec=".", na=" ")
 
-	#saveRDS(b__fr_gouv_deces_quotidiens, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
+	saveRDS(b__fr_gouv_deces_quotidiens, file = 'gen/rds/fr_gouv_registre_deces_fr.rds')
 
 	cat("(b__fr_gouv_deces_quotidiens) a été construite\n")
 }
@@ -1070,7 +1069,7 @@ fr_insee_population_france_metro <- fr_insee_population_france_metro %>% group_b
 fr_insee_population_france_metro <- ungroup(fr_insee_population_france_metro)
   
 fr_insee_population_france_metro <- fr_insee_population_france_metro %>% 
-  mutate(annee_suivante = if_else(ANNEE==2025,2025,ANNEE + 1)) %>% 
+  mutate(annee_suivante = if_else(ANNEE==2026,2026,ANNEE + 1)) %>% 
   mutate(population=as.double(POP)) %>% 
   mutate(age=AGE,annee=ANNEE) %>% 
   select(-ANNEE,-POP,-AGE)
@@ -1083,7 +1082,7 @@ fr_insee_population_france <- fr_insee_population_france %>% group_by(ANNEE,AGE)
 fr_insee_population_france <- ungroup(fr_insee_population_france)
 
 fr_insee_population_france <- fr_insee_population_france %>% 
-  mutate(annee_suivante = if_else(ANNEE==2025,2025,ANNEE + 1)) %>% 
+  mutate(annee_suivante = if_else(ANNEE==2026,2026,ANNEE + 1)) %>% 
   mutate(population=as.double(POP)) %>% 
   mutate(age=AGE,annee=ANNEE) %>% 
   select(-ANNEE,-POP,-AGE)
@@ -2117,14 +2116,24 @@ carte_departements <- st_read(dsn="./data/geo/GEOFLA_2-2_DEPARTEMENT_SHP_LAMB93_
 
 
 idx <- match(carte_departements$CODE_DEPT, comparaison_hopsi_deces_metro_2020$dep)
-concordance_deces <- comparaison_hopsi_deces_metro_2020[idx, "deces_norm"]
-carte_departements$deces_norm <- concordance_deces
+carte_departements$deces_norm <- comparaison_hopsi_deces_metro_2020$deces_norm[idx]
 
 couleurs <- colorRampPalette(c('white', 'red'))
 couleurs_inverse <- colorRampPalette(c('red', 'white'))
 
-spplot(carte_departements, "deces_norm",col.regions=couleurs(30),  
-       main=list(label="Evolution du nombre de deces en 2020 par rapport à 2017",cex=.8))
+ggplot(data = carte_departements) +
+  geom_sf(aes(fill = deces_norm), color = "grey30", linewidth = 0.2) +   # linewidth pour les contours
+  scale_fill_gradient(low = "white", high = "red", na.value = "grey80") +  # ou utilise ton colorRampPalette
+  labs(title = "Evolution du nombre de décès en 2020 par rapport à 2017",
+       fill = "Décès normalisés") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    legend.position = "right",
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank()
+  )
 
 pngFileRelPath <- paste0(repertoire, "/carte_deces.png")
 
@@ -2179,7 +2188,7 @@ deces_par_jour_age_stand_complet<- read.csv2(file.path("gen/csv/deces_par_jour_a
 
 #filter selon les données complètes uniquement
 deces_par_jour_age_stand_complet<-deces_par_jour_age_stand_complet %>% 
-  filter(annee<=2024)
+  filter(annee<=2025)
 
 
 deces_par_jour_age_stand_complet<-deces_par_jour_age_stand_complet %>% 
@@ -2321,7 +2330,7 @@ p<-ggplot(donnees_finales_tranche_age %>% filter(tranchesAge==trage),aes(x = ann
   geom_line(aes( y=intervalle_haut), color = "#CC3333",size = 1,linetype = "longdash")+ 
   theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
         axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
- scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+ scale_x_continuous(breaks=seq(2010, 2025, 1))+ labs(
    title    = paste0("Nombre de décès par trimestre en France des ",trage),
    subtitle = "Projection de la tendance log-linéaire de 2010-2019",
    x        = "Trimestre",
@@ -2334,7 +2343,7 @@ p<-ggplot(donnees_finales_tranche_age %>% filter(tranchesAge==trage),aes(x = ann
     geom_col(aes( y=surmortalite + sousmortalite), fill = "#3399FF")+
     theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
           axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
-    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+    scale_x_continuous(breaks=seq(2010, 2025, 1))+ labs(
       title    = paste0("Ecart entre le nombre de décès observés et attendus par trimestre en France des ",trage),
       subtitle = "Projection de la tendance log-linéaire de 2010-2019",
       x        = "Trimestre",
@@ -2345,7 +2354,7 @@ p<-ggplot(donnees_finales_tranche_age %>% filter(tranchesAge==trage),aes(x = ann
     geom_col(aes( y=n_dose1 + n_complet + n_rappel + n_2_rappel + n_3_rappel +n_rappel_biv), fill = "#3399FF")+
     theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
           axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
-    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+    scale_x_continuous(breaks=seq(2010, 2025, 1))+ labs(
       title    = paste0("Nombre de vaccins AntiCovid-19 distribués par trimestre en France pour les ",trage),
       subtitle = "",
       x        = "Trimestre",
@@ -2504,7 +2513,7 @@ for (trage in (c("0 ans",
     geom_line(aes( y=projection_deces), color = "#330066",size = 0.5,linetype = "longdash")+
     theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
           axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
-    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+    scale_x_continuous(breaks=seq(2010, 2025, 1))+ labs(
       title    = paste0("Nombre de décès par mois en France des ",trage),
       subtitle = "Projection de la tendance log-linéaire de 2010-2019",
       x        = "Trimestre",
@@ -2517,7 +2526,7 @@ for (trage in (c("0 ans",
     geom_col(aes( y=surmortalite + sousmortalite), fill = "#3399FF")+
     theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
           axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
-    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+    scale_x_continuous(breaks=seq(2010, 2025, 1))+ labs(
       title    = paste0("Ecart entre le nombre de décès observés et attendus par mois en France des ",trage),
       subtitle = "Projection de la tendance log-linéaire de 2010-2019",
       x        = "Mois",
@@ -2528,7 +2537,7 @@ for (trage in (c("0 ans",
     geom_col(aes( y=n_dose1 + n_complet + n_rappel + n_2_rappel + n_3_rappel +n_rappel_biv), fill = "#3399FF")+
     theme(axis.text.x = element_text(face = "bold", color = "#993333",size = 12, angle = 45),
           axis.text.y = element_text(face = "bold", color = "blue", size = 12, angle = 45))+
-    scale_x_continuous(breaks=seq(2010, 2024, 1))+ labs(
+    scale_x_continuous(breaks=seq(2010, 2025, 1))+ labs(
       title    = paste0("Nombre de vaccins AntiCovid-19 distribués par mois en France pour les ",trage),
       subtitle = "",
       x        = "Mois",

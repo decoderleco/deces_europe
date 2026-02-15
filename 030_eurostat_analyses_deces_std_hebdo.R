@@ -221,25 +221,26 @@ g<-ggplot(data = france_suede_portugal) +
   geom_area(aes(x = numSemaineDepuis2013, 
                 y = deces_france),
             color="#CC0000",fill="#CC0000",size=1,alpha=1/2) +
-  geom_vline(xintercept = seq(from=0, to=600, by = 52),linetype = "dashed",color="steelblue")+
+  geom_vline(xintercept = seq(from=0, to=652, by = 52),linetype = "dashed",color="steelblue")+
   theme(axis.title.x = element_blank(), 
         axis.text.x = element_blank(),
         axis.title.y = element_text(color="#000000", size=20 ),
         plot.title = element_text(color="#003366", size=25 ),
         axis.text.y =  element_text(color="#000000", size=15 , angle =45))+
   ylab("Décès hebdomadaires standardisés")+
-  geom_text(x=26, y=1000, label="2013",size=10)+
-  geom_text(x=79, y=1000, label="2014",size=10)+
-  geom_text(x=131, y=1000, label="2015",size=10)+
-  geom_text(x=183, y=1000, label="2016",size=10)+
-  geom_text(x=235, y=1000, label="2017",size=10)+
-  geom_text(x=287, y=1000, label="2018",size=10)+
-  geom_text(x=339, y=1000, label="2019",size=10)+
-  geom_text(x=391, y=1000, label="2020",size=10)+
-  geom_text(x=443, y=1000, label="2021",size=10)+
-  geom_text(x=495, y=1000, label="2022",size=10)+
-  geom_text(x=547, y=1000, label="2023",size=10)+
-  geom_text(x=599, y=1000, label="2024",size=10)+
+  geom_text(x=26, y=1000, label="2013",size=8)+
+  geom_text(x=79, y=1000, label="2014",size=8)+
+  geom_text(x=131, y=1000, label="2015",size=8)+
+  geom_text(x=183, y=1000, label="2016",size=8)+
+  geom_text(x=235, y=1000, label="2017",size=8)+
+  geom_text(x=287, y=1000, label="2018",size=8)+
+  geom_text(x=339, y=1000, label="2019",size=8)+
+  geom_text(x=391, y=1000, label="2020",size=8)+
+  geom_text(x=443, y=1000, label="2021",size=8)+
+  geom_text(x=495, y=1000, label="2022",size=8)+
+  geom_text(x=547, y=1000, label="2023",size=8)+
+  geom_text(x=599, y=1000, label="2024",size=8)+
+  geom_text(x=651, y=1000, label="2025",size=8)+
   annotate(geom = "text", x = 50, y = 30000, label = "Portugal", color = "#006600",
            angle = 0, size = 15)+
   annotate(geom = "text", x = 50, y = 28000, label = "Suède", color = "#0066CC",
@@ -255,6 +256,45 @@ repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_FR_SU_PO")
 a__f_createDir(repertoire)
 
 dev.print(device = png, file = paste0(repertoire, "/Deces_Hebdo_france_suede_portugal_couleur.png"), width = 1000)
+temp<-france_suede_portugal %>% filter((numSemaineDepuis2013>=312))
+temp<-temp %>% filter((numSemaineDepuis2013<=480))
+
+g<-ggplot(data = temp ) + 
+  geom_area(aes(x = numSemaineDepuis2013, 
+                y = deces_portugal),color="#006600",fill="#006600",size=1,alpha=1/4) +
+  geom_area(aes(x = numSemaineDepuis2013, 
+                y = deces_suede),color="#0066CC",fill="#0066CC",size=1,alpha=1/2) + 
+  geom_area(aes(x = numSemaineDepuis2013, 
+                y = deces_france),
+            color="#CC0000",fill="#CC0000",size=1,alpha=1/2) +
+  geom_vline(xintercept = seq(from=312, to=500, by = 52),linetype = "dashed",color="steelblue")+
+  theme(axis.title.x = element_blank(), 
+        axis.text.x = element_blank(),
+        axis.title.y = element_text(color="#000000", size=20 ),
+        plot.title = element_text(color="#003366", size=25 ),
+        axis.text.y =  element_text(color="#000000", size=15 , angle =45))+
+  ylab("Décès hebdomadaires standardisés")+
+  geom_text(x=287, y=1000, label="2018",size=8)+
+  geom_text(x=339, y=1000, label="2019",size=8)+
+  geom_text(x=391, y=1000, label="2020",size=8)+
+  geom_text(x=443, y=1000, label="2021",size=8)+
+  annotate(geom = "text", x = 350, y = 30000, label = "Portugal", color = "#006600",
+           angle = 0, size = 15)+
+  annotate(geom = "text", x = 350, y = 26000, label = "Suède", color = "#0066CC",
+           angle = 0, size = 15)+
+  annotate(geom = "text", x = 350, y = 22000, label = "France", color = "#CC0000",
+           angle = 0, size = 15)+
+  ggtitle(paste0("Décès hebdomadaires standardisés selon 2020 par pays"))+
+  scale_y_continuous(labels=function(x) format(x,big.mark=" ",scientific = FALSE))
+
+g
+
+repertoire <- paste0(K_DIR_GEN_IMG_EUROSTAT,"/Deces/Hebdo/Std/Deces_FR_SU_PO")
+a__f_createDir(repertoire)
+
+dev.print(device = png, file = paste0(repertoire, "/Deces_Hebdo_france_suede_portugal_couleur_zoom.png"), width = 1000)
+
+
 
 
 g<-ggplot(data = france_suede_portugal) + 

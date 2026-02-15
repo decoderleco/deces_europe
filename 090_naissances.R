@@ -1,6 +1,5 @@
 # Attacher les Packages contenus dans les Library pour définir les namespaces
-library(maptools)
-library(rgdal)
+
 library(tidyr)
 library(maps)
 library(eurostat)
@@ -12,7 +11,6 @@ library(ggplot2)
 library(lubridate)
 library(sf)
 library(rnaturalearth)
-library(rgeos)
 library(rnaturalearthdata)
 library(readr)
 library(lsr)
@@ -251,38 +249,8 @@ b__es_pjan<-b__es_pjan %>% left_join(b__es_pjan_suivante)
 
 rm(b__es_pjan_suivante)
 
-#####estimation de la population de l'année 2024 à l'aide de l'évolution entre 2022 et 2023####
-#on se base sur le passage entre 10 ans en 2022 et 11 ans en 2023 pour répercuter ce ratio sur les 10 ans de 2023 pour les 11 ans de 2024
-
-evol<-b__es_pjan %>% filter(time=="2022-01-01") %>% 
-  mutate(age_chiffre = as.numeric(substr(age,2,3))) %>% 
-  mutate(age_annee_2023=age_chiffre+1)
-
-#on va décaler d'une année la date
-
-annee_2023<-evol %>% select(age_annee_2023,geo,time,values) %>% 
-  rename(age_chiffre=age_annee_2023) %>% 
-  rename(population_annee_2022_age_precedent=values)
-
-#on décale l'age
-evol<-evol %>% left_join(annee_2023) %>% 
-  mutate(evol_2022_2023=pop_annee_suivante/population_annee_2022_age_precedent) %>% 
-  mutate(age_a_appliquer = paste0("Y",age_chiffre-1)) %>% 
-  select(geo,age_a_appliquer,evol_2022_2023) %>% 
-  rename(age=age_a_appliquer)
-
-pjan_2023<-b__es_pjan %>% filter(time=="2023-01-01") %>% left_join(evol) %>% 
-  mutate(pop_annee_suivante=values * evol_2022_2023) %>% 
-  mutate(age=paste0("Y", as.numeric(substr(age,2,3))+1)) %>%
-  select(age,geo,time,pop_annee_suivante,values)
-
-#on vire les données 2023 de la table initiale et on rajoute les données 2023 complétées de 2024
-
-b__es_pjan<-b__es_pjan %>% filter(time!="2023-01-01") %>% rbind(pjan_2023)
-rm(annee_2023)
-
 #####estimation de la population de l'année 2025 à l'aide de l'évolution entre 2023 et 2024####
-
+#on se base sur le passage entre 10 ans en 2023 et 11 ans en 2024 pour répercuter ce ratio sur les 10 ans de 2023 pour les 11 ans de 2024
 
 evol<-b__es_pjan %>% filter(time=="2023-01-01") %>% 
   mutate(age_chiffre = as.numeric(substr(age,2,3))) %>% 
@@ -301,21 +269,51 @@ evol<-evol %>% left_join(annee_2024) %>%
   select(geo,age_a_appliquer,evol_2023_2024) %>% 
   rename(age=age_a_appliquer)
 
-pjan_2024<-b__es_pjan %>% filter(time=="2023-01-01") %>% 
-  select(geo,age,time,pop_annee_suivante) %>% 
-  rename(values=pop_annee_suivante) %>% 
-  mutate(time="2024-01-01")
-
-
-pjan_2024<-pjan_2024%>% left_join(evol) %>% 
+pjan_2024<-b__es_pjan %>% filter(time=="2024-01-01") %>% left_join(evol) %>% 
   mutate(pop_annee_suivante=values * evol_2023_2024) %>% 
   mutate(age=paste0("Y", as.numeric(substr(age,2,3))+1)) %>%
   select(age,geo,time,pop_annee_suivante,values)
 
-#on vire les données 2023 de la table initiale et on rajoute les données 2024 complétées de 2025
+#on vire les données 2024 de la table initiale et on rajoute les données 2023 complétées de 2024
 
-b__es_pjan<-b__es_pjan %>%rbind(pjan_2024)
+b__es_pjan<-b__es_pjan %>% filter(time!="2024-01-01") %>% rbind(pjan_2024)
 rm(annee_2024)
+
+#####estimation de la population de l'année 2026 à l'aide de l'évolution entre 2024 et 2025####
+
+
+evol<-b__es_pjan %>% filter(time=="2024-01-01") %>% 
+  mutate(age_chiffre = as.numeric(substr(age,2,3))) %>% 
+  mutate(age_annee_2025=age_chiffre+1)
+
+#on va décaler d'une année la date
+
+annee_2025<-evol %>% select(age_annee_2025,geo,time,values) %>% 
+  rename(age_chiffre=age_annee_2025) %>% 
+  rename(population_annee_2024_age_precedent=values)
+
+#on décale l'age
+evol<-evol %>% left_join(annee_2025) %>% 
+  mutate(evol_2024_2025=pop_annee_suivante/population_annee_2024_age_precedent) %>% 
+  mutate(age_a_appliquer = paste0("Y",age_chiffre-1)) %>% 
+  select(geo,age_a_appliquer,evol_2024_2025) %>% 
+  rename(age=age_a_appliquer)
+
+pjan_2025<-b__es_pjan %>% filter(time=="2024-01-01") %>% 
+  select(geo,age,time,pop_annee_suivante) %>% 
+  rename(values=pop_annee_suivante) %>% 
+  mutate(time="2025-01-01")
+
+
+pjan_2025<-pjan_2025%>% left_join(evol) %>% 
+  mutate(pop_annee_suivante=values * evol_2024_2025) %>% 
+  mutate(age=paste0("Y", as.numeric(substr(age,2,3))+1)) %>%
+  select(age,geo,time,pop_annee_suivante,values)
+
+#on vire les données 2024 de la table initiale et on rajoute les données 2025 complétées de 2026
+
+b__es_pjan<-b__es_pjan %>%rbind(pjan_2025)
+rm(annee_2025)
 
 
 #####calcul de la population moyenne de l'année####

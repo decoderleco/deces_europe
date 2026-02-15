@@ -117,12 +117,18 @@ a__f_moyenne_mobile <- function(
 	moyenne_mobile_Mort85.89$numerojour <- 1:nrow(moyenne_mobile_Mort85.89) + decalageSemaines
 	table_a_modifier <- table_a_modifier %>% 
 			left_join(moyenne_mobile_Mort85.89)
-	#MortGe90
-	moyenne_mobile_MortGe90 <- running_mean(table_a_modifier$MortGe90, tailleFenetreGlissante)
-	moyenne_mobile_MortGe90 <- data_frame(moyenne_mobile_MortGe90)
-	moyenne_mobile_MortGe90$numerojour <- 1:nrow(moyenne_mobile_MortGe90) + decalageSemaines
+	#Mort90.94
+	moyenne_mobile_Mort90.94 <- running_mean(table_a_modifier$Mort90.94, tailleFenetreGlissante)
+	moyenne_mobile_Mort90.94 <- data_frame(moyenne_mobile_Mort90.94)
+	moyenne_mobile_Mort90.94$numerojour <- 1:nrow(moyenne_mobile_Mort90.94) + decalageSemaines
 	table_a_modifier <- table_a_modifier %>% 
-			left_join(moyenne_mobile_MortGe90)
+	  left_join(moyenne_mobile_Mort90.94)
+	#MortGe95
+	moyenne_mobile_MortGe95 <- running_mean(table_a_modifier$MortGe95, tailleFenetreGlissante)
+	moyenne_mobile_MortGe95 <- data_frame(moyenne_mobile_MortGe95)
+	moyenne_mobile_MortGe95$numerojour <- 1:nrow(moyenne_mobile_MortGe95) + decalageSemaines
+	table_a_modifier <- table_a_modifier %>% 
+			left_join(moyenne_mobile_MortGe95)
 	#temperature
 	moyenne_mobile_temperature <- running_mean(table_a_modifier$temperature, tailleFenetreTemperature)
 	moyenne_mobile_temperature <- data_frame(moyenne_mobile_temperature)

@@ -31,10 +31,12 @@ install.packages("RColorBrewer")
 install.packages("insee")
 install.packages("rvest")
 install.packages("weights")
+install.packages("tidyverse")
 
 install.packages("tinytex")
 install.packages("curl")
 install.packages("gsl")
+install.packages("patchwork")
 
 install.packages("igraph")
 install.packages("ggforce")
@@ -63,6 +65,7 @@ install.packages("markdown")
 install.packages('ISOweek')
 install.packages('aweek')
 
+install.packages("rlang", repos = "https://cloud.r-project.org")
 
 
 # Charger devtools pour disposer de install_github
